@@ -23,7 +23,7 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +49,7 @@ public class MatchByNameBindingMatchingStrategy implements BindingMatchingStrate
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type) {
+    public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(name, "name cannot be bull");
 
@@ -59,6 +59,6 @@ public class MatchByNameBindingMatchingStrategy implements BindingMatchingStrate
         // Add the Binding (if we found one)
         if (binding != null) result.add(binding);
 
-        return result.toArray(new Binding[result.size()]);
+        return Collections.unmodifiableSet(result);
     }
 }

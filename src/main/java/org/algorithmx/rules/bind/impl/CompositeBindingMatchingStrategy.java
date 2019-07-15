@@ -23,8 +23,7 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,16 +64,16 @@ public class CompositeBindingMatchingStrategy implements BindingMatchingStrategy
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type) {
+    public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Set<Binding<T>> result = new HashSet<>();
 
         for (BindingMatchingStrategy strategy : strategies) {
             // Add all the matches
-            result.addAll(Arrays.asList(strategy.match(bindings, name, type)));
+            result.addAll(strategy.match(bindings, name, type));
             // Check to see if we should stop
             if (stopWhenMatched && result.size() > 0) break;
         }
 
-        return result.toArray(new Binding[result.size()]);
+        return Collections.unmodifiableSet(result);
     }
 }

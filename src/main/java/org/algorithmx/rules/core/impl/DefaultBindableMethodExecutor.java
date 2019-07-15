@@ -17,18 +17,19 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.RuntimeRuleException;
+import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.BindingMatchingStrategy;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.MethodDefinition;
 import org.algorithmx.rules.core.ParameterDefinition;
-import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Default Implementation of BindableMethodExecutor.
@@ -75,28 +76,33 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
 
         for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
             // Find all the matching bindings
-            Binding<?>[] bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),
+            Set<Binding<Object>> bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),
                     TypeReference.with(parameterDefinition.getType()));
+            int matches = bindings.size();
 
             // Looks like we are missing a required parameter
-            if (bindings.length == 0 && parameterDefinition.isRequired()) {
-                throw new RuntimeRuleException("Unable to find a matching Binding for param ["
+            if (bindings.size() == 0 && parameterDefinition.isRequired()) {
+                throw new UnrulyException("Unable to find a matching Binding for param ["
                         + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]");
 
-            } else if (bindings.length == 0 && !parameterDefinition.isRequired()) {
+            } else if (matches == 0 && !parameterDefinition.isRequired()) {
                 // Default to null
                 args[index] = null;
-            } else if (bindings.length == 1 && bindings[0].getValue() == null && parameterDefinition.isRequired()) {
-                throw new RuntimeRuleException("Missing required param value for [" + parameterDefinition.getName()
-                        + "] method [" + definition.getMethod() + "]. Binding used [" + bindings[0] + "]");
-            } else if (bindings.length == 1) {
+            } else if (matches == 1) {
+                Binding<Object> binding = bindings.stream().findFirst().get();
+
+                if (parameterDefinition.isRequired() && binding.getValue() == null) {
+                    throw new UnrulyException("Missing required param value for [" + parameterDefinition.getName()
+                            + "] method [" + definition.getMethod() + "]. Binding used [" + binding + "]");
+                }
+
                 // We found a match!
-                args[index] = bindings[0].getValue();
+                args[index] = binding.getValue();
             } else {
                 // Too many matches found; cannot proceed.
-                throw new RuntimeRuleException("Found too many [" + bindings.length + "] Binding matches for param ["
+                throw new UnrulyException("Found too many [" + matches + "] Binding matches for param ["
                         + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]. Matches found ["
-                        + Arrays.toString(bindings) + "] using BindingMatchingStrategy ["
+                        + bindings.toString() + "] using BindingMatchingStrategy ["
                         + matchingStrategy.getClass().getSimpleName() + "]");
             }
 
@@ -108,7 +114,7 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
             return (T) definition.getMethodHandle().invokeWithArguments(args);
         } catch (Throwable e) {
             // Something went wrong with the execution
-            throw new RuntimeRuleException("Error trying to execute [" + definition.getMethod()
+            throw new UnrulyException("Error trying to execute [" + definition.getMethod()
                     + "] with arguments [" + Arrays.toString(args) + "]", e);
         }
     }

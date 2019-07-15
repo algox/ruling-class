@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.RuntimeRuleException;
+import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
@@ -80,7 +80,7 @@ public final class ParameterDefinition {
 
             // Make sure the parameter isn't primitve and options
             if (!required && method.getParameters()[i].getType().isPrimitive()) {
-                throw new RuntimeRuleException("Primitive types cannot be optional. Method [" + method + "] Param ["
+                throw new UnrulyException("Primitive types cannot be optional. Method [" + method + "] Param ["
                         + parameterNames[i] + "] is declared Nullable however the type is primitive ["
                         + method.getParameters()[i].getType() + "] Use ["
                         + ClassUtils.getWrapperClass(method.getParameters()[i].getType()) + "] instead");

@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.RuntimeRuleException;
+import org.algorithmx.rules.UnrulyException;
 
 /**
  * Thrown when you attempt to declare an already existing Binding.
@@ -26,7 +26,7 @@ import org.algorithmx.rules.RuntimeRuleException;
  * @since 1.0
  *
  */
-public class BindingAlreadyExistsException extends RuntimeRuleException {
+public class BindingAlreadyExistsException extends UnrulyException {
 
 	static final long serialVersionUID = 0L;
 

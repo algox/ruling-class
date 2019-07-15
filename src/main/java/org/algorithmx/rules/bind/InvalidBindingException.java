@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.RuntimeRuleException;
+import org.algorithmx.rules.UnrulyException;
 
 import java.lang.reflect.Type;
 
@@ -28,7 +28,7 @@ import java.lang.reflect.Type;
  * @since 1.0
  *
  */
-public class InvalidBindingException extends RuntimeRuleException {
+public class InvalidBindingException extends UnrulyException {
 
 	static final long serialVersionUID = 0L;
 

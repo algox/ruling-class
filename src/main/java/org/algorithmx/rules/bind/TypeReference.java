@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.RuntimeRuleException;
+import org.algorithmx.rules.UnrulyException;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -58,7 +58,7 @@ public abstract class TypeReference<T> {
         Type superclass = getClass().getGenericSuperclass();
 
         if (!(superclass instanceof ParameterizedType)) {
-            throw new RuntimeRuleException("SimpleBinding must have a parameterized type. Ex: new SimpleBinding<String>();");
+            throw new UnrulyException("SimpleBinding must have a parameterized type. Ex: new SimpleBinding<String>();");
         }
 
         return ((ParameterizedType) superclass).getActualTypeArguments()[0];

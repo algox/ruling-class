@@ -19,7 +19,7 @@ package org.algorithmx.rules;
 
 /**
  * Parent class of all Rule Runtime exceptions.
- * RuleRuntimeExceptions can be thrown anytime throughout the lifecycle of the Rule.
+ * UnrulyExceptions can be thrown anytime throughout the lifecycle of this framework.
  * <p>
  * There are dedicated subclasses to encapsulate specific exception types.
  * <p>
@@ -29,7 +29,7 @@ package org.algorithmx.rules;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RuntimeRuleException extends RuntimeException {
+public class UnrulyException extends RuntimeException {
 
     static final long serialVersionUID = 0L;
 
@@ -38,7 +38,7 @@ public class RuntimeRuleException extends RuntimeException {
      *
      * @param message error message.
      */
-    public RuntimeRuleException(String message) {
+    public UnrulyException(String message) {
         super(message);
     }
 
@@ -47,17 +47,17 @@ public class RuntimeRuleException extends RuntimeException {
      *
      * @param cause exception.
      */
-    public RuntimeRuleException(Throwable cause) {
+    public UnrulyException(Throwable cause) {
         super(cause);
     }
 
     /**
      * Ctor taking a message and a source exception.
      *
-     * @param message error messge.
+     * @param message error message.
      * @param cause exception.
      */
-    public RuntimeRuleException(String message, Throwable cause) {
+    public UnrulyException(String message, Throwable cause) {
         super(message, cause);
     }
 

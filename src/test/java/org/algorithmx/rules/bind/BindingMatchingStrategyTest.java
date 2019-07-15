@@ -44,18 +44,15 @@ public class BindingMatchingStrategyTest {
         Binding<List<Long>> var4 = bindings.bind("key4", new TypeReference<List<Long>>() {});
         Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
 
-        Set<Binding<?>> matches = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME
-                .getStrategy().match(bindings, "key2")));
+        Set<Binding<Object>> matches = BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy().match(bindings, "key2");
         Assert.assertTrue(matches.size() == 1);
         Assert.assertTrue(matches.contains(var2));
 
-        matches = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME
-                .getStrategy().match(bindings, "key5")));
+        matches = BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy().match(bindings, "key5");
         Assert.assertTrue(matches.size() == 1);
         Assert.assertTrue(matches.contains(var5));
 
-        matches = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME
-                .getStrategy().match(bindings, "key6")));
+        matches = BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy().match(bindings, "key6");
         Assert.assertTrue(matches.size() == 0);
     }
 
@@ -70,23 +67,21 @@ public class BindingMatchingStrategyTest {
         Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
         Binding<Map<String, String>> var6 = bindings.bind("key6", new TypeReference<Map<String, String>>() {});
 
-        Set<Binding<Integer>> matches1 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy()
-                .match(bindings, null, Integer.class)));
+        Set<Binding<Integer>> matches1 = BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy().match(bindings, null, Integer.class);
         Assert.assertTrue(matches1.size() == 1);
         Assert.assertTrue(matches1.contains(var2));
 
-        Set<Binding<Number>> matches2 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_TYPE
-                .getStrategy().match(bindings, null, Number.class)));
+        Set<Binding<Number>> matches2 = BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy().match(bindings, null, Number.class);
         Assert.assertTrue(matches2.size() == 2);
         Assert.assertTrue(matches2.contains(var3) && matches2.contains(var2));
 
-        Set<Binding<Map<?, ?>>> matches3 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_TYPE
-                .getStrategy().match(bindings, null, new TypeReference<Map<?, ?>>() {})));
+        Set<Binding<Map<?, ?>>> matches3 = BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy().match(bindings, null,
+                new TypeReference<Map<?, ?>>() {});
         Assert.assertTrue(matches3.size() == 2);
         Assert.assertTrue(matches3.contains(var5) && matches3.contains(var6));
 
-        Set<Binding<List<Integer>>> matches4 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_TYPE
-                .getStrategy().match(bindings, null, new TypeReference<List<Integer>>() {})));
+        Set<Binding<List<Integer>>> matches4 = BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy().match(bindings, null,
+                new TypeReference<List<Integer>>() {});
         Assert.assertTrue(matches4.size() == 0);
     }
 
@@ -101,23 +96,22 @@ public class BindingMatchingStrategyTest {
         Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
         Binding<Map<String, String>> var6 = bindings.bind("key6", new TypeReference<Map<String, String>>() {});
 
-        Set<Binding<Integer>> matches1 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
-                .getStrategy().match(bindings, "key1", Integer.class)));
+        Set<Binding<Integer>> matches1 = BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE.getStrategy().match(bindings, "key1", Integer.class);
         Assert.assertTrue(matches1.size() == 1);
         Assert.assertTrue(matches1.contains(var1));
 
-        Set<Binding<BigDecimal>> matches2 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
-                .getStrategy().match(bindings, "x", BigDecimal.class)));
+        Set<Binding<BigDecimal>> matches2 = BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
+                .getStrategy().match(bindings, "x", BigDecimal.class);
         Assert.assertTrue(matches2.size() == 1);
         Assert.assertTrue(matches2.contains(var3));
 
-        Set<Binding<Map<?, ?>>> matches3 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
-                .getStrategy().match(bindings, "x", new TypeReference<Map<?, ?>>() {})));
+        Set<Binding<Map<?, ?>>> matches3 = BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
+                .getStrategy().match(bindings, "x", new TypeReference<Map<?, ?>>() {});
         Assert.assertTrue(matches3.size() == 2);
         Assert.assertTrue(matches3.contains(var5) && matches3.contains(var6));
 
-        Set<Binding<List<Integer>>> matches4 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
-                .getStrategy().match(bindings, "x", new TypeReference<List<Integer>>() {})));
+        Set<Binding<List<Integer>>> matches4 = BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE
+                .getStrategy().match(bindings, "x", new TypeReference<List<Integer>>() {});
         Assert.assertTrue(matches4.size() == 0);
     }
 
@@ -132,13 +126,12 @@ public class BindingMatchingStrategyTest {
         Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
         Binding<Map<String, String>> var6 = bindings.bind("key6", new TypeReference<Map<String, String>>() {});
 
-        Set<Binding<Number>> matches1 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE
-                .getStrategy().match(bindings, "key3", Number.class)));
+        Set<Binding<Number>> matches1 = BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy().match(bindings, "key3", Number.class);
         Assert.assertTrue(matches1.size() == 1);
         Assert.assertTrue(matches1.contains(var3));
 
-        Set<Binding<Number>> matches2 = new HashSet<>(Arrays.asList(BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE_THEN_BY_JUST_BY_TYPE
-                .getStrategy().match(bindings, "key7", Number.class)));
+        Set<Binding<Number>> matches2 = BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE_THEN_BY_JUST_BY_TYPE
+                .getStrategy().match(bindings, "key7", Number.class);
         Assert.assertTrue(matches2.size() == 2);
         Assert.assertTrue(matches2.contains(var3) && matches2.contains(var2));
 
