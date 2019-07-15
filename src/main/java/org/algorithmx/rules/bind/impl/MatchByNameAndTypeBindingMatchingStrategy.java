@@ -42,20 +42,21 @@ public class MatchByNameAndTypeBindingMatchingStrategy implements BindingMatchin
     /**
      * Returns a set of Bindings that match the given name.
      *
-     * @param ctx Rule Context rule context.
+     * @param bindings bindings.
      * @param name desired name.
      * @param type desired type.
      * @return all the matches; Will be an empty Set if no matches are found.
      */
     @Override
-    public Binding[] match(Bindings ctx, String name, Type type) {
-        Assert.notNull(ctx, "RuleCtx cannot be bull");
+    @SuppressWarnings("unchecked")
+    public <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type) {
+        Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(name, "name cannot be bull");
         Assert.notNull(type, "type cannot be bull");
 
-        Set<Binding> result = new HashSet<>();
+        Set<Binding<T>> result = new HashSet<>();
         // Look for the Binding by name & type
-        Binding binding = ctx.getBinding(name, TypeReference.with(type));
+        Binding<T> binding = bindings.getBinding(name, type);
         // Add the Binding (if we found one)
         if (binding != null) result.add(binding);
 

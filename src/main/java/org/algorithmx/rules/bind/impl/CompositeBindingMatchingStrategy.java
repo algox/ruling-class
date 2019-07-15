@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Type;
@@ -57,18 +58,19 @@ public class CompositeBindingMatchingStrategy implements BindingMatchingStrategy
     /**
      * Returns a set a Bindings that match a set criteria that is determined by the implementing class.
      *
-     * @param ctx Rule Context.
+     * @param bindings bindings.
      * @param name desired name.
      * @param type desired type.
      * @return Bindings that match the criteria. Will be empty Set if no matches are found.
      */
     @Override
-    public Binding[] match(Bindings ctx, String name, Type type) {
-        Set<Binding> result = new HashSet<>();
+    @SuppressWarnings("unchecked")
+    public <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type) {
+        Set<Binding<T>> result = new HashSet<>();
 
         for (BindingMatchingStrategy strategy : strategies) {
             // Add all the matches
-            result.addAll(Arrays.asList(strategy.match(ctx, name, type)));
+            result.addAll(Arrays.asList(strategy.match(bindings, name, type)));
             // Check to see if we should stop
             if (stopWhenMatched && result.size() > 0) break;
         }

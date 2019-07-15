@@ -18,6 +18,7 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.RuntimeRuleException;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.MethodDefinition;
 import org.algorithmx.rules.core.ParameterDefinition;
@@ -74,7 +75,8 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
 
         for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
             // Find all the matching bindings
-            Binding[] bindings = matchingStrategy.match(ctx, parameterDefinition.getName(), parameterDefinition.getType());
+            Binding<?>[] bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),
+                    TypeReference.with(parameterDefinition.getType()));
 
             // Looks like we are missing a required parameter
             if (bindings.length == 0 && parameterDefinition.isRequired()) {
@@ -94,7 +96,8 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
                 // Too many matches found; cannot proceed.
                 throw new RuntimeRuleException("Found too many [" + bindings.length + "] Binding matches for param ["
                         + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]. Matches found ["
-                        + Arrays.toString(bindings) + "] using BindingMatchingStrategy [" + matchingStrategy.getClass().getSimpleName() + "]");
+                        + Arrays.toString(bindings) + "] using BindingMatchingStrategy ["
+                        + matchingStrategy.getClass().getSimpleName() + "]");
             }
 
             index++;

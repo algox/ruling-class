@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="10" failures="0" name="org.algorithmx.rules.bind.BindTest" time="0.01" errors="0" skipped="0">
+<testsuite tests="10" failures="0" name="org.algorithmx.rules.bind.BindTest" time="0.006" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="D:\Tools\Java\jdk1.8.0_201\jre\bin"/>
@@ -64,7 +64,7 @@
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind1" time="0"/>
-  <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind2" time="0.001"/>
+  <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind2" time="0"/>
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind3" time="0"/>
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind4" time="0"/>
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind5" time="0"/>
@@ -72,5 +72,5 @@
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind7" time="0"/>
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind8" time="0"/>
   <testcase classname="org.algorithmx.rules.bind.BindTest" name="testBind9" time="0"/>
-  <testcase classname="org.algorithmx.rules.bind.BindTest" name="testValidation" time="0.009"/>
+  <testcase classname="org.algorithmx.rules.bind.BindTest" name="testValidation" time="0.006"/>
 </testsuite>

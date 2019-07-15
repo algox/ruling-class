@@ -47,11 +47,12 @@ public class MatchByTypeBindingMatchingStrategy implements BindingMatchingStrate
      * @return all the matches; Will be an empty Set if no matches are found.
      */
     @Override
-    public  Binding[] match(Bindings bindings, String name, Type type) {
+    @SuppressWarnings("unchecked")
+    public <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(type, "type cannot be bull");
 
-        Set<Binding<Object>> result = bindings.getBindings(TypeReference.with(type));
+        Set<Binding<T>> result = bindings.getBindings(type);
         return result.toArray(new Binding[result.size()]);
     }
 }

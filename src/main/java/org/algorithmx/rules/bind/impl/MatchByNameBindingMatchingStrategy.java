@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Type;
@@ -47,13 +48,14 @@ public class MatchByNameBindingMatchingStrategy implements BindingMatchingStrate
      * @return all the matches; Will be an empty Set if no matches are found.
      */
     @Override
-    public Binding[] match(Bindings bindings, String name, Type type) {
+    @SuppressWarnings("unchecked")
+    public <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(name, "name cannot be bull");
 
-        Set<Binding> result = new HashSet<>();
+        Set<Binding<T>> result = new HashSet<>();
         // Look for the Binding by name
-        Binding binding = bindings.getBinding(name);
+        Binding<T> binding = bindings.getBinding(name);
         // Add the Binding (if we found one)
         if (binding != null) result.add(binding);
 

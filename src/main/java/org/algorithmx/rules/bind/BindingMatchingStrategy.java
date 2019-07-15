@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import java.lang.reflect.Type;
-
 /**
  * Strategy class that matches Bindings to a desired criteria.
  *
@@ -32,8 +30,31 @@ public interface BindingMatchingStrategy {
      *
      * @param bindings bindings.
      * @param name desired name.
+     * @return Bindings that match the criteria.
+     */
+    default <T> Binding<T>[] match(Bindings bindings, String name) {
+        return match(bindings, name, (TypeReference<T>) null);
+    }
+
+    /**
+     * Returns a set a Bindings that match a set criteria that is determined by the implementing class.
+     *
+     * @param bindings bindings.
+     * @param name desired name.
      * @param type desired type.
      * @return Bindings that match the criteria.
      */
-    Binding[] match(Bindings bindings, String name, Type type);
+    default <T> Binding<T>[] match(Bindings bindings, String name, Class<T> type) {
+        return match(bindings, name, TypeReference.with(type));
+    }
+
+    /**
+     * Returns a set a Bindings that match a set criteria that is determined by the implementing class.
+     *
+     * @param bindings bindings.
+     * @param name desired name.
+     * @param type desired type.
+     * @return Bindings that match the criteria.
+     */
+    <T> Binding<T>[] match(Bindings bindings, String name, TypeReference<T> type);
 }

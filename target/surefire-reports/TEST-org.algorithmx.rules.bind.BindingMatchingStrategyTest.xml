@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="4" failures="0" name="org.algorithmx.rules.bind.BindingMatchingStrategyTest" time="0.009" errors="0" skipped="0">
+<testsuite tests="4" failures="0" name="org.algorithmx.rules.bind.BindingMatchingStrategyTest" time="0.012" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="D:\Tools\Java\jdk1.8.0_201\jre\bin"/>
@@ -63,7 +63,7 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="org.algorithmx.rules.bind.BindingMatchingStrategyTest" name="testMatch1" time="0.007"/>
+  <testcase classname="org.algorithmx.rules.bind.BindingMatchingStrategyTest" name="testMatch1" time="0.01"/>
   <testcase classname="org.algorithmx.rules.bind.BindingMatchingStrategyTest" name="testMatch2" time="0"/>
   <testcase classname="org.algorithmx.rules.bind.BindingMatchingStrategyTest" name="testMatch3" time="0.001"/>
   <testcase classname="org.algorithmx.rules.bind.BindingMatchingStrategyTest" name="testMatch5" time="0.001"/>
