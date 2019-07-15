@@ -23,8 +23,8 @@ import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.MethodDefinition;
-import org.algorithmx.rules.core.ParameterDefinition;
+import org.algorithmx.rules.model.MethodDefinition;
+import org.algorithmx.rules.model.ParameterDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Modifier;

@@ -20,6 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.core.rules.Rule2;
+import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.types.ActionType;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
