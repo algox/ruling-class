@@ -30,6 +30,8 @@ import java.lang.reflect.Type;
  */
 public class InvalidBindingException extends RuntimeRuleException {
 
+	static final long serialVersionUID = 0L;
+
 	/**
 	 * Ctor taking an error message.
 	 *

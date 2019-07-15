@@ -11,6 +11,8 @@ import org.algorithmx.rules.RuntimeRuleException;
  */
 public class NoSuchBindingException extends RuntimeRuleException {
 
+    static final long serialVersionUID = 0L;
+
     public NoSuchBindingException(String name) {
         super("Binding with name [" + name + "] does not exist");
     }

@@ -44,6 +44,8 @@ public final class LambdaUtilsTest {
         Rule1<Integer> rule1 = (Integer x) -> x > 10;
 
         Rule1<Integer> rule2 = new Rule1<Integer>() {
+            static final long serialVersionUID = 0L;
+
             @Override
             public boolean when(Integer value) {
                 return false;
@@ -54,7 +56,7 @@ public final class LambdaUtilsTest {
         Assert.assertTrue(!LambdaUtils.isLambda(rule2));
 
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule1);
-        Class implementationClass = LambdaUtils.getImplementationClass(lambda);
+        Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
 
         Assert.assertTrue(implementationMethod.getName().equals(lambda.getImplMethodName()));
@@ -66,7 +68,7 @@ public final class LambdaUtilsTest {
     public void test2() {
         Rule3<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule3);
-        Class implementationClass = LambdaUtils.getImplementationClass(lambda);
+        Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
 
         ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
@@ -82,6 +84,7 @@ public final class LambdaUtilsTest {
     public void test3() throws NoSuchMethodException {
 
         Rule3<Integer, String, BigDecimal> rule3 = new Rule3<Integer, String, BigDecimal>() {
+            static final long serialVersionUID = 0L;
             @Override
             public boolean when(Integer xxx, String value, BigDecimal salary) {
                 return false;

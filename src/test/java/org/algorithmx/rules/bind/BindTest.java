@@ -40,7 +40,7 @@ public class BindTest {
     @Test
     public void testBind1() {
         Bindings bindings = Bindings.create();
-        Binding var = bindings.bind("key", String.class, "value");
+        Binding<String> var = bindings.bind("key", String.class, "value");
         Assert.assertEquals("key", var.getName());
         Assert.assertEquals(String.class, var.getType());
         Assert.assertEquals("value", var.getValue());
@@ -62,7 +62,7 @@ public class BindTest {
         values.add(1);
         values.add(2);
         values.add(3);
-        Binding var = ctx.bind("key", new TypeReference<List<Integer>>(){});
+        Binding<List<Integer>> var = ctx.bind("key", new TypeReference<List<Integer>>(){});
         var.setValue(values);
         Assert.assertEquals(values, var.getValue());
     }
@@ -100,12 +100,12 @@ public class BindTest {
         ctx.bind("key1", String.class, "value");
         ctx.bind("key2", new TypeReference<List<?>>(){});
         ctx.bind("key3", BigDecimal.class);
-        ctx.bind("key4", new TypeReference<Map<? extends List, List<Integer>>>(){});
+        ctx.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>(){});
 
         Assert.assertTrue(ctx.contains("key1", String.class));
-        Assert.assertTrue(ctx.contains("key2", new TypeReference<List<Integer>>(){}.getType()));
+        Assert.assertTrue(ctx.contains("key2", new TypeReference<List<Integer>>(){}));
         Assert.assertTrue(ctx.contains("key3", BigDecimal.class));
-        Assert.assertTrue(ctx.contains("key4", new TypeReference<Map<ArrayList, List<Integer>>>(){}.getType()));
+        Assert.assertTrue(ctx.contains("key4", new TypeReference<Map<ArrayList<?>, List<Integer>>>(){}));
     }
 
     @Test
@@ -114,9 +114,9 @@ public class BindTest {
         ctx.bind("key1", String.class, "value");
         ctx.bind("key2", new TypeReference<List<?>>(){});
         ctx.bind("key3", BigDecimal.class, new BigDecimal("10.00"));
-        ctx.bind("key4", new TypeReference<Map<? extends List, List<Integer>>>(){});
+        ctx.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>(){});
 
-        Binding binding = ctx.getBinding("key3");
+        Binding<BigDecimal> binding = ctx.getBinding("key3");
 
         Assert.assertNotNull(binding);
         Assert.assertEquals(binding.getValue(), new BigDecimal("10.00"));
@@ -128,19 +128,19 @@ public class BindTest {
         ctx.bind("key1", String.class, "value");
         ctx.bind("key2", new TypeReference<List<?>>() {});
         ctx.bind("key3", BigDecimal.class, new BigDecimal("10.00"));
-        ctx.bind("key4", new TypeReference<Map<? extends List, List<Integer>>>() {});
+        ctx.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
         ctx.bind("key5", BigDecimal.class, new BigDecimal("20.00"));
 
-        Set<Binding> bindings1 = ctx.getBindings(BigDecimal.class);
+        Set<Binding<BigDecimal>> bindings1 = ctx.getBindings(BigDecimal.class);
         Assert.assertTrue(bindings1.size() == 2);
-        Set<Binding> bindings2 = ctx.getBindings(new TypeReference<Map<? extends List, List<Integer>>>() {}.getType());
+        Set<Binding<Map<? extends List<?>, List<Integer>>>> bindings2 = ctx.getBindings(new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
         Assert.assertTrue(bindings2.size() == 1);
     }
 
     @Test(expected = InvalidBindingException.class)
     public void testValidation() {
         Bindings ctx = Bindings.create();
-        ctx.bind("key", String.class, "hello world!", (Object s) -> !((String) s).contains("hello"));
+        ctx.bind("key", String.class, "hello world!", (String s) -> ! s.contains("hello"));
     }
 
 }

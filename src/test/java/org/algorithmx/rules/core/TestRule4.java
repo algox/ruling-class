@@ -42,7 +42,7 @@ public class TestRule4 {
 
     }
 
-    @Action(type = ActionType.ON_ANY, description = "calculatePayment", order = 2)
+    @Action(type = ActionType.ON_PASS, description = "calculatePayment", order = 2)
     public void calculatePayment(int id, Date closingDate, List<Integer> values) {
 
     }

@@ -28,6 +28,8 @@ import org.algorithmx.rules.RuntimeRuleException;
  */
 public class BindingAlreadyExistsException extends RuntimeRuleException {
 
+	static final long serialVersionUID = 0L;
+
 	/**
 	 * Ctor with the binding name.
 	 * 

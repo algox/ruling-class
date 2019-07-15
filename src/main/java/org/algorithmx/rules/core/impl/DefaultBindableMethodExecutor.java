@@ -49,13 +49,15 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
      * <li>Validate and make sure all required params are met</li>
      * <li>Execute the BindableMethod with the derived args from above</li>
      *
-     * @param definition
-     * @param ctx
-     * @param matchingStrategy
-     * @param <T>
-     * @return
+     * @param target target object.
+     * @param definition method details.
+     * @param ctx all Bindings to use.
+     * @param matchingStrategy strategy used to match Bindings to method parameters.
+     * @param <T> response type.
+     * @return result of the method execution.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T execute(Object target, MethodDefinition definition, Bindings ctx, BindingMatchingStrategy matchingStrategy) {
         Assert.notNull(definition, "definition cannot be null");
         Assert.notNull(ctx, "bind cannot be null");

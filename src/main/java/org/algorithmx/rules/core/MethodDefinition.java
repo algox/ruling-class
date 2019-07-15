@@ -59,7 +59,7 @@ public final class MethodDefinition {
      * @param predicate matcher.
      * @return all matching MethodDefinitions
      */
-    public static MethodDefinition[] load(Class c, Predicate<Method> predicate) {
+    public static MethodDefinition[] load(Class<?> c, Predicate<Method> predicate) {
         Method[] matches = Arrays.stream(c.getDeclaredMethods())
                 .filter(predicate)
                 .toArray(size -> new Method[size]);
@@ -73,7 +73,7 @@ public final class MethodDefinition {
      * @param methods desired methods.
      * @return MethodDefinitions.
      */
-    public static MethodDefinition[] load(Class c, Method...methods) {
+    public static MethodDefinition[] load(Class<?> c, Method...methods) {
         MethodDefinition[] result = new MethodDefinition[methods.length];
         MethodHandles.Lookup lookup = MethodHandles.lookup().in(c);
 

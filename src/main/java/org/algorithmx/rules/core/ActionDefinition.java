@@ -40,7 +40,7 @@ import java.util.Arrays;
 public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     // Action class
-    private final Class actionClass;
+    private final Class<?> actionClass;
     // Action Type;
     private final ActionType actionType;
     // Description of the Action
@@ -50,7 +50,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     // then method
     private final MethodDefinition action;
 
-    private ActionDefinition(Class actionClass, ActionType actionType, String description, int order, MethodDefinition action) {
+    private ActionDefinition(Class<?> actionClass, ActionType actionType, String description, int order, MethodDefinition action) {
         super();
         Assert.notNull(actionClass, "action class cannot be null");
         Assert.notNull(action, "action cannot be null");
@@ -69,7 +69,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * @param c desired class
      * @return all the associated actions
      */
-    public static ActionDefinition[] load(Class c) {
+    public static ActionDefinition[] load(Class<?> c) {
         MethodDefinition[] actions = MethodDefinition.load(c, (Method method) ->
                 void.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers())
                         && method.getAnnotation(Action.class) != null);
@@ -97,7 +97,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * @return ActionDefinition.
      */
     public static ActionDefinition load(SerializedLambda lambda, ActionType actionType, String description, Integer order) {
-        Class implementationClass = LambdaUtils.getImplementationClass(lambda);
+        Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Assert.notNull(implementationClass, "implementationClass cannot be null");
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
         Assert.notNull(implementationMethod, "implementationMethod cannot be null");
@@ -115,7 +115,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
         return order.compareTo(o.order);
     }
 
-    public Class getActionClass() {
+    public Class<?> getActionClass() {
         return actionClass;
     }
 

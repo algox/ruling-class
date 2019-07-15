@@ -38,7 +38,7 @@ class SimpleBinding<T> implements Binding<T> {
 
     private final String name;
     private final Type type;
-    private final Predicate validationCheck;
+    private final Predicate<T> validationCheck;
 
     private T value;
     private boolean mutable = true;
@@ -51,7 +51,7 @@ class SimpleBinding<T> implements Binding<T> {
      * @param value initial value of the Binding.
      * @param validationCheck any validation checks to be performed on the value.
      */
-    SimpleBinding(String name, Type type, T value, Predicate validationCheck) {
+    SimpleBinding(String name, Type type, T value, Predicate<T> validationCheck) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
@@ -113,6 +113,7 @@ class SimpleBinding<T> implements Binding<T> {
      * the value that is passed is a List<String>. InvalidBindingException will NOT be thrown in this case.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void setValue(T value) {
 
         // Make sure we can edit this value
@@ -172,7 +173,7 @@ class SimpleBinding<T> implements Binding<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleBinding that = (SimpleBinding) o;
+        SimpleBinding<?> that = (SimpleBinding) o;
         return name.equals(that.name) &&
                 type.equals(that.type) &&
                 Objects.equals(value, that.value);

@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Type;
@@ -46,11 +47,11 @@ public class MatchByTypeBindingMatchingStrategy implements BindingMatchingStrate
      * @return all the matches; Will be an empty Set if no matches are found.
      */
     @Override
-    public Binding[] match(Bindings bindings, String name, Type type) {
+    public  Binding[] match(Bindings bindings, String name, Type type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(type, "type cannot be bull");
 
-        Set<Binding> result = bindings.getBindings(type);
+        Set<Binding<Object>> result = bindings.getBindings(TypeReference.with(type));
         return result.toArray(new Binding[result.size()]);
     }
 }

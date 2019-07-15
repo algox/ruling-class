@@ -44,7 +44,7 @@ public final class RuleDefinition {
     public static final int MAX_ACTIONS                 = 25;
 
     // Rule class
-    private final Class rulingClass;
+    private final Class<?> rulingClass;
     // Name of the Rule
     private final String name;
     // Description of the Rule
@@ -53,7 +53,7 @@ public final class RuleDefinition {
     private final MethodDefinition condition;
     private final ActionDefinition[] actions;
 
-    private RuleDefinition(Class rulingClass, String name, String description, MethodDefinition condition, ActionDefinition...actions) {
+    private RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition, ActionDefinition...actions) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.notNull(name, "name cannot be null.");
@@ -73,9 +73,9 @@ public final class RuleDefinition {
      * @param c desired Rule class.
      * @return RuleDefinition of the supplied Rule class.
      */
-    public static RuleDefinition load(Class c) {
+    public static RuleDefinition load(Class<?> c) {
         // Try and locate the Rule annotation on the class
-        Rule rule = (Rule) c.getAnnotation(Rule.class);
+        Rule rule = c.getAnnotation(Rule.class);
         // Looks like the class isn't annotated with @Rule
         Assert.notNull(rule, "Desired Rule class [" + c.getName() + "] is not annotated with @Rule");
 
@@ -110,7 +110,7 @@ public final class RuleDefinition {
      * @return RuleDefinition of the supplied Lambda.
      */
     public static RuleDefinition load(SerializedLambda lambda, String ruleName, String ruleDescription, ActionDefinition...actions) {
-        Class implementationClass = LambdaUtils.getImplementationClass(lambda);
+        Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Assert.notNull(implementationClass, "implementationClass cannot be null");
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
         Assert.notNull(implementationMethod, "implementationMethod cannot be null");
@@ -121,7 +121,7 @@ public final class RuleDefinition {
         return new RuleDefinition(implementationClass, ruleName, ruleDescription, conditions[0], actions);
     }
 
-    public Class getRulingClass() {
+    public Class<?> getRulingClass() {
         return rulingClass;
     }
 

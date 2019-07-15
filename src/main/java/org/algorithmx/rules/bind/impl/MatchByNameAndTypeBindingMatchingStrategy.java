@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Type;
@@ -54,7 +55,7 @@ public class MatchByNameAndTypeBindingMatchingStrategy implements BindingMatchin
 
         Set<Binding> result = new HashSet<>();
         // Look for the Binding by name & type
-        Binding binding = ctx.getBinding(name, type);
+        Binding binding = ctx.getBinding(name, TypeReference.with(type));
         // Add the Binding (if we found one)
         if (binding != null) result.add(binding);
 

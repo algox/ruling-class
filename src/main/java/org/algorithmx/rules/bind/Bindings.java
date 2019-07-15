@@ -19,7 +19,6 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.SimpleBindings;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -50,7 +49,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, Class type) throws BindingAlreadyExistsException, InvalidBindingException;
+    <T> Binding<T> bind(String name, Class<T> type) throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
      * Declares a new Binding given a name, type and an initial value.
@@ -61,7 +60,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, TypeReference type) throws BindingAlreadyExistsException, InvalidBindingException;
+    <T> Binding<T> bind(String name, TypeReference<T> type) throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
      * Declares a new Binding given a name, type and an initial value.
@@ -73,7 +72,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, Class type, Object initialValue) throws BindingAlreadyExistsException,
+    <T> Binding<T> bind(String name, Class<T> type, T initialValue) throws BindingAlreadyExistsException,
             InvalidBindingException;
 
     /**
@@ -86,7 +85,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, TypeReference type, Object initialValue) throws BindingAlreadyExistsException,
+    <T> Binding<T> bind(String name, TypeReference<T> type, T initialValue) throws BindingAlreadyExistsException,
             InvalidBindingException;
 
     /**
@@ -100,7 +99,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, Class type, Object initialValue, Predicate validationCheck)
+    <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck)
             throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
@@ -114,7 +113,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, TypeReference type, Object initialValue, Predicate validationCheck)
+    <T> Binding<T> bind(String name, TypeReference<T> type, T initialValue, Predicate<T> validationCheck)
             throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
@@ -129,7 +128,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, Class type, Object initialValue, Predicate validationCheck, boolean mutable)
+    <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
@@ -144,7 +143,7 @@ public interface Bindings {
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    Binding bind(String name, TypeReference type, Object initialValue, Predicate validationCheck, boolean mutable)
+    <T> Binding<T> bind(String name, TypeReference<T> type, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
@@ -171,10 +170,21 @@ public interface Bindings {
      * Determines if the Binding with given name and types exists.
      *
      * @param name name of the Binding.
-     * @param type generic ype of the Binding.
+     * @param type class type of the Binding.
      * @return true if Binding exists; false otherwise.
      */
-    boolean contains(String name, Type type);
+    default <T> boolean contains(String name, Class<T> type) {
+        return contains(name, TypeReference.with(type));
+    }
+
+    /**
+     * Determines if the Binding with given name and types exists.
+     *
+     * @param name name of the Binding.
+     * @param type generic type of the Binding.
+     * @return true if Binding exists; false otherwise.
+     */
+    <T> boolean contains(String name, TypeReference<T> type);
 
     /**
      * Retrieves the Binding identified by the given name.
@@ -182,7 +192,7 @@ public interface Bindings {
      * @param name name of the Binding.
      * @return Binding if found; null otherwise.
      */
-    Binding getBinding(String name);
+    <T> Binding<T> getBinding(String name);
 
     /**
      * Retrieves the value of the Binding with the given name.
@@ -201,7 +211,7 @@ public interface Bindings {
      * @param value desired new value.
      * @throws NoSuchBindingException if Binding is not found.
      */
-    void set(String name, Object value);
+    <T> void set(String name, T value);
 
     /**
      * Retrieves the Binding identified by the given name.
@@ -210,7 +220,18 @@ public interface Bindings {
      * @param type type of the Binding.
      * @return Binding if found; null otherwise.
      */
-    Binding getBinding(String name, Type type);
+    default <T> Binding<T> getBinding(String name, Class<T> type) {
+        return getBinding(name, TypeReference.with(type));
+    }
+
+    /**
+     * Retrieves the Binding identified by the given name.
+     *
+     * @param name name of the Binding.
+     * @param type type of the Binding.
+     * @return Binding if found; null otherwise.
+     */
+    <T> Binding<T> getBinding(String name, TypeReference<T> type);
 
     /**
      * Retrieves all the Bindings of the given type.
@@ -218,13 +239,23 @@ public interface Bindings {
      * @param type desired type.
      * @return all matching Bindings.
      */
-    Set<Binding> getBindings(Type type);
+    default <T> Set<Binding<T>> getBindings(Class<T> type) {
+        return getBindings(TypeReference.with(type));
+    }
+
+    /**
+     * Retrieves all the Bindings of the given type.
+     *
+     * @param type desired type.
+     * @return all matching Bindings.
+     */
+    <T> Set<Binding<T>> getBindings(TypeReference<T> type);
 
     /**
      * Retrieves the Bindings as an Unmodifiable Map.
      *
      * @return unmodifiable Map of the Bindings.
      */
-    Map<String, Binding> asMap();
+    Map<String, Binding<?>> asMap();
 
 }

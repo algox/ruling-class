@@ -15,8 +15,6 @@
  */
 package org.algorithmx.rules.spring.util;
 
-import com.sun.istack.internal.Nullable;
-
 import java.io.Closeable;
 import java.io.Externalizable;
 import java.io.Serializable;
@@ -242,7 +240,7 @@ public class ClassUtils {
      * @throws LinkageError if the class file could not be loaded
      * @see Class#forName(String, boolean, ClassLoader)
      */
-    public static Class<?> forName(String name, @Nullable ClassLoader classLoader)
+    public static Class<?> forName(String name, ClassLoader classLoader)
             throws ClassNotFoundException, LinkageError {
 
         Assert.notNull(name, "Name must not be null");
@@ -309,8 +307,7 @@ public class ClassUtils {
      * @return the primitive class, or {@code null} if the name does not denote
      * a primitive class or primitive array class
      */
-    @Nullable
-    public static Class<?> resolvePrimitiveClassName(@Nullable String name) {
+    public static Class<?> resolvePrimitiveClassName(String name) {
         Class<?> result = null;
         // Most class names will be quite long, considering that they
         // SHOULD sit in a package, so a length check is worthwhile.

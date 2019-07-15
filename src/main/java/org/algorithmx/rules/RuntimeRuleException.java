@@ -31,6 +31,8 @@ package org.algorithmx.rules;
  */
 public class RuntimeRuleException extends RuntimeException {
 
+    static final long serialVersionUID = 0L;
+
     /**
      * Ctor taking a message.
      *

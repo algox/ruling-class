@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 public class SimpleBindings implements Bindings {
 
     // Stores all the Bindings
-    private final Map<String, Binding> bindings = createBindings();
+    private final Map<String, Binding<?>> bindings = createBindings();
 
     public SimpleBindings() {
         super();
@@ -48,7 +48,7 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, Class type) throws BindingAlreadyExistsException, InvalidBindingException {
+    public <T> Binding<T> bind(String name, Class<T> type) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, null, null, true);
     }
 
@@ -62,7 +62,7 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, TypeReference type) throws BindingAlreadyExistsException, InvalidBindingException {
+    public <T> Binding<T> bind(String name, TypeReference<T> type) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, null, null, true);
     }
 
@@ -77,8 +77,7 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, Class type, Object initialValue)
-            throws BindingAlreadyExistsException, InvalidBindingException {
+    public <T> Binding<T> bind(String name, Class<T> type, T initialValue) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, initialValue, null, true);
     }
 
@@ -93,7 +92,7 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, Class type, Object initialValue, Predicate validationCheck)
+    public <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck)
             throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, initialValue, validationCheck, true);
     }
@@ -110,7 +109,7 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, Class type, Object initialValue, Predicate validationCheck,
+    public <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck,
                                boolean mutable) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, TypeReference.with(type), initialValue, validationCheck, mutable);
     }
@@ -126,7 +125,8 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, TypeReference typeRef, Object initialValue) throws BindingAlreadyExistsException, InvalidBindingException {
+    public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue)
+            throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, typeRef, initialValue, null, true);
     }
 
@@ -142,7 +142,7 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, TypeReference typeRef, Object initialValue, Predicate validationCheck)
+    public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck)
             throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, typeRef, initialValue, validationCheck, true);
     }
@@ -160,13 +160,14 @@ public class SimpleBindings implements Bindings {
      * @see SimpleBinding
      */
     @Override
-    public Binding bind(String name, TypeReference typeRef, Object initialValue, Predicate validationCheck, boolean mutable)
+    @SuppressWarnings("unchecked")
+    public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException {
-        SimpleBinding result = new SimpleBinding(name, typeRef.getType(), initialValue, validationCheck);
+        SimpleBinding<T> result = new SimpleBinding<T>(name, typeRef.getType(), initialValue, validationCheck);
         result.setMutable(mutable);
 
         // Try and put the Binding
-        Binding existingBinding = bindings.putIfAbsent(name, result);
+        Binding<?> existingBinding = bindings.putIfAbsent(name, result);
         // Looks like we already have a binding
         if (existingBinding != null) throw new BindingAlreadyExistsException(name);
 
@@ -206,14 +207,14 @@ public class SimpleBindings implements Bindings {
      * Determines if the Binding with given name and types exists.
      *
      * @param name name of the Binding.
-     * @param type generic ype of the Binding.
+     * @param typeRef generic ype of the Binding.
      * @return true if Binding exists; false otherwise.
      */
     @Override
-    public boolean contains(String name, Type type) {
-        Binding result = bindings.get(name);
+    public <T> boolean contains(String name, TypeReference<T> typeRef) {
+        Binding<?> result = bindings.get(name);
         return result != null
-                ? result.isTypeAcceptable(type)
+                ? result.isTypeAcceptable(typeRef.getType())
                     ? true : false
                 : false;
     }
@@ -225,8 +226,9 @@ public class SimpleBindings implements Bindings {
      * @return Binding if found; null otherwise.
      */
     @Override
-    public Binding getBinding(String name) {
-        return bindings.get(name);
+    @SuppressWarnings("unchecked")
+    public <T> Binding<T> getBinding(String name) {
+        return (Binding<T>) bindings.get(name);
     }
 
     /**
@@ -238,11 +240,12 @@ public class SimpleBindings implements Bindings {
      * @throws NoSuchBindingException if Binding is not found.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T get(String name) {
-        Binding result = getBinding(name);
+        Binding<T> result = getBinding(name);
         // Could not find Binding
         if (result == null) throw new NoSuchBindingException(name);
-        return (T) result.getValue();
+        return result.getValue();
     }
 
     /**
@@ -253,8 +256,8 @@ public class SimpleBindings implements Bindings {
      * @throws NoSuchBindingException if Binding is not found.
      */
     @Override
-    public void set(String name, Object value) {
-        Binding result = getBinding(name);
+    public <T> void set(String name, T value) {
+        Binding<T> result = getBinding(name);
         // Could not find Binding
         if (result == null) throw new NoSuchBindingException(name);
         result.setValue(value);
@@ -264,31 +267,33 @@ public class SimpleBindings implements Bindings {
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.
-     * @param type type of the Binding.
+     * @param typeRef type of the Binding.
      * @return Binding if found; null otherwise.
      */
-    public Binding getBinding(String name, Type type) {
-        Binding result = getBinding(name);
+    @Override
+    public <T> Binding<T> getBinding(String name, TypeReference<T> typeRef) {
+        Binding<T> result = getBinding(name);
 
         return result == null
                 ? null
-                : result.isAssignable(type)
+                : result.isAssignable(typeRef.getType())
                     ? result
                     : null;
     }
     /**
      * Retrieves all the Bindings of the given type.
      *
-     * @param type desired type.
+     * @param typeRef desired type.
      * @return all matching Bindings.
      */
     @Override
-    public Set<Binding> getBindings(Type type) {
-        Set<Binding> result = new HashSet<>();
+    @SuppressWarnings("unchecked")
+    public <T> Set<Binding<T>> getBindings(TypeReference<T> typeRef) {
+        Set<Binding<T>> result = new HashSet<>();
 
-        for (Binding binding : bindings.values()) {
-            if (binding.isAssignable(type)) {
-                result.add(binding);
+        for (Binding<?> binding : bindings.values()) {
+            if (binding.isAssignable(typeRef.getType())) {
+                result.add((Binding<T>) binding);
             }
         }
 
@@ -301,13 +306,13 @@ public class SimpleBindings implements Bindings {
      * @return unmodifiable Map of the Bindings.
      */
     @Override
-    public Map<String, Binding> asMap() {
+    public Map<String, Binding<?>> asMap() {
        return Collections.unmodifiableMap(bindings);
     }
     /**
      * Creates the data structure to store all the Bindings.
      */
-    protected Map<String, Binding> createBindings() {
+    protected Map<String, Binding<?>> createBindings() {
         return new HashMap<>();
     }
 }

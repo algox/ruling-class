@@ -91,7 +91,7 @@ public final class LambdaUtils {
      * @return Lambda implementation class.
      * @throws IllegalStateException if we are unable to load the implementing Class.
      */
-    public static Class getImplementationClass(SerializedLambda lambda) {
+    public static Class<?> getImplementationClass(SerializedLambda lambda) {
         String className = null;
 
         try {
@@ -110,7 +110,7 @@ public final class LambdaUtils {
      * @return Lambda implementation method.
      * @throws IllegalStateException if we are unable to locate the Lambda implementing method.
      */
-    public static Method getImplementationMethod(SerializedLambda lambda, Class implementingClass) {
+    public static Method getImplementationMethod(SerializedLambda lambda, Class<?> implementingClass) {
         Optional<Method> result = Arrays.stream(implementingClass.getDeclaredMethods())
                 .filter(method -> method.getName().equals(lambda.getImplMethodName()))
                 .findFirst();
@@ -128,7 +128,7 @@ public final class LambdaUtils {
      * @param c target class.
      * @return writeReplace method if found; null otherwise.
      */
-    private static Method getWriteReplaceMethod(Class c) {
+    private static Method getWriteReplaceMethod(Class<?> c) {
 
         try {
             Method writeReplaceMethod = c.getDeclaredMethod("writeReplace");
