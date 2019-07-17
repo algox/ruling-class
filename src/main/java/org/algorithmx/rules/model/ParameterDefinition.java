@@ -18,6 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
@@ -46,11 +47,12 @@ public final class ParameterDefinition {
 
     private final int index;
     private final String name;
+    private final String description;
     private final Type type;
     private final boolean required;
     private final Annotation[] annotations;
 
-    private ParameterDefinition(int index, String name, Type type, boolean required, Annotation...annotations) {
+    private ParameterDefinition(int index, String name, Type type, String description, boolean required, Annotation...annotations) {
         super();
         Assert.isTrue(index >= 0, "Parameter index must be >= 0");
         Assert.notNull(name, "Parameter name cannot be null");
@@ -58,6 +60,7 @@ public final class ParameterDefinition {
 
         this.name = name;
         this.type = type;
+        this.description = description;
         this.index = index;
         this.annotations = annotations;
         this.required = required;
@@ -86,8 +89,10 @@ public final class ParameterDefinition {
                         + ClassUtils.getWrapperClass(method.getParameters()[i].getType()) + "] instead");
             }
 
+            Description descriptionAnnotation = method.getParameters()[i].getAnnotation(Description.class);
             result[i] = new ParameterDefinition(i, parameterNames[i], method.getGenericParameterTypes()[i],
-                    required, method.getParameterAnnotations()[i]);
+                    descriptionAnnotation != null ? descriptionAnnotation.value() : null, required,
+                    method.getParameterAnnotations()[i]);
         }
 
         return result;
@@ -107,6 +112,10 @@ public final class ParameterDefinition {
 
     public Type getType() {
         return type;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public boolean isRequired() {

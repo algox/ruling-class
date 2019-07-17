@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.model;
 
+import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -95,7 +96,10 @@ public final class RuleDefinition {
        Assert.isTrue(actions.length < MAX_ACTIONS, "Too many actions defined in class [" + c
                + "]. Maximum set at [" + MAX_ACTIONS + "]");
 
-        return new RuleDefinition(c, ruleName, rule.description(), conditions[0], actions);
+        Description descriptionAnnotation = c.getAnnotation(Description.class);
+        return new RuleDefinition(c, ruleName, descriptionAnnotation != null
+                ? descriptionAnnotation.value()
+                : rule.description(), conditions[0], actions);
     }
 
     /**
