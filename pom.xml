@@ -6,7 +6,31 @@
 
     <groupId>org.algorithmx</groupId>
     <artifactId>ruling-class</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
+    <packaging>pom</packaging>
+
+    <name>Ruling Class</name>
+    <description>Java Rule Engine for the masses</description>
+    <url>https://github.com/algorithmx-org/ruling-class</url>
+    <inceptionYear>2019</inceptionYear>
+
+    <organization>
+        <name>algorithmx</name>
+        <url>http://algorithmx.org</url>
+    </organization>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/algorithmx-org/ruling-class/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -34,20 +58,28 @@
     </build>
 
     <dependencies>
-
-        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <scm>
+        <url>https://github.com/algorithmx-org/ruling-class</url>
+        <connection>scm:git:git://github.com/algorithmx-org/ruling-class.git</connection>
+        <developerConnection>scm:git:git://github.com/algorithmx-org/ruling-class.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Max Arulananthan</name>
+        </developer>
+    </developers>
 </project>
