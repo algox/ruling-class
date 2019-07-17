@@ -1,2 +1,2 @@
 # ruling-class
-Rule Framework for the masses
+Java Rule Framework for the masses
