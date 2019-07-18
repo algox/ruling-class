@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  *
  * <pre class="code">
  * Assert.notNull(clazz, "The class must not be null");
- * Assert.isTrue(i > 0, "The value must be greater than zero");</pre>
+ * Assert.isTrue(i &gt; 0, "The value must be greater than zero");</pre>
  *
  * <p>Mainly for internal use within the framework; consider
  * <a href="http://commons.apache.org/proper/commons-lang/">Apache's Commons Lang</a>
@@ -77,7 +77,7 @@ public abstract class Assert {
      * on an assertion failure.
      * <pre class="code">
      * Assert.state(id == null,
-     *     () -> "ID for " + entity.getName() + " must not already be initialized");
+     *     () -&gt; "ID for " + entity.getName() + " must not already be initialized");
      * </pre>
      * @param expression a boolean expression
      * @param messageSupplier a supplier for the exception message to use if the
@@ -92,19 +92,9 @@ public abstract class Assert {
     }
 
     /**
-     * Assert a boolean expression, throwing an {@code IllegalStateException}
-     * if the expression evaluates to {@code false}.
-     * @deprecated as of 4.3.7, in favor of {@link #state(boolean, String)}
-     */
-    @Deprecated
-    public static void state(boolean expression) {
-        state(expression, "[Assertion failed] - this state invariant must be true");
-    }
-
-    /**
      * Assert a boolean expression, throwing an {@code IllegalArgumentException}
      * if the expression evaluates to {@code false}.
-     * <pre class="code">Assert.isTrue(i > 0, "The value must be greater than zero");</pre>
+     * <pre class="code">Assert.isTrue(i &gt; 0, "The value must be greater than zero");</pre>
      * @param expression a boolean expression
      * @param message the exception message to use if the assertion fails
      * @throws IllegalArgumentException if {@code expression} is {@code false}
@@ -119,7 +109,7 @@ public abstract class Assert {
      * Assert a boolean expression, throwing an {@code IllegalArgumentException}
      * if the expression evaluates to {@code false}.
      * <pre class="code">
-     * Assert.isTrue(i > 0, () -> "The value '" + i + "' must be greater than zero");
+     * Assert.isTrue(i &gt; 0, () -&gt; "The value '" + i + "' must be greater than zero");
      * </pre>
      * @param expression a boolean expression
      * @param messageSupplier a supplier for the exception message to use if the
@@ -131,16 +121,6 @@ public abstract class Assert {
         if (!expression) {
             throw new IllegalArgumentException(nullSafeGet(messageSupplier));
         }
-    }
-
-    /**
-     * Assert a boolean expression, throwing an {@code IllegalArgumentException}
-     * if the expression evaluates to {@code false}.
-     * @deprecated as of 4.3.7, in favor of {@link #isTrue(boolean, String)}
-     */
-    @Deprecated
-    public static void isTrue(boolean expression) {
-        isTrue(expression, "[Assertion failed] - this expression must be true");
     }
 
     /**
@@ -159,7 +139,7 @@ public abstract class Assert {
     /**
      * Assert that an object is {@code null}.
      * <pre class="code">
-     * Assert.isNull(value, () -> "The value '" + value + "' must be null");
+     * Assert.isNull(value, () -&gt; "The value '" + value + "' must be null");
      * </pre>
      * @param object the object to check
      * @param messageSupplier a supplier for the exception message to use if the
@@ -171,15 +151,6 @@ public abstract class Assert {
         if (object != null) {
             throw new IllegalArgumentException(nullSafeGet(messageSupplier));
         }
-    }
-
-    /**
-     * Assert that an object is {@code null}.
-     * @deprecated as of 4.3.7, in favor of {@link #isNull(Object, String)}
-     */
-    @Deprecated
-    public static void isNull( Object object) {
-        isNull(object, "[Assertion failed] - the object argument must be null");
     }
 
     /**
@@ -198,7 +169,7 @@ public abstract class Assert {
     /**
      * Assert that an object is not {@code null}.
      * <pre class="code">
-     * Assert.notNull(clazz, () -> "The class '" + clazz.getName() + "' must not be null");
+     * Assert.notNull(clazz, () -&gt; "The class '" + clazz.getName() + "' must not be null");
      * </pre>
      * @param object the object to check
      * @param messageSupplier a supplier for the exception message to use if the
@@ -210,15 +181,6 @@ public abstract class Assert {
         if (object == null) {
             throw new IllegalArgumentException(nullSafeGet(messageSupplier));
         }
-    }
-
-    /**
-     * Assert that an object is not {@code null}.
-     * @deprecated as of 4.3.7, in favor of {@link #notNull(Object, String)}
-     */
-    @Deprecated
-    public static void notNull( Object object) {
-        notNull(object, "[Assertion failed] - this argument is required; it must not be null");
     }
 
     private static String nullSafeGet( Supplier<String> messageSupplier) {

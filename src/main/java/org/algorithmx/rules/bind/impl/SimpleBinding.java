@@ -30,9 +30,11 @@ import java.util.function.Predicate;
 /**
  * Binding is a mapping between a name and a value.
  *
+ * @param <T> generic type of the Binding.
+ *
  * @author Max Arulananthan
- * @Since 1.0
- * @See org.algorithmx.rules.bind.Binding
+ * @since 1.0
+ * @see org.algorithmx.rules.bind.Binding
  */
 class SimpleBinding<T> implements Binding<T> {
 

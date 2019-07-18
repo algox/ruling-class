@@ -23,6 +23,8 @@ import java.lang.reflect.Type;
  * A binding between a name and a value of a type.
  * A Binding has a name, type and a value. The name and type cannot be changed once the Binding is created.
  *
+ * @param <T> generic type of the Binding.
+ *
  * @author Max Arulananthan
  * @since 1.0
  */
@@ -65,8 +67,8 @@ public interface Binding<T> {
 	 *
 	 * @throws InvalidBindingException thrown if the value doesn't pass the validation check
 	 * or if there is type mismatch. The type checking simply makes sure that the value passed matches the declared type
-	 * of the Binding. It will not check any generics similar to Java. If the Binding is declared as List<Integer> and
-	 * the value that is passed is a List<String>. InvalidBindingException will NOT be thrown in this case.
+	 * of the Binding. It will not check any generics similar to Java. If the Binding is declared as List of Integers
+	 * and the value that is passed is a List of Strings. InvalidBindingException will NOT be thrown in this case.
 	 */
 	void setValue(T value) throws InvalidBindingException;
 

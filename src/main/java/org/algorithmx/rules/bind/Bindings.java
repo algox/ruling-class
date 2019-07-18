@@ -45,6 +45,8 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param type type reference of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -56,6 +58,8 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param type type reference of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -68,6 +72,8 @@ public interface Bindings {
      * @param name name of the Binding.
      * @param type type of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -81,6 +87,8 @@ public interface Bindings {
      * @param name name of the Binding.
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -95,6 +103,8 @@ public interface Bindings {
      * @param type type of the Binding.
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -109,6 +119,8 @@ public interface Bindings {
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -124,6 +136,8 @@ public interface Bindings {
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
      * @param mutable determines whether the value is mutable.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -139,6 +153,8 @@ public interface Bindings {
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
      * @param mutable determines whether the value is mutable.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
@@ -171,6 +187,7 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param type class type of the Binding.
+     * @param <T> generic type of the Binding.
      * @return true if Binding exists; false otherwise.
      */
     default <T> boolean contains(String name, Class<T> type) {
@@ -182,6 +199,7 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param type generic type of the Binding.
+     * @param <T> generic type of the Binding.
      * @return true if Binding exists; false otherwise.
      */
     <T> boolean contains(String name, TypeReference<T> type);
@@ -200,6 +218,7 @@ public interface Bindings {
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.
+     * @param <T> generic type of the Binding.
      * @return Binding if found; null otherwise.
      */
     <T> Binding<T> getBinding(String name);
@@ -209,6 +228,7 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param <T> desired Type.
+     * @param <T> generic type of the Binding.
      * @return value if Binding is found.
      * @throws NoSuchBindingException if Binding is not found.
      */
@@ -219,6 +239,7 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param value desired new value.
+     * @param <T> generic type of the Binding.
      * @throws NoSuchBindingException if Binding is not found.
      */
     <T> void set(String name, T value);
@@ -228,6 +249,7 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param type type of the Binding.
+     * @param <T> generic type of the Binding.
      * @return Binding if found; null otherwise.
      */
     default <T> Binding<T> getBinding(String name, Class<T> type) {
@@ -239,6 +261,7 @@ public interface Bindings {
      *
      * @param name name of the Binding.
      * @param type type of the Binding.
+     * @param <T> generic type of the Binding.
      * @return Binding if found; null otherwise.
      */
     <T> Binding<T> getBinding(String name, TypeReference<T> type);
@@ -247,6 +270,7 @@ public interface Bindings {
      * Retrieves all the Bindings of the given type.
      *
      * @param type desired type.
+     * @param <T> generic type of the Binding.
      * @return all matching Bindings.
      */
     default <T> Set<Binding<T>> getBindings(Class<T> type) {
@@ -257,6 +281,7 @@ public interface Bindings {
      * Retrieves all the Bindings of the given type.
      *
      * @param type desired type.
+     * @param <T> generic type of the Binding.
      * @return all matching Bindings.
      */
     <T> Set<Binding<T>> getBindings(TypeReference<T> type);

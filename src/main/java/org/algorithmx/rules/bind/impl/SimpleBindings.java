@@ -27,7 +27,7 @@ import java.util.function.Predicate;
  * Default implementation of the Bindings.
  *
  * @author Max Arulananthan
- * @Since 1.0
+ * @since 1.0
  */
 public class SimpleBindings implements Bindings {
 
@@ -43,6 +43,7 @@ public class SimpleBindings implements Bindings {
      *
      * @param name name of the Binding.
      * @param type type of the Binding.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -57,6 +58,7 @@ public class SimpleBindings implements Bindings {
      *
      * @param name name of the Binding.
      * @param type type of the Binding.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -72,6 +74,7 @@ public class SimpleBindings implements Bindings {
      * @param name name of the Binding.
      * @param type type of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -87,6 +90,7 @@ public class SimpleBindings implements Bindings {
      * @param name name of the Binding.
      * @param type type of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -104,6 +108,7 @@ public class SimpleBindings implements Bindings {
      * @param type type of the Binding.
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -120,6 +125,7 @@ public class SimpleBindings implements Bindings {
      * @param name name of the Binding.
      * @param typeRef type reference of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -137,6 +143,7 @@ public class SimpleBindings implements Bindings {
      * @param typeRef type reference of the Binding.
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -155,6 +162,7 @@ public class SimpleBindings implements Bindings {
      * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
      * @param mutable determines whether the value is mutable.
+     * @param <T> generic type of the Binding.
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see SimpleBinding
@@ -208,6 +216,7 @@ public class SimpleBindings implements Bindings {
      *
      * @param name name of the Binding.
      * @param typeRef generic ype of the Binding.
+     * @param <T> generic type of the Binding.
      * @return true if Binding exists; false otherwise.
      */
     @Override
@@ -245,6 +254,7 @@ public class SimpleBindings implements Bindings {
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.
+     * @param <T> generic type of the Binding.
      * @return Binding if found; null otherwise.
      */
     @Override
@@ -275,6 +285,7 @@ public class SimpleBindings implements Bindings {
      *
      * @param name name of the Binding.
      * @param value desired new value.
+     * @param <T> generic type of the Binding.
      * @throws NoSuchBindingException if Binding is not found.
      */
     @Override
@@ -290,6 +301,7 @@ public class SimpleBindings implements Bindings {
      *
      * @param name name of the Binding.
      * @param typeRef type of the Binding.
+     * @param <T> generic type of the Binding.
      * @return Binding if found; null otherwise.
      */
     @Override
@@ -307,6 +319,7 @@ public class SimpleBindings implements Bindings {
      * Retrieves all the Bindings of the given type.
      *
      * @param typeRef desired type.
+     * @param <T> generic type of the Binding.
      * @return all matching Bindings.
      */
     @Override
@@ -334,6 +347,8 @@ public class SimpleBindings implements Bindings {
     }
     /**
      * Creates the data structure to store all the Bindings.
+     *
+     * @return creates the data structure that will ultimately store the Bindings. Defaulted to HashMap.
      */
     protected Map<String, Binding<?>> createBindings() {
         return new HashMap<>();

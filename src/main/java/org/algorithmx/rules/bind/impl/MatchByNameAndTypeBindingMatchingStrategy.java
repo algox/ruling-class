@@ -28,10 +28,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Strategy class that matches Bindings in a given Rule Context by the given Name & Type.
+ * Strategy class that matches Bindings in a given Rule Context by the given Name and Type.
  *
  * @author Max Arulananthan
- * @Since 1.0
+ * @since 1.0
  */
 public class MatchByNameAndTypeBindingMatchingStrategy implements BindingMatchingStrategy {
 

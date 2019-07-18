@@ -92,6 +92,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * of arguments and returns nothing (ie: void) and the method name is "then".
      *
      * @param lambda supplied lambda.
+     * @param actionType determines whether this Action is based on a PASS/FAIL.
      * @param description action description.
      * @param order order of the action (default 0).
      * @return ActionDefinition.

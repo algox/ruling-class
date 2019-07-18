@@ -152,6 +152,7 @@ public class ClassUtils {
      * for 'primary' user-level interfaces. Common characteristics: no service-level
      * operations, no bean property methods, no default methods.
      * @param ifc the interface to check
+     * @return true if the given interface is a Java defined interface.
      * @since 5.0.3
      */
     public static boolean isJavaLanguageInterface(Class<?> ifc) {
@@ -161,8 +162,9 @@ public class ClassUtils {
     /**
      * Determine if the supplied class is an <em>inner class</em>,
      * i.e. a non-static member of an enclosing class.
+     * @param clazz class in question.
      * @return {@code true} if the supplied class is an inner class
-     * @since 5.0.5
+     * @since 5.0.
      * @see Class#isMemberClass()
      */
     public static boolean isInnerClass(Class<?> clazz) {

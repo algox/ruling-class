@@ -26,7 +26,7 @@ import org.algorithmx.rules.bind.impl.MatchByTypeBindingMatchingStrategy;
  * Convenient way to map between a Name to the BindingMatchingStrategy.
  *
  * @author Max Arulananthan
- * @Since 1.0
+ * @since 1.0
  */
 public enum BindingMatchingStrategyType {
 

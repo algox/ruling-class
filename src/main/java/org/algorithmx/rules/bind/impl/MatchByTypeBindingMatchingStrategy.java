@@ -30,7 +30,7 @@ import java.util.Set;
  * Strategy class that matches Bindings by the given Type.
  *
  * @author Max Arulananthan
- * @Since 1.0
+ * @since 1.0
  */
 public class MatchByTypeBindingMatchingStrategy implements BindingMatchingStrategy {
 
@@ -44,6 +44,7 @@ public class MatchByTypeBindingMatchingStrategy implements BindingMatchingStrate
      * @param bindings bindings.
      * @param name desired name (ignored)
      * @param type desired type.
+     * @param <T> generic type of the Bindings.
      * @return all the matches; Will be an empty Set if no matches are found.
      */
     @Override

@@ -47,9 +47,9 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
     /**
      * Executes the BindableMethod and returns its result. Following the steps below:
      *
-     * <li>First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.</li>
-     * <li>Validate and make sure all required params are met</li>
-     * <li>Execute the BindableMethod with the derived args from above</li>
+     * First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.
+     * Validate and make sure all required params are met.
+     * Execute the BindableMethod with the derived args from above.
      *
      * @param target target object.
      * @param definition method details.

@@ -32,7 +32,7 @@ import java.util.Set;
  * be setup during the creation of the CompositeBindingMatchingStrategy.
  *
  * @author Max Arulananthan
- * @Since 1.0
+ * @since 1.0
  */
 public class CompositeBindingMatchingStrategy implements BindingMatchingStrategy {
 

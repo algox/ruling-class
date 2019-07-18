@@ -28,11 +28,11 @@ import java.lang.reflect.Parameter;
 /**
  * Discovers parameter names using the following logic.
  *
- * <li>If the parameter has the <code>@Param</code>then it is used to getBinding the name</li>
- * <li>Uses standard Java 8 reflection to retrieve the parameter name. The compiler must be told to store the parameter infomation
- * for this tactic to work. Please use -parameters option during compilation</li>
- * <li>Uses byte code inspection to retrieve the name. This will work any concrete classes (ie: not generated at runtime)
- * that sit in the CLASSPATH.</li>
+ * If the parameter has the <code>@Param</code>then it is used to getBinding the name
+ * Uses standard Java 8 reflection to retrieve the parameter name. The compiler must be told to store the parameter information
+ * for this tactic to work. Please use -parameters option during compilation.
+ * Uses byte code inspection to retrieve the name. This will work any concrete classes (ie: not generated at runtime)
+ * that sit in the CLASSPATH.
  *
  * <p>Illegal argument exception is thrown if we are unable to retrieve the parameter name. In this remedy the problem by
  * following either of the first two methods.</p>

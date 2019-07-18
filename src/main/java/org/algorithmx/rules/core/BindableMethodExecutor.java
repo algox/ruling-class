@@ -25,9 +25,9 @@ import org.algorithmx.rules.model.MethodDefinition;
 /**
  * Method executor responsible for executing methods with Bindable arguments. Here are the sequence of steps:
  *
- * <li>First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.</li>
- * <li>Validate and make sure all required params are met</li>
- * <li>Execute the BindableMethod with the derived args from above</li>
+ * First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.
+ * Validate and make sure all required params are met
+ * Execute the BindableMethod with the derived args from above
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -46,16 +46,16 @@ public interface BindableMethodExecutor {
     /**
      * Executes the BindableMethod and returns its result. Following the steps below:
      *
-     * <li>First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.</li>
-     * <li>Validate and make sure all required params are met</li>
-     * <li>Execute the BindableMethod with the derived args from above</li>
+     * First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.
+     * Validate and make sure all required params are met.
+     * Execute the BindableMethod with the derived args from above.
      *
-     * @param target object
-     * @param definition
-     * @param ctx
-     * @param matchingStrategy
-     * @param <T>
-     * @return
+     * @param target target object.
+     * @param definition definition of the method being executed.
+     * @param ctx all the available Bindings.
+     * @param matchingStrategy matching strategy used to Bind the parameters.
+     * @param <T> generic type of the result.
+     * @return the result of the execution.
      */
     <T> T execute(Object target, MethodDefinition definition, Bindings ctx, BindingMatchingStrategy matchingStrategy);
 }

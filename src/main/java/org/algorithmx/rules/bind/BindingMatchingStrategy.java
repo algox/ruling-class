@@ -17,14 +17,13 @@
  */
 package org.algorithmx.rules.bind;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * Strategy class that matches Bindings to a desired criteria.
  *
  * @author Max Arulananthan
- * @Since 1.0
+ * @since 1.0
  */
 public interface BindingMatchingStrategy {
 
@@ -33,6 +32,7 @@ public interface BindingMatchingStrategy {
      *
      * @param bindings bindings.
      * @param name desired name.
+     * @param <T> generic type of the Binding.
      * @return Bindings that match the criteria.
      */
     default <T> Set<Binding<T>> match(Bindings bindings, String name) {
@@ -45,6 +45,7 @@ public interface BindingMatchingStrategy {
      * @param bindings bindings.
      * @param name desired name.
      * @param type desired type.
+     * @param <T> generic type of the Binding.
      * @return Bindings that match the criteria.
      */
     default <T> Set<Binding<T>> match(Bindings bindings, String name, Class<T> type) {
@@ -57,6 +58,7 @@ public interface BindingMatchingStrategy {
      * @param bindings bindings.
      * @param name desired name.
      * @param type desired type.
+     * @param <T> generic type of the Binding.
      * @return Bindings that match the criteria.
      */
     <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type);
