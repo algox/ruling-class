@@ -81,7 +81,7 @@ public final class ParameterDefinition {
         for (int i = 0; i < method.getGenericParameterTypes().length; i++) {
             boolean required = isRequired(method, i);
 
-            // Make sure the parameter isn't primitve and options
+            // Make sure the parameter isn't primitive
             if (!required && method.getParameters()[i].getType().isPrimitive()) {
                 throw new UnrulyException("Primitive types cannot be optional. Method [" + method + "] Param ["
                         + parameterNames[i] + "] is declared Nullable however the type is primitive ["
