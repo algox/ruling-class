@@ -220,6 +220,28 @@ public class SimpleBindings implements Bindings {
     }
 
     /**
+     * Creates an alias for an existing Binding.
+     *
+     * @param existingBindingName name of the existing Binding.
+     * @param alias alias for the existing Binding.
+     * @param <T> generic type of the Binding.
+     * @return existing Binding.
+     */
+    @Override
+    public <T> Binding<T> alias(String existingBindingName, String alias) {
+        Binding<T> result = getBinding(existingBindingName);
+
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(existingBindingName);
+        // Make sure the alias doesn't exist
+        if (contains(alias)) throw new BindingAlreadyExistsException(alias);
+
+        this.bindings.put(alias, result);
+
+        return result;
+    }
+
+    /**
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.
@@ -280,6 +302,7 @@ public class SimpleBindings implements Bindings {
                     ? result
                     : null;
     }
+
     /**
      * Retrieves all the Bindings of the given type.
      *

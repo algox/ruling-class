@@ -187,6 +187,16 @@ public interface Bindings {
     <T> boolean contains(String name, TypeReference<T> type);
 
     /**
+     * Creates an alias for an existing Binding.
+     *
+     * @param existingBindingName name of the existing Binding.
+     * @param alias alias for the existing Binding.
+     * @param <T> generic type of the Binding.
+     * @return existing Binding.
+     */
+    <T> Binding<T> alias(String existingBindingName, String alias);
+
+    /**
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.
