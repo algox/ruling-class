@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import java.lang.reflect.Type;
+import java.util.function.Supplier;
 
 /**
  * A binding between a name and a value of a type.
@@ -28,7 +29,7 @@ import java.lang.reflect.Type;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Binding<T> {
+public interface Binding<T> extends Supplier<T> {
 
 	/**
 	 * Name of the Binding.
@@ -36,7 +37,7 @@ public interface Binding<T> {
 	 * @return name.
 	 */
 	String getName();
-	
+
 	/**
 	 * Type of the Binding.
      *
@@ -52,7 +53,12 @@ public interface Binding<T> {
     default boolean isMutable() {
     	return true;
 	}
-	
+
+	@Override
+	default T get() {
+		return getValue();
+	}
+
 	/**
 	 * Value of the Binding.
      *
