@@ -79,7 +79,7 @@ public class BindTest {
         Bindings bindings = Bindings.create();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<Integer>>(){});
-        bindings.bind("key3", BigDecimal.class);
+        bindings.bind("key3", TypeReference.with(BigDecimal.class));
         Assert.assertEquals(3, bindings.size());
         bindings.clear();
         Assert.assertEquals(0, bindings.size());
@@ -127,9 +127,9 @@ public class BindTest {
         Bindings bindings = Bindings.create();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<?>>() {});
-        bindings.bind("key3", BigDecimal.class, new BigDecimal("10.00"));
+        bindings.bind("key3", TypeReference.with(BigDecimal.class), new BigDecimal("10.00"));
         bindings.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
-        bindings.bind("key5", BigDecimal.class, new BigDecimal("20.00"));
+        bindings.bind("key5", TypeReference.with(BigDecimal.class), new BigDecimal("20.00"));
 
         Set<Binding<BigDecimal>> bindings1 = bindings.getBindings(BigDecimal.class);
         Assert.assertTrue(bindings1.size() == 2);
@@ -137,23 +137,34 @@ public class BindTest {
         Assert.assertTrue(bindings2.size() == 1);
     }
 
+    @Test
+    public void testBind10() {
+        Bindings bindings1 = Bindings.create();
+        Binding<String> var1 = bindings1.bind("key1", String.class, "value");
+        Binding<String> var2 = bindings1.bind("key2", String.class, "value");
+        Bindings bindings2 = Bindings.create();
+        bindings2.bind(var1, var2);
+        Assert.assertTrue(bindings2.contains("key1", String.class));
+        Assert.assertTrue(bindings2.contains("key2", String.class));
+    }
+
     @Test(expected = InvalidBindingException.class)
     public void testValidation() {
         Bindings bindings = Bindings.create();
-        bindings.bind("key", String.class, "hello world!", (String s) -> ! s.contains("hello"));
+        Binding<String> binding = bindings.bind("key",  String.class, "hello world!", (String s) -> !s.contains("hello"), true);
     }
 
     @Test
     public void testSupplier1() {
         Bindings bindings = Bindings.create();
-        bindings.bind("key", () -> "Hello World!", String.class);
+        bindings.bind("key", () -> "Hello World!", TypeReference.with(String.class));
         Assert.assertTrue(bindings.get("key").equals("Hello World!"));
     }
 
     @Test(expected = InvalidBindingException.class)
     public void testSupplier2() {
         Bindings bindings = Bindings.create();
-        bindings.bind("key", () -> "Hello World!", String.class);
+        bindings.bind("key", () -> "Hello World!", TypeReference.with(String.class));
         bindings.set("key", "new value");
     }
 }

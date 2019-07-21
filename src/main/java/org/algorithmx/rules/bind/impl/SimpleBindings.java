@@ -18,8 +18,8 @@
 package org.algorithmx.rules.bind.impl;
 
 import org.algorithmx.rules.bind.*;
+import org.algorithmx.rules.spring.util.Assert;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -40,72 +40,37 @@ public class SimpleBindings implements Bindings {
     }
 
     @Override
-    public <T> Binding<T> bind(String name, Class<T> type) throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, type, null, null, true);
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, TypeReference<T> type) throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, type, null, null, true);
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, Class<T> type, T initialValue) throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, type, initialValue, null, true);
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, type, initialValue, validationCheck, true);
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck,
-                               boolean mutable) throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, TypeReference.with(type), initialValue, validationCheck, mutable);
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, typeRef, initialValue, null, true);
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        return bind(name, typeRef, initialValue, validationCheck, true);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException {
         SimpleBinding<T> result = new SimpleBinding<T>(name, typeRef.getType(), initialValue, validationCheck);
         result.setMutable(mutable);
-
-        // Try and put the Binding
-        Binding<?> existingBinding = bindings.putIfAbsent(name, result);
-        // Looks like we already have a binding
-        if (existingBinding != null) throw new BindingAlreadyExistsException(name);
-
+        bind(result);
         return result;
-    }
-
-    @Override
-    public <T> Binding<T> bind(String name, Supplier<T> valueSupplier, Class<T> type) throws BindingAlreadyExistsException {
-        return bind(name, valueSupplier, TypeReference.with(type));
     }
 
     @Override
     public <T> Binding<T> bind(String name, Supplier<T> valueSupplier, TypeReference<T> typeRef) throws BindingAlreadyExistsException {
-        SimpleBinding<T> result = new SimpleBinding<T>(name, typeRef.getType(), valueSupplier);
-        // Try and put the Binding
-        Binding<?> existingBinding = bindings.putIfAbsent(name, result);
-        // Looks like we already have a binding
-        if (existingBinding != null) throw new BindingAlreadyExistsException(name);
+        SimpleBinding<T> result = new SimpleBinding(name, typeRef.getType(), valueSupplier);
+        bind(result);
         return result;
+    }
+
+    @Override
+    public <T> void bind(Binding<T> binding) {
+        Assert.notNull(binding, "binding cannot be null");
+        // Try and put the Binding
+        Binding<?> existingBinding = bindings.putIfAbsent(binding.getName(), binding);
+        // Looks like we already have a binding
+        if (existingBinding != null) throw new BindingAlreadyExistsException(binding.getName());
+    }
+
+    @Override
+    public <T> void bind(Collection<Binding<T>> existingBindings) {
+        for (Binding<T> binding : existingBindings) {
+            if (binding == null) continue;
+            bind(binding);
+        }
     }
 
     @Override
@@ -144,6 +109,11 @@ public class SimpleBindings implements Bindings {
         this.bindings.put(alias, result);
 
         return result;
+    }
+
+    @Override
+    public Iterator<Binding<?>> iterator() {
+        return bindings.values().iterator();
     }
 
     @Override
