@@ -39,15 +39,6 @@ public class MatchByNameBindingMatchingStrategy implements BindingMatchingStrate
         super();
     }
 
-    /**
-     * Returns a set of Bindings that match the given name.
-     *
-     * @param bindings bindings.
-     * @param name desired name.
-     * @param type desired type.
-     * @param <T> generic type of the Bindings.
-     * @return all the matches; Will be an empty Set if no matches are found.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {

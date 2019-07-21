@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.*;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Default implementation of the Bindings.
@@ -38,135 +39,45 @@ public class SimpleBindings implements Bindings {
         super();
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, Class<T> type) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, null, null, true);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, TypeReference<T> type) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, null, null, true);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, Class<T> type, T initialValue) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, initialValue, null, true);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck)
             throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, type, initialValue, validationCheck, true);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck,
                                boolean mutable) throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, TypeReference.with(type), initialValue, validationCheck, mutable);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param typeRef type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue)
             throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, typeRef, initialValue, null, true);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param typeRef type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck)
             throws BindingAlreadyExistsException, InvalidBindingException {
         return bind(name, typeRef, initialValue, validationCheck, true);
     }
 
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param typeRef type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param mutable determines whether the value is mutable.
-     * @param <T> generic type of the Binding.
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see SimpleBinding
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
@@ -182,43 +93,36 @@ public class SimpleBindings implements Bindings {
         return result;
     }
 
-    /**
-     * Retrieves the number of Bindings.
-     *
-     * @return number of Bindings.
-     */
+    @Override
+    public <T> Binding<T> bind(String name, Supplier<T> valueSupplier, Class<T> type) throws BindingAlreadyExistsException {
+        return bind(name, valueSupplier, TypeReference.with(type));
+    }
+
+    @Override
+    public <T> Binding<T> bind(String name, Supplier<T> valueSupplier, TypeReference<T> typeRef) throws BindingAlreadyExistsException {
+        SimpleBinding<T> result = new SimpleBinding<T>(name, typeRef.getType(), valueSupplier);
+        // Try and put the Binding
+        Binding<?> existingBinding = bindings.putIfAbsent(name, result);
+        // Looks like we already have a binding
+        if (existingBinding != null) throw new BindingAlreadyExistsException(name);
+        return result;
+    }
+
     @Override
     public int size() {
         return bindings.size();
     }
 
-    /**
-     * Clears all the Bindings.
-     */
     @Override
     public void clear() {
         bindings.clear();
     }
 
-    /**
-     * Determines if a Binding with given name exists.
-     *
-     * @param name name of the Binding.
-     * @return true if Binding exists; false otherwise.
-     */
     @Override
     public boolean contains(String name) {
         return bindings.containsKey(name);
     }
 
-    /**
-     * Determines if the Binding with given name and types exists.
-     *
-     * @param name name of the Binding.
-     * @param typeRef generic ype of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return true if Binding exists; false otherwise.
-     */
     @Override
     public <T> boolean contains(String name, TypeReference<T> typeRef) {
         Binding<?> result = bindings.get(name);
@@ -228,14 +132,6 @@ public class SimpleBindings implements Bindings {
                 : false;
     }
 
-    /**
-     * Creates an alias for an existing Binding.
-     *
-     * @param existingBindingName name of the existing Binding.
-     * @param alias alias for the existing Binding.
-     * @param <T> generic type of the Binding.
-     * @return existing Binding.
-     */
     @Override
     public <T> Binding<T> alias(String existingBindingName, String alias) {
         Binding<T> result = getBinding(existingBindingName);
@@ -250,27 +146,12 @@ public class SimpleBindings implements Bindings {
         return result;
     }
 
-    /**
-     * Retrieves the Binding identified by the given name.
-     *
-     * @param name name of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return Binding if found; null otherwise.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Binding<T> getBinding(String name) {
         return (Binding<T>) bindings.get(name);
     }
 
-    /**
-     * Retrieves the value of the Binding with the given name.
-     *
-     * @param name name of the Binding.
-     * @param <T> desired Type.
-     * @return value if Binding is found.
-     * @throws NoSuchBindingException if Binding is not found.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(String name) {
@@ -280,14 +161,6 @@ public class SimpleBindings implements Bindings {
         return result.getValue();
     }
 
-    /**
-     * Sets the value of Binding with the given name.
-     *
-     * @param name name of the Binding.
-     * @param value desired new value.
-     * @param <T> generic type of the Binding.
-     * @throws NoSuchBindingException if Binding is not found.
-     */
     @Override
     public <T> void set(String name, T value) {
         Binding<T> result = getBinding(name);
@@ -296,14 +169,6 @@ public class SimpleBindings implements Bindings {
         result.setValue(value);
     }
 
-    /**
-     * Retrieves the Binding identified by the given name.
-     *
-     * @param name name of the Binding.
-     * @param typeRef type of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return Binding if found; null otherwise.
-     */
     @Override
     public <T> Binding<T> getBinding(String name, TypeReference<T> typeRef) {
         Binding<T> result = getBinding(name);
@@ -315,13 +180,6 @@ public class SimpleBindings implements Bindings {
                     : null;
     }
 
-    /**
-     * Retrieves all the Bindings of the given type.
-     *
-     * @param typeRef desired type.
-     * @param <T> generic type of the Binding.
-     * @return all matching Bindings.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Set<Binding<T>> getBindings(TypeReference<T> typeRef) {
@@ -336,15 +194,16 @@ public class SimpleBindings implements Bindings {
         return Collections.unmodifiableSet(result);
     }
 
-    /**
-     * Retrieves the Bindings as an Unmodifiable Map.
-     *
-     * @return unmodifiable Map of the Bindings.
-     */
     @Override
-    public Map<String, Binding<?>> asMap() {
-       return Collections.unmodifiableMap(bindings);
+    public Map<String, ?> asMap() {
+        Map<String, Object> result = new HashMap<>();
+
+        for (Map.Entry<String, Binding<?>> entry : bindings.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().getValue());
+        }
+        return Collections.unmodifiableMap(result);
     }
+
     /**
      * Creates the data structure to store all the Bindings.
      *

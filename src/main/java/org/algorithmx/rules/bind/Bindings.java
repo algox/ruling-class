@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.impl.SimpleBindings;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * The interface that is used to store and find Bindings.
@@ -163,6 +164,30 @@ public interface Bindings {
             throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**
+     * Declares a new Binding given a name, type and the value will be retrieved using the supplied Supplier.
+     *
+     * @param name name of the Binding.
+     * @param valueSupplier the value of the Binding will be retrieved using this Supplier.
+     * @param type type reference of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     */
+    <T> Binding<T> bind(String name, Supplier<T> valueSupplier, Class<T> type) throws BindingAlreadyExistsException;
+
+    /**
+     * Declares a new Binding given a name, type and the value will be retrieved using the supplied Supplier.
+     *
+     * @param name name of the Binding.
+     * @param valueSupplier the value of the Binding will be retrieved using this Supplier.
+     * @param type type reference of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return the resulting Binding.
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     */
+    <T> Binding<T> bind(String name, Supplier<T> valueSupplier, TypeReference<T> type) throws BindingAlreadyExistsException;
+
+    /**
      * Retrieves the number of Bindings.
      *
      * @return number of Bindings.
@@ -287,10 +312,10 @@ public interface Bindings {
     <T> Set<Binding<T>> getBindings(TypeReference<T> type);
 
     /**
-     * Retrieves the Bindings as an Unmodifiable Map.
+     * Retrieves the Binding values as an Unmodifiable Map.
      *
-     * @return unmodifiable Map of the Bindings.
+     * @return unmodifiable Map of the Binding values.
      */
-    Map<String, Binding<?>> asMap();
+    Map<String, ?> asMap();
 
 }

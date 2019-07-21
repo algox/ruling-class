@@ -54,14 +54,6 @@ public class CompositeBindingMatchingStrategy implements BindingMatchingStrategy
         this.strategies = strategies;
     }
 
-    /**
-     * Returns a set a Bindings that match a set criteria that is determined by the implementing class.
-     *
-     * @param bindings bindings.
-     * @param name desired name.
-     * @param type desired type.
-     * @return Bindings that match the criteria. Will be empty Set if no matches are found.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {

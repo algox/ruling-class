@@ -25,7 +25,9 @@ import org.algorithmx.rules.spring.util.TypeUtils;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Binding is a mapping between a name and a value.
@@ -42,8 +44,28 @@ class SimpleBinding<T> implements Binding<T> {
     private final Type type;
     private final Predicate<T> validationCheck;
 
-    private T value;
+    private Supplier<T> valueSupplier;
     private boolean mutable = true;
+
+    /**
+     * Creates a new SimpleBinding using the given Supplier. Supplier is responsible to supplying the Binding's value.
+     * The Binding will not enforce any validation rules on the Binding nor will it be mutable.
+     *
+     * @param name name of the Binding.
+     * @param type Type of the Binding.
+     * @param supplier value supplier.
+     */
+    SimpleBinding(String name, Type type, Supplier<T> supplier) {
+        super();
+        Assert.notNull(name, "name cannot be null");
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.notNull(type, "type cannot be null");
+        this.name = name;
+        this.type = type;
+        this.validationCheck = null;
+        this.valueSupplier = supplier;
+        setMutable(false);
+    }
 
     /**
      * Creates a new SimpleBinding
@@ -64,56 +86,26 @@ class SimpleBinding<T> implements Binding<T> {
         setValue(value);
     }
 
-    /**
-     * Name of the Binding.
-     *
-     * @return name.
-     */
     @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Type of the Binding.
-     *
-     * @return type.
-     */
     @Override
     public Type getType() {
         return type;
     }
 
-    /**
-     * Value of the Binding.
-     *
-     * @return value.
-     */
     @Override
     public T getValue() {
-        return value;
+        return valueSupplier.get();
     }
 
-    /**
-     * Determines whether this Binding is modifiable.
-     *
-     * @return true if modifiable; false otherwise.
-     */
     @Override
     public boolean isMutable() {
         return mutable;
     }
 
-    /**
-     * Sets the value of the Binding.
-     *
-     * @param value new value.
-     *
-     * @throws InvalidBindingException thrown if the value doesn't pass the validation check
-     * or if there is type mismatch. The type checking simply makes sure that the value passed matches the declared type
-     * of the Binding. It will not check any generics similar to Java. If the Binding is declared as List<Integer> and
-     * the value that is passed is a List<String>. InvalidBindingException will NOT be thrown in this case.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public void setValue(T value) {
@@ -138,26 +130,14 @@ class SimpleBinding<T> implements Binding<T> {
             value = (T) ClassUtils.getDefaultValue((Class) type);
         }
 
-        this.value = value;
+        this.valueSupplier = new ValueSupplier<>(value);
     }
 
-    /**
-     * Determines whether the given type is acceptable.
-     *
-     * @param type input type.
-     * @return true if the given type matches the SimpleBinding type.
-     */
     @Override
     public boolean isTypeAcceptable(Type type) {
         return TypeUtils.isAssignable(this.type, type);
     }
 
-    /**
-     * Determines whether the binding can be assigned to the given Type.
-     *
-     * @param type desired type.
-     * @return true if this Binding can be assigned to the desired type.
-     */
     @Override
     public boolean isAssignable(Type type) {
         return TypeUtils.isAssignable(type, this.type);
@@ -178,12 +158,12 @@ class SimpleBinding<T> implements Binding<T> {
         SimpleBinding<?> that = (SimpleBinding) o;
         return name.equals(that.name) &&
                 type.equals(that.type) &&
-                Objects.equals(value, that.value);
+                Objects.equals(valueSupplier.get(), that.valueSupplier.get());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, value);
+        return Objects.hash(name, type, valueSupplier.get());
     }
 
     @Override
@@ -191,7 +171,31 @@ class SimpleBinding<T> implements Binding<T> {
         return "SimpleBinding {" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", value=" + value +
+                ", value=" + valueSupplier.get() +
                 '}';
+    }
+
+    /**
+     * Internal class to act as the supplier for cases where the value is provided.
+     *
+     * @param <T> generic Binding type.
+     */
+    private static class ValueSupplier<T> implements Supplier<T> {
+
+        private final AtomicReference<T> ref;
+
+        ValueSupplier(T value) {
+            super();
+            this.ref = new AtomicReference<>(value);
+        }
+
+        @Override
+        public T get() {
+            return ref.get();
+        }
+
+        void setValue(T value) {
+            this.ref.set(value);
+        }
     }
 }
