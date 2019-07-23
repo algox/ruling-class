@@ -41,36 +41,52 @@ public class SimpleBindings implements Bindings {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Binding<T> bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
+    public <T> Bindings bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException {
         SimpleBinding<T> result = new SimpleBinding<T>(name, typeRef.getType(), initialValue, validationCheck);
         result.setMutable(mutable);
         bind(result);
-        return result;
+        return this;
     }
 
     @Override
-    public <T> Binding<T> bind(String name, Supplier<T> valueSupplier, TypeReference<T> typeRef) throws BindingAlreadyExistsException {
+    public <T> Bindings bind(String name, Supplier<T> valueSupplier, TypeReference<T> typeRef) throws BindingAlreadyExistsException {
         SimpleBinding<T> result = new SimpleBinding(name, typeRef.getType(), valueSupplier);
         bind(result);
-        return result;
+        return this;
     }
 
     @Override
-    public <T> void bind(Binding<T> binding) {
+    public <T> Bindings bind(Binding<T> binding) {
         Assert.notNull(binding, "binding cannot be null");
         // Try and put the Binding
         Binding<?> existingBinding = bindings.putIfAbsent(binding.getName(), binding);
         // Looks like we already have a binding
         if (existingBinding != null) throw new BindingAlreadyExistsException(binding.getName());
+        return this;
     }
 
     @Override
-    public <T> void bind(Collection<Binding<T>> existingBindings) {
+    public <T> Bindings bind(Collection<Binding<T>> existingBindings) {
         for (Binding<T> binding : existingBindings) {
             if (binding == null) continue;
             bind(binding);
         }
+        return this;
+    }
+
+    @Override
+    public Bindings alias(String existingBindingName, String alias) {
+        Binding result = getBinding(existingBindingName);
+
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(existingBindingName);
+        // Make sure the alias doesn't exist
+        if (contains(alias)) throw new BindingAlreadyExistsException(alias);
+
+        this.bindings.put(alias, result);
+
+        return this;
     }
 
     @Override
@@ -95,20 +111,6 @@ public class SimpleBindings implements Bindings {
                 ? result.isTypeAcceptable(typeRef.getType())
                     ? true : false
                 : false;
-    }
-
-    @Override
-    public <T> Binding<T> alias(String existingBindingName, String alias) {
-        Binding<T> result = getBinding(existingBindingName);
-
-        // Could not find Binding
-        if (result == null) throw new NoSuchBindingException(existingBindingName);
-        // Make sure the alias doesn't exist
-        if (contains(alias)) throw new BindingAlreadyExistsException(alias);
-
-        this.bindings.put(alias, result);
-
-        return result;
     }
 
     @Override

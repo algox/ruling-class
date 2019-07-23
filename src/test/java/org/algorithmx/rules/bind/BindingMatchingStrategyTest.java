@@ -37,12 +37,14 @@ public class BindingMatchingStrategyTest {
     @Test
     public void testMatch1() {
         Bindings bindings = Bindings.create();
+        bindings.bind("key1", String.class)
+                .bind("key2", Integer.class)
+                .bind("key3", BigDecimal.class)
+                .bind("key4", new TypeReference<List<Long>>() {})
+                .bind("key5", new TypeReference<Map<?, ?>>() {});
 
-        Binding<String> var1 = bindings.bind("key1", String.class);
-        Binding<Integer> var2 = bindings.bind("key2", Integer.class);
-        Binding<BigDecimal> var3 = bindings.bind("key3", BigDecimal.class);
-        Binding<List<Long>> var4 = bindings.bind("key4", new TypeReference<List<Long>>() {});
-        Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
+        Binding<Integer> var2 = bindings.getBinding("key2");
+        Binding<Map<?, ?>> var5 = bindings.getBinding("key5");
 
         Set<Binding<Object>> matches = BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy().match(bindings, "key2");
         Assert.assertTrue(matches.size() == 1);
@@ -59,13 +61,19 @@ public class BindingMatchingStrategyTest {
     @Test
     public void testMatch2() {
         Bindings bindings = Bindings.create();
+        bindings.bind("key1", String.class)
+                .bind("key2", Integer.class)
+                .bind("key3", BigDecimal.class)
+                .bind("key4", new TypeReference<List<Long>>() {})
+                .bind("key5", new TypeReference<Map<?, ?>>() {})
+                .bind("key6", new TypeReference<Map<String, String>>() {});
 
-        Binding<String> var1 = bindings.bind("key1", String.class);
-        Binding<Integer> var2 = bindings.bind("key2", Integer.class);
-        Binding<BigDecimal> var3 = bindings.bind("key3", BigDecimal.class);
-        Binding<List<Long>> var4 = bindings.bind("key4", new TypeReference<List<Long>>() {});
-        Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
-        Binding<Map<String, String>> var6 = bindings.bind("key6", new TypeReference<Map<String, String>>() {});
+        Binding<String> var1 = bindings.getBinding("key1");
+        Binding<Integer> var2 = bindings.getBinding("key2");
+        Binding<BigDecimal> var3 = bindings.getBinding("key3");
+        Binding<List<Long>> var4 = bindings.getBinding("key4");
+        Binding<Map<?, ?>> var5 = bindings.getBinding("key5");
+        Binding<Map<String, String>> var6 = bindings.getBinding("key6");
 
         Set<Binding<Integer>> matches1 = BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy().match(bindings, null, Integer.class);
         Assert.assertTrue(matches1.size() == 1);
@@ -88,13 +96,19 @@ public class BindingMatchingStrategyTest {
     @Test
     public void testMatch3() {
         Bindings bindings = Bindings.create();
+        bindings.bind("key1", String.class)
+                .bind("key2", Integer.class)
+                .bind("key3", BigDecimal.class)
+                .bind("key4", new TypeReference<List<Long>>() {})
+                .bind("key5", new TypeReference<Map<?, ?>>() {})
+                .bind("key6", new TypeReference<Map<String, String>>() {});
 
-        Binding<String> var1 = bindings.bind("key1", String.class);
-        Binding<Integer> var2 = bindings.bind("key2", Integer.class);
-        Binding<BigDecimal> var3 = bindings.bind("key3", BigDecimal.class);
-        Binding<List<Long>> var4 = bindings.bind("key4", new TypeReference<List<Long>>() {});
-        Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
-        Binding<Map<String, String>> var6 = bindings.bind("key6", new TypeReference<Map<String, String>>() {});
+        Binding<String> var1 = bindings.getBinding("key1");
+        Binding<Integer> var2 = bindings.getBinding("key2");
+        Binding<BigDecimal> var3 = bindings.getBinding("key3");
+        Binding<List<Long>> var4 = bindings.getBinding("key4");
+        Binding<Map<?, ?>> var5 = bindings.getBinding("key5");
+        Binding<Map<String, String>> var6 = bindings.getBinding("key6");
 
         Set<Binding<Integer>> matches1 = BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE.getStrategy().match(bindings, "key1", Integer.class);
         Assert.assertTrue(matches1.size() == 1);
@@ -118,13 +132,19 @@ public class BindingMatchingStrategyTest {
     @Test
     public void testMatch5() {
         Bindings bindings = Bindings.create();
+        bindings.bind("key1", String.class)
+                .bind("key2", Integer.class)
+                .bind("key3", BigDecimal.class)
+                .bind("key4", new TypeReference<List<Long>>() {})
+                .bind("key5", new TypeReference<Map<?, ?>>() {})
+                .bind("key6", new TypeReference<Map<String, String>>() {});
 
-        Binding<String> var1 = bindings.bind("key1", String.class);
-        Binding<Integer> var2 = bindings.bind("key2", Integer.class);
-        Binding<BigDecimal> var3 = bindings.bind("key3", BigDecimal.class);
-        Binding<List<Long>> var4 = bindings.bind("key4", new TypeReference<List<Long>>() {});
-        Binding<Map<?, ?>> var5 = bindings.bind("key5", new TypeReference<Map<?, ?>>() {});
-        Binding<Map<String, String>> var6 = bindings.bind("key6", new TypeReference<Map<String, String>>() {});
+        Binding<String> var1 = bindings.getBinding("key1");
+        Binding<Integer> var2 = bindings.getBinding("key2");
+        Binding<BigDecimal> var3 = bindings.getBinding("key3");
+        Binding<List<Long>> var4 = bindings.getBinding("key4");
+        Binding<Map<?, ?>> var5 = bindings.getBinding("key5");
+        Binding<Map<String, String>> var6 = bindings.getBinding("key6");
 
         Set<Binding<Number>> matches1 = BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy().match(bindings, "key3", Number.class);
         Assert.assertTrue(matches1.size() == 1);

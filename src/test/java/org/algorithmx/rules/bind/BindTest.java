@@ -39,8 +39,8 @@ public class BindTest {
 
     @Test
     public void testBind1() {
-        Bindings bindings = Bindings.create();
-        Binding<String> var = bindings.bind("key", String.class, "value");
+        Bindings bindings = Bindings.create().bind("key", String.class, "value");
+        Binding<String> var = bindings.getBinding("key");
         Assert.assertEquals("key", var.getName());
         Assert.assertEquals(String.class, var.getType());
         Assert.assertEquals("value", var.getValue());
@@ -48,8 +48,8 @@ public class BindTest {
 
     @Test
     public void testBind2() {
-        Bindings bindings = Bindings.create();
-        Binding<Double> var = bindings.bind("key", Double.class);
+        Bindings bindings = Bindings.create().bind("key", Double.class);
+        Binding<Double> var = bindings.getBinding("key");
         var.setValue(33.33);
         double result = var.getValue();
         Assert.assertEquals(33.33, result, 0.00);
@@ -57,12 +57,12 @@ public class BindTest {
 
     @Test
     public void testBind3() {
-        Bindings bindings = Bindings.create();
         List<Integer> values = new ArrayList<>();
         values.add(1);
         values.add(2);
         values.add(3);
-        Binding<List<Integer>> var = bindings.bind("key", new TypeReference<List<Integer>>(){});
+        Bindings bindings = Bindings.create().bind("key", new TypeReference<List<Integer>>(){});
+        Binding<List<Integer>> var = bindings.getBinding("key", new TypeReference<List<Integer>>(){});
         var.setValue(values);
         Assert.assertEquals(values, var.getValue());
     }
@@ -133,15 +133,20 @@ public class BindTest {
 
         Set<Binding<BigDecimal>> bindings1 = bindings.getBindings(BigDecimal.class);
         Assert.assertTrue(bindings1.size() == 2);
-        Set<Binding<Map<? extends List<?>, List<Integer>>>> bindings2 = bindings.getBindings(new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
+        Set<Binding<Map<? extends List<?>, List<Integer>>>> bindings2 = bindings.getBindings(
+                new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
         Assert.assertTrue(bindings2.size() == 1);
     }
 
     @Test
     public void testBind10() {
-        Bindings bindings1 = Bindings.create();
-        Binding<String> var1 = bindings1.bind("key1", String.class, "value");
-        Binding<String> var2 = bindings1.bind("key2", String.class, "value");
+        Bindings bindings1 = Bindings.create()
+                .bind("key1", String.class, "value")
+                .bind("key2", String.class, "value");
+
+        Binding<String> var1 = bindings1.getBinding("key1");
+        Binding<String> var2 = bindings1.getBinding("key2");
+
         Bindings bindings2 = Bindings.create();
         bindings2.bind(var1, var2);
         Assert.assertTrue(bindings2.contains("key1", String.class));
@@ -150,21 +155,19 @@ public class BindTest {
 
     @Test(expected = InvalidBindingException.class)
     public void testValidation() {
-        Bindings bindings = Bindings.create();
-        Binding<String> binding = bindings.bind("key",  String.class, "hello world!", (String s) -> !s.contains("hello"), true);
+        Bindings bindings = Bindings.create()
+                .bind("key",  String.class, "hello world!", (String s) -> !s.contains("hello"), true);
     }
 
     @Test
     public void testSupplier1() {
-        Bindings bindings = Bindings.create();
-        bindings.bind("key", () -> "Hello World!", TypeReference.with(String.class));
+        Bindings bindings = Bindings.create().bind("key", () -> "Hello World!", TypeReference.with(String.class));
         Assert.assertTrue(bindings.get("key").equals("Hello World!"));
     }
 
     @Test(expected = InvalidBindingException.class)
     public void testSupplier2() {
-        Bindings bindings = Bindings.create();
-        bindings.bind("key", () -> "Hello World!", TypeReference.with(String.class));
+        Bindings bindings = Bindings.create().bind("key", () -> "Hello World!", TypeReference.with(String.class));
         bindings.set("key", "new value");
     }
 }

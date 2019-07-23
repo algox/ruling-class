@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
@@ -52,11 +51,10 @@ public class ExecutorTest {
     public void test1() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = BindingBuilder.create()
+        Bindings bindings = Bindings.create()
                 .bind("id", int.class, 123)
                 .bind("closingDate", Date.class, new Date())
-                .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
-                .build();
+                .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>());
 
         RuleDefinition definition1 = RuleDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
@@ -69,11 +67,10 @@ public class ExecutorTest {
     public void test2() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = BindingBuilder.create()
+        Bindings bindings = Bindings.create()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello")
-                .bind("z", BigDecimal.class, new BigDecimal("10.00"))
-                .build();
+                .bind("z", BigDecimal.class, new BigDecimal("10.00"));
 
         Rule3<Integer, String, BigDecimal> rule3 = (Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null;
         SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(rule3);
@@ -87,10 +84,9 @@ public class ExecutorTest {
     public void test3() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = BindingBuilder.create()
+        Bindings bindings = Bindings.create()
                 .bind("x", int.class, 123)
-                .bind("y", String.class, "Hello")
-                .build();
+                .bind("y", String.class, "Hello");
 
         Rule2<Integer, String> rule2 = (Integer x, String y) -> x > 10 && y != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
@@ -104,12 +100,11 @@ public class ExecutorTest {
     public void test4() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = BindingBuilder.create()
+        Bindings bindings = Bindings.create()
                 .bind("id", int.class, 123)
                 .bind("closingDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
-                .bind("result", int.class, 0)
-                .build();
+                .bind("result", int.class, 0);
 
         bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, null, false);
 
@@ -128,12 +123,11 @@ public class ExecutorTest {
     public void test5() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = BindingBuilder.create()
+        Bindings bindings = Bindings.create()
                 .bind("id", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
-                .bind("result", int.class, 0)
-                .build();
+                .bind("result", int.class, 0);
 
         bindings.bind("binds", TypeReference.with(Bindings.class), bindings, null, false);
 
