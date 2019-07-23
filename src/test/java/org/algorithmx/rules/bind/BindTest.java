@@ -155,7 +155,7 @@ public class BindTest {
 
     @Test(expected = InvalidBindingException.class)
     public void testValidation() {
-        Bindings bindings = Bindings.create()
+        Bindings.create()
                 .bind("key",  String.class, "hello world!", (String s) -> !s.contains("hello"), true);
     }
 
@@ -167,8 +167,9 @@ public class BindTest {
 
     @Test(expected = InvalidBindingException.class)
     public void testSupplier2() {
-        Bindings bindings = Bindings.create().bind("key", () -> "Hello World!", TypeReference.with(String.class));
-        bindings.set("key", "new value");
+        Bindings.create()
+                .bind("key", () -> "Hello World!", TypeReference.with(String.class))
+                .set("key", "new value");
     }
 }
 

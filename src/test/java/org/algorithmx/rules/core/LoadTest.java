@@ -19,7 +19,7 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.TypeReference;
-import org.algorithmx.rules.core.rules.Rule2;
+import org.algorithmx.rules.model.Condition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.types.ActionType;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -135,7 +135,7 @@ public class LoadTest {
 
     @Test
     public void loadTest7() {
-        Rule2<Integer, String> rule2 = (Integer i, @Nullable String text) -> i > 100 && text != null;
+        Condition.Condition2<Integer, String> rule2 = (Integer i, @Nullable String text) -> i > 100 && text != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition def = RuleDefinition.load(lambda, "Test Rule 2", "Some rule for testing");
 

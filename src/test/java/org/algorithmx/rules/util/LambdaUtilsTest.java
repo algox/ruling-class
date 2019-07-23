@@ -17,8 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.rules.Rule1;
-import org.algorithmx.rules.core.rules.Rule3;
+import org.algorithmx.rules.model.Condition;
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
 import org.junit.Assert;
@@ -41,9 +40,9 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test1() {
-        Rule1<Integer> rule1 = (Integer x) -> x > 10;
+        Condition.Condition1<Integer> rule1 = (Integer x) -> x > 10;
 
-        Rule1<Integer> rule2 = new Rule1<Integer>() {
+        Condition.Condition1<Integer> rule2 = new Condition.Condition1<Integer>() {
             static final long serialVersionUID = 0L;
 
             @Override
@@ -66,7 +65,7 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test2() {
-        Rule3<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
+        Condition.Condition3<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule3);
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
@@ -83,7 +82,7 @@ public final class LambdaUtilsTest {
     @Test
     public void test3() throws NoSuchMethodException {
 
-        Rule3<Integer, String, BigDecimal> rule3 = new Rule3<Integer, String, BigDecimal>() {
+        Condition.Condition3<Integer, String, BigDecimal> rule3 = new Condition.Condition3<Integer, String, BigDecimal>() {
             static final long serialVersionUID = 0L;
             @Override
             public boolean when(Integer xxx, String value, BigDecimal salary) {
