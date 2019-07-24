@@ -31,6 +31,8 @@ import java.util.function.Supplier;
  */
 public interface Binding<T> extends Supplier<T> {
 
+	String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
+
 	/**
 	 * Name of the Binding.
      *

@@ -66,4 +66,13 @@ public enum BindingMatchingStrategyType {
     public BindingMatchingStrategy getStrategy() {
         return strategy;
     }
+
+    /**
+     * Returns the default Strategy Type.
+     *
+     * @return default strategy type.
+     */
+    public static BindingMatchingStrategyType getDefault() {
+        return MATCH_BY_NAME_AND_TYPE;
+    }
 }

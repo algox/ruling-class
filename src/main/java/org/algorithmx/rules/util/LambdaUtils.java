@@ -19,6 +19,7 @@ package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.spring.util.ClassUtils;
 
+import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,7 +49,7 @@ public final class LambdaUtils {
     public static boolean isLambda(Object target) {
         try {
             if (!target.getClass().isSynthetic()) return false;
-            return getSerializedLambda(target) != null;
+            return (target instanceof Serializable) ? getSerializedLambda((Serializable) target) != null : false;
         } catch (IllegalStateException e) {
             return false;
         }
@@ -61,7 +62,7 @@ public final class LambdaUtils {
      * @return Serialized form of the given lambda.
      * @throws IllegalStateException if the given target object really isn't a Lambda or if we are unable to deserialize the Lambda.
      */
-    public static SerializedLambda getSerializedLambda(Object target) {
+    public static SerializedLambda getSerializedLambda(Serializable target) {
         Method writeReplaceMethod = getWriteReplaceMethod(target.getClass());
 
         try {

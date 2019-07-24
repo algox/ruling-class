@@ -58,4 +58,14 @@ public interface BindableMethodExecutor {
      * @return the result of the execution.
      */
     <T> T execute(Object target, MethodDefinition definition, Bindings ctx, BindingMatchingStrategy matchingStrategy);
+
+    /**
+     *  Executes the BindableMethod and returns its result.
+     *
+     * @param target target object.
+     * @param definition definition of the method being executed.
+     * @param userArgs method arguments.
+     * @param <T> generic type of the result.
+     * @return the result of the execution.*/
+    <T> T execute(Object target, MethodDefinition definition, Object...userArgs);
 }

@@ -19,7 +19,7 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.annotation.Rule;
 
-@Rule(name = "Test Rule 2")
+@Rule(name = "TestRule2")
 public class TestRule2 {
 
     public TestRule2() {

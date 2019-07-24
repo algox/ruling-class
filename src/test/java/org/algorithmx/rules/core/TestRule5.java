@@ -24,7 +24,7 @@ import org.algorithmx.rules.bind.Bindings;
 import java.util.Date;
 import java.util.List;
 
-@Rule(name = "Test Rule", description = "Test Description 1")
+@Rule(name = "TestRule", description = "Test Description 1")
 public class TestRule5 {
 
     public TestRule5() {

@@ -1,4 +1,4 @@
-package org.algorithmx.rules.model;
+package org.algorithmx.rules.core;
 
 import java.io.Serializable;
 

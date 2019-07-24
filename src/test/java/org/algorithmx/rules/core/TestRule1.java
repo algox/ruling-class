@@ -22,9 +22,8 @@ import org.algorithmx.rules.annotation.Rule;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
-@Rule(name = "Test Rule", description = "Test Description 1")
+@Rule(name = "TestRule", description = "Test Description 1")
 public class TestRule1 {
 
     public TestRule1() {

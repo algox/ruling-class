@@ -22,6 +22,7 @@ import org.algorithmx.rules.spring.util.Assert;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
@@ -88,16 +89,40 @@ public final class MethodDefinition {
         return result;
     }
 
+    /**
+     * Reflective method behind the Method Definition.
+     *
+     * @return reflective method.
+     */
     public Method getMethod() {
         return method;
     }
 
+    /**
+     * All the parameter definitions for this method definition.
+     *
+     * @return parameter meta information.
+     */
     public ParameterDefinition[] getParameterDefinitions() {
         return parameterDefinitions;
     }
 
+    /**
+     * Method Handle for optimized execution of the method at runtime.
+     *
+     * @return method handle.
+     */
     public MethodHandle getMethodHandle() {
         return methodHandle;
+    }
+
+    /**
+     * Determines whether the method is static.
+     *
+     * @return return true if its a static method; false otherwise.
+     */
+    public boolean isStatic() {
+        return Modifier.isStatic(method.getModifiers());
     }
 
     @Override

@@ -23,7 +23,7 @@ import org.algorithmx.rules.annotation.Rule;
 import java.util.Date;
 import java.util.List;
 
-@Rule(name = "Test Rule 4")
+@Rule(name = "TestRule4")
 public class TestRule4 {
 
     public TestRule4() {

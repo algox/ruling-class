@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
  * Binding is a mapping between a name and a value.
@@ -39,6 +40,8 @@ import java.util.function.Supplier;
  * @see org.algorithmx.rules.bind.Binding
  */
 class SimpleBinding<T> implements Binding<T> {
+
+    private static final Pattern NAME_PATTERN = Pattern.compile(NAME_REGEX);
 
     private final String name;
     private final Type type;
@@ -59,6 +62,7 @@ class SimpleBinding<T> implements Binding<T> {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Binding name must match [" + NAME_PATTERN + "] Given [" + name + "]");
         Assert.notNull(type, "type cannot be null");
         this.name = name;
         this.type = type;
@@ -78,6 +82,8 @@ class SimpleBinding<T> implements Binding<T> {
     SimpleBinding(String name, Type type, T value, Predicate<T> validationCheck) {
         super();
         Assert.notNull(name, "name cannot be null");
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Binding name must match [" + NAME_PATTERN + "]");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
         Assert.notNull(type, "type cannot be null");
         this.name = name;

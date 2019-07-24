@@ -20,9 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.model.ActionDefinition;
-import org.algorithmx.rules.model.Condition;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.types.ActionType;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,7 +45,7 @@ public class LoadTest {
     public void loadTest1() {
         RuleDefinition ruleDef = RuleDefinition.load(TestRule1.class);
 
-        Assert.assertTrue("Test Rule".equals(ruleDef.getName()));
+        Assert.assertTrue("TestRule".equals(ruleDef.getName()));
         Assert.assertTrue("Test Description 1".equals(ruleDef.getDescription()));
 
         ActionDefinition actionDef = ActionDefinition.load(TestRule1.class);
@@ -60,7 +58,7 @@ public class LoadTest {
 
         Method m = TestRule1.class.getDeclaredMethod("when", int.class, Date.class, List.class);
 
-        Assert.assertTrue("Test Rule".equals(def.getName()));
+        Assert.assertTrue("TestRule".equals(def.getName()));
         Assert.assertTrue(def.getCondition() != null);
         Assert.assertTrue(def.getCondition().getMethod().equals(m));
     }
@@ -125,7 +123,7 @@ public class LoadTest {
     public void loadTest7() {
         Condition.Condition2<Integer, String> rule2 = (Integer i, @Nullable String text) -> i > 100 && text != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
-        RuleDefinition def = RuleDefinition.load(lambda, "Test Rule 2", "Some rule for testing");
+        RuleDefinition def = RuleDefinition.load(lambda, "TestRule2", "Some rule for testing");
 
         Assert.assertTrue(def.getCondition().getParameterDefinitions().length == 2);
 

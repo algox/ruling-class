@@ -18,18 +18,15 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.core.BindableMethodExecutor;
+import org.algorithmx.rules.core.ParameterResolver;
 import org.algorithmx.rules.model.MethodDefinition;
-import org.algorithmx.rules.model.ParameterDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Set;
 
 /**
  * Default Implementation of BindableMethodExecutor.
@@ -39,6 +36,8 @@ import java.util.Set;
  * @see BindableMethodExecutor
  */
 public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
+
+    private final ParameterResolver resolver = ParameterResolver.create();
 
     /**
      * Default Ctor.
@@ -53,49 +52,29 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
         Assert.notNull(definition, "definition cannot be null");
         Assert.notNull(ctx, "bind cannot be null");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
+        return execute(target, definition, resolver.resolve(definition, ctx, matchingStrategy));
+    }
+
+    @Override
+    public <T> T execute(Object target, MethodDefinition definition, Object...userArgs) {
+
+        if (definition.getParameterDefinitions().length != (userArgs == null ? 0 : userArgs.length)) {
+            throw new UnrulyException("Invalid number of args passed to Method call [" + definition.getMethod()
+                    + "] required [" + definition.getParameterDefinitions().length + "]");
+        }
 
         boolean staticMethod = Modifier.isStatic(definition.getMethod().getModifiers());
         int index = 0;
 
+        // Do no include target if its a static method call
         Object[] args = new Object[staticMethod
                 ? definition.getParameterDefinitions().length
                 : definition.getParameterDefinitions().length + 1];
 
         if (!staticMethod) args[index++] = target;
 
-        for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
-            // Find all the matching bindings
-            Set<Binding<Object>> bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),
-                    TypeReference.with(parameterDefinition.getType()));
-            int matches = bindings.size();
-
-            // Looks like we are missing a required parameter
-            if (bindings.size() == 0 && parameterDefinition.isRequired()) {
-                throw new UnrulyException("Unable to find a matching Binding for param ["
-                        + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]");
-
-            } else if (matches == 0 && !parameterDefinition.isRequired()) {
-                // Default to null
-                args[index] = null;
-            } else if (matches == 1) {
-                Binding<Object> binding = bindings.stream().findFirst().get();
-
-                if (parameterDefinition.isRequired() && binding.getValue() == null) {
-                    throw new UnrulyException("Missing required param value for [" + parameterDefinition.getName()
-                            + "] method [" + definition.getMethod() + "]. Binding used [" + binding + "]");
-                }
-
-                // We found a match!
-                args[index] = binding.getValue();
-            } else {
-                // Too many matches found; cannot proceed.
-                throw new UnrulyException("Found too many [" + matches + "] Binding matches for param ["
-                        + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]. Matches found ["
-                        + bindings.toString() + "] using BindingMatchingStrategy ["
-                        + matchingStrategy.getClass().getSimpleName() + "]");
-            }
-
-            index++;
+        for (int i = 0; i < userArgs.length; i++) {
+            args[index++] = userArgs[i];
         }
 
         try {

@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Indicates the class with this annotation is Rule and it will follow the "rules" of a being a Rule.
@@ -41,7 +42,8 @@ import java.util.Objects;
 public final class RuleDefinition {
 
     public static final String CONDITION_METHOD_NAME    = "when";
-    public static final int MAX_ACTIONS                 = 25;
+    private static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9]*?$";
+    private static final Pattern NAME_PATTERN           = Pattern.compile(RULE_NAME_REGEX);
 
     // Rule class
     private final Class<?> rulingClass;
@@ -56,8 +58,10 @@ public final class RuleDefinition {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.notNull(name, "name cannot be null.");
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN
+                + "] Given [" + name + "]");
         Assert.notNull(condition, "when method cannot be null.");
-
         this.rulingClass = rulingClass;
         this.name = name;
         this.description = description;
@@ -116,20 +120,49 @@ public final class RuleDefinition {
         return new RuleDefinition(implementationClass, ruleName, ruleDescription, conditions[0]);
     }
 
+    /**
+     * The implementing Rule class.
+     *
+     * @return Rule class.
+     */
     public Class<?> getRulingClass() {
         return rulingClass;
     }
 
+    /**
+     * Name of the Rule.
+     *
+     * @return name of rule. If not specified the simple class name is used.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Rule description.
+     *
+     * @return description of what the rule does.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Condition details.
+     *
+     * @return meta information rule implementing method.
+     */
     public MethodDefinition getCondition() {
         return condition;
+    }
+
+    /**
+     * Determines if the condition is a statically implemented method call (such as a lambda).
+     *
+     * @return true if statically implemented; false otherwise.
+     */
+    public boolean isStatic() {
+        return condition.isStatic();
     }
 
     @Override
