@@ -20,11 +20,10 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
-import org.algorithmx.rules.core.actions.Action3;
+import org.algorithmx.rules.model.Action;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.Condition;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.types.ActionType;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -107,12 +106,10 @@ public class ExecutorTest {
 
         bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, null, false);
 
-        RuleDefinition definition1 = RuleDefinition.load(TestRule5.class);
+        ActionDefinition definition1 = ActionDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
 
-        executor.execute(rule5, definition1.getActions()[0].getAction(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
-        executor.execute(rule5, definition1.getActions()[1].getAction(), bindings,
+        executor.execute(rule5, definition1.getAction(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
         int result = bindings.get("result");
         Assert.assertTrue(result == 2);
@@ -130,9 +127,9 @@ public class ExecutorTest {
 
         bindings.bind("binds", TypeReference.with(Bindings.class), bindings, null, false);
 
-        Action3<Integer, String, Bindings> action = (Integer id, String y, Bindings binds) -> binds.set("result", 10);
+        Action.Action3<Integer, String, Bindings> action = (Integer id, String y, Bindings binds) -> binds.set("result", 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
-        ActionDefinition definition = ActionDefinition.load(lambda, ActionType.ON_PASS, "Action!", 0);
+        ActionDefinition definition = ActionDefinition.load(lambda,"Action!");
         executor.execute(action, definition.getAction(), bindings, BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
         int result = bindings.get("result");
         Assert.assertTrue(result == 10);

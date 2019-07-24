@@ -17,14 +17,11 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Action;
-import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.types.ActionType;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Rule(name = "Test Rule 4")
 public class TestRule4 {
@@ -37,13 +34,8 @@ public class TestRule4 {
         return true;
     }
 
-    @Action(order = 1)
-    public void calculatePayment(int id, @Nullable Date closingDate) {
-
-    }
-
-    @Action(type = ActionType.ON_PASS, description = "calculatePayment", order = 2)
-    public void calculatePayment(int id, Date closingDate, List<Integer> values) {
+    @Description("calculatePayment")
+    public void then(int id, Date closingDate, List<Integer> values) {
 
     }
 

@@ -2,7 +2,7 @@ package org.algorithmx.rules.model;
 
 import java.io.Serializable;
 
-public interface Condition<A, B, C, D, E> extends Serializable {
+public interface Condition extends Serializable {
 
     long serialVersionUID = -0L;
 

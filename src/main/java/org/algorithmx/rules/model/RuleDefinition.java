@@ -51,9 +51,8 @@ public final class RuleDefinition {
     private final String description;
     // when method
     private final MethodDefinition condition;
-    private final ActionDefinition[] actions;
 
-    private RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition, ActionDefinition...actions) {
+    private RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.notNull(name, "name cannot be null.");
@@ -63,7 +62,6 @@ public final class RuleDefinition {
         this.name = name;
         this.description = description;
         this.condition = condition;
-        this.actions = actions;
     }
 
     /**
@@ -91,15 +89,10 @@ public final class RuleDefinition {
                 + "] defined on Rule class [" + c + "]. Please define only a single "+ CONDITION_METHOD_NAME
                 + " method public boolean " + CONDITION_METHOD_NAME + "(...)");
 
-       ActionDefinition[] actions = ActionDefinition.load(c);
-
-       Assert.isTrue(actions.length < MAX_ACTIONS, "Too many actions defined in class [" + c
-               + "]. Maximum set at [" + MAX_ACTIONS + "]");
-
         Description descriptionAnnotation = c.getAnnotation(Description.class);
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
-                : rule.description(), conditions[0], actions);
+                : rule.description(), conditions[0]);
     }
 
     /**
@@ -109,10 +102,9 @@ public final class RuleDefinition {
      * @param lambda Rule Lambda expression.
      * @param ruleName name of the rule.
      * @param ruleDescription description of the rule.
-     * @param actions any associated actions.
      * @return RuleDefinition of the supplied Lambda.
      */
-    public static RuleDefinition load(SerializedLambda lambda, String ruleName, String ruleDescription, ActionDefinition...actions) {
+    public static RuleDefinition load(SerializedLambda lambda, String ruleName, String ruleDescription) {
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Assert.notNull(implementationClass, "implementationClass cannot be null");
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
@@ -121,7 +113,7 @@ public final class RuleDefinition {
                 "Lambda method not implemented correctly. Please define method public boolean when(...)");
 
         MethodDefinition[] conditions = MethodDefinition.load(implementationClass, implementationMethod);
-        return new RuleDefinition(implementationClass, ruleName, ruleDescription, conditions[0], actions);
+        return new RuleDefinition(implementationClass, ruleName, ruleDescription, conditions[0]);
     }
 
     public Class<?> getRulingClass() {
@@ -138,10 +130,6 @@ public final class RuleDefinition {
 
     public MethodDefinition getCondition() {
         return condition;
-    }
-
-    public ActionDefinition[] getActions() {
-        return actions;
     }
 
     @Override
@@ -164,7 +152,6 @@ public final class RuleDefinition {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", condition=" + condition +
-                ", actions=" + Arrays.toString(actions) +
                 '}';
     }
 }

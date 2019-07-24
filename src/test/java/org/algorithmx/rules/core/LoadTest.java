@@ -19,6 +19,7 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.Condition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.types.ActionType;
@@ -44,12 +45,13 @@ public class LoadTest {
 
     @Test
     public void loadTest1() {
-        RuleDefinition def = RuleDefinition.load(TestRule1.class);
+        RuleDefinition ruleDef = RuleDefinition.load(TestRule1.class);
 
-        Assert.assertTrue("Test Rule".equals(def.getName()));
-        Assert.assertTrue("Test Description 1".equals(def.getDescription()));
-        Assert.assertTrue(def.getCondition() != null);
-        Assert.assertTrue(def.getActions().length == 2);
+        Assert.assertTrue("Test Rule".equals(ruleDef.getName()));
+        Assert.assertTrue("Test Description 1".equals(ruleDef.getDescription()));
+
+        ActionDefinition actionDef = ActionDefinition.load(TestRule1.class);
+        Assert.assertTrue(actionDef != null);
     }
 
     @Test
@@ -100,37 +102,23 @@ public class LoadTest {
 
     @Test()
     public void loadTest6() {
-        RuleDefinition def = RuleDefinition.load(TestRule4.class);
+        ActionDefinition def = ActionDefinition.load(TestRule4.class);
 
-        Assert.assertTrue(def.getActions().length == 2);
+        Assert.assertTrue(def.getDescription().equals("calculatePayment"));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].getType().equals(int.class));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].isRequired());
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getActions()[0].getDescription().equals(""));
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[0].getName().equals("id"));
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[0].isRequired());
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].getName().equals("closingDate"));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].getType().equals(Date.class));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].isRequired());
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getActions()[0].getActionType() == ActionType.ON_PASS);
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[1].getName().equals("closingDate"));
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[1].isRequired() == false);
-        Assert.assertTrue(def.getActions()[0].getAction().getParameterDefinitions()[1].getAnnotations().length == 1);
-
-        Assert.assertTrue(def.getActions()[1].getDescription().equals("calculatePayment"));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[0].getName().equals("id"));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[0].isRequired());
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[0].getAnnotations().length == 0);
-
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[1].getName().equals("closingDate"));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[1].isRequired());
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[1].getAnnotations().length == 0);
-
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[2].getName().equals("values"));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[2].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[2].isRequired());
-        Assert.assertTrue(def.getActions()[1].getAction().getParameterDefinitions()[2].getAnnotations().length == 0);
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].getName().equals("values"));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].isRequired());
+        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].getAnnotations().length == 0);
     }
 
     @Test

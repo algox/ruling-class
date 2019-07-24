@@ -17,15 +17,13 @@
  */
 package org.algorithmx.rules.model;
 
-import org.algorithmx.rules.annotation.Action;
+import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.types.ActionType;
 import org.algorithmx.rules.util.LambdaUtils;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 
 /**
  * Indicates the annotated (@Action) method is an Action and is eligible to be execute based on the result
@@ -37,28 +35,24 @@ import java.util.Arrays;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class ActionDefinition implements Comparable<ActionDefinition> {
+public final class ActionDefinition {
+
+    public static final String THEN_METHOD_NAME = "then";
 
     // Action class
     private final Class<?> actionClass;
-    // Action Type;
-    private final ActionType actionType;
     // Description of the Action
     private final String description;
-    // Execution Order
-    private final Integer order;
     // then method
     private final MethodDefinition action;
 
-    private ActionDefinition(Class<?> actionClass, ActionType actionType, String description, int order, MethodDefinition action) {
+    private ActionDefinition(Class<?> actionClass, String description, MethodDefinition action) {
         super();
         Assert.notNull(actionClass, "action class cannot be null");
         Assert.notNull(action, "action cannot be null");
 
         this.actionClass = actionClass;
-        this.actionType = actionType;
         this.description = description;
-        this.order = order;
         this.action = action;
     }
 
@@ -69,22 +63,19 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * @param c desired class
      * @return all the associated actions
      */
-    public static ActionDefinition[] load(Class<?> c) {
+    public static ActionDefinition load(Class<?> c) {
         MethodDefinition[] actions = MethodDefinition.load(c, (Method method) ->
                 void.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers())
-                        && method.getAnnotation(Action.class) != null);
+                        && THEN_METHOD_NAME.equals(method.getName()));
 
-        ActionDefinition[] result = new ActionDefinition[actions.length];
+        Assert.isTrue(!(actions.length == 0), "Action Method " + THEN_METHOD_NAME + " not defined on class ["
+                + c + "]. Please define method public void " + THEN_METHOD_NAME + "(...)");
+        Assert.isTrue(actions.length == 1, "multiple "+ THEN_METHOD_NAME + " methods " + actions
+                + "] defined on class [" + c + "]. Please define only a single "+ THEN_METHOD_NAME
+                + " method public void " + THEN_METHOD_NAME + "(...)");
 
-        for (int i = 0; i < actions.length; i++) {
-            Action action = actions[i].getMethod().getAnnotation(Action.class);
-            result[i] = new ActionDefinition(c, action.type(), action.description(), action.order(), actions[i]);
-        }
-
-        // Sort by order
-        Arrays.sort(result);
-
-        return result;
+        Description descriptionAnnotation = actions[0].getMethod().getAnnotation(Description.class);
+        return new ActionDefinition(c, descriptionAnnotation != null ? descriptionAnnotation.value() : null, actions[0]);
     }
 
     /**
@@ -92,12 +83,10 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * of arguments and returns nothing (ie: void) and the method name is "then".
      *
      * @param lambda supplied lambda.
-     * @param actionType determines whether this Action is based on a PASS/FAIL.
      * @param description action description.
-     * @param order order of the action (default 0).
      * @return ActionDefinition.
      */
-    public static ActionDefinition load(SerializedLambda lambda, ActionType actionType, String description, Integer order) {
+    public static ActionDefinition load(SerializedLambda lambda, String description) {
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Assert.notNull(implementationClass, "implementationClass cannot be null");
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
@@ -106,30 +95,15 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
                 "Action Lambda not defined correctly. Please define method public void then(...)");
 
         MethodDefinition[] actions = MethodDefinition.load(implementationClass, implementationMethod);
-
-        return new ActionDefinition(implementationClass, actionType == null ? ActionType.ON_PASS : actionType,
-                description, order == null ? 0 : order, actions[0]);
-    }
-
-    @Override
-    public int compareTo(ActionDefinition o) {
-        return order.compareTo(o.order);
+        return new ActionDefinition(implementationClass, description, actions[0]);
     }
 
     public Class<?> getActionClass() {
         return actionClass;
     }
 
-    public ActionType getActionType() {
-        return actionType;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public int getOrder() {
-        return order;
     }
 
     public MethodDefinition getAction() {
@@ -140,9 +114,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     public String toString() {
         return "ActionDefinition{" +
                 "actionClass=" + actionClass +
-                ", actionType=" + actionType +
                 ", description='" + description + '\'' +
-                ", order=" + order +
                 ", action=" + action +
                 '}';
     }

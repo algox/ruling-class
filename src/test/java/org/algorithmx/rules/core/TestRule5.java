@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Action;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Bindings;
@@ -36,15 +35,9 @@ public class TestRule5 {
         return id > 100;
     }
 
-    @Action(order = 0)
-    public void calculateId(Bindings bindings) {
+    public void then(Bindings bindings) {
         int x = bindings.get("result");
-        bindings.set("result", ++x);
-    }
-
-    @Action(order = 1)
-    public void makePayment(Bindings bindings) {
-        int x = bindings.get("result");
-        bindings.set("result", ++x);
+        x += 2;
+        bindings.set("result", x);
     }
 }

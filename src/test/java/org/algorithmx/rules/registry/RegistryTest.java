@@ -12,7 +12,7 @@ public class RegistryTest {
 
     @Test
     public void test1() {
-        /*RuleRegistry x = null;
+        /*RuleSet x = null;
 
         x.register("test", (String y) -> y.equals(""),
                 "")

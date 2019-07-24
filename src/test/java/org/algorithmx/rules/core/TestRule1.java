@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Action;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.annotation.Rule;
 
@@ -36,13 +35,7 @@ public class TestRule1 {
         return true;
     }
 
-    @Action
-    public void calculateId(int id) {
-        // do something
-    }
-
-    @Action
-    public void makePayment(Date closingDate) {
+    public void then(int id) {
         // do something
     }
 }
