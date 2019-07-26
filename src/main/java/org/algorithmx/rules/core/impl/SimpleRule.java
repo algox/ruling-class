@@ -1,12 +1,8 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.ObjectFactory;
-import org.algorithmx.rules.core.ParameterResolver;
-import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.core.RuleExecutionContext;
 import org.algorithmx.rules.spring.util.Assert;
 
 public class SimpleRule implements Rule {
@@ -27,7 +23,7 @@ public class SimpleRule implements Rule {
     }
 
     @Override
-    public boolean test(RuleExecutionContext ctx) throws UnrulyException {
+    public boolean run(RuleExecutionContext ctx) throws UnrulyException {
         Object[] args = parameterResolver.resolve(ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
         return methodExecutor.execute(targetClassInstance, ruleDefinition.getCondition(), args);
     }
@@ -35,10 +31,5 @@ public class SimpleRule implements Rule {
     @Override
     public boolean run(Object... args) throws UnrulyException {
         return methodExecutor.execute(targetClassInstance, ruleDefinition.getCondition(), args);
-    }
-
-    @Override
-    public RuleDefinition getRuleDefinition() {
-        return ruleDefinition;
     }
 }

@@ -44,28 +44,28 @@ public class DefaultRuleSet implements RuleSet {
     public Rule add(Class<?> c) {
         RuleDefinition ruleDefinition = RuleDefinition.load(c);
         Rule result = Rule.create(ruleDefinition, parameterResolver, methodExecutor, objectFactory);
-        add(result);
+        add(result, ruleDefinition.getName());
         return result;
     }
 
     @Override
     public Rule add(String name, Condition.Condition0 condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A> Rule add(String name, Condition.Condition1<A> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B> Rule add(String name, Condition.Condition2<A, B> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
@@ -77,58 +77,57 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public <A, B, C, D> Rule add(String name, Condition.Condition4<A, B, C, D> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B, C, D, E> Rule add(String name, Condition.Condition5<A, B, C, D, E> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B, C, D, E, F> Rule add(String name, Condition.Condition6<A, B, C, D, E, F> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B, C, D, E, F, G> Rule add(String name, Condition.Condition7<A, B, C, D, E, F, G> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B, C, D, E, F, G, H> Rule add(String name, Condition.Condition8<A, B, C, D, E, F, G, H> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B, C, D, E, F, G, H, I> Rule add(String name, Condition.Condition9<A, B, C, D, E, F, G, H, I> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
     @Override
     public <A, B, C, D, E, F, G, H, I, J> Rule add(String name, Condition.Condition10<A, B, C, D, E, F, G, H, I, J> condition, String description) {
         Rule result = add(condition, name, description);
-        add(result);
+        add(result, name);
         return result;
     }
 
-    public void add(Rule rule) {
-        Rule existingRule = rules.putIfAbsent(rule.getRuleDefinition().getName(), rule);
+    public void add(Rule rule, String name) {
+        Rule existingRule = rules.putIfAbsent(name, rule);
 
         if (existingRule != null) {
-            throw new UnrulyException("Rule with name [" + rule.getRuleDefinition().getName()
-                    + "] already exists in this Ruleset [" + getName() + "]");
+            throw new UnrulyException("Rule with name [" + name + "] already exists in this Ruleset [" + getName() + "]");
         }
     }
 

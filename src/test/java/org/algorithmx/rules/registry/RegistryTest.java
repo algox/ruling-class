@@ -35,12 +35,12 @@ public class RegistryTest {
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        Assert.assertTrue(rule3.test(bindings));
-        Assert.assertTrue(rule3.test(RuleExecutionContext.create(bindings)));
+        Assert.assertTrue(rule3.run(bindings));
+        Assert.assertTrue(rule3.run(RuleExecutionContext.create(bindings)));
 
-        Assert.assertTrue(rule1.or(rule2).test(RuleExecutionContext.create(bindings)));
-        Assert.assertTrue(rule1.and(rule3).test(RuleExecutionContext.create(bindings)));
-        Assert.assertTrue(rule1.or(rule3).test(RuleExecutionContext.create(bindings)));
-        Assert.assertTrue(rule4.negate().test(RuleExecutionContext.create(bindings)));
+        Assert.assertTrue(rule1.or(rule2).and(rule3).run(bindings));
+        Assert.assertTrue(rule1.and(rule3).run(bindings));
+        Assert.assertTrue(rule1.or(rule3).run(bindings));
+        Assert.assertTrue(rule4.negate().run(bindings));
     }
 }

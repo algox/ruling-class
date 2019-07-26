@@ -1,10 +1,6 @@
 package org.algorithmx.rules.registry;
 
-import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.ObjectFactory;
-import org.algorithmx.rules.core.ParameterResolver;
-import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.registry.impl.DefaultRuleSet;
 
 public interface RuleSet extends Iterable<Rule> {
