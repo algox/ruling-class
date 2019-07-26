@@ -17,6 +17,9 @@
  */
 package org.algorithmx.rules.util;
 
+import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.model.RuleDefinition;
+
 /**
  * Utility class to provide convenience methods for Rules.
  *
@@ -45,5 +48,17 @@ public final class RuleUtils {
      */
     public final static boolean FAIL() {
         return false;
+    }
+
+    /**
+     * Loads a new RuleDefinition from the given Condition, Rule Name and Description.
+     *
+     * @param condition when condition.
+     * @param name Rule Name.
+     * @param description Rule Description.
+     * @return new Rule Definition.
+     */
+    public static RuleDefinition load(Condition condition, String name, String description) {
+        return RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
     }
 }
