@@ -3,15 +3,10 @@ package org.algorithmx.rules.registry;
 import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.registry.impl.DefaultRuleSet;
 
-public interface RuleSet extends Iterable<Rule> {
+public interface RuleSet extends Iterable<Rule>, BaseRule {
 
     static RuleSet create(String name) {
-        return new DefaultRuleSet(name, ParameterResolver.create(), BindableMethodExecutor.create(), ObjectFactory.create());
-    }
-
-    static RuleSet create(String name, ParameterResolver parameterResolver, BindableMethodExecutor methodExecutor,
-                          ObjectFactory objectFactory) {
-        return new DefaultRuleSet(name, parameterResolver, methodExecutor, objectFactory);
+        return new DefaultRuleSet(name);
     }
 
     String getName();

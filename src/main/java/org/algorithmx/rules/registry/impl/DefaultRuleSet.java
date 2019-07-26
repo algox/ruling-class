@@ -1,11 +1,7 @@
 package org.algorithmx.rules.registry.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.ObjectFactory;
-import org.algorithmx.rules.core.ParameterResolver;
-import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.registry.RuleSet;
 import org.algorithmx.rules.spring.util.Assert;
@@ -17,33 +13,31 @@ import java.util.regex.Pattern;
 
 public class DefaultRuleSet implements RuleSet {
 
-    private static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9]*?$";
-    private static final Pattern NAME_PATTERN           = Pattern.compile(RULE_NAME_REGEX);
+    private static final String RULE_NAME_REGEX     = "^[a-zA-Z][a-zA-Z0-9]*?$";
+    private static final Pattern NAME_PATTERN       = Pattern.compile(RULE_NAME_REGEX);
 
     private final String name;
-    private final ParameterResolver parameterResolver;
-    private final BindableMethodExecutor methodExecutor;
-    private final ObjectFactory objectFactory;
 
     private final LinkedHashMap<String, Rule> rules = new LinkedHashMap<>();
 
-    public DefaultRuleSet(String name, ParameterResolver parameterResolver, BindableMethodExecutor methodExecutor,
-                          ObjectFactory objectFactory) {
+    public DefaultRuleSet(String name) {
         super();
         Assert.notNull(name, "name cannot be null.");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
         Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "RuleSet name must match [" + NAME_PATTERN
                 + "] Given [" + name + "]");
         this.name = name;
-        this.parameterResolver = parameterResolver;
-        this.methodExecutor = methodExecutor;
-        this.objectFactory = objectFactory;
+    }
+
+    @Override
+    public boolean run(RuleExecutionContext ctx) throws UnrulyException {
+        return false;
     }
 
     @Override
     public Rule add(Class<?> c) {
         RuleDefinition ruleDefinition = RuleDefinition.load(c);
-        Rule result = Rule.create(ruleDefinition, parameterResolver, methodExecutor, objectFactory);
+        Rule result = Rule.create(ruleDefinition);
         add(result, ruleDefinition.getName());
         return result;
     }
@@ -148,6 +142,6 @@ public class DefaultRuleSet implements RuleSet {
 
     protected Rule add(Condition condition, String name, String description) {
         RuleDefinition ruleDefinition = RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
-        return Rule.create(ruleDefinition, parameterResolver, methodExecutor, objectFactory);
+        return Rule.create(ruleDefinition);
     }
 }

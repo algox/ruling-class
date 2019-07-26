@@ -7,10 +7,18 @@ import org.algorithmx.rules.spring.util.Assert;
 
 public class RuleExecutionContext {
 
-    private final Bindings bindings;
-    private final BindingMatchingStrategy matchingStrategy;
+    private Bindings bindings = Bindings.create();
+    private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategyType.getDefault().getStrategy();
+
+    private ParameterResolver parameterResolver = ParameterResolver.create();
+    private BindableMethodExecutor methodExecutor =  BindableMethodExecutor.create();
+    private ObjectFactory objectFactory = ObjectFactory.create();
 
     private BindableMethodExecutor bindableMethodExecutor = BindableMethodExecutor.create();
+
+    public static RuleExecutionContext create() {
+        return new RuleExecutionContext();
+    }
 
     public static RuleExecutionContext create(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
         return new RuleExecutionContext(bindings, matchingStrategy);
@@ -18,6 +26,10 @@ public class RuleExecutionContext {
 
     public static RuleExecutionContext create(Bindings bindings) {
         return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
+    }
+
+    private RuleExecutionContext() {
+        super();
     }
 
     private RuleExecutionContext(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
@@ -28,16 +40,28 @@ public class RuleExecutionContext {
         this.matchingStrategy = matchingStrategy;
     }
 
-    public Bindings getBindings() {
+    public Bindings bindings() {
         return bindings;
     }
 
-    public BindingMatchingStrategy getMatchingStrategy() {
+    public BindingMatchingStrategy matchingStrategy() {
         return matchingStrategy;
     }
 
-    public BindableMethodExecutor getBindableMethodExecutor() {
+    public BindableMethodExecutor bindableMethodExecutor() {
         return bindableMethodExecutor;
+    }
+
+    public ParameterResolver parameterResolver() {
+        return parameterResolver;
+    }
+
+    public BindableMethodExecutor methodExecutor() {
+        return methodExecutor;
+    }
+
+    public ObjectFactory objectFactory() {
+        return objectFactory;
     }
 
     public void setBindableMethodExecutor(BindableMethodExecutor bindableMethodExecutor) {

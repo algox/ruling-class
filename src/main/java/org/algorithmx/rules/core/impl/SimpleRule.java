@@ -8,28 +8,33 @@ import org.algorithmx.rules.spring.util.Assert;
 public class SimpleRule implements Rule {
 
     private final RuleDefinition ruleDefinition;
-    private final ParameterResolver parameterResolver;
-    private final BindableMethodExecutor methodExecutor;
-    private final Object targetClassInstance;
+    private Object targetClassInstance;
 
-    public SimpleRule(RuleDefinition ruleDefinition, ParameterResolver parameterResolver,
-                      BindableMethodExecutor methodExecutor, ObjectFactory objectFactory) {
+    public SimpleRule(RuleDefinition ruleDefinition) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
-        this.parameterResolver = parameterResolver != null ? parameterResolver : ParameterResolver.create();
-        this.methodExecutor = methodExecutor != null ? methodExecutor : BindableMethodExecutor.create();
-        this.targetClassInstance = ruleDefinition.isStatic() ? null : objectFactory.create(ruleDefinition.getRulingClass());
     }
 
     @Override
     public boolean run(RuleExecutionContext ctx) throws UnrulyException {
-        Object[] args = parameterResolver.resolve(ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
-        return methodExecutor.execute(targetClassInstance, ruleDefinition.getCondition(), args);
+        Object[] args = ctx.parameterResolver().resolve(ruleDefinition.getCondition(),
+                ctx.bindings(), ctx.matchingStrategy());
+        return run(ctx, args);
     }
 
     @Override
-    public boolean run(Object... args) throws UnrulyException {
-        return methodExecutor.execute(targetClassInstance, ruleDefinition.getCondition(), args);
+    public boolean run(RuleExecutionContext ctx, Object... args) throws UnrulyException {
+        return ctx.bindableMethodExecutor().execute(ruleDefinition.isStatic()
+                        ? null
+                        : getOrCreateRuleInstance(ctx.objectFactory(), ruleDefinition.getRulingClass()),
+                ruleDefinition.getCondition(), args);
+    }
+
+    private Object getOrCreateRuleInstance(ObjectFactory objectFactory, Class<?> rulingClass) {
+        if (this.targetClassInstance == null) {
+            this.targetClassInstance = objectFactory.create(rulingClass);
+        }
+        return this.targetClassInstance;
     }
 }

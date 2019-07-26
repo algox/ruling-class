@@ -6,10 +6,13 @@ import org.algorithmx.rules.model.RuleDefinition;
 
 public interface Rule extends BaseRule {
 
-    static Rule create(RuleDefinition ruleDefinition, ParameterResolver parameterResolver,
-                       BindableMethodExecutor methodExecutor, ObjectFactory objectFactory) {
-        return new SimpleRule(ruleDefinition, parameterResolver, methodExecutor, objectFactory);
+    static Rule create(RuleDefinition ruleDefinition) {
+        return new SimpleRule(ruleDefinition);
     }
 
-    boolean run(Object... args) throws UnrulyException;
+    default boolean run(Object... args) throws UnrulyException {
+        return run(RuleExecutionContext.create(), args);
+    }
+
+    boolean run(RuleExecutionContext ctx, Object... args) throws UnrulyException;
 }
