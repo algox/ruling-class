@@ -37,4 +37,9 @@ public class SimpleRule implements Rule {
         }
         return this.targetClassInstance;
     }
+
+    @Override
+    public RuleDefinition getRuleDefinition() {
+        return ruleDefinition;
+    }
 }

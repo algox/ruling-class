@@ -17,6 +17,8 @@
  */
 package org.algorithmx.rules.annotation;
 
+import org.algorithmx.rules.core.RuleScope;
+
 import java.lang.annotation.*;
 
 /**
@@ -42,6 +44,13 @@ public @interface Rule {
      * @return Name of the Rule.
      */
     String name() default NOT_APPLICABLE;
+
+    /**
+     * Determines whether the Rule is a SINGLETON(default) or has state.
+     *
+     * @return Rule scope. SINGLETON(default).
+     */
+    RuleScope scope() default RuleScope.SINGLETON;
 
     /**
      * Text describing what the Rule does.
