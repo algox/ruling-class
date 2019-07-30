@@ -39,7 +39,12 @@ public class SimpleRule implements Rule {
     }
 
     @Override
-    public RuleDefinition getRuleDefinition() {
-        return ruleDefinition;
+    public String getName() {
+        return ruleDefinition.getName();
+    }
+
+    @Override
+    public String getDescription() {
+        return ruleDefinition.getDescription();
     }
 }

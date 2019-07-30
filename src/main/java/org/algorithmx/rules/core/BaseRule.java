@@ -4,10 +4,9 @@ import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.Bindings;
 
 import java.util.Objects;
-import java.util.function.Predicate;
 
 @FunctionalInterface
-public interface BaseRule extends Predicate<RuleExecutionContext> {
+public interface BaseRule {
 
     default boolean test(Bindings bindings) throws UnrulyException {
         return run(RuleExecutionContext.create(bindings));
@@ -17,7 +16,7 @@ public interface BaseRule extends Predicate<RuleExecutionContext> {
         return run(ctx);
     }
 
-    default BaseRule and(Rule other) {
+    default BaseRule and(BaseRule other) {
         Objects.requireNonNull(other);
         return (t) -> run(t) && other.test(t);
     }
@@ -26,7 +25,7 @@ public interface BaseRule extends Predicate<RuleExecutionContext> {
         return (t) -> !test(t);
     }
 
-    default BaseRule or(Rule other) {
+    default BaseRule or(BaseRule other) {
         Objects.requireNonNull(other);
         return (t) -> test(t) || other.test(t);
     }
@@ -36,5 +35,4 @@ public interface BaseRule extends Predicate<RuleExecutionContext> {
     }
 
     boolean run(RuleExecutionContext ctx) throws UnrulyException;
-
 }

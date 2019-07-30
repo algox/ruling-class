@@ -52,6 +52,7 @@ public final class RuleDefinition {
     private final String name;
     // Description of the Rule
     private final String description;
+    // Stateless vs Stateful
     private final RuleScope scope;
     // when method
     private final MethodDefinition condition;

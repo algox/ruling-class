@@ -16,12 +16,12 @@ public class RuleSetTest {
     @Test
     public void test1() {
         RuleSet rules = RuleSet.create("RuleSet1", "Test Rule Set")
-                .add(Rule.create("test", (String y) -> y.equals(""), ""))
-                .add(Rule.create("testrule2", (String a, BigDecimal x) -> x != null,
-                        "This test is to make sure its working!"))
-                .add(Rule.create("testrule3", (String a, String b, Integer c) -> c == 20 && "hello".equals(b),
-                ""))
-                .add(Rule.create("testrule4", () -> false, ""));
+                .add("test", (String y) -> y.equals(""), "")
+                .add("testrule2", (String a, BigDecimal x) -> x != null,
+                        "This test is to make sure its working!")
+                .add("testrule3", (String a, String b, Integer c) -> c == 20 && "hello".equals(b),
+                "")
+                .add("testrule4", () -> false, "");
 
         Bindings bindings = Bindings.create()
                 .bind("y", String.class, "")
@@ -34,8 +34,8 @@ public class RuleSetTest {
         Rule rule2 = rules.get("testrule2");
         Rule rule3 = rules.get("testrule3");
         Rule rule4 = rules.get("testrule4");
-        //CompositeRule rule5 = RuleFactory.create().all(rules);
-
+        CompositeRule rule5 = RuleFactory.and(rules);
+        
         Assert.assertTrue(rule1.run(""));
         Assert.assertTrue(rule3.run("", "hello", 20));
         Assert.assertTrue(rule3.run(bindings));
@@ -45,6 +45,6 @@ public class RuleSetTest {
         Assert.assertTrue(rule1.and(rule3).run(bindings));
         Assert.assertTrue(rule1.or(rule3).run(bindings));
         Assert.assertTrue(rule4.negate().run(bindings));
-        //Assert.assertTrue(rule5.negate().run(bindings));
+        Assert.assertTrue(rule5.negate().run(bindings));
     }
 }

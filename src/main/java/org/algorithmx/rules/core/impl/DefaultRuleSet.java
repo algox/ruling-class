@@ -2,7 +2,6 @@ package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.core.*;
-import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -53,10 +52,10 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public RuleSet add(Rule rule) {
-        Rule existingRule = rules.putIfAbsent(rule.getRuleDefinition().getName(), rule);
+        Rule existingRule = rules.putIfAbsent(rule.getName(), rule);
 
         if (existingRule != null) {
-            throw new UnrulyException("Rule with name [" + rule.getRuleDefinition().getName()
+            throw new UnrulyException("Rule with name [" + rule.getName()
                     + "] already exists in this Ruleset [" + getName() + "]");
         }
 
@@ -66,16 +65,16 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public RuleSet add(Class<?> c) {
-        return add(Rule.create(c));
-    }
-
-    @Override
-    public RuleSet add(RuleDefinition ruleDefinition) {
-        return add(Rule.create(ruleDefinition));
+        return add(RuleFactory.create(c));
     }
 
     @Override
     public Iterator<Rule> iterator() {
         return rules.values().iterator();
+    }
+
+    @Override
+    public Rule[] getRules() {
+        return rules.values().toArray(new Rule[size()]);
     }
 }
