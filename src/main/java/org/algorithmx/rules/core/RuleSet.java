@@ -12,6 +12,20 @@ public interface RuleSet extends Iterable<Rule> {
         return new DefaultRuleSet(name, description);
     }
 
+    String getName();
+
+    String getDescription();
+
+    Rule get(String ruleName);
+
+    int size();
+
+    RuleSet add(Rule rule);
+
+    RuleSet add(Class<?> rulingClass);
+
+    Rule[] getRules();
+
     default RuleSet add(String name, Condition.Condition0 condition, String description) {
         add(RuleFactory.create(name, condition, description));
         return this;
@@ -71,19 +85,5 @@ public interface RuleSet extends Iterable<Rule> {
         add(RuleFactory.create(name, condition, description));
         return this;
     }
-
-    String getName();
-
-    String getDescription();
-
-    Rule get(String ruleName);
-
-    int size();
-
-    RuleSet add(Rule rule);
-
-    RuleSet add(Class<?> rulingClass);
-
-    Rule[] getRules();
 }
 

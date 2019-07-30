@@ -32,7 +32,7 @@ public class SimpleRule implements Rule {
     }
 
     private Object getOrCreateRuleInstance(ObjectFactory objectFactory, Class<?> rulingClass) {
-        if (this.targetClassInstance == null) {
+        if (this.targetClassInstance == null || ruleDefinition.getScope() == RuleScope.PROTOTYPE) {
             this.targetClassInstance = objectFactory.create(rulingClass);
         }
         return this.targetClassInstance;

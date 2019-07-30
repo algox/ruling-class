@@ -35,7 +35,7 @@ public class RuleSetTest {
         Rule rule3 = rules.get("testrule3");
         Rule rule4 = rules.get("testrule4");
         CompositeRule rule5 = RuleFactory.and(rules);
-        
+
         Assert.assertTrue(rule1.run(""));
         Assert.assertTrue(rule3.run("", "hello", 20));
         Assert.assertTrue(rule3.run(bindings));
