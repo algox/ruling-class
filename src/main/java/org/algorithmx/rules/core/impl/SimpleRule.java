@@ -5,7 +5,7 @@ import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
-public class SimpleRule implements Rule {
+public class SimpleRule implements IdentifiableRule {
 
     private final RuleDefinition ruleDefinition;
     private Object targetClassInstance;
@@ -23,8 +23,7 @@ public class SimpleRule implements Rule {
         return run(ctx, args);
     }
 
-    @Override
-    public boolean run(RuleExecutionContext ctx, Object... args) throws UnrulyException {
+    protected boolean run(RuleExecutionContext ctx, Object... args) throws UnrulyException {
         return ctx.bindableMethodExecutor().execute(ruleDefinition.isStatic()
                         ? null
                         : getOrCreateRuleInstance(ctx.objectFactory(), ruleDefinition.getRulingClass()),

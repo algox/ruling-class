@@ -22,7 +22,7 @@ public class RuleSetTest {
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        Rule rule6 = RuleFactory.rule("testrule6", () -> true, "this test rule 6 ");
+        IdentifiableRule rule6 = RuleFactory.rule("testrule6", () -> true, "this test rule 6 ");
 
         RuleSet rules = RuleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", (String y) -> y.equals(""), "")
@@ -39,8 +39,6 @@ public class RuleSetTest {
         Rule rule4 = rules.get("testrule4");
         CompositeRule rule5 = RuleFactory.and(rules);
 
-        Assert.assertTrue(rule1.run(""));
-        Assert.assertTrue(rule3.run("", "hello", 20));
         Assert.assertTrue(rule3.run(bindings));
         Assert.assertTrue(rule3.run(RuleExecutionContext.create(bindings)));
 

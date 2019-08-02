@@ -1,6 +1,6 @@
 package org.algorithmx.rules.core;
 
-public interface IdentifiableRule extends BaseRule {
+public interface IdentifiableRule extends Rule {
 
     String getName();
 

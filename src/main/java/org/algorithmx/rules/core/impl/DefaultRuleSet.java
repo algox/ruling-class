@@ -17,7 +17,7 @@ public class DefaultRuleSet implements RuleSet {
     private final String name;
     private final String description;
 
-    private final LinkedHashMap<String, Rule> rules = new LinkedHashMap<>();
+    private final LinkedHashMap<String, IdentifiableRule> rules = new LinkedHashMap<>();
 
     public DefaultRuleSet(String name, String description) {
         super();
@@ -51,7 +51,7 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleSet add(Rule rule) {
+    public RuleSet add(IdentifiableRule rule) {
         Rule existingRule = rules.putIfAbsent(rule.getName(), rule);
 
         if (existingRule != null) {
@@ -69,12 +69,12 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Iterator<Rule> iterator() {
+    public Iterator<IdentifiableRule> iterator() {
         return rules.values().iterator();
     }
 
     @Override
-    public Rule[] getRules() {
-        return rules.values().toArray(new Rule[size()]);
+    public IdentifiableRule[] getRules() {
+        return rules.values().toArray(new IdentifiableRule[size()]);
     }
 }

@@ -13,6 +13,10 @@ public final class RuleFactory {
         super();
     }
 
+    public static CompositeRule and(RuleSet ruleSet) {
+        return and(ruleSet.getRules());
+    }
+
     public static CompositeRule and(final Rule[] allRules) {
         return new DefaultCompositeRule(allRules, (rules, ctx) -> {
             for (Rule rule : rules) {
@@ -22,8 +26,8 @@ public final class RuleFactory {
         });
     }
 
-    public static CompositeRule and(RuleSet ruleSet) {
-        return and(ruleSet.getRules());
+    public static CompositeRule or(RuleSet ruleSet) {
+        return or(ruleSet.getRules());
     }
 
     public static CompositeRule or(final Rule[] allRules) {
@@ -35,8 +39,8 @@ public final class RuleFactory {
         });
     }
 
-    public static CompositeRule or(RuleSet ruleSet) {
-        return or(ruleSet.getRules());
+    public static CompositeRule none(RuleSet ruleSet) {
+        return none(ruleSet.getRules());
     }
 
     public static CompositeRule none(final Rule[] allRules) {
@@ -48,10 +52,6 @@ public final class RuleFactory {
         });
     }
 
-    public static CompositeRule none(RuleSet ruleSet) {
-        return none(ruleSet.getRules());
-    }
-
     public static RuleSet rules(String name) {
         return new DefaultRuleSet(name, null);
     }
@@ -60,60 +60,60 @@ public final class RuleFactory {
         return new DefaultRuleSet(name, description);
     }
 
-    public static Rule rule(Class<?> rulingClass) {
+    public static IdentifiableRule rule(Class<?> rulingClass) {
         return create(RuleDefinition.load(rulingClass));
     }
 
-    public static Rule rule(String name, Condition.Condition0 condition, String description) {
+    public static IdentifiableRule rule(String name, Condition.Condition0 condition, String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A> Rule rule(String name, Condition.Condition1<A> condition, String description) {
+    public static <A> IdentifiableRule rule(String name, Condition.Condition1<A> condition, String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B> Rule rule(String name, Condition.Condition2<A, B> condition, String description) {
+    public static <A, B> IdentifiableRule rule(String name, Condition.Condition2<A, B> condition, String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C> Rule rule(String name, Condition.Condition3<A, B, C> condition, String description) {
+    public static <A, B, C> IdentifiableRule rule(String name, Condition.Condition3<A, B, C> condition, String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D> Rule rule(String name, Condition.Condition4<A, B, C, D> condition, String description) {
+    public static <A, B, C, D> IdentifiableRule rule(String name, Condition.Condition4<A, B, C, D> condition, String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D, E> Rule rule(String name, Condition.Condition5<A, B, C, D, E> condition, String description) {
+    public static <A, B, C, D, E> IdentifiableRule rule(String name, Condition.Condition5<A, B, C, D, E> condition, String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D, E, F> Rule rule(String name, Condition.Condition6<A, B, C, D, E, F> condition,
+    public static <A, B, C, D, E, F> IdentifiableRule rule(String name, Condition.Condition6<A, B, C, D, E, F> condition,
                                                              String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D, E, F, G> Rule rule(String name, Condition.Condition7<A, B, C, D, E, F, G> condition,
+    public static <A, B, C, D, E, F, G> IdentifiableRule rule(String name, Condition.Condition7<A, B, C, D, E, F, G> condition,
                                                                 String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D, E, F, G, H> Rule rule(String name, Condition.Condition8<A, B, C, D, E, F, G, H> condition,
+    public static <A, B, C, D, E, F, G, H> IdentifiableRule rule(String name, Condition.Condition8<A, B, C, D, E, F, G, H> condition,
                                                                    String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D, E, F, G, H, I> Rule rule(String name, Condition.Condition9<A, B, C, D, E, F, G, H, I> condition,
+    public static <A, B, C, D, E, F, G, H, I> IdentifiableRule rule(String name, Condition.Condition9<A, B, C, D, E, F, G, H, I> condition,
                                                                       String description) {
         return create(load(condition, name, description));
     }
 
-    public static <A, B, C, D, E, F, G, H, I, J> Rule rule(String name, Condition.Condition10<A, B, C, D, E, F, G, H, I, J> condition,
+    public static <A, B, C, D, E, F, G, H, I, J> IdentifiableRule rule(String name, Condition.Condition10<A, B, C, D, E, F, G, H, I, J> condition,
                                                                          String description) {
         return create(load(condition, name, description));
     }
 
-    private static Rule create(RuleDefinition ruleDefinition) {
+    private static IdentifiableRule create(RuleDefinition ruleDefinition) {
         return new SimpleRule(ruleDefinition);
     }
 

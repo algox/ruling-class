@@ -1,6 +1,6 @@
 package org.algorithmx.rules.core;
 
-public interface RuleSet extends Iterable<Rule> {
+public interface RuleSet extends Iterable<IdentifiableRule> {
 
     String getName();
 
@@ -10,11 +10,11 @@ public interface RuleSet extends Iterable<Rule> {
 
     int size();
 
-    RuleSet add(Rule rule);
+    RuleSet add(IdentifiableRule rule);
 
     RuleSet add(Class<?> rulingClass);
 
-    Rule[] getRules();
+    IdentifiableRule[] getRules();
 
     default RuleSet add(String name, Condition.Condition0 condition, String description) {
         add(RuleFactory.rule(name, condition, description));

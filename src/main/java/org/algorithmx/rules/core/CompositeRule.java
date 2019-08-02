@@ -1,6 +1,6 @@
 package org.algorithmx.rules.core;
 
-public interface CompositeRule extends BaseRule {
+public interface CompositeRule extends Rule {
 
     Rule[] getRules();
 }
