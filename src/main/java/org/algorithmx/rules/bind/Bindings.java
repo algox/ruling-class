@@ -44,17 +44,30 @@ public interface Bindings extends Iterable<Binding<?>> {
         return new SimpleBindings();
     }
 
+    /**
+     * Creates an instance of the Bindings and adds all the declarations to the Bindings.
+     *
+     * @return new instance of the Bindings (with all declarations added).
+     */
     static Bindings create(BindingDeclaration... declarations)  {
         Assert.notNull(declarations, "declarations cannot be null");
         Bindings result = new SimpleBindings();
-
-        Arrays.stream(declarations).forEach(declaration -> {
-            Object value = declaration.value();
-            Class type = value == null ? Object.class : value.getClass();
-            result.bind(declaration.name(), type, declaration.value());
-        });
-
+        Arrays.stream(declarations).forEach(result::bind);
         return result;
+    }
+
+    /**
+     * Creates a new Binding using a BindingDeclaration. The type of the Binding will be the type of the value.
+     * In case the value is null then the type is Object.class. Note that generics are not available and hence the
+     * type that is declared will NOT have any generic type.
+     *
+     * @param declaration declaration details.
+     * @return this Bindings (fluent interface).
+     */
+    default Bindings bind(BindingDeclaration declaration) {
+        Object value = declaration.value();
+        Class type = value == null ? Object.class : value.getClass();
+        return bind(declaration.name(), type, declaration.value());
     }
 
     /**
