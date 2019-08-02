@@ -5,6 +5,7 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.spring.util.Assert;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public class RuleExecutionContext {
@@ -57,6 +58,15 @@ public class RuleExecutionContext {
 
     public ObjectFactory objectFactory() {
         return objectFactory;
+    }
+
+    public RuleSet ruleSet(String name) {
+        return rules.get(name);
+    }
+
+    public void setRules(RuleSet...rules) {
+        Assert.notNull(rules, "rules cannot be null");
+        Arrays.stream(rules).forEach(r -> this.rules.put(r.getName(), r));
     }
 
     public void setBindableMethodExecutor(BindableMethodExecutor bindableMethodExecutor) {
