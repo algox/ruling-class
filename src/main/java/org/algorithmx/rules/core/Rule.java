@@ -1,6 +1,7 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 
 import java.util.Objects;
@@ -10,6 +11,10 @@ import java.util.function.Predicate;
 public interface Rule extends Predicate<RuleExecutionContext> {
 
     boolean run(RuleExecutionContext ctx) throws UnrulyException;
+
+    default boolean run(BindingDeclaration... bindings) {
+        return run(Bindings.create(bindings));
+    }
 
     default boolean run(Bindings bindings) throws UnrulyException {
         return run(RuleExecutionContext.create(bindings));

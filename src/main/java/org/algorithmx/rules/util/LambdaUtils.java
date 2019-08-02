@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
+import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 
 import java.io.Serializable;
@@ -47,6 +48,8 @@ public final class LambdaUtils {
      * @return true if the target class is a Lambda; false otherwise.
      */
     public static boolean isLambda(Object target) {
+        Assert.notNull(target, "target cannot be null.");
+
         try {
             if (!target.getClass().isSynthetic()) return false;
             return (target instanceof Serializable) ? getSerializedLambda((Serializable) target) != null : false;
@@ -63,6 +66,7 @@ public final class LambdaUtils {
      * @throws IllegalStateException if the given target object really isn't a Lambda or if we are unable to deserialize the Lambda.
      */
     public static SerializedLambda getSerializedLambda(Serializable target) {
+        Assert.notNull(target, "target cannot be null.");
         Method writeReplaceMethod = getWriteReplaceMethod(target.getClass());
 
         try {
@@ -86,6 +90,20 @@ public final class LambdaUtils {
     }
 
     /**
+     * Returns the Serialized form of the Lambda.
+     *
+     * @param target Lambda object
+     * @return Serialized form of the given lambda; null in case of any error.
+     */
+    public static SerializedLambda getSafeSerializedLambda(Serializable target) {
+        try {
+            return getSerializedLambda(target);
+        } catch (IllegalStateException e) {
+            return null;
+        }
+    }
+
+    /**
      * Return the Lambda implementation class.
      *
      * @param lambda serialized lambda form
@@ -93,6 +111,7 @@ public final class LambdaUtils {
      * @throws IllegalStateException if we are unable to load the implementing Class.
      */
     public static Class<?> getImplementationClass(SerializedLambda lambda) {
+        Assert.notNull(lambda, "lambda cannot be null.");
         String className = null;
 
         try {
@@ -112,6 +131,8 @@ public final class LambdaUtils {
      * @throws IllegalStateException if we are unable to locate the Lambda implementing method.
      */
     public static Method getImplementationMethod(SerializedLambda lambda, Class<?> implementingClass) {
+        Assert.notNull(lambda, "lambda cannot be null.");
+        Assert.notNull(implementingClass, "implementingClass cannot be null.");
         Optional<Method> result = Arrays.stream(implementingClass.getDeclaredMethods())
                 .filter(method -> method.getName().equals(lambda.getImplMethodName()))
                 .findFirst();

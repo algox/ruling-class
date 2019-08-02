@@ -153,6 +153,15 @@ public class BindTest {
         Assert.assertTrue(bindings2.contains("key2", String.class));
     }
 
+    @Test
+    public void testBind11() {
+        Bindings bindings1 = Bindings.create(key1 -> "hello", a -> 123, c -> 12.11);
+        Assert.assertTrue(bindings1.contains("key1", String.class));
+        Assert.assertTrue(bindings1.contains("a", int.class));
+        Assert.assertTrue(bindings1.contains("c", double.class));
+
+    }
+
     @Test(expected = InvalidBindingException.class)
     public void testValidation() {
         Bindings.create()

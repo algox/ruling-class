@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.SimpleBindings;
+import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,8 +40,21 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @return new instance of the Bindings.
      */
-     static Bindings create() {
+    static Bindings create() {
         return new SimpleBindings();
+    }
+
+    static Bindings create(BindingDeclaration... declarations)  {
+        Assert.notNull(declarations, "declarations cannot be null");
+        Bindings result = new SimpleBindings();
+
+        Arrays.stream(declarations).forEach(declaration -> {
+            Object value = declaration.value();
+            Class type = value == null ? Object.class : value.getClass();
+            result.bind(declaration.name(), type, declaration.value());
+        });
+
+        return result;
     }
 
     /**

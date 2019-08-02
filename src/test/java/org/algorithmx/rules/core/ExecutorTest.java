@@ -132,4 +132,20 @@ public class ExecutorTest {
         int result = bindings.get("result");
         Assert.assertTrue(result == 10);
     }
+
+    @Test
+    public void test6() {
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        Rule rule = RuleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
+        boolean result = rule.run(x -> "hello world", y -> 20, z -> 10);
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void test7() {
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        Rule rule = RuleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
+        boolean result = rule.run(x -> "hello world", y -> 20, z -> 10);
+        Assert.assertTrue(result);
+    }
 }
