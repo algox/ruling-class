@@ -4,6 +4,7 @@ import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.util.LambdaUtils;
+import org.algorithmx.rules.util.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
@@ -14,8 +15,6 @@ public interface BindingDeclaration extends Function<String, Object>, Serializab
 
     long serialVersionUID = -0L;
 
-    ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-
     default String name() {
         SerializedLambda lambda = LambdaUtils.getSafeSerializedLambda(this);
 
@@ -25,7 +24,7 @@ public interface BindingDeclaration extends Function<String, Object>, Serializab
 
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
-        String[] parameterNames = parameterNameDiscoverer.getParameterNames(implementationMethod);
+        String[] parameterNames = ReflectionUtils.getParameterNames(implementationMethod);
 
         return parameterNames[0];
     }

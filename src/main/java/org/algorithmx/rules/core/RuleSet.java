@@ -1,5 +1,9 @@
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.spring.util.Assert;
+
+import java.util.Arrays;
+
 public interface RuleSet extends Iterable<IdentifiableRule> {
 
     String getName();
@@ -15,6 +19,18 @@ public interface RuleSet extends Iterable<IdentifiableRule> {
     RuleSet add(Class<?> rulingClass);
 
     IdentifiableRule[] getRules();
+
+    default RuleSet add(IdentifiableRule[] rules) {
+        Assert.notNull(rules, "rules cannot be null.");
+        Arrays.stream(rules).forEach(this::add);
+        return this;
+    }
+
+    default RuleSet add(RuleSet ruleSet) {
+        Assert.notNull(ruleSet, "rules cannot be null.");
+        add(ruleSet.getRules());
+        return this;
+    }
 
     default RuleSet add(String name, Condition.Condition0 condition, String description) {
         add(RuleFactory.rule(name, condition, description));

@@ -43,7 +43,7 @@ public class SimpleBindings implements Bindings {
     @SuppressWarnings("unchecked")
     public <T> Bindings bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException {
-        SimpleBinding<T> result = new SimpleBinding<T>(name, typeRef.getType(), initialValue, validationCheck);
+        SimpleBinding<T> result = new SimpleBinding(name, typeRef.getType(), initialValue, validationCheck);
         result.setMutable(mutable);
         bind(result);
         return this;
