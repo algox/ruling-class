@@ -24,6 +24,7 @@ import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
+import org.algorithmx.rules.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -42,8 +43,6 @@ import java.util.Arrays;
  * @since 1.0
  */
 public final class ParameterDefinition {
-
-    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     private final int index;
     private final String name;
@@ -73,7 +72,7 @@ public final class ParameterDefinition {
      * @return all the parameter definitions for the given method.
      */
     public static ParameterDefinition[] load(Method method) {
-        String[] parameterNames = parameterNameDiscoverer.getParameterNames(method);
+        String[] parameterNames = ReflectionUtils.getParameterNames(method);
         Assert.isTrue(parameterNames.length == method.getParameterTypes().length,
                 "parameterNames length does not match parameter types length");
         ParameterDefinition[] result = new ParameterDefinition[method.getParameterTypes().length];

@@ -47,6 +47,7 @@ public interface Bindings extends Iterable<Binding<?>> {
     /**
      * Creates an instance of the Bindings and adds all the declarations to the Bindings.
      *
+     * @param declarations binding declarations.
      * @return new instance of the Bindings (with all declarations added).
      */
     static Bindings create(BindingDeclaration... declarations)  {

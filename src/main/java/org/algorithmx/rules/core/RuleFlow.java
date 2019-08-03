@@ -1,5 +1,6 @@
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.annotation.Managed;
 import org.algorithmx.rules.bind.Bindings;
 
@@ -10,41 +11,51 @@ public interface RuleFlow<T> {
 
     @Managed
     default Bindings bindings() {
-        return null;
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
-    default boolean rule(Rule rule) {
-        return false;
+    default boolean rule(String name) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
-    default boolean and(RuleSet ruleSet) {
-        return and(ruleSet.getRules());
+    default RuleSet ruleSet(String name) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
-    default boolean and(final Rule[] allRules) {
-        return false;
+    default boolean run(Rule rule) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
-    default boolean or(RuleSet ruleSet) {
-        return or(ruleSet.getRules());
+    default boolean all(String ruleSet) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
-    default boolean or(final Rule[] allRules) {
-        return false;
+    default boolean all(final Rule[] allRules) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
-    default boolean none(RuleSet ruleSet) {
-        return none(ruleSet.getRules());
+    default boolean any(String ruleSet) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
+    }
+
+    @Managed
+    default boolean any(final Rule[] allRules) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
+    }
+
+    @Managed
+    default boolean none(String ruleSet) {
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 
     @Managed
     default boolean none(final Rule[] allRules) {
-        return false;
+        throw new UnrulyException("RuleFlow must be executed in a managed environment.");
     }
 }
