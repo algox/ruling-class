@@ -137,7 +137,7 @@ public class ExecutorTest {
     public void test6() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
         Rule rule = RuleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
-        boolean result = rule.run(x -> "hello world", y -> 20, z -> 10);
+        boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
         Assert.assertTrue(result);
     }
 
@@ -145,7 +145,7 @@ public class ExecutorTest {
     public void test7() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
         Rule rule = RuleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
-        boolean result = rule.run(x -> "hello world", y -> 20, z -> 10);
+        boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
         Assert.assertTrue(result);
     }
 }

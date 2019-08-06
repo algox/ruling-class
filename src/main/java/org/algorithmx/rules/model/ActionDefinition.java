@@ -110,6 +110,15 @@ public final class ActionDefinition {
         return action;
     }
 
+    /**
+     * Determines if the action is a statically implemented method call (such as a lambda).
+     *
+     * @return true if statically implemented; false otherwise.
+     */
+    public boolean isStatic() {
+        return action.isStatic();
+    }
+
     @Override
     public String toString() {
         return "ActionDefinition{" +

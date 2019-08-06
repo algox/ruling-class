@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 /**
- * Defines a method is to be run dynamically (such as "when" and "then")
+ * Defines a method is to be isPass dynamically (such as "when" and "then")
  *
  * The definition stores the reflective method and its assocated parameter definitions.
  *

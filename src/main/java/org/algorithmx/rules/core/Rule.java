@@ -10,27 +10,39 @@ import java.util.function.Predicate;
 @FunctionalInterface
 public interface Rule extends Predicate<RuleExecutionContext> {
 
-    boolean run(RuleExecutionContext ctx) throws UnrulyException;
+    boolean isPass(RuleExecutionContext ctx) throws UnrulyException;
 
-    default boolean run(BindingDeclaration... bindings) {
-        return run(Bindings.create(bindings));
+    default boolean isPass(BindingDeclaration... bindings) {
+        return isPass(Bindings.create(bindings));
     }
 
-    default boolean run(Bindings bindings) throws UnrulyException {
-        return run(RuleExecutionContext.create(bindings));
+    default boolean isPass(Bindings bindings) throws UnrulyException {
+        return isPass(RuleExecutionContext.create(bindings));
+    }
+
+    default boolean isFail(RuleExecutionContext ctx) throws UnrulyException {
+        return !isPass(ctx);
+    }
+
+    default boolean isFail(BindingDeclaration... bindings) {
+        return !isPass(Bindings.create(bindings));
+    }
+
+    default boolean isFail(Bindings bindings) throws UnrulyException {
+        return !isPass(RuleExecutionContext.create(bindings));
     }
 
     default boolean test(Bindings bindings) throws UnrulyException {
-        return run(RuleExecutionContext.create(bindings));
+        return isPass(RuleExecutionContext.create(bindings));
     }
 
     default boolean test(RuleExecutionContext ctx) throws UnrulyException {
-        return run(ctx);
+        return isPass(ctx);
     }
 
     default Rule and(Rule other) {
         Objects.requireNonNull(other);
-        return (t) -> run(t) && other.test(t);
+        return (t) -> isPass(t) && other.test(t);
     }
 
     default Rule negate() {

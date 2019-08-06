@@ -42,15 +42,15 @@ public class SimpleRuleFlowTest {
         public Integer run() {
             int result = 0;
 
-            
+
             return result;
         }
 
         /**@Override
-        public Integer run() {
+        public Integer isPass() {
             int result = 0;
 
-            if (run(rule("x")) && run(and(ruleSet("c")))) {
+            if (isPass(rule("x")) && isPass(and(ruleSet("c")))) {
                 result = 1;
             }
 

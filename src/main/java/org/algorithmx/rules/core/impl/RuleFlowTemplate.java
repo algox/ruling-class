@@ -22,7 +22,7 @@ public abstract class RuleFlowTemplate<T> implements RuleFlow<T> {
     /*@Override
     public final boolean rule(Rule rule) {
         Assert.notNull(rule, "rule cannot be null.");
-        return rule.run(ctx);
+        return rule.isPass(ctx);
     }
 
     @Override

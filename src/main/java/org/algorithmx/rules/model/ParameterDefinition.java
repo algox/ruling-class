@@ -32,7 +32,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 
 /**
- * Defines a parameter within a method that is to be run dynamically (such as "when" and "then")
+ * Defines a parameter within a method that is to be isPass dynamically (such as "when" and "then")
  *
  * The definition stores the parameter index, name of parameter (automatically discovered), generic type,
  * whether the parameter is required and any associated annotations.

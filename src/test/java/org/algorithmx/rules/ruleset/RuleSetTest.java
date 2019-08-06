@@ -39,13 +39,13 @@ public class RuleSetTest {
         Rule rule4 = rules.get("testrule4");
         CompositeRule rule5 = RuleFactory.and(rules);
 
-        Assert.assertTrue(rule3.run(bindings));
-        Assert.assertTrue(rule3.run(RuleExecutionContext.create(bindings)));
+        Assert.assertTrue(rule3.isPass(bindings));
+        Assert.assertTrue(rule3.isPass(RuleExecutionContext.create(bindings)));
 
-        Assert.assertTrue(rule1.or(rule2).and(rule3).run(bindings));
-        Assert.assertTrue(rule1.and(rule3).run(bindings));
-        Assert.assertTrue(rule1.or(rule3).run(bindings));
-        Assert.assertTrue(rule4.negate().negate().run(bindings));
-        Assert.assertTrue(rule5.run(bindings));
+        Assert.assertTrue(rule1.or(rule2).and(rule3).isPass(bindings));
+        Assert.assertTrue(rule1.and(rule3).isPass(bindings));
+        Assert.assertTrue(rule1.or(rule3).isPass(bindings));
+        Assert.assertTrue(rule4.negate().negate().isPass(bindings));
+        Assert.assertTrue(rule5.isPass(bindings));
     }
 }

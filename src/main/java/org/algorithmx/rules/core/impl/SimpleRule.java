@@ -17,13 +17,13 @@ public class SimpleRule implements IdentifiableRule {
     }
 
     @Override
-    public boolean run(RuleExecutionContext ctx) throws UnrulyException {
+    public boolean isPass(RuleExecutionContext ctx) throws UnrulyException {
         Object[] args = ctx.parameterResolver().resolve(ruleDefinition.getCondition(),
                 ctx.bindings(), ctx.matchingStrategy());
-        return run(ctx, args);
+        return isPass(ctx, args);
     }
 
-    protected boolean run(RuleExecutionContext ctx, Object... args) throws UnrulyException {
+    protected boolean isPass(RuleExecutionContext ctx, Object... args) throws UnrulyException {
         return ctx.bindableMethodExecutor().execute(ruleDefinition.isStatic()
                         ? null
                         : getOrCreateRuleInstance(ctx.objectFactory(), ruleDefinition.getRulingClass()),

@@ -23,7 +23,7 @@ public class DefaultCompositeRule implements CompositeRule {
     }
 
     @Override
-    public boolean run(RuleExecutionContext ctx) throws UnrulyException {
+    public boolean isPass(RuleExecutionContext ctx) throws UnrulyException {
         return test.test(rules, ctx);
     }
 
