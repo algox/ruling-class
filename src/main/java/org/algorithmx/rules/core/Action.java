@@ -1,74 +1,19 @@
 package org.algorithmx.rules.core;
 
-import java.io.Serializable;
+import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 
-public interface Action extends Serializable {
+@FunctionalInterface
+public interface Action {
 
-    long serialVersionUID = -0L;
+    void run(RuleExecutionContext ctx) throws UnrulyException;
 
-    @FunctionalInterface
-    interface Action0 extends Action {
-
-        void then();
+    default void run(BindingDeclaration... bindings) {
+        run(Bindings.create(bindings));
     }
 
-    @FunctionalInterface
-    interface Action1<A> extends Action {
-
-        void then(A arg1);
-    }
-
-    @FunctionalInterface
-    interface Action2<A, B> extends Action {
-
-        void then(A arg1, B arg2);
-    }
-
-    @FunctionalInterface
-    interface Action3<A, B, C> extends Action {
-
-        void then(A arg1, B arg2, C arg3);
-    }
-
-    @FunctionalInterface
-    interface Action4<A, B, C, D> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4);
-    }
-
-    @FunctionalInterface
-    interface Action5<A, B, C, D, E> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4, E arg5);
-    }
-
-    @FunctionalInterface
-    interface Action6<A, B, C, D, E, F> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4, E arg5, F arg6);
-    }
-
-    @FunctionalInterface
-    interface Action7<A, B, C, D, E, F, G> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4, E arg5, F arg6, G arg7);
-    }
-
-    @FunctionalInterface
-    interface Action8<A, B, C, D, E, F, G, H> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4, E arg5, F arg6, G arg7, H arg8);
-    }
-
-    @FunctionalInterface
-    interface Action9<A, B, C, D, E, F, G, H, I> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4, E arg5, F arg6, G arg7, H arg8, I arg9);
-    }
-
-    @FunctionalInterface
-    interface Action10<A, B, C, D, E, F, G, H, I, J> extends Action {
-
-        void then(A arg1, B arg2, C arg3, D arg4, E arg5, F arg6, G arg7, H arg8, I arg9, J arg10);
+    default void run(Bindings bindings) throws UnrulyException {
+        run(RuleExecutionContext.create(bindings));
     }
 }

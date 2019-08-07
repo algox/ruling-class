@@ -4,14 +4,17 @@ import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+public interface RuleAction {
 
-@FunctionalInterface
-public interface RuleAction extends Consumer<RuleExecutionContext> {
+    Rule getRule();
 
-    void run(RuleExecutionContext ctx) throws UnrulyException;
+    Action getAction();
+
+    default void run(RuleExecutionContext ctx) throws UnrulyException {
+        if (getRule().isPass(ctx)) {
+            getAction().run(ctx);
+        }
+    }
 
     default void run(BindingDeclaration... bindings) {
         run(Bindings.create(bindings));
@@ -20,13 +23,4 @@ public interface RuleAction extends Consumer<RuleExecutionContext> {
     default void run(Bindings bindings) throws UnrulyException {
         run(RuleExecutionContext.create(bindings));
     }
-
-    @Override
-    default void accept(RuleExecutionContext ctx) {
-        run(ctx);
-    }
-
-    /*default RuleAction andThen(RuleAction after) {
-        return (RuleExecutionContext t) -> { accept(t); after.accept(t); };
-    }*/
 }

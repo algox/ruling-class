@@ -3,6 +3,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.impl.SimpleRuleAction;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -52,5 +53,9 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     default Rule or(Rule other) {
         Objects.requireNonNull(other);
         return (t) -> test(t) || other.test(t);
+    }
+
+    default RuleAction then(Action action) {
+        return new SimpleRuleAction(this, action);
     }
 }

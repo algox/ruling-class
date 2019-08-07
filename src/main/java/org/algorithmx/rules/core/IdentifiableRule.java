@@ -1,10 +1,5 @@
 package org.algorithmx.rules.core;
 
-public interface IdentifiableRule extends Rule {
+public interface IdentifiableRule extends Rule, Identifiable {
 
-    String getName();
-
-    default String getDescription() {
-        return null;
-    }
 }
