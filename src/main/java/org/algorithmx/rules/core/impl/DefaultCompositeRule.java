@@ -31,4 +31,9 @@ public class DefaultCompositeRule implements CompositeRule {
     public final Rule[] getRules() {
         return rules;
     }
+
+    @Override
+    public Object getTarget() {
+        return this;
+    }
 }

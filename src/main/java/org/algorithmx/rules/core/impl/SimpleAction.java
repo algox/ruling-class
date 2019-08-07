@@ -9,13 +9,13 @@ import org.algorithmx.rules.spring.util.Assert;
 public class SimpleAction implements Action {
 
     private final ActionDefinition actionDefinition;
-    private final Object targetClassInstance;
+    private final Object target;
 
-    public SimpleAction(ActionDefinition actionDefinition, Object targetClassInstance) {
+    public SimpleAction(ActionDefinition actionDefinition, Object target) {
         super();
         Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
         this.actionDefinition = actionDefinition;
-        this.targetClassInstance = targetClassInstance;
+        this.target = target;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class SimpleAction implements Action {
                 ctx.bindings(), ctx.matchingStrategy());
         ctx.bindableMethodExecutor().execute(actionDefinition.isStatic()
                         ? null
-                        : targetClassInstance, actionDefinition.getAction(), args);
+                        : target, actionDefinition.getAction(), args);
 
     }
 }

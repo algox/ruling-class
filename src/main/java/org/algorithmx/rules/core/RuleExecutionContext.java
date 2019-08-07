@@ -15,7 +15,6 @@ public class RuleExecutionContext {
     private final BindingMatchingStrategy matchingStrategy;
 
     private ParameterResolver parameterResolver = ParameterResolver.create();
-    private ObjectFactory objectFactory = ObjectFactory.create();
     private BindableMethodExecutor bindableMethodExecutor = BindableMethodExecutor.create();
 
     public static RuleExecutionContext create(Bindings bindings) {
@@ -52,10 +51,6 @@ public class RuleExecutionContext {
 
     public BindableMethodExecutor methodExecutor() {
         return bindableMethodExecutor;
-    }
-
-    public ObjectFactory objectFactory() {
-        return objectFactory;
     }
 
     public RuleSet ruleSet(String name) {

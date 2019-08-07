@@ -65,7 +65,7 @@ public abstract class TypeReference<T> {
     }
 
     /**
-     * Static way to create a Type Reference to an existing Type.
+     * Static way to defaultBindings a Type Reference to an existing Type.
      *
      * @param type existing Type.
      * @param <T> desired Generic Type.

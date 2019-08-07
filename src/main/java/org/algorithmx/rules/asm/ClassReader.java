@@ -1314,7 +1314,7 @@ public class ClassReader {
         final int codeLength = readInt(currentOffset + 4);
         currentOffset += 8;
 
-        // Read the bytecode 'code' array to create a label for each referenced instruction.
+        // Read the bytecode 'code' array to defaultBindings a label for each referenced instruction.
         final int bytecodeStartOffset = currentOffset;
         final int bytecodeEndOffset = currentOffset + codeLength;
         final Label[] labels = context.currentMethodLabels = new Label[codeLength + 1];
@@ -1612,7 +1612,7 @@ public class ClassReader {
             }
         }
 
-        // Read the 'exception_table_length' and 'exception_table' field to create a label for each
+        // Read the 'exception_table_length' and 'exception_table' field to defaultBindings a label for each
         // referenced instruction, and to make methodVisitor visit the corresponding try catch blocks.
         int exceptionTableLength = readUnsignedShort(currentOffset);
         currentOffset += 2;
@@ -1625,7 +1625,7 @@ public class ClassReader {
             methodVisitor.visitTryCatchBlock(start, end, handler, catchType);
         }
 
-        // Read the Code attributes to create a label for each referenced instruction (the variables
+        // Read the Code attributes to defaultBindings a label for each referenced instruction (the variables
         // are ordered as in Section 4.7 of the JVMS). Attribute offsets exclude the
         // attribute_name_index and attribute_length fields.
         // - The offset of the current 'stack_map_frame' in the StackMap[Table] attribute, or 0.
@@ -2439,7 +2439,7 @@ public class ClassReader {
      *
      * @param bytecodeOffset a bytecode offset in a method.
      * @param labels the already created labels, indexed by their offset. If a label already exists
-     *     for bytecodeOffset this method must not create a new one. Otherwise it must store the new
+     *     for bytecodeOffset this method must not defaultBindings a new one. Otherwise it must store the new
      *     label in this array.
      * @return a non null Label, which must be equal to labels[bytecodeOffset].
      */
@@ -2509,7 +2509,7 @@ public class ClassReader {
             final boolean visible) {
         char[] charBuffer = context.charBuffer;
         int currentOffset = runtimeTypeAnnotationsOffset;
-        // Read the num_annotations field and create an array to store the type_annotation offsets.
+        // Read the num_annotations field and defaultBindings an array to store the type_annotation offsets.
         int[] typeAnnotationsOffsets = new int[readUnsignedShort(currentOffset)];
         currentOffset += 2;
         // Parse the 'annotations' array field.
@@ -2566,7 +2566,7 @@ public class ClassReader {
             // (whose size depends on its path_length field).
             int pathLength = readByte(currentOffset);
             if ((targetType >>> 24) == TypeReference.EXCEPTION_PARAMETER) {
-                // Parse the target_path structure and create a corresponding TypePath.
+                // Parse the target_path structure and defaultBindings a corresponding TypePath.
                 TypePath path = pathLength == 0 ? null : new TypePath(classFileBuffer, currentOffset);
                 currentOffset += 1 + 2 * pathLength;
                 // Parse the type_index field.
@@ -3254,7 +3254,7 @@ public class ClassReader {
             int attributeLength = readInt(currentAttributeOffset + 2);
             currentAttributeOffset += 6;
             if (Constants.BOOTSTRAP_METHODS.equals(attributeName)) {
-                // Read the num_bootstrap_methods field and create an array of this size.
+                // Read the num_bootstrap_methods field and defaultBindings an array of this size.
                 currentBootstrapMethodOffsets = new int[readUnsignedShort(currentAttributeOffset)];
                 // Compute and store the offset of each 'bootstrap_methods' array field entry.
                 int currentBootstrapMethodOffset = currentAttributeOffset + 2;

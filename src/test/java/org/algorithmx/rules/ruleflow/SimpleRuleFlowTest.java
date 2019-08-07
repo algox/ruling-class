@@ -15,14 +15,15 @@ public class SimpleRuleFlowTest {
 
     @Test
     public void simpleTest1() {
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("y", String.class, "")
                 .bind("a", String.class, "")
                 .bind("b", String.class, "hello")
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        RuleSet rules = RuleFactory.rules("RuleSet1", "Test Rule Set")
+        RuleFactory ruleFactory = RuleFactory.defaultFactory();
+        RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", (String y) -> y.equals(""), "")
                 .add("testrule2", (String a, BigDecimal x) -> x != null,
                         "This test is to make sure its working!")

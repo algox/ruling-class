@@ -10,7 +10,7 @@ public interface Action {
     void run(RuleExecutionContext ctx) throws UnrulyException;
 
     default void run(BindingDeclaration... bindings) {
-        run(Bindings.create(bindings));
+        run(Bindings.defaultBindings().bind(bindings));
     }
 
     default void run(Bindings bindings) throws UnrulyException {

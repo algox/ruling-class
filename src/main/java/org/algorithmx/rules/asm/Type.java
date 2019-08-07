@@ -311,11 +311,11 @@ public final class Type {
             ++numArgumentTypes;
         }
 
-        // Second step: create a Type instance for each argument type.
+        // Second step: defaultBindings a Type instance for each argument type.
         Type[] argumentTypes = new Type[numArgumentTypes];
         // Skip the first character, which is always a '('.
         currentOffset = 1;
-        // Parse and create the argument types, one at each loop iteration.
+        // Parse and defaultBindings the argument types, one at each loop iteration.
         int currentArgumentTypeIndex = 0;
         while (methodDescriptor.charAt(currentOffset) != ')') {
             final int currentArgumentTypeOffset = currentOffset;

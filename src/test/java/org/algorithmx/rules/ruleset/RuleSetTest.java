@@ -3,7 +3,6 @@ package org.algorithmx.rules.ruleset;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.*;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.math.BigDecimal;
 
@@ -13,18 +12,19 @@ public class RuleSetTest {
         super();
     }
 
-    @Test
+    //@Test
     public void test1() {
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("y", String.class, "")
                 .bind("a", String.class, "")
                 .bind("b", String.class, "hello")
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
+        RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
-        IdentifiableRule rule6 = RuleFactory.rule("testrule6", () -> true, "this test rule 6 ");
+        IdentifiableRule rule6 = ruleFactory.rule("testrule6", () -> true, "this test rule 6 ");
 
-        RuleSet rules = RuleFactory.rules("RuleSet1", "Test Rule Set")
+        RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", (String y) -> y.equals(""), "")
                 .add("testrule2", (String a, BigDecimal x) -> x != null,
                         "This test is to make sure its working!")
@@ -37,7 +37,7 @@ public class RuleSetTest {
         Rule rule2 = rules.get("testrule2");
         Rule rule3 = rules.get("testrule3");
         Rule rule4 = rules.get("testrule4");
-        CompositeRule rule5 = RuleFactory.and(rules);
+        CompositeRule rule5 = ruleFactory.and(rules);
 
         Assert.assertTrue(rule3.isPass(bindings));
         Assert.assertTrue(rule3.isPass(RuleExecutionContext.create(bindings)));

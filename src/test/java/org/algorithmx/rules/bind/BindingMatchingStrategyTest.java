@@ -36,7 +36,7 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch1() {
-        Bindings bindings = Bindings.create();
+        Bindings bindings = Bindings.defaultBindings();
         bindings.bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
@@ -60,7 +60,7 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch2() {
-        Bindings bindings = Bindings.create();
+        Bindings bindings = Bindings.defaultBindings();
         bindings.bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
@@ -95,7 +95,7 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch3() {
-        Bindings bindings = Bindings.create();
+        Bindings bindings = Bindings.defaultBindings();
         bindings.bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
@@ -131,7 +131,7 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch5() {
-        Bindings bindings = Bindings.create();
+        Bindings bindings = Bindings.defaultBindings();
         bindings.bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)

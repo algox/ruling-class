@@ -40,17 +40,17 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @return new instance of the Bindings.
      */
-    static Bindings create() {
+    static Bindings defaultBindings() {
         return new SimpleBindings();
     }
 
     /**
-     * Creates an instance of the Bindings and adds all the declarations to the Bindings.
+     * Creates Bindings and adds them all.
      *
      * @param declarations binding declarations.
-     * @return new instance of the Bindings (with all declarations added).
+     * @return this Bindings (fluent interface).
      */
-    static Bindings create(BindingDeclaration... declarations)  {
+    default Bindings bind(BindingDeclaration... declarations)  {
         Assert.notNull(declarations, "declarations cannot be null");
         Bindings result = new SimpleBindings();
         Arrays.stream(declarations).forEach(result::bind);

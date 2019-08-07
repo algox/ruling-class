@@ -65,7 +65,8 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public RuleSet add(Class<?> c) {
-        return add(RuleFactory.rule(c));
+        //return add(RuleFactory.rule(c));
+        return this;
     }
 
     @Override

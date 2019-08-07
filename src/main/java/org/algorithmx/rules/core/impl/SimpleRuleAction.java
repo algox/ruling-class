@@ -19,12 +19,12 @@ public class SimpleRuleAction implements RuleAction {
     }
 
     @Override
-    public Rule getRule() {
-        return null;
+    public final Rule getRule() {
+        return rule;
     }
 
     @Override
-    public Action getAction() {
-        return null;
+    public final Action getAction() {
+        return action;
     }
 }

@@ -47,7 +47,7 @@ public class ExecutorTest {
     public void test1() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
                 .bind("closingDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>());
@@ -63,7 +63,7 @@ public class ExecutorTest {
     public void test2() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
@@ -80,7 +80,7 @@ public class ExecutorTest {
     public void test3() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
@@ -96,7 +96,7 @@ public class ExecutorTest {
     public void test4() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
                 .bind("closingDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
@@ -117,7 +117,7 @@ public class ExecutorTest {
     public void test5() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
@@ -136,7 +136,8 @@ public class ExecutorTest {
     @Test
     public void test6() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
-        Rule rule = RuleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
+        RuleFactory ruleFactory = RuleFactory.defaultFactory();
+        Rule rule = ruleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
         boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
         Assert.assertTrue(result);
     }
@@ -144,7 +145,8 @@ public class ExecutorTest {
     @Test
     public void test7() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
-        Rule rule = RuleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
+        RuleFactory ruleFactory = RuleFactory.defaultFactory();
+        Rule rule = ruleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
         boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
         Assert.assertTrue(result);
     }

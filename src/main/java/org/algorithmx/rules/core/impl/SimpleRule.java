@@ -1,19 +1,21 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.core.IdentifiableRule;
+import org.algorithmx.rules.core.RuleExecutionContext;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 public class SimpleRule implements IdentifiableRule {
 
     private final RuleDefinition ruleDefinition;
-    private Object targetClassInstance;
+    private final Object target;
 
-    public SimpleRule(RuleDefinition ruleDefinition) {
+    public SimpleRule(RuleDefinition ruleDefinition, Object target) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
+        this.target = target;
     }
 
     @Override
@@ -26,15 +28,12 @@ public class SimpleRule implements IdentifiableRule {
     protected boolean isPass(RuleExecutionContext ctx, Object... args) throws UnrulyException {
         return ctx.bindableMethodExecutor().execute(ruleDefinition.isStatic()
                         ? null
-                        : getOrCreateRuleInstance(ctx.objectFactory(), ruleDefinition.getRulingClass()),
-                ruleDefinition.getCondition(), args);
+                        : target, ruleDefinition.getCondition(), args);
     }
 
-    private Object getOrCreateRuleInstance(ObjectFactory objectFactory, Class<?> rulingClass) {
-        if (this.targetClassInstance == null || ruleDefinition.getScope() == RuleScope.PROTOTYPE) {
-            this.targetClassInstance = objectFactory.create(rulingClass);
-        }
-        return this.targetClassInstance;
+    @Override
+    public RuleDefinition getRuleDefinition() {
+        return ruleDefinition;
     }
 
     @Override
@@ -45,5 +44,10 @@ public class SimpleRule implements IdentifiableRule {
     @Override
     public String getDescription() {
         return ruleDefinition.getDescription();
+    }
+
+    @Override
+    public Object getTarget() {
+        return target;
     }
 }
