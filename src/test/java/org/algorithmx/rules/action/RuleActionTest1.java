@@ -22,6 +22,7 @@ public class RuleActionTest1 {
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         RuleAction action = ruleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test")
+                .and(ruleFactory.rule("TestRule1", (String x, Integer y) -> x.equals("value"), "test"))
                 .then((Integer z) -> System.err.println("YASS! [" + z + "]"));
         action.run(bindings);
 
