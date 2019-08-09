@@ -8,11 +8,19 @@ public interface RuleAction {
 
     Rule getRule();
 
-    Action getAction();
+    Action[] getActions();
+
+    default RuleAction then(Then action) {
+        return then(action, null);
+    }
+
+    RuleAction then(Then action, String description);
 
     default void run(RuleExecutionContext ctx) throws UnrulyException {
         if (getRule().isPass(ctx)) {
-            getAction().run(ctx);
+            for (Action action : getActions()) {
+                action.run(ctx);
+            }
         }
     }
 

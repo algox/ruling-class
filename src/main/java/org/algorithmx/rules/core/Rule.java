@@ -76,7 +76,11 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     }
 
     default RuleAction then(Then action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
+        return then(action, null);
+    }
+
+    default RuleAction then(Then action, String description) {
+        return new SimpleRuleAction(this, ActionUtils.create(action, description, getTarget()));
     }
 
     default Object getTarget() {
