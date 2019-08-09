@@ -22,7 +22,7 @@ public class RuleSetTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
-        IdentifiableRule rule6 = ruleFactory.rule("testrule6", () -> true, "this test rule 6 ");
+        IdentifiableRule rule6 = ruleFactory.rule("testrule6", Condition.arg0(() -> true), "this test rule 6 ");
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", (String y) -> y.equals(""), "")

@@ -60,9 +60,8 @@ public final class RuleDefinition {
     private RuleDefinition(Class<?> rulingClass, String name, String description, RuleScope scope, MethodDefinition condition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
-        Assert.notNull(name, "name cannot be null.");
-        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN
+        Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(name == null || NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN
                 + "] Given [" + name + "]");
         Assert.notNull(condition, "when method cannot be null.");
         this.rulingClass = rulingClass;

@@ -137,7 +137,7 @@ public class ExecutorTest {
     public void test6() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
+        Rule rule = ruleFactory.rule("TestRule", Condition.arg2((String x, Integer y) -> y > 10), "test");
         boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
         Assert.assertTrue(result);
     }
@@ -146,8 +146,16 @@ public class ExecutorTest {
     public void test7() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory.rule("TestRule", (String x, Integer y) -> y > 10, "test");
+        Rule rule = ruleFactory.rule("TestRule", Condition.arg2((String x, Integer y) -> y > 10), "test");
         boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
         Assert.assertTrue(result);
+    }
+
+    @Test
+    public void test8() {
+        Condition.arg1((String x) -> x.equalsIgnoreCase(""));
+        RuleFactory ruleFactory = RuleFactory.defaultFactory();
+
+        ruleFactory.rule("somerule", Condition.arg2((String x, Integer y) -> x.equalsIgnoreCase("x")), "");
     }
 }

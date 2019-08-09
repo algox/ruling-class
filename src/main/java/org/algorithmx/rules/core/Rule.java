@@ -49,6 +49,10 @@ public interface Rule extends Predicate<RuleExecutionContext> {
         return (t) -> isPass(t) && other.test(t);
     }
 
+    default Rule and(Condition other) {
+        return and(RuleFactory.defaultFactory().rule(other));
+    }
+
     default Rule negate() {
         return (t) -> !test(t);
     }
@@ -58,6 +62,11 @@ public interface Rule extends Predicate<RuleExecutionContext> {
         return (t) -> test(t) || other.test(t);
     }
 
+    default Rule or(Condition other) {
+        return or(RuleFactory.defaultFactory().rule(other));
+    }
+
+
     default RuleAction then(Action action) {
         return new SimpleRuleAction(this, action);
     }
@@ -66,51 +75,12 @@ public interface Rule extends Predicate<RuleExecutionContext> {
         return new SimpleRuleAction(this, new SimpleAction(ActionDefinition.load(actionClass), getTarget()));
     }
 
-    default RuleAction then(Then.Then0 action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A> RuleAction then(Then.Then1<A> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B> RuleAction then(Then.Then2<A, B> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C> RuleAction then(Then.Then3<A, B, C> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D> RuleAction then(Then.Then4<A, B, C, D> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D, E> RuleAction then(Then.Then5<A, B, C, D, E> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D, E, F> RuleAction then(Then.Then6<A, B, C, D, E, F> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D, E, F, G> RuleAction then(Then.Then7<A, B, C, D, E, F, G> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D, E, F, G, H> RuleAction then(Then.Then8<A, B, C, D, E, F, G, H> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D, E, F, G, H, I> RuleAction then(Then.Then9<A, B, C, D, E, F, G, H, I> action) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
-    }
-
-    default <A, B, C, D, E, F, G, H, I, J> RuleAction then(Then.Then10<A, B, C, D, E, F, G, H, I, J> action) {
+    default RuleAction then(Then action) {
         return new SimpleRuleAction(this, ActionUtils.create(action, null, getTarget()));
     }
 
     default Object getTarget() {
         return null;
     }
+
 }
