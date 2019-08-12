@@ -19,14 +19,12 @@ package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.core.RuleScope;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -52,22 +50,19 @@ public final class RuleDefinition {
     private final String name;
     // Description of the Rule
     private final String description;
-    // Stateless vs Stateful
-    private final RuleScope scope;
     // when method
     private final MethodDefinition condition;
 
-    private RuleDefinition(Class<?> rulingClass, String name, String description, RuleScope scope, MethodDefinition condition) {
+    private RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(name == null || NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN
-                + "] Given [" + name + "]");
+        Assert.isTrue(name == null || NAME_PATTERN.matcher(name).matches(), "Rule name must match ["
+                + NAME_PATTERN + "] Given [" + name + "]");
         Assert.notNull(condition, "when method cannot be null.");
         this.rulingClass = rulingClass;
         this.name = name;
         this.description = description;
-        this.scope = scope;
         this.condition = condition;
     }
 
@@ -99,7 +94,7 @@ public final class RuleDefinition {
         Description descriptionAnnotation = c.getAnnotation(Description.class);
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
-                : rule.description(), rule.scope(), conditions[0]);
+                : rule.description(), conditions[0]);
     }
 
     /**
@@ -120,7 +115,7 @@ public final class RuleDefinition {
                 "Lambda method not implemented correctly. Please define method public boolean when(...)");
 
         MethodDefinition[] conditions = MethodDefinition.load(implementationClass, implementationMethod);
-        return new RuleDefinition(implementationClass, ruleName, ruleDescription, RuleScope.SINGLETON, conditions[0]);
+        return new RuleDefinition(implementationClass, ruleName, ruleDescription, conditions[0]);
     }
 
     /**
@@ -148,15 +143,6 @@ public final class RuleDefinition {
      */
     public String getDescription() {
         return description;
-    }
-
-    /**
-     * Rule Scope. Determines whether the Rule is a Singleton(default) or has state.
-     *
-     * @return rule scope.
-     */
-    public RuleScope getScope() {
-        return scope;
     }
 
     /**
