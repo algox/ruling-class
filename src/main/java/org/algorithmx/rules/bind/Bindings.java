@@ -50,9 +50,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @return new instance of the ScopedBindings.
      */
-    /*static Bindings scopedBindings() {
+    static Bindings scopedBindings() {
         return new SimpleScopedBindings();
-    }*/
+    }
 
     /**
      * Creates Bindings and adds them all.
@@ -317,7 +317,11 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return true if Binding exists; false otherwise.
      */
     default <T> boolean contains(String name, TypeReference<T> type) {
-        return getBinding(name, type) != null;
+        Binding<?> result = getBinding(name);
+        return result != null
+                ? result.isTypeAcceptable(type.getType())
+                ? true : false
+                : false;
     }
 
     /**

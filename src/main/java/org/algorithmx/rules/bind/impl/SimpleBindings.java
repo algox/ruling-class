@@ -86,20 +86,6 @@ public class SimpleBindings implements Bindings {
     }
 
     @Override
-    public boolean contains(String name) {
-        return bindings.containsKey(name);
-    }
-
-    @Override
-    public <T> boolean contains(String name, TypeReference<T> typeRef) {
-        Binding<?> result = bindings.get(name);
-        return result != null
-                ? result.isTypeAcceptable(typeRef.getType())
-                    ? true : false
-                : false;
-    }
-
-    @Override
     public Iterator<Binding<?>> iterator() {
         return bindings.values().iterator();
     }
