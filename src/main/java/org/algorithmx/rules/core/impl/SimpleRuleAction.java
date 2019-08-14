@@ -8,6 +8,7 @@ import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ActionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SimpleRuleAction implements RuleAction {
@@ -15,12 +16,12 @@ public class SimpleRuleAction implements RuleAction {
     private final Rule rule;
     private final List<Action> actions = new ArrayList<>();
 
-    public SimpleRuleAction(Rule rule, Action action) {
+    public SimpleRuleAction(Rule rule, Action...actions) {
         super();
         Assert.notNull(rule, "rule cannot be null.");
-        Assert.notNull(action, "action cannot be null.");
+        Assert.notNull(actions, "action cannot be null.");
         this.rule = rule;
-        this.actions.add(action);
+        this.actions.addAll(Arrays.asList(actions));
     }
 
     @Override

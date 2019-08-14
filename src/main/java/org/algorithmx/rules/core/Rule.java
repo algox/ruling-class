@@ -44,6 +44,10 @@ public interface Rule extends Predicate<RuleExecutionContext> {
         return isPass(ctx);
     }
 
+    default boolean isIdentifiable() {
+        return this instanceof Identifiable;
+    }
+
     default Rule and(Rule other) {
         Objects.requireNonNull(other);
         return (t) -> isPass(t) && other.test(t);

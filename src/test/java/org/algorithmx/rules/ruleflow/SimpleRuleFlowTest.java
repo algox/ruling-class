@@ -23,13 +23,6 @@ public class SimpleRuleFlowTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", (String y) -> y.equals(""), "")
-                .add("testrule2", (String a, BigDecimal x) -> x != null,
-                        "This test is to make sure its working!")
-                .add("testrule3", (String a, String b, Integer c) -> c == 20 && "hello".equals(b),
-                        "")
-                .add("testrule4", () -> true, "");
 
     }
 

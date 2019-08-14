@@ -60,5 +60,4 @@ public interface Action {
     static <A, B, C, D, E, F, G, H, I, J> Then.Then10 arg10(Then.Then10<A, B, C, D, E, F, G, H, I, J> arg) {
         return arg;
     }
-
 }

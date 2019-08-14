@@ -50,4 +50,9 @@ public class SimpleRule implements IdentifiableRule {
     public Object getTarget() {
         return target;
     }
+
+    @Override
+    public final boolean isIdentifiable() {
+        return true;
+    }
 }

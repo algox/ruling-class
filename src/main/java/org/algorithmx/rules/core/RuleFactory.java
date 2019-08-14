@@ -69,6 +69,10 @@ public interface RuleFactory {
         return rule(load(condition, null, null));
     }
 
+    default IdentifiableRule rule(String name, Condition condition) {
+        return rule(load(condition, name, null));
+    }
+
     default IdentifiableRule rule(String name, Condition condition, String description) {
         return rule(load(condition, name, description));
     }
@@ -77,5 +81,17 @@ public interface RuleFactory {
         Rule rule = rule(RuleDefinition.load(rulingClassWithAction));
         Action action = new SimpleAction(ActionDefinition.load(rulingClassWithAction), rule.getTarget());
         return new SimpleRuleAction(rule, action);
+    }
+
+    default RuleAction action(Condition condition, Action...actions) {
+        return new SimpleRuleAction(rule(condition), actions);
+    }
+
+    default RuleAction action(String ruleName, Condition condition, Action...actions) {
+        return new SimpleRuleAction(rule(ruleName, condition, null), actions);
+    }
+
+    default RuleAction action(String ruleName, String description, Condition condition, Action...actions) {
+        return new SimpleRuleAction(rule(ruleName, condition, description), actions);
     }
 }
