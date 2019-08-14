@@ -50,7 +50,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @return new instance of the ScopedBindings.
      */
-    static Bindings scopedBindings() {
+    static ScopedBindings scopedBindings() {
         return new SimpleScopedBindings();
     }
 
