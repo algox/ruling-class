@@ -161,15 +161,14 @@ class SimpleBinding<T> implements Binding<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleBinding<?> that = (SimpleBinding) o;
+        SimpleBinding<?> that = (SimpleBinding<?>) o;
         return name.equals(that.name) &&
-                type.equals(that.type) &&
-                Objects.equals(valueSupplier.get(), that.valueSupplier.get());
+                type.equals(that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, valueSupplier.get());
+        return Objects.hash(name, type);
     }
 
     @Override

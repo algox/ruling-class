@@ -17,7 +17,7 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     boolean isPass(RuleExecutionContext ctx) throws UnrulyException;
 
     default boolean isPass(BindingDeclaration... bindings) {
-        return isPass(Bindings.defaultBindings().bind(bindings));
+        return isPass(Bindings.simpleBindings().bind(bindings));
     }
 
     default boolean isPass(Bindings bindings) throws UnrulyException {
@@ -29,7 +29,7 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     }
 
     default boolean isFail(BindingDeclaration... bindings) {
-        return !isPass(Bindings.defaultBindings().bind(bindings));
+        return !isPass(Bindings.simpleBindings().bind(bindings));
     }
 
     default boolean isFail(Bindings bindings) throws UnrulyException {

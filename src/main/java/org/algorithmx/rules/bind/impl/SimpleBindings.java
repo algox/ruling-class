@@ -76,20 +76,6 @@ public class SimpleBindings implements Bindings {
     }
 
     @Override
-    public Bindings alias(String existingBindingName, String alias) {
-        Binding result = getBinding(existingBindingName);
-
-        // Could not find Binding
-        if (result == null) throw new NoSuchBindingException(existingBindingName);
-        // Make sure the alias doesn't exist
-        if (contains(alias)) throw new BindingAlreadyExistsException(alias);
-
-        this.bindings.put(alias, result);
-
-        return this;
-    }
-
-    @Override
     public int size() {
         return bindings.size();
     }
@@ -173,6 +159,7 @@ public class SimpleBindings implements Bindings {
         for (Map.Entry<String, Binding<?>> entry : bindings.entrySet()) {
             result.put(entry.getKey(), entry.getValue().getValue());
         }
+
         return Collections.unmodifiableMap(result);
     }
 

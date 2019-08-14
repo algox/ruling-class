@@ -14,7 +14,7 @@ public class RuleSetTest {
 
     //@Test
     public void test1() {
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = Bindings.simpleBindings()
                 .bind("y", String.class, "")
                 .bind("a", String.class, "")
                 .bind("b", String.class, "hello")

@@ -47,7 +47,7 @@ public class ExecutorTest {
     public void test1() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
                 .bind("closingDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>());
@@ -63,7 +63,7 @@ public class ExecutorTest {
     public void test2() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = Bindings.simpleBindings()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
@@ -80,7 +80,7 @@ public class ExecutorTest {
     public void test3() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = Bindings.simpleBindings()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
@@ -96,7 +96,7 @@ public class ExecutorTest {
     public void test4() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
                 .bind("closingDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
@@ -117,7 +117,7 @@ public class ExecutorTest {
     public void test5() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())

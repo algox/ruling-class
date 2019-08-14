@@ -13,7 +13,7 @@ public class RuleActionTest1 {
 
     @Test
     public void test1() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = Bindings.simpleBindings();
         bindings.bind("x", String.class, "value");
         bindings.bind("y", Integer.class, 17);
         bindings.bind("z", Integer.class, 200);

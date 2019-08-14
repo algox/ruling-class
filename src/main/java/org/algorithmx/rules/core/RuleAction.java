@@ -25,7 +25,7 @@ public interface RuleAction {
     }
 
     default void run(BindingDeclaration... bindings) {
-        run(Bindings.defaultBindings().bind(bindings));
+        run(Bindings.simpleBindings().bind(bindings));
     }
 
     default void run(Bindings bindings) throws UnrulyException {

@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.SimpleBindings;
+import org.algorithmx.rules.bind.impl.SimpleScopedBindings;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
@@ -36,13 +37,22 @@ import java.util.function.Supplier;
 public interface Bindings extends Iterable<Binding<?>> {
 
     /**
-     * Creates an instance of the Bindings.
+     * Creates an instance of the SimpleBindings.
      *
-     * @return new instance of the Bindings.
+     * @return new instance of the SimpleBindings.
      */
-    static Bindings defaultBindings() {
+    static Bindings simpleBindings() {
         return new SimpleBindings();
     }
+
+    /**
+     * Creates an instance of the ScopedBindings.
+     *
+     * @return new instance of the ScopedBindings.
+     */
+    /*static Bindings scopedBindings() {
+        return new SimpleScopedBindings();
+    }*/
 
     /**
      * Creates Bindings and adds them all.
@@ -265,15 +275,6 @@ public interface Bindings extends Iterable<Binding<?>> {
     <T> Bindings bind(Collection<Binding<T>> bindings);
 
     /**
-     * Creates an alias for an existing Binding.
-     *
-     * @param existingBindingName name of the existing Binding.
-     * @param alias alias for the existing Binding.
-     * @return this Bindings (fluent interface).
-     */
-    Bindings alias(String existingBindingName, String alias);
-
-    /**
      * Retrieves the number of Bindings.
      *
      * @return number of Bindings.
@@ -291,7 +292,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param name name of the Binding.
      * @return true if Binding exists; false otherwise.
      */
-    boolean contains(String name);
+    default boolean contains(String name) {
+        return getBinding(name) != null;
+    }
 
     /**
      * Determines if the Binding with given name and types exists.
@@ -313,7 +316,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param <T> generic type of the Binding.
      * @return true if Binding exists; false otherwise.
      */
-    <T> boolean contains(String name, TypeReference<T> type);
+    default <T> boolean contains(String name, TypeReference<T> type) {
+        return getBinding(name, type) != null;
+    }
 
     /**
      * Retrieves the Binding identified by the given name.
@@ -333,7 +338,12 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return value if Binding is found.
      * @throws NoSuchBindingException if Binding is not found.
      */
-    <T> T get(String name);
+    default <T> T get(String name) {
+        Binding<T> result = getBinding(name);
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(name);
+        return result.getValue();
+    }
 
     /**
      * Sets the value of Binding with the given name.
@@ -343,7 +353,12 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param <T> generic type of the Binding.
      * @throws NoSuchBindingException if Binding is not found.
      */
-    <T> void set(String name, T value);
+    default <T> void set(String name, T value) {
+        Binding<T> result = getBinding(name);
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(name);
+        result.setValue(value);
+    }
 
     /**
      * Retrieves the Binding identified by the given name.
