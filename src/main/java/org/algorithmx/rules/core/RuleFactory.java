@@ -1,7 +1,9 @@
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.core.impl.*;
-import org.algorithmx.rules.model.ActionDefinition;
+import org.algorithmx.rules.core.impl.DefaultCompositeRule;
+import org.algorithmx.rules.core.impl.DefaultObjectFactory;
+import org.algorithmx.rules.core.impl.DefaultRuleFactory;
+import org.algorithmx.rules.core.impl.DefaultRuleSet;
 import org.algorithmx.rules.model.RuleDefinition;
 
 import static org.algorithmx.rules.util.RuleUtils.load;
@@ -61,12 +63,56 @@ public interface RuleFactory {
         return new DefaultRuleSet(name, description);
     }
 
-    default IdentifiableRule rule(Class<?> rulingClass) {
+    default ActionableRule rule(Class<?> rulingClass) {
         return rule(RuleDefinition.load(rulingClass));
     }
 
-    default Rule rule(Condition condition) {
+    default ActionableRule rule(Condition condition) {
         return rule(load(condition, null, null));
+    }
+
+    default ActionableRule rule(Condition.Condition0 arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A> ActionableRule rule(Condition.Condition1<A> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B> ActionableRule rule(Condition.Condition2<A, B> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C> ActionableRule rule(Condition.Condition3<A, B, C> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D> ActionableRule rule(Condition.Condition4<A, B, C, D> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D, E> ActionableRule rule(Condition.Condition5<A, B, C, D, E> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D, E, F> ActionableRule rule(Condition.Condition6<A, B, C, D, E, F> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D, E, F, G> ActionableRule rule(Condition.Condition7<A, B, C, D, E, F, G> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D, E, F, G, H> ActionableRule rule(Condition.Condition8<A, B, C, D, E, F, G, H> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D, E, F, G, H, I> ActionableRule rule(Condition.Condition9<A, B, C, D, E, F, G, H, I> arg) {
+        return rule((Condition) arg);
+    }
+
+    default <A, B, C, D, E, F, G, H, I, J> ActionableRule rule(Condition.Condition10<A, B, C, D, E, F, G, H, I, J> arg) {
+        return rule((Condition) arg);
     }
 
     default IdentifiableRule rule(String name, Condition condition) {
@@ -75,23 +121,5 @@ public interface RuleFactory {
 
     default IdentifiableRule rule(String name, Condition condition, String description) {
         return rule(load(condition, name, description));
-    }
-
-    default RuleAction action(Class<?> rulingClassWithAction) {
-        Rule rule = rule(RuleDefinition.load(rulingClassWithAction));
-        Action action = new SimpleAction(ActionDefinition.load(rulingClassWithAction), rule.getTarget());
-        return new SimpleRuleAction(rule, action);
-    }
-
-    default RuleAction action(Condition condition, Action...actions) {
-        return new SimpleRuleAction(rule(condition), actions);
-    }
-
-    default RuleAction action(String ruleName, Condition condition, Action...actions) {
-        return new SimpleRuleAction(rule(ruleName, condition, null), actions);
-    }
-
-    default RuleAction action(String ruleName, String description, Condition condition, Action...actions) {
-        return new SimpleRuleAction(rule(ruleName, condition, description), actions);
     }
 }

@@ -21,6 +21,7 @@ import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -41,10 +42,8 @@ import java.util.regex.Pattern;
 public final class RuleDefinition {
 
     public static final String CONDITION_METHOD_NAME    = "when";
-    private static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9]*?$";
-    private static final Pattern NAME_PATTERN           = Pattern.compile(RULE_NAME_REGEX);
 
-    // Rule class
+    // Rule classNAME_PATTERN
     private final Class<?> rulingClass;
     // Name of the Rule
     private final String name;
@@ -57,8 +56,8 @@ public final class RuleDefinition {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(name == null || NAME_PATTERN.matcher(name).matches(), "Rule name must match ["
-                + NAME_PATTERN + "] Given [" + name + "]");
+        Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "Rule name must match ["
+                + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
         Assert.notNull(condition, "when method cannot be null.");
         this.rulingClass = rulingClass;
         this.name = name;

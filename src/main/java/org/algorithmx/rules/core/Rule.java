@@ -3,10 +3,6 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.impl.SimpleAction;
-import org.algorithmx.rules.core.impl.SimpleRuleAction;
-import org.algorithmx.rules.model.ActionDefinition;
-import org.algorithmx.rules.util.ActionUtils;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -70,25 +66,8 @@ public interface Rule extends Predicate<RuleExecutionContext> {
         return or(RuleFactory.defaultFactory().rule(other));
     }
 
-
-    default RuleAction then(Action action) {
-        return new SimpleRuleAction(this, action);
-    }
-
-    default RuleAction then(Class<?> actionClass) {
-        return new SimpleRuleAction(this, new SimpleAction(ActionDefinition.load(actionClass), getTarget()));
-    }
-
-    default RuleAction then(Then action) {
-        return then(action, null);
-    }
-
-    default RuleAction then(Then action, String description) {
-        return new SimpleRuleAction(this, ActionUtils.create(action, description, getTarget()));
-    }
-
     default Object getTarget() {
-        return null;
+        return this;
     }
 
 }

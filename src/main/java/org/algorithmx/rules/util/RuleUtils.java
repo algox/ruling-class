@@ -21,6 +21,8 @@ import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
+import java.util.regex.Pattern;
+
 /**
  * Utility class to provide convenience methods for Rules.
  *
@@ -28,6 +30,9 @@ import org.algorithmx.rules.spring.util.Assert;
  * @since 1.0
  */
 public final class RuleUtils {
+
+    public static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9]*?$";
+    private static final Pattern NAME_PATTERN           = Pattern.compile(RULE_NAME_REGEX);
 
     private RuleUtils() {
         super();
@@ -62,5 +67,10 @@ public final class RuleUtils {
     public static RuleDefinition load(Condition condition, String name, String description) {
         Assert.notNull(condition, "condition cannot be null.");
         return RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
+    }
+
+    public static boolean isValidRuleName(String ruleName) {
+        Assert.notNull(ruleName, "ruleName cannot be null.");
+        return NAME_PATTERN.matcher(ruleName).matches();
     }
 }

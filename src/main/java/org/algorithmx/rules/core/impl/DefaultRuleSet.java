@@ -1,25 +1,23 @@
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.core.ActionableRule;
+import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.RuleFactory;
+import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DefaultRuleSet implements RuleSet {
-
-    private static final String RULE_NAME_REGEX     = "^[a-zA-Z][a-zA-Z0-9]*?$";
-    private static final Pattern NAME_PATTERN       = Pattern.compile(RULE_NAME_REGEX);
 
     private final String name;
     private final String description;
     private final RuleFactory ruleFactory;
 
-    private final LinkedList<RuleAction> actions = new LinkedList<>();
-    private final Map<String, RuleAction> ruleIndex = new HashMap<>();
+    private final LinkedList<ActionableRule> actions = new LinkedList<>();
+    private final Map<String, ActionableRule> ruleIndex = new HashMap<>();
 
     public DefaultRuleSet(String name, String description) {
         this(name, description, RuleFactory.defaultFactory());
@@ -29,7 +27,7 @@ public class DefaultRuleSet implements RuleSet {
         super();
         Assert.notNull(name, "name cannot be null.");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "RuleSet name must match [" + NAME_PATTERN
+        Assert.isTrue(RuleUtils.isValidRuleName(name), "RuleSet name must match [" + RuleUtils.RULE_NAME_REGEX
                 + "] Given [" + name + "]");
         Assert.notNull(ruleFactory, "ruleFactory cannot be null.");
         this.name = name;
@@ -48,40 +46,46 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Iterator<RuleAction> iterator() {
+    public Iterator<ActionableRule> iterator() {
         return actions.iterator();
     }
 
     @Override
-    public IdentifiableRule getRule(String ruleName) {
+    public ActionableRule getRule(String ruleName) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
-        RuleAction ruleAction = ruleIndex.get(ruleName);
-
-        return ruleAction != null
-                ? (IdentifiableRule) ruleAction.getRule()
-                : null;
-
-    }
-
-    @Override
-    public RuleAction get(String ruleName) {
         return ruleIndex.get(ruleName);
     }
 
     @Override
-    public RuleSet add(Class<?> ruleActionClass) {
-        add(ruleFactory.action(ruleActionClass));
+    public RuleSet add(Class<?> rulingClass) {
+        add(ruleFactory.rule(rulingClass));
         return this;
     }
 
     @Override
-    public final RuleSet add(RuleAction ruleAction) {
-        actions.add(ruleAction);
+    public RuleSet add(String name, ActionableRule rule) {
+        Assert.notNull(rule, "rule cannot be null.");
+        Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "RuleSet name must match ["
+                + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
 
-        if (ruleAction.getRule().isIdentifiable()) {
-            ruleIndex.put(((Identifiable) ruleAction.getRule()).getName(), ruleAction);
+        actions.add(rule);
+
+        if (name != null) {
+            ruleIndex.put(name, rule);
         }
 
+        return this;
+    }
+
+    @Override
+    public final RuleSet add(ActionableRule rule) {
+        return add(rule.isIdentifiable() ? ((Identifiable) rule).getName() : null, rule);
+    }
+
+    @Override
+    public RuleSet add(RuleSet ruleSet) {
+        Assert.notNull(ruleSet, "ruleSet cannot be null.");
+        Arrays.stream(ruleSet.getRules()).forEach((ActionableRule rule) -> add(rule));
         return this;
     }
 
@@ -91,8 +95,7 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Rule[] getRules() {
-        actions.stream().forEach((RuleAction r) -> r.getRule());
-        return null;
+    public ActionableRule[] getRules() {
+        return actions.toArray(new ActionableRule[actions.size()]);
     }
 }

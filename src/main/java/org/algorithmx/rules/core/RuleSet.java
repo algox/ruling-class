@@ -1,29 +1,23 @@
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.spring.util.Assert;
-
-public interface RuleSet extends Iterable<RuleAction> {
+public interface RuleSet extends Iterable<ActionableRule> {
 
     String getName();
 
     String getDescription();
 
-    RuleAction get(String ruleName);
-
-    IdentifiableRule getRule(String ruleName);
+    ActionableRule getRule(String ruleName);
 
     int size();
 
-    Rule[] getRules();
+    ActionableRule[] getRules();
 
     RuleSet add(Class<?> ruleActionClass);
 
-    RuleSet add(RuleAction ruleAction);
+    RuleSet add(ActionableRule rule);
 
-    default RuleSet add(RuleSet ruleSet) {
-        Assert.notNull(ruleSet, "rules cannot be null.");
-        // TODO
-        return this;
-    }
+    RuleSet add(String name, ActionableRule rule);
+
+    RuleSet add(RuleSet ruleSet);
 }
 

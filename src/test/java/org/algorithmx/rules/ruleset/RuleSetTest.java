@@ -26,17 +26,17 @@ public class RuleSetTest {
         IdentifiableRule rule6 = ruleFactory.rule("testrule6", Condition.arg0(() -> true), "this test rule 6 ");
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add(ruleFactory.rule("test", Condition.arg1((String y) -> y.equals("")))
+                .add("test", ruleFactory.rule((String y) -> y.equals(""))
                         .then(Action.arg1((String y) -> System.err.println(y))))
-                .add(ruleFactory.rule("testrule3", Condition.arg2((String a, BigDecimal x) -> x != null), "This test is to make sure its working!")
+                .add(ruleFactory.rule((String a, BigDecimal x) -> x != null)
                                 .then(Action.arg0(() -> System.err.println("XXX Hello"))))
-                .add(ruleFactory.rule(Condition.arg3((String a, String b, Integer c) -> c == 20 && "hello".equals(b))).then(Action.arg0(() -> System.err.println("XXX oh yeah"))))
+                .add("testrule3", ruleFactory.rule((String a, String b, Integer c) -> c == 20 && "hello".equals(b))
+                        .then(Action.arg0(() -> System.err.println("XXX oh yeah"))))
                 .add(rule6.then(Action.arg0(() -> System.err.println("XXX End"))));
 
         Rule rule1 = rules.getRule("test");
         Rule rule3 = rules.getRule("testrule3");
-        // TODO : Fix
-        //CompositeRule rule5 = ruleFactory.and(rules);
+        CompositeRule rule5 = ruleFactory.and(rules);
 
         Assert.assertTrue(rule3.isPass(bindings));
         Assert.assertTrue(rule3.isPass(RuleExecutionContext.create(bindings)));

@@ -2,7 +2,7 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.model.RuleDefinition;
 
-public interface IdentifiableRule extends Rule, Identifiable {
+public interface IdentifiableRule extends ActionableRule, Identifiable {
 
     RuleDefinition getRuleDefinition();
 
