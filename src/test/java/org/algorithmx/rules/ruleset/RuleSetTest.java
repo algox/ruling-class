@@ -27,12 +27,12 @@ public class RuleSetTest {
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", ruleFactory.rule((String y) -> y.equals(""))
-                        .then(Action.arg1((String y) -> System.err.println(y))))
+                        .then((String y) -> System.err.println(y)))
                 .add(ruleFactory.rule((String a, BigDecimal x) -> x != null)
-                                .then(Action.arg0(() -> System.err.println("XXX Hello"))))
+                                .then(() -> System.err.println("XXX Hello")))
                 .add("testrule3", ruleFactory.rule((String a, String b, Integer c) -> c == 20 && "hello".equals(b))
-                        .then(Action.arg0(() -> System.err.println("XXX oh yeah"))))
-                .add(rule6.then(Action.arg0(() -> System.err.println("XXX End"))));
+                        .then(() -> System.err.println("XXX oh yeah")))
+                .add(rule6.then(() -> System.err.println("XXX End")));
 
         Rule rule1 = rules.getRule("test");
         Rule rule3 = rules.getRule("testrule3");
