@@ -27,7 +27,6 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * Indicates the class with this annotation is Rule and it will follow the "rules" of a being a Rule.

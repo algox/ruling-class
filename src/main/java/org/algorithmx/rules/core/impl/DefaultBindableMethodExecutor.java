@@ -37,7 +37,7 @@ import java.util.Arrays;
  */
 public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
 
-    private final ParameterResolver resolver = ParameterResolver.create();
+    private final ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
     /**
      * Default Ctor.

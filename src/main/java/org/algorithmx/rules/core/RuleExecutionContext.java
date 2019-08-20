@@ -13,9 +13,9 @@ public class RuleExecutionContext {
     private final Bindings bindings;
     private final LinkedHashMap<String, RuleSet> rules = new LinkedHashMap<>();
     private final BindingMatchingStrategy matchingStrategy;
+    private final RuleEngine ruleEngine = RuleEngine.defaultRuleEngine();
 
-    private ParameterResolver parameterResolver = ParameterResolver.create();
-    private BindableMethodExecutor bindableMethodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
+    private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
 
     public static RuleExecutionContext create(Bindings bindings) {
         return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
@@ -33,6 +33,10 @@ public class RuleExecutionContext {
         this.matchingStrategy = matchingStrategy;
     }
 
+    public RuleEngine ruleEngine() {
+        return ruleEngine;
+    }
+
     public Bindings bindings() {
         return bindings;
     }
@@ -41,16 +45,8 @@ public class RuleExecutionContext {
         return matchingStrategy;
     }
 
-    public BindableMethodExecutor bindableMethodExecutor() {
-        return bindableMethodExecutor;
-    }
-
     public ParameterResolver parameterResolver() {
         return parameterResolver;
-    }
-
-    public BindableMethodExecutor methodExecutor() {
-        return bindableMethodExecutor;
     }
 
     public RuleSet ruleSet(String name) {
@@ -60,10 +56,5 @@ public class RuleExecutionContext {
     public void setRules(RuleSet...rules) {
         Assert.notNull(rules, "rules cannot be null");
         Arrays.stream(rules).forEach(r -> this.rules.put(r.getName(), r));
-    }
-
-    public void setBindableMethodExecutor(BindableMethodExecutor bindableMethodExecutor) {
-        Assert.notNull(bindableMethodExecutor, "bindableMethodExecutor cannot be null");
-        this.bindableMethodExecutor = bindableMethodExecutor;
     }
 }

@@ -20,15 +20,7 @@ public class SimpleRule extends RuleTemplate implements Identifiable {
 
     @Override
     public boolean isPass(RuleExecutionContext ctx) throws UnrulyException {
-        Object[] args = ctx.parameterResolver().resolve(ruleDefinition.getCondition(),
-                ctx.bindings(), ctx.matchingStrategy());
-        return isPass(ctx, args);
-    }
-
-    protected boolean isPass(RuleExecutionContext ctx, Object... args) throws UnrulyException {
-        return ctx.bindableMethodExecutor().execute(ruleDefinition.isStatic()
-                        ? null
-                        : target, ruleDefinition.getCondition(), args);
+        return ctx.ruleEngine().isPass(this, ruleDefinition, target, ctx);
     }
 
     public RuleDefinition getRuleDefinition() {

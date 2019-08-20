@@ -47,7 +47,7 @@ public interface Rule extends Predicate<RuleExecutionContext> {
 
     <A, B, C, D, E, F, G, H, I, J> Rule then(Then.Then10<A, B, C, D, E, F, G, H, I, J> arg);
 
-    default void run(BindingDeclaration... bindings) {
+    default void run(BindingDeclaration...bindings) {
         run(Bindings.simpleBindings().bind(bindings));
     }
 

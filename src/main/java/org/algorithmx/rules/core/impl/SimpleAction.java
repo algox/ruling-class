@@ -20,11 +20,6 @@ public class SimpleAction implements Action {
 
     @Override
     public void run(RuleExecutionContext ctx) throws UnrulyException {
-        Object[] args = ctx.parameterResolver().resolve(actionDefinition.getAction(),
-                ctx.bindings(), ctx.matchingStrategy());
-        ctx.bindableMethodExecutor().execute(actionDefinition.isStatic()
-                        ? null
-                        : target, actionDefinition.getAction(), args);
-
+        ctx.ruleEngine().run(this, actionDefinition, target, ctx);
     }
 }

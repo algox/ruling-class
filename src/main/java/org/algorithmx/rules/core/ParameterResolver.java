@@ -7,7 +7,7 @@ import org.algorithmx.rules.model.MethodDefinition;
 
 public interface ParameterResolver {
 
-    static ParameterResolver create() {
+    static ParameterResolver defaultParameterResolver() {
         return new DefaultParameterResolver();
     }
 
