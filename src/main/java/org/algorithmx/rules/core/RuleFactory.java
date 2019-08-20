@@ -14,7 +14,7 @@ public interface RuleFactory {
         return new DefaultRuleFactory(new DefaultObjectFactory());
     }
 
-    ActionableRule rule(RuleDefinition ruleDefinition);
+    Rule rule(RuleDefinition ruleDefinition);
 
     default CompositeRule and(RuleSet ruleSet) {
         return and(ruleSet.getRules());
@@ -63,63 +63,63 @@ public interface RuleFactory {
         return new DefaultRuleSet(name, description);
     }
 
-    default ActionableRule rule(Class<?> rulingClass) {
+    default Rule rule(Class<?> rulingClass) {
         return rule(RuleDefinition.load(rulingClass));
     }
 
-    default ActionableRule rule(Condition condition) {
+    default Rule rule(Condition condition) {
         return rule(load(condition, null, null));
     }
 
-    default ActionableRule rule(Condition.Condition0 arg) {
+    default Rule rule(Condition.Condition0 arg) {
         return rule((Condition) arg);
     }
 
-    default <A> ActionableRule rule(Condition.Condition1<A> arg) {
+    default <A> Rule rule(Condition.Condition1<A> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B> ActionableRule rule(Condition.Condition2<A, B> arg) {
+    default <A, B> Rule rule(Condition.Condition2<A, B> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C> ActionableRule rule(Condition.Condition3<A, B, C> arg) {
+    default <A, B, C> Rule rule(Condition.Condition3<A, B, C> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D> ActionableRule rule(Condition.Condition4<A, B, C, D> arg) {
+    default <A, B, C, D> Rule rule(Condition.Condition4<A, B, C, D> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D, E> ActionableRule rule(Condition.Condition5<A, B, C, D, E> arg) {
+    default <A, B, C, D, E> Rule rule(Condition.Condition5<A, B, C, D, E> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D, E, F> ActionableRule rule(Condition.Condition6<A, B, C, D, E, F> arg) {
+    default <A, B, C, D, E, F> Rule rule(Condition.Condition6<A, B, C, D, E, F> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D, E, F, G> ActionableRule rule(Condition.Condition7<A, B, C, D, E, F, G> arg) {
+    default <A, B, C, D, E, F, G> Rule rule(Condition.Condition7<A, B, C, D, E, F, G> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D, E, F, G, H> ActionableRule rule(Condition.Condition8<A, B, C, D, E, F, G, H> arg) {
+    default <A, B, C, D, E, F, G, H> Rule rule(Condition.Condition8<A, B, C, D, E, F, G, H> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D, E, F, G, H, I> ActionableRule rule(Condition.Condition9<A, B, C, D, E, F, G, H, I> arg) {
+    default <A, B, C, D, E, F, G, H, I> Rule rule(Condition.Condition9<A, B, C, D, E, F, G, H, I> arg) {
         return rule((Condition) arg);
     }
 
-    default <A, B, C, D, E, F, G, H, I, J> ActionableRule rule(Condition.Condition10<A, B, C, D, E, F, G, H, I, J> arg) {
+    default <A, B, C, D, E, F, G, H, I, J> Rule rule(Condition.Condition10<A, B, C, D, E, F, G, H, I, J> arg) {
         return rule((Condition) arg);
     }
 
-    default ActionableRule rule(String name, Condition condition) {
+    default Rule rule(String name, Condition condition) {
         return rule(load(condition, name, null));
     }
 
-    default ActionableRule rule(String name, Condition condition, String description) {
+    default Rule rule(String name, Condition condition, String description) {
         return rule(load(condition, name, description));
     }
 }

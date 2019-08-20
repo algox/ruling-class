@@ -19,7 +19,7 @@ public class RuleActionTest1 {
         bindings.bind("z", Integer.class, 200);
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        ActionableRule action = ruleFactory.rule((String x, Integer y) -> y > 10)
+        Rule action = ruleFactory.rule((String x, Integer y) -> y > 10)
                 .then((Integer z) -> System.err.println("YASS! [" + z + "]"))
                 .then((String x) -> System.err.println("MAN! [" + x + "]"));
         action.run(bindings);

@@ -1,7 +1,7 @@
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.ActionableRule;
 import org.algorithmx.rules.core.ObjectFactory;
+import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
@@ -16,7 +16,7 @@ public final class DefaultRuleFactory implements RuleFactory {
         this.objectFactory = objectFactory;
     }
 
-    public ActionableRule rule(RuleDefinition ruleDefinition) {
+    public Rule rule(RuleDefinition ruleDefinition) {
         return new SimpleRule(ruleDefinition, objectFactory.create(ruleDefinition.getRulingClass()));
     }
 }

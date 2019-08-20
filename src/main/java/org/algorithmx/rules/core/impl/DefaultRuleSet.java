@@ -1,14 +1,10 @@
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.ActionableRule;
-import org.algorithmx.rules.core.Identifiable;
-import org.algorithmx.rules.core.RuleFactory;
-import org.algorithmx.rules.core.RuleSet;
+import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class DefaultRuleSet implements RuleSet {
 
@@ -16,8 +12,8 @@ public class DefaultRuleSet implements RuleSet {
     private final String description;
     private final RuleFactory ruleFactory;
 
-    private final LinkedList<ActionableRule> actions = new LinkedList<>();
-    private final Map<String, ActionableRule> ruleIndex = new HashMap<>();
+    private final LinkedList<Rule> actions = new LinkedList<>();
+    private final Map<String, Rule> ruleIndex = new HashMap<>();
 
     public DefaultRuleSet(String name, String description) {
         this(name, description, RuleFactory.defaultFactory());
@@ -46,12 +42,12 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Iterator<ActionableRule> iterator() {
+    public Iterator<Rule> iterator() {
         return actions.iterator();
     }
 
     @Override
-    public ActionableRule getRule(String ruleName) {
+    public Rule getRule(String ruleName) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
         return ruleIndex.get(ruleName);
     }
@@ -63,7 +59,7 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleSet add(String name, ActionableRule rule) {
+    public RuleSet add(String name, Rule rule) {
         Assert.notNull(rule, "rule cannot be null.");
         Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "RuleSet name must match ["
                 + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
@@ -78,14 +74,14 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public final RuleSet add(ActionableRule rule) {
+    public final RuleSet add(Rule rule) {
         return add(rule.isIdentifiable() ? ((Identifiable) rule).getName() : null, rule);
     }
 
     @Override
     public RuleSet add(RuleSet ruleSet) {
         Assert.notNull(ruleSet, "ruleSet cannot be null.");
-        Arrays.stream(ruleSet.getRules()).forEach((ActionableRule rule) -> add(rule));
+        Arrays.stream(ruleSet.getRules()).forEach((Rule rule) -> add(rule));
         return this;
     }
 
@@ -95,7 +91,7 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public ActionableRule[] getRules() {
-        return actions.toArray(new ActionableRule[actions.size()]);
+    public Rule[] getRules() {
+        return actions.toArray(new Rule[actions.size()]);
     }
 }
