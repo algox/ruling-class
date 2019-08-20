@@ -17,7 +17,9 @@ public final class DefaultRuleFactory implements RuleFactory {
     }
 
     public Rule rule(RuleDefinition ruleDefinition) {
-        // TODO : Handle Lambda creation?
-        return new SimpleRule(ruleDefinition, objectFactory.create(ruleDefinition.getRulingClass()));
+        return new SimpleRule(ruleDefinition,
+                ruleDefinition.isStatic()
+                        ? null
+                        : objectFactory.create(ruleDefinition.getRulingClass()));
     }
 }
