@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.annotation.Param;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
@@ -46,6 +47,7 @@ public class ExecutorTest {
     @Test
     public void test1() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
+        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
@@ -54,14 +56,16 @@ public class ExecutorTest {
 
         RuleDefinition definition1 = RuleDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
-        boolean result = executor.execute(rule5, definition1.getCondition(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
+        boolean result = executor.execute(rule5, definition1.getCondition(),
+                resolver.resolve(definition1.getCondition(), bindings,
+                        BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
     }
 
     @Test
     public void test2() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
+        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("x", int.class, 123)
@@ -71,14 +75,16 @@ public class ExecutorTest {
         Condition.Condition3<Integer, String, BigDecimal> rule3 = (Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null;
         SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(rule3);
         RuleDefinition definition2 = RuleDefinition.load(lambda1, "Rule3", " Test Rule 3");
-        boolean result = executor.execute(rule3, definition2.getCondition(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
+        boolean result = executor.execute(rule3, definition2.getCondition(),
+                resolver.resolve(definition2.getCondition(), bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(!result);
     }
 
     @Test
     public void test3() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
+        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("x", int.class, 123)
@@ -87,14 +93,16 @@ public class ExecutorTest {
         Condition.Condition2<Integer, String> rule2 = (Integer x, String y) -> x > 10 && y != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition definition = RuleDefinition.load(lambda, "Rule2", " Test Rule 2");
-        boolean result = executor.execute(rule2, definition.getCondition(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
+        boolean result = executor.execute(rule2, definition.getCondition(),
+                resolver.resolve(definition.getCondition(), bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
     }
 
     @Test
     public void test4() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
+        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
@@ -107,8 +115,9 @@ public class ExecutorTest {
         ActionDefinition definition1 = ActionDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
 
-        executor.execute(rule5, definition1.getAction(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
+        executor.execute(rule5, definition1.getAction(),
+                resolver.resolve(definition1.getAction(), bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         int result = bindings.get("result");
         Assert.assertTrue(result == 2);
     }
@@ -116,6 +125,7 @@ public class ExecutorTest {
     @Test
     public void test5() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
+        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
@@ -128,7 +138,9 @@ public class ExecutorTest {
         Then.Then3<Integer, String, Bindings> action = (Integer id, String y, Bindings binds) -> binds.set("result", 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
         ActionDefinition definition = ActionDefinition.load(lambda,"Then!");
-        executor.execute(action, definition.getAction(), bindings, BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy());
+        executor.execute(action, definition.getAction(),
+                resolver.resolve(definition.getAction(), bindings,
+                        BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         int result = bindings.get("result");
         Assert.assertTrue(result == 10);
     }

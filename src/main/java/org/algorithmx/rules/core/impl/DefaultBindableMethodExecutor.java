@@ -18,12 +18,8 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.ParameterResolver;
 import org.algorithmx.rules.model.MethodDefinition;
-import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -37,22 +33,11 @@ import java.util.Arrays;
  */
 public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
 
-    private final ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
-
     /**
      * Default Ctor.
      */
     public DefaultBindableMethodExecutor() {
         super();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T execute(Object target, MethodDefinition definition, Bindings ctx, BindingMatchingStrategy matchingStrategy) {
-        Assert.notNull(definition, "definition cannot be null");
-        Assert.notNull(ctx, "bind cannot be null");
-        Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
-        return execute(target, definition, resolver.resolve(definition, ctx, matchingStrategy));
     }
 
     @Override

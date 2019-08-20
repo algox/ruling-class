@@ -17,9 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.DefaultBindableMethodExecutor;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.model.MethodDefinition;
 
 /**
@@ -42,22 +40,6 @@ public interface BindableMethodExecutor {
     static BindableMethodExecutor defaultBindableMethodExecutor() {
         return new DefaultBindableMethodExecutor();
     }
-
-    /**
-     * Executes the BindableMethod and returns its result. Following the steps below:
-     *
-     * First resolve all the parameters (as per the MethodDefinition) and Bind values to them using the given matching strategy.
-     * Validate and make sure all required params are met.
-     * Execute the BindableMethod with the derived args from above.
-     *
-     * @param target target object.
-     * @param definition definition of the method being executed.
-     * @param ctx all the available Bindings.
-     * @param matchingStrategy matching strategy used to Bind the parameters.
-     * @param <T> generic type of the result.
-     * @return the result of the execution.
-     */
-    <T> T execute(Object target, MethodDefinition definition, Bindings ctx, BindingMatchingStrategy matchingStrategy);
 
     /**
      *  Executes the BindableMethod and returns its result.
