@@ -3,6 +3,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.function.Predicate;
 
@@ -88,28 +89,44 @@ public interface Rule extends Predicate<RuleExecutionContext> {
         return this instanceof Identifiable;
     }
 
-    /*default Rule and(Rule other) {
-        Objects.requireNonNull(other);
-        return (t) -> isPass(t) && other.test(t);
+    default Rule and(Rule other) {
+        Rule[] rules = new Rule[1];
+        rules[0] = other;
+        return and(rules);
     }
 
-    default Rule and(Condition other) {
-        return and(RuleFactory.defaultFactory().rule(other));
-    }
-
-    default Rule negate() {
-        return (t) -> !test(t);
+    default Rule and(Rule...others) {
+        return CompositeRule.AND(combine(this, others));
     }
 
     default Rule or(Rule other) {
-        Objects.requireNonNull(other);
-        return (t) -> test(t) || other.test(t);
+        Rule[] rules = new Rule[1];
+        rules[0] = other;
+        return or(rules);
     }
 
-    default Rule or(Condition other) {
-        return or(RuleFactory.defaultFactory().rule(other));
-    }*/
+    default Rule or(Rule...others) {
+        return CompositeRule.OR(combine(this, others));
+    }
+
+    default Rule none(Rule other) {
+        Rule[] rules = new Rule[1];
+        rules[0] = other;
+        return none(rules);
+    }
+
+    default Rule none(Rule...others) {
+        return CompositeRule.NONE(combine(this, others));
+    }
 
     Object getTarget();
 
+    static Rule[] combine(Rule rule, Rule[] others) {
+        Assert.isTrue(others != null && others.length > 0,
+                "others cannot be null and must have at least 1 element");
+        Rule[] result = new Rule[others.length + 1];
+        result[0] = rule;
+        System.arraycopy(others, 0, result, 1, others.length);
+        return result;
+    }
 }

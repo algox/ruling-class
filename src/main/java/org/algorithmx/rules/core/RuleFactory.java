@@ -1,6 +1,5 @@
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.core.impl.DefaultCompositeRule;
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
@@ -15,45 +14,6 @@ public interface RuleFactory {
     }
 
     Rule rule(RuleDefinition ruleDefinition);
-
-    default CompositeRule and(RuleSet ruleSet) {
-        return and(ruleSet.getRules());
-    }
-
-    default CompositeRule and(final Rule[] allRules) {
-        return new DefaultCompositeRule(allRules, (rules, ctx) -> {
-            for (Rule rule : rules) {
-                if (!rule.isPass(ctx)) return false;
-            }
-            return true;
-        });
-    }
-
-    default CompositeRule or(RuleSet ruleSet) {
-        return or(ruleSet.getRules());
-    }
-
-    default CompositeRule or(final Rule[] allRules) {
-        return new DefaultCompositeRule(allRules, (rules, ctx) -> {
-            for (Rule rule : rules) {
-                if (rule.isPass(ctx)) return true;
-            }
-            return false;
-        });
-    }
-
-    default CompositeRule none(RuleSet ruleSet) {
-        return none(ruleSet.getRules());
-    }
-
-    default CompositeRule none(final Rule[] allRules) {
-        return new DefaultCompositeRule(allRules, (rules, ctx) -> {
-            for (Rule rule : rules) {
-                if (rule.isPass(ctx)) return false;
-            }
-            return true;
-        });
-    }
 
     default RuleSet rules(String name) {
         return new DefaultRuleSet(name, null);
