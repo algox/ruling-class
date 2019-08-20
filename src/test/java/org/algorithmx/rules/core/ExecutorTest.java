@@ -45,7 +45,7 @@ public class ExecutorTest {
 
     @Test
     public void test1() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
@@ -61,7 +61,7 @@ public class ExecutorTest {
 
     @Test
     public void test2() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("x", int.class, 123)
@@ -78,7 +78,7 @@ public class ExecutorTest {
 
     @Test
     public void test3() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("x", int.class, 123)
@@ -94,7 +94,7 @@ public class ExecutorTest {
 
     @Test
     public void test4() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
@@ -115,7 +115,7 @@ public class ExecutorTest {
 
     @Test
     public void test5() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
         Bindings bindings = Bindings.simpleBindings()
                 .bind("id", int.class, 123)
@@ -135,7 +135,7 @@ public class ExecutorTest {
 
     @Test
     public void test6() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         Rule rule = ruleFactory.rule((String x, Integer y) -> y > 10);
         boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
@@ -144,7 +144,7 @@ public class ExecutorTest {
 
     @Test
     public void test7() {
-        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         Rule rule = ruleFactory.rule((String x, Integer y) -> y > 10);
         boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);

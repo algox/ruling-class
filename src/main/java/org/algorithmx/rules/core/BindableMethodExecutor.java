@@ -39,7 +39,7 @@ public interface BindableMethodExecutor {
      *
      * @return default BindableMethodExecutor implementation.
      */
-    static BindableMethodExecutor create() {
+    static BindableMethodExecutor defaultBindableMethodExecutor() {
         return new DefaultBindableMethodExecutor();
     }
 

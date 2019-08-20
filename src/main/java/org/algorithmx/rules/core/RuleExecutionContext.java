@@ -15,7 +15,7 @@ public class RuleExecutionContext {
     private final BindingMatchingStrategy matchingStrategy;
 
     private ParameterResolver parameterResolver = ParameterResolver.create();
-    private BindableMethodExecutor bindableMethodExecutor = BindableMethodExecutor.create();
+    private BindableMethodExecutor bindableMethodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     public static RuleExecutionContext create(Bindings bindings) {
         return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
