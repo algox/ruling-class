@@ -1,14 +1,17 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.core.Action;
+import org.algorithmx.rules.core.ActionableRule;
+import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.core.Then;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ActionUtils;
 
 import java.util.LinkedList;
 
-public class SimpleRule implements IdentifiableRule, ActionableRule {
+public class SimpleRule implements ActionableRule {
 
     private final RuleDefinition ruleDefinition;
     private final Object target;

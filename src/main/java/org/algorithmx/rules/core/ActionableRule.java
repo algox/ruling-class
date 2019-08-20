@@ -3,8 +3,21 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.model.RuleDefinition;
 
-public interface ActionableRule extends Rule {
+public interface ActionableRule extends Rule, Identifiable {
+
+    RuleDefinition getRuleDefinition();
+
+    @Override
+    default String getName() {
+        return getRuleDefinition().getName();
+    }
+
+    @Override
+    default String getDescription() {
+        return getRuleDefinition().getDescription();
+    }
 
     default void run(RuleExecutionContext ctx) throws UnrulyException {
         if (isPass(ctx)) {

@@ -14,7 +14,7 @@ public interface RuleFactory {
         return new DefaultRuleFactory(new DefaultObjectFactory());
     }
 
-    IdentifiableRule rule(RuleDefinition ruleDefinition);
+    ActionableRule rule(RuleDefinition ruleDefinition);
 
     default CompositeRule and(RuleSet ruleSet) {
         return and(ruleSet.getRules());
@@ -115,11 +115,11 @@ public interface RuleFactory {
         return rule((Condition) arg);
     }
 
-    default IdentifiableRule rule(String name, Condition condition) {
+    default ActionableRule rule(String name, Condition condition) {
         return rule(load(condition, name, null));
     }
 
-    default IdentifiableRule rule(String name, Condition condition, String description) {
+    default ActionableRule rule(String name, Condition condition, String description) {
         return rule(load(condition, name, description));
     }
 }
