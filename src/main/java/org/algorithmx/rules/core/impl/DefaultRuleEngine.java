@@ -11,7 +11,7 @@ public class DefaultRuleEngine implements RuleEngine {
     public DefaultRuleEngine() {
         super();
     }
-    
+
     @Override
     public boolean isPass(Rule rule, RuleExecutionContext ctx) throws UnrulyException {
         return rule.isPass(ctx);
@@ -22,6 +22,7 @@ public class DefaultRuleEngine implements RuleEngine {
         rule.run(ctx);
     }
 
+    @Override
     public void run(Action action, RuleExecutionContext ctx) throws UnrulyException {
         action.run(ctx);
     }

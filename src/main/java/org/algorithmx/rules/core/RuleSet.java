@@ -12,7 +12,7 @@ public interface RuleSet extends Iterable<Rule> {
 
     Rule[] getRules();
 
-    RuleSet add(Class<?> ruleActionClass);
+    RuleSet add(Class<?> ruleClass);
 
     RuleSet add(Rule rule);
 
