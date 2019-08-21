@@ -51,13 +51,12 @@ public final class RuleDefinition {
     // when method
     private final MethodDefinition condition;
 
-    private RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition) {
+    public RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
         Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "Rule name must match ["
                 + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
-        Assert.notNull(condition, "when method cannot be null.");
         this.rulingClass = rulingClass;
         this.name = name;
         this.description = description;

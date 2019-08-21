@@ -3,7 +3,8 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.model.RuleDefinition;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.function.Predicate;
 
@@ -96,7 +97,7 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     }
 
     default Rule and(Rule...others) {
-        return CompositeRule.AND(combine(this, others));
+        return CompositeRule.AND(RuleUtils.merge(this, others));
     }
 
     default Rule or(Rule other) {
@@ -106,7 +107,7 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     }
 
     default Rule or(Rule...others) {
-        return CompositeRule.OR(combine(this, others));
+        return CompositeRule.OR(RuleUtils.merge(this, others));
     }
 
     default Rule none(Rule other) {
@@ -116,17 +117,10 @@ public interface Rule extends Predicate<RuleExecutionContext> {
     }
 
     default Rule none(Rule...others) {
-        return CompositeRule.NONE(combine(this, others));
+        return CompositeRule.NONE(RuleUtils.merge(this, others));
     }
 
     Object getTarget();
 
-    static Rule[] combine(Rule rule, Rule[] others) {
-        Assert.isTrue(others != null && others.length > 0,
-                "others cannot be null and must have at least 1 element");
-        Rule[] result = new Rule[others.length + 1];
-        result[0] = rule;
-        System.arraycopy(others, 0, result, 1, others.length);
-        return result;
-    }
+    RuleDefinition getRuleDefinition();
 }

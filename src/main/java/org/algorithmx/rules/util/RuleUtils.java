@@ -18,6 +18,7 @@
 package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -72,5 +73,14 @@ public final class RuleUtils {
     public static boolean isValidRuleName(String ruleName) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
         return NAME_PATTERN.matcher(ruleName).matches();
+    }
+
+    public static Rule[] merge(Rule rule, Rule[] others) {
+        Assert.isTrue(others != null && others.length > 0,
+                "others cannot be null and must have at least 1 element");
+        Rule[] result = new Rule[others.length + 1];
+        result[0] = rule;
+        System.arraycopy(others, 0, result, 1, others.length);
+        return result;
     }
 }

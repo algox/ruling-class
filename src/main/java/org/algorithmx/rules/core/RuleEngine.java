@@ -2,8 +2,6 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.UnrulyException;
 import org.algorithmx.rules.core.impl.DefaultRuleEngine;
-import org.algorithmx.rules.model.ActionDefinition;
-import org.algorithmx.rules.model.RuleDefinition;
 
 public interface RuleEngine {
 
@@ -15,9 +13,9 @@ public interface RuleEngine {
         return getClass().getSimpleName();
     }
 
-    boolean isPass(Rule rule, RuleDefinition ruleDefinition, Object target, RuleExecutionContext ctx) throws UnrulyException;
+    boolean isPass(Rule rule, RuleExecutionContext ctx) throws UnrulyException;
 
-    void run(Rule rule, RuleDefinition ruleDefinition, Object target, RuleExecutionContext ctx) throws UnrulyException;
+    void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException;
 
-    void run(Action action, ActionDefinition actionDefinition, Object target, RuleExecutionContext ctx) throws UnrulyException;
+    void run(Action action, RuleExecutionContext ctx) throws UnrulyException;
 }

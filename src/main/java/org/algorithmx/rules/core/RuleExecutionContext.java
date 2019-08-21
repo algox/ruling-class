@@ -5,17 +5,13 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-
 public class RuleExecutionContext {
 
     private final Bindings bindings;
-    private final LinkedHashMap<String, RuleSet> rules = new LinkedHashMap<>();
     private final BindingMatchingStrategy matchingStrategy;
-    private final RuleEngine ruleEngine = RuleEngine.defaultRuleEngine();
 
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
+    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     public static RuleExecutionContext create(Bindings bindings) {
         return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
@@ -33,10 +29,6 @@ public class RuleExecutionContext {
         this.matchingStrategy = matchingStrategy;
     }
 
-    public RuleEngine ruleEngine() {
-        return ruleEngine;
-    }
-
     public Bindings bindings() {
         return bindings;
     }
@@ -49,12 +41,7 @@ public class RuleExecutionContext {
         return parameterResolver;
     }
 
-    public RuleSet ruleSet(String name) {
-        return rules.get(name);
-    }
-
-    public void setRules(RuleSet...rules) {
-        Assert.notNull(rules, "rules cannot be null");
-        Arrays.stream(rules).forEach(r -> this.rules.put(r.getName(), r));
+    public BindableMethodExecutor methodExecutor() {
+        return methodExecutor;
     }
 }
