@@ -19,8 +19,14 @@ package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
+import org.algorithmx.rules.spring.util.Assert;
 
+import javax.annotation.PostConstruct;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Reflection related utility methods.
@@ -47,4 +53,39 @@ public final class ReflectionUtils {
     public static String[] getParameterNames(Method method) {
         return parameterNameDiscoverer.getParameterNames(method);
     }
+
+    /**
+     * Finds the PostConstruct method(s) in a given class.
+     *
+     * @param c desired class
+     * @return PostConstruct methods (if found); null otherwise.
+     */
+    public static List<Method> getPostConstructMethods(Class<?> c) {
+        return Arrays.stream(c.getDeclaredMethods())
+                .filter(method -> void.class.equals(method.getReturnType()) &&
+                method.getParameterCount() == 0 && method.getExceptionTypes().length == 0 &&
+                method.getAnnotation(PostConstruct.class) != null).collect(Collectors.toList());
+    }
+
+    /**
+     * Invokes the PostConstruct method on the given target.
+     *
+     * @param postConstructMethod post constructor method.
+     * @param target target object.
+     */
+    public static void invokePostConstruct(Method postConstructMethod, Object target) {
+        Assert.notNull(postConstructMethod, "postConstructMethod cannot be null");
+
+        postConstructMethod.setAccessible(true);
+        try {
+            postConstructMethod.invoke(target);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Error occurred trying to call @PostConstruct ["
+                    + postConstructMethod + "]", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("Error occurred trying to call @PostConstruct ["
+                    + postConstructMethod + "]", e);
+        }
+    }
+
 }
