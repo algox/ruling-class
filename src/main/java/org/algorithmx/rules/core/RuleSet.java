@@ -17,7 +17,5 @@ public interface RuleSet extends Iterable<Rule> {
     RuleSet add(Rule rule);
 
     RuleSet add(String name, Rule rule);
-
-    RuleSet add(RuleSet ruleSet);
 }
 

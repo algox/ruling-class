@@ -1,10 +1,9 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.UnrulyException;
-import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.core.RuleSet;
 
 public class DefaultRuleEngine implements RuleEngine {
 
@@ -13,17 +12,7 @@ public class DefaultRuleEngine implements RuleEngine {
     }
 
     @Override
-    public boolean isPass(Rule rule, RuleExecutionContext ctx) throws UnrulyException {
-        return rule.isPass(ctx);
-    }
+    public void run(RuleExecutionContext ctx, RuleSet... rules) throws UnrulyException {
 
-    @Override
-    public void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException {
-        rule.run(ctx);
-    }
-
-    @Override
-    public void run(Action action, RuleExecutionContext ctx) throws UnrulyException {
-        action.run(ctx);
     }
 }

@@ -13,9 +13,5 @@ public interface RuleEngine {
         return getClass().getSimpleName();
     }
 
-    boolean isPass(Rule rule, RuleExecutionContext ctx) throws UnrulyException;
-
-    void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException;
-
-    void run(Action action, RuleExecutionContext ctx) throws UnrulyException;
+    void run(RuleExecutionContext ctx, RuleSet...rules) throws UnrulyException;
 }

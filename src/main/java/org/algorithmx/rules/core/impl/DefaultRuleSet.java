@@ -79,13 +79,6 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleSet add(RuleSet ruleSet) {
-        Assert.notNull(ruleSet, "ruleSet cannot be null.");
-        Arrays.stream(ruleSet.getRules()).forEach((Rule rule) -> add(rule));
-        return this;
-    }
-
-    @Override
     public int size() {
         return actions.size();
     }
