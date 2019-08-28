@@ -19,10 +19,11 @@ public class RuleActionTest1 {
         bindings.bind("z", Integer.class, 200);
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule action = ruleFactory.rule((String x, Integer y) -> y > 10)
+        Rule ruleWithAction = ruleFactory.rule((String x, Integer y) -> y > 10)
                 .then((Integer z) -> System.err.println("YASS! [" + z + "]"))
                 .then((String x) -> System.err.println("MAN! [" + x + "]"));
-        action.run(bindings);
+        RuleEngine ruleEngine = RuleEngine.defaultRuleEngine();
+        ruleEngine.run(ruleWithAction, bindings);
 
         RuleUtils.load((Condition.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
     }

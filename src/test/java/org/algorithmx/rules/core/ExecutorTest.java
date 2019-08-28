@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Param;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
@@ -150,7 +149,7 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         Rule rule = ruleFactory.rule((String x, Integer y) -> y > 10);
-        boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
+        boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
     }
 
@@ -159,7 +158,7 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         Rule rule = ruleFactory.rule((String x, Integer y) -> y > 10);
-        boolean result = rule.isPass(x -> "hello world", y -> 20, z -> 10);
+        boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
     }
 

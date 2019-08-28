@@ -1,19 +1,16 @@
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.ParameterResolver;
-import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.model.ActionDefinition;
-import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 public class SimpleAction implements Action {
 
     private final ActionDefinition actionDefinition;
     private final Object target;
+
+    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     public SimpleAction(ActionDefinition actionDefinition, Object target) {
         super();
@@ -23,14 +20,22 @@ public class SimpleAction implements Action {
     }
 
     @Override
-    public void run(RuleExecutionContext ctx) throws UnrulyException {
-        Object[] args = resolveArguments(actionDefinition.getAction(), ctx.parameterResolver(),
-                ctx.bindings(), ctx.matchingStrategy());
-        ctx.methodExecutor().execute(target, actionDefinition.getAction(), args);
+    public void execute(Object... args) {
+        methodExecutor.execute(target, actionDefinition.getAction(), args);
     }
 
-    protected Object[] resolveArguments(MethodDefinition methodDefinition, ParameterResolver parameterResolver,
-                                        Bindings bindings, BindingMatchingStrategy matchingStrategy) {
-        return parameterResolver.resolve(methodDefinition, bindings, matchingStrategy);
+    @Override
+    public ActionDefinition getActionDefinition() {
+        return actionDefinition;
+    }
+
+    @Override
+    public Object getTarget() {
+        return target;
+    }
+
+    public void setMethodExecutor(BindableMethodExecutor methodExecutor) {
+        Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
+        this.methodExecutor = methodExecutor;
     }
 }

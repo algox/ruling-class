@@ -9,6 +9,7 @@ import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.function.BiPredicate;
 
+@Deprecated
 public class DefaultCompositeRule extends RuleTemplate implements CompositeRule {
 
     private final Rule[] rules;
@@ -26,9 +27,19 @@ public class DefaultCompositeRule extends RuleTemplate implements CompositeRule 
     }
 
     @Override
+    public boolean isPass(Object...args) throws UnrulyException {
+        return true;
+    }
+
+    /*@Override
+    public boolean test(RuleExecutionContext ruleExecutionContext) {
+        return false;
+    }
+
+    @Override
     public boolean isPass(RuleExecutionContext ctx) throws UnrulyException {
         return test.test(rules, ctx);
-    }
+    }*/
 
     @Override
     public final Rule[] getRules() {

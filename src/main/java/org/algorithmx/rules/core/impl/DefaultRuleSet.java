@@ -74,8 +74,15 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public final RuleSet add(Rule rule) {
+    public RuleSet add(Rule rule) {
         return add(rule.isIdentifiable() ? ((Identifiable) rule).getName() : null, rule);
+    }
+
+    @Override
+    public RuleSet add(Collection<Rule> rules) {
+        Assert.notNull(rules, "rules cannot be null.");
+        rules.stream().forEach(rule -> add(rule));
+        return this;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.core.impl.DefaultCompositeRule;
 
+@Deprecated
 public interface CompositeRule extends Rule {
 
     static CompositeRule AND(final Rule...allRules) {

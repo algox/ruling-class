@@ -1,18 +1,12 @@
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
-import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.model.ActionDefinition;
 
-@FunctionalInterface
 public interface Action {
 
-    void run(RuleExecutionContext ctx) throws UnrulyException;
+    void execute(Object...args);
 
-    default void run(BindingDeclaration... bindings) {
-        run(Bindings.simpleBindings().bind(bindings));
-    }
+    ActionDefinition getActionDefinition();
 
-    default void run(Bindings bindings) throws UnrulyException {
-        run(RuleExecutionContext.create(bindings));
-    }
+    Object getTarget();
 }
