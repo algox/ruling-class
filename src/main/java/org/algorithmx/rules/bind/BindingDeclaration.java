@@ -1,6 +1,6 @@
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.util.ReflectionUtils;
 

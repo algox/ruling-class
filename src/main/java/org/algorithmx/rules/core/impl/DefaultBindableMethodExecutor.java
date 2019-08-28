@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.model.MethodDefinition;
 

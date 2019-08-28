@@ -1,6 +1,6 @@
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.ObjectFactory;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ReflectionUtils;

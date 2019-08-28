@@ -1,6 +1,6 @@
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.CompositeRule;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleExecutionContext;

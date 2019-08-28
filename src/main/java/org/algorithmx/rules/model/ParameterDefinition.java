@@ -17,11 +17,9 @@
  */
 package org.algorithmx.rules.model;
 
-import org.algorithmx.rules.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
-import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
-import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.algorithmx.rules.util.ReflectionUtils;
