@@ -3,15 +3,20 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.model.RuleExecution;
 import org.algorithmx.rules.spring.util.Assert;
 
-public class RuleExecutionContext {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+public class RuleExecutionContext implements RuleExecutionAuditor {
 
     private final Bindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
 
-    private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
+    private final List<RuleExecution> audit = Collections.synchronizedList(new ArrayList<>());
 
     public static RuleExecutionContext create(Bindings bindings) {
         return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
@@ -29,19 +34,33 @@ public class RuleExecutionContext {
         this.matchingStrategy = matchingStrategy;
     }
 
+    @Override
+    public void audit(RuleExecution execution) {
+        this.audit.add(execution);
+    }
+
+    @Override
+    public RuleExecution getFirstAuditItem() {
+        int size = audit.size();
+        return size > 0 ? audit.get(0) : null;
+    }
+
+    @Override
+    public RuleExecution getLastAuditItem() {
+        int size = audit.size();
+        return size > 0 ? audit.get(size - 1) : null;
+    }
+
+    @Override
+    public Iterator<RuleExecution> getAuditItems() {
+        return audit.iterator();
+    }
+
     public Bindings bindings() {
         return bindings;
     }
 
     public BindingMatchingStrategy matchingStrategy() {
         return matchingStrategy;
-    }
-
-    public ParameterResolver parameterResolver() {
-        return parameterResolver;
-    }
-
-    public BindableMethodExecutor methodExecutor() {
-        return methodExecutor;
     }
 }

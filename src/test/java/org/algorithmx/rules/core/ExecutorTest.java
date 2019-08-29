@@ -56,7 +56,7 @@ public class ExecutorTest {
         RuleDefinition definition1 = RuleDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
         boolean result = executor.execute(rule5, definition1.getCondition(),
-                resolver.resolve(definition1.getCondition(), bindings,
+                resolver.resolveAsBindingValues(definition1.getCondition(), bindings,
                         BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
     }
@@ -75,7 +75,7 @@ public class ExecutorTest {
         SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(rule3);
         RuleDefinition definition2 = RuleDefinition.load(lambda1, "Rule3", " Test Rule 3");
         boolean result = executor.execute(rule3, definition2.getCondition(),
-                resolver.resolve(definition2.getCondition(), bindings,
+                resolver.resolveAsBindingValues(definition2.getCondition(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(!result);
     }
@@ -93,7 +93,7 @@ public class ExecutorTest {
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition definition = RuleDefinition.load(lambda, "Rule2", " Test Rule 2");
         boolean result = executor.execute(rule2, definition.getCondition(),
-                resolver.resolve(definition.getCondition(), bindings,
+                resolver.resolveAsBindingValues(definition.getCondition(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
     }
@@ -115,7 +115,7 @@ public class ExecutorTest {
         TestRule5 rule5 = new TestRule5();
 
         executor.execute(rule5, definition1.getAction(),
-                resolver.resolve(definition1.getAction(), bindings,
+                resolver.resolveAsBindingValues(definition1.getAction(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         int result = bindings.get("result");
         Assert.assertTrue(result == 2);
@@ -138,7 +138,7 @@ public class ExecutorTest {
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
         ActionDefinition definition = ActionDefinition.load(lambda,"Then!");
         executor.execute(action, definition.getAction(),
-                resolver.resolve(definition.getAction(), bindings,
+                resolver.resolveAsBindingValues(definition.getAction(), bindings,
                         BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         int result = bindings.get("result");
         Assert.assertTrue(result == 10);
