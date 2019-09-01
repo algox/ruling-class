@@ -69,6 +69,16 @@ public interface Binding<T> extends Supplier<T> {
 	T getValue();
 
 	/**
+	 * Textual Value of the Binding.
+	 *
+	 * @return string value of the Binding. The default implementation will call toString() on the value.
+	 */
+	default String getTextValue() {
+		Object result = getValue();
+		return result != null ? result.toString() : null;
+	}
+
+	/**
 	 * Sets the value of the Binding.
 	 *
 	 * @param value new value.
