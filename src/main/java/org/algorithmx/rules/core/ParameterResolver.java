@@ -23,17 +23,46 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.DefaultParameterResolver;
 import org.algorithmx.rules.model.MethodDefinition;
 
+/**
+ * Resolves a method's parameters from the given Bindings and a MatchingStrategy.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface ParameterResolver {
 
+    /**
+     * Creates a the default implementation of the ParameterResolver.
+     *
+     * @return a new instance of the ParameterResolver.
+     */
     static ParameterResolver defaultParameterResolver() {
         return new DefaultParameterResolver();
     }
 
+    /**
+     * Resolves the method parameters into an array of Bindings. We use the matching strategy to resolves each parameter.
+     *
+     * @param definition method meta information.
+     * @param bindings available bindings.
+     * @param matchingStrategy matching strategy to use to resolve the bindings.
+     * @return arrays of matching Bindings.
+     * @throws UnrulyException if the Binding Strategy failed.
+     */
     Binding<Object>[] resolveAsBindings(MethodDefinition definition, Bindings bindings,
-                                        BindingMatchingStrategy matchingStrategy);
+                                        BindingMatchingStrategy matchingStrategy) throws UnrulyException;
 
+    /**
+     * Resolves the method parameters into an array of values. We use the matching strategy to resolves each parameter.
+     *
+     * @param definition method meta information.
+     * @param bindings available bindings.
+     * @param matchingStrategy matching strategy to use to resolve the bindings.
+     * @return arrays of method parameter values.
+     * @throws UnrulyException if the Binding Strategy failed.
+     */
     default Object[] resolveAsBindingValues(MethodDefinition definition, Bindings bindings,
-                                            BindingMatchingStrategy matchingStrategy) {
+                                            BindingMatchingStrategy matchingStrategy) throws UnrulyException {
         Binding<Object>[] bindingValues = resolveAsBindings(definition, bindings, matchingStrategy);
 
         if (bindingValues == null) return null;

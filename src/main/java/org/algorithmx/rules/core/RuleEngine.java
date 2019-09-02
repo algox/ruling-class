@@ -21,6 +21,12 @@ import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.DefaultRuleEngine;
 
+/**
+ *
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface RuleEngine {
 
     static RuleEngine defaultRuleEngine() {

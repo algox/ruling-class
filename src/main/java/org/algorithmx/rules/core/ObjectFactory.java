@@ -19,11 +19,31 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
 
+/**
+ * Factory use to create Objects. Framework requires Object instances to be created (such as Rules), the ObjectFactory is
+ * used to create those Objects.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface ObjectFactory {
-    
+
+    /**
+     * Returns the default implementation of the ObjectFactory.
+     *
+     * @return instance of the ObjectFactory.
+     */
     static ObjectFactory create() {
         return new DefaultObjectFactory();
     }
 
-    <T> T create(Class<T> type);
+    /**
+     * Creates a new instance of the desired Type.
+     *
+     * @param type desired type.
+     * @param <T> generic Type.
+     * @return new instance of Type.
+     * @throws UnrulyException thrown in case we are unable to create the type at runtime.
+     */
+    <T> T create(Class<T> type) throws UnrulyException;
 }

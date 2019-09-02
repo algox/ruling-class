@@ -28,6 +28,12 @@ import java.util.Arrays;
 
 import static org.algorithmx.rules.util.RuleUtils.load;
 
+/**
+ *
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface RuleFactory {
 
     static RuleFactory defaultFactory() {

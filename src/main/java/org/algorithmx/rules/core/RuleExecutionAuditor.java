@@ -21,13 +21,44 @@ import org.algorithmx.rules.model.RuleExecution;
 
 import java.util.Iterator;
 
-public interface RuleExecutionAuditor {
+/**
+ * As the name suggests this class is responsible for auditing the execution of a Rule. Keeps an audit trail of all the
+ * Rule executions.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
+public interface RuleExecutionAuditor extends Iterable<RuleExecution> {
 
+    /**
+     * Stores a audit item for the execution of a Rule.
+     *
+     * @param auditItem Rule Audit details.
+     */
     void audit(RuleExecution auditItem);
 
+    /**
+     * Returns the first audit item.
+     *
+     * @return first audit item in the audit trail.
+     */
     RuleExecution getFirstAuditItem();
 
+    /**
+     * Returns the last audit item.
+     *
+     * @return last audit item in the audit trail.
+     */
     RuleExecution getLastAuditItem();
 
+    /**
+     * Returns the audit trail.
+     * @return
+     */
     Iterator<RuleExecution> getAuditItems();
+
+    @Override
+    default Iterator<RuleExecution> iterator() {
+        return getAuditItems();
+    }
 }

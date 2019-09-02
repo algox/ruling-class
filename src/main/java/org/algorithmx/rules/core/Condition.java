@@ -19,6 +19,12 @@ package org.algorithmx.rules.core;
 
 import java.io.Serializable;
 
+/**
+ *
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface Condition extends Serializable {
 
     long serialVersionUID = -0L;

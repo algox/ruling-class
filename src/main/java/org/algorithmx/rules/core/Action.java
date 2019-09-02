@@ -19,6 +19,12 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.model.ActionDefinition;
 
+/**
+ *
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface Action {
 
     void execute(Object...args);

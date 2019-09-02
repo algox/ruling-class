@@ -28,6 +28,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class RuleExecutionContext implements RuleExecutionAuditor {
 
     private static final ThreadLocal<RuleExecutionContext> CTX_HOLDER = new ThreadLocal<>();

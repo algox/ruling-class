@@ -19,6 +19,12 @@ package org.algorithmx.rules.core;
 
 import java.util.Collection;
 
+/**
+ *
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface RuleSet extends Iterable<Rule> {
 
     String getName();

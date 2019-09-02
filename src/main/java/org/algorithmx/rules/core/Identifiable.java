@@ -17,10 +17,26 @@
  */
 package org.algorithmx.rules.core;
 
+/**
+ * Marks a class to be Identifiable by a Name. Used to Identify Rule/RuleSets.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface Identifiable {
 
+    /**
+     * Identifiable Name.
+     *
+     * @return name.
+     */
     String getName();
 
+    /**
+     * Brief description of the class.
+     *
+     * @return description.
+     */
     default String getDescription() {
         return null;
     }

@@ -19,6 +19,12 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.core.impl.DefaultCompositeRule;
 
+/**
+ *
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 @Deprecated
 public interface CompositeRule extends Rule {
 
