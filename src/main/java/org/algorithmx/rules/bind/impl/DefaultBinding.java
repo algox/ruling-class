@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * @since 1.0
  * @see org.algorithmx.rules.bind.Binding
  */
-class SimpleBinding<T> implements Binding<T> {
+class DefaultBinding<T> implements Binding<T> {
 
     private static final Pattern NAME_PATTERN = Pattern.compile(NAME_REGEX);
 
@@ -51,14 +51,14 @@ class SimpleBinding<T> implements Binding<T> {
     private boolean mutable = true;
 
     /**
-     * Creates a new SimpleBinding using the given Supplier. Supplier is responsible to supplying the Binding's value.
+     * Creates a new DefaultBinding using the given Supplier. Supplier is responsible to supplying the Binding's value.
      * The Binding will not enforce any validation rules on the Binding nor will it be mutable.
      *
      * @param name name of the Binding.
      * @param type Type of the Binding.
      * @param supplier value supplier.
      */
-    SimpleBinding(String name, Type type, Supplier<T> supplier) {
+    DefaultBinding(String name, Type type, Supplier<T> supplier) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
@@ -72,14 +72,14 @@ class SimpleBinding<T> implements Binding<T> {
     }
 
     /**
-     * Creates a new SimpleBinding
+     * Creates a new DefaultBinding
      *
      * @param name name of the Binding.
      * @param type Type of the Binding.
      * @param value initial value of the Binding.
      * @param validationCheck any validation checks to be performed on the value.
      */
-    SimpleBinding(String name, Type type, T value, Predicate<T> validationCheck) {
+    DefaultBinding(String name, Type type, T value, Predicate<T> validationCheck) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
@@ -161,7 +161,7 @@ class SimpleBinding<T> implements Binding<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleBinding<?> that = (SimpleBinding<?>) o;
+        DefaultBinding<?> that = (DefaultBinding<?>) o;
         return name.equals(that.name) &&
                 type.equals(that.type);
     }
@@ -173,7 +173,7 @@ class SimpleBinding<T> implements Binding<T> {
 
     @Override
     public String toString() {
-        return "SimpleBinding {" +
+        return "DefaultBinding {" +
                 "name='" + name + '\'' +
                 ", type=" + type +
                 ", value=" + valueSupplier.get() +

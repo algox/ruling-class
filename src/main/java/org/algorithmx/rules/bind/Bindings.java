@@ -18,7 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.SimpleBindings;
-import org.algorithmx.rules.bind.impl.SimpleScopedBindings;
+import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return new instance of the ScopedBindings.
      */
     static ScopedBindings defaultBindings() {
-        return new SimpleScopedBindings();
+        return new DefaultScopedBindings();
     }
 
     /**

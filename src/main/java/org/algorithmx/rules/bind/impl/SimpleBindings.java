@@ -54,7 +54,7 @@ public class SimpleBindings implements Bindings {
     @SuppressWarnings("unchecked")
     public <T> Bindings bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException {
-        SimpleBinding<T> result = new SimpleBinding(name, typeRef.getType(), initialValue, validationCheck);
+        DefaultBinding<T> result = new DefaultBinding(name, typeRef.getType(), initialValue, validationCheck);
         result.setMutable(mutable);
         bind(result);
         return this;
@@ -62,7 +62,7 @@ public class SimpleBindings implements Bindings {
 
     @Override
     public <T> Bindings bind(String name, Supplier<T> valueSupplier, TypeReference<T> typeRef) throws BindingAlreadyExistsException {
-        SimpleBinding<T> result = new SimpleBinding(name, typeRef.getType(), valueSupplier);
+        DefaultBinding<T> result = new DefaultBinding(name, typeRef.getType(), valueSupplier);
         bind(result);
         return this;
     }

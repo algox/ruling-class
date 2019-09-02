@@ -30,11 +30,11 @@ import java.util.Stack;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class SimpleScopedBindings implements ScopedBindings {
+public class DefaultScopedBindings implements ScopedBindings {
 
     private final Stack<Bindings> scopes = new Stack<>();
 
-    public SimpleScopedBindings() {
+    public DefaultScopedBindings() {
         super();
         init();
     }

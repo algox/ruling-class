@@ -19,7 +19,7 @@ package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Then;
-import org.algorithmx.rules.core.impl.SimpleAction;
+import org.algorithmx.rules.core.impl.DefaultAction;
 import org.algorithmx.rules.model.ActionDefinition;
 
 import java.lang.invoke.SerializedLambda;
@@ -56,7 +56,7 @@ public final class ActionUtils {
      * @return Action Object.
      */
     public static Action create(ActionDefinition actionDefinition, Object target) {
-        return new SimpleAction(actionDefinition, target);
+        return new DefaultAction(actionDefinition, target);
     }
 
     /**

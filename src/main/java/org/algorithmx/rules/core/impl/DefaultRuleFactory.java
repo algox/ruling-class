@@ -34,7 +34,7 @@ public final class DefaultRuleFactory implements RuleFactory {
     }
 
     public Rule rule(RuleDefinition ruleDefinition) {
-        return new SimpleRule(ruleDefinition,
+        return new DefaultRule(ruleDefinition,
                 ruleDefinition.isStatic()
                         ? null
                         : objectFactory.create(ruleDefinition.getRulingClass()));
