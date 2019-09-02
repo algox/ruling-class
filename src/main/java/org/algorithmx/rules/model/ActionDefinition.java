@@ -35,7 +35,7 @@ import java.lang.reflect.Modifier;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class ActionDefinition {
+public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     public static final String THEN_METHOD_NAME = "then";
 
@@ -63,19 +63,21 @@ public final class ActionDefinition {
      * @param c desired class
      * @return all the associated actions
      */
-    public static ActionDefinition load(Class<?> c) {
+    public static ActionDefinition[] load(Class<?> c) {
         MethodDefinition[] actions = MethodDefinition.load(c, (Method method) ->
                 void.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers())
                         && THEN_METHOD_NAME.equals(method.getName()));
+        if (actions == null || actions.length == 0) return null;
 
-        Assert.isTrue(!(actions.length == 0), "Action Method " + THEN_METHOD_NAME + " not defined on class ["
-                + c + "]. Please define method public void " + THEN_METHOD_NAME + "(...)");
-        Assert.isTrue(actions.length == 1, "multiple "+ THEN_METHOD_NAME + " methods " + actions
-                + "] defined on class [" + c + "]. Please define only a single "+ THEN_METHOD_NAME
-                + " method public void " + THEN_METHOD_NAME + "(...)");
+        ActionDefinition[] result = new ActionDefinition[actions.length];
 
-        Description descriptionAnnotation = actions[0].getMethod().getAnnotation(Description.class);
-        return new ActionDefinition(c, descriptionAnnotation != null ? descriptionAnnotation.value() : null, actions[0]);
+        for (int i = 0; i < result.length; i++) {
+            Description descriptionAnnotation = actions[i].getMethod().getAnnotation(Description.class);
+            result[i] = new ActionDefinition(c, descriptionAnnotation != null ? descriptionAnnotation.value() : null,
+                    actions[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -96,6 +98,12 @@ public final class ActionDefinition {
 
         MethodDefinition[] actions = MethodDefinition.load(implementationClass, implementationMethod);
         return new ActionDefinition(implementationClass, description, actions[0]);
+    }
+
+    @Override
+    public int compareTo(ActionDefinition other) {
+        Integer parameterCount = action.getMethod().getParameterCount();
+        return parameterCount.compareTo(other.action.getMethod().getParameterCount());
     }
 
     public Class<?> getActionClass() {

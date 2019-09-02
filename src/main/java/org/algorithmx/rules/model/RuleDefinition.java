@@ -91,7 +91,7 @@ public final class RuleDefinition {
         Description descriptionAnnotation = c.getAnnotation(Description.class);
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
-                : rule.description(), conditions[0]);
+                : null, conditions[0]);
     }
 
     /**

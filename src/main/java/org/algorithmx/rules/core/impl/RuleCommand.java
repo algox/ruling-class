@@ -7,8 +7,6 @@ import org.algorithmx.rules.core.*;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.RuleExecution;
 
-import java.util.Arrays;
-
 public class RuleCommand {
 
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
@@ -21,6 +19,7 @@ public class RuleCommand {
         RuleExecution audit = new RuleExecution(rule.getRuleDefinition());
 
         try {
+            RuleExecutionContext.set(ctx);
             Binding<Object>[] bindings = resolveArguments(rule.getRuleDefinition().getCondition(), parameterResolver,
                     ctx.bindings(), ctx.matchingStrategy());
             boolean result = rule.isPass(getBindingValues(bindings));
@@ -35,13 +34,15 @@ public class RuleCommand {
                     audit.add(actionBindings);
                     action.execute(getBindingValues(actionBindings));
                 }
-                Arrays.stream(rule.getActions()).forEach(action -> action.execute(ctx));
             }
         } catch (Exception e) {
             audit.setError(e);
             String ruleName = rule.isIdentifiable() ? ((Identifiable) rule).getName() : null;
-            throw new UnrulyException("Error trying to execute rule [" + (ruleName != null ? ruleName : "n/a") + "]", e);
+            UnrulyException ex = new UnrulyException("Error trying to execute rule [" + (ruleName != null ? ruleName : "n/a") + "]", e);
+            ex.setExecutionStack(ctx.getAuditItems());
+            throw ex;
         } finally {
+            RuleExecutionContext.clear();
             auditor.audit(audit);
         }
     }

@@ -48,9 +48,9 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
-        Bindings bindings = Bindings.simpleBindings()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
-                .bind("closingDate", Date.class, new Date())
+                .bind("birthDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>());
 
         RuleDefinition definition1 = RuleDefinition.load(TestRule5.class);
@@ -66,7 +66,7 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
-        Bindings bindings = Bindings.simpleBindings()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
@@ -85,7 +85,7 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
-        Bindings bindings = Bindings.simpleBindings()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
@@ -103,19 +103,20 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
-        Bindings bindings = Bindings.simpleBindings()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
-                .bind("closingDate", Date.class, new Date())
+                .bind("birthDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
                 .bind("result", int.class, 0);
 
         bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, null, false);
 
-        ActionDefinition definition1 = ActionDefinition.load(TestRule5.class);
+        ActionDefinition[] definition1 = ActionDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
 
-        executor.execute(rule5, definition1.getAction(),
-                resolver.resolveAsBindingValues(definition1.getAction(), bindings,
+        Assert.assertTrue(definition1.length == 1);
+        executor.execute(rule5, definition1[0].getAction(),
+                resolver.resolveAsBindingValues(definition1[0].getAction(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         int result = bindings.get("result");
         Assert.assertTrue(result == 2);
@@ -126,7 +127,7 @@ public class ExecutorTest {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
 
-        Bindings bindings = Bindings.simpleBindings()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())

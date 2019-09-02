@@ -34,8 +34,8 @@ public class TestRule4 {
         return true;
     }
 
-    @Description("calculatePayment")
-    public void then(int id, Date closingDate, List<Integer> values) {
+    @Description("calculate")
+    public void then(int id, Date birthDate, List<Integer> values) {
 
     }
 

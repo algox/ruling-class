@@ -5,6 +5,7 @@ import org.algorithmx.rules.spring.util.Assert;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ValidationError {
 
@@ -43,8 +44,37 @@ public class ValidationError {
         return Collections.unmodifiableMap(params);
     }
 
+    public ValidationError param(String name, Object value) {
+        params.put(name, value != null ? value.toString() : null);
+        return this;
+    }
+
     public ValidationError param(String name, String value) {
         params.put(name, value);
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ValidationError that = (ValidationError) o;
+        return ruleName.equals(that.ruleName) &&
+                errorCode.equals(that.errorCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ruleName, errorCode);
+    }
+
+    @Override
+    public String toString() {
+        return "ValidationError{" +
+                "ruleName='" + ruleName + '\'' +
+                ", errorCode='" + errorCode + '\'' +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", params=" + params +
+                '}';
     }
 }

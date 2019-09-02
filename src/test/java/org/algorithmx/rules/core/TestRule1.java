@@ -17,20 +17,20 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 
 import java.util.Date;
 import java.util.List;
 
-@Rule(name = "TestRule", description = "Test Description 1")
+@Rule(name = "TestRule") @Description("Test Description 1")
 public class TestRule1 {
 
     public TestRule1() {
         super();
     }
 
-    public boolean when(int id, @Nullable Date closingDate, List<String> values) {
+    public boolean when(int id, Date birthDate, List<String> values) {
         return true;
     }
 

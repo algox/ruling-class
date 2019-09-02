@@ -17,21 +17,20 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Bindings;
 
 import java.util.Date;
 import java.util.List;
 
-@Rule(name = "TestRule", description = "Test Description 1")
+@Rule(name = "TestRule")
 public class TestRule5 {
 
     public TestRule5() {
         super();
     }
 
-    public boolean when(int id, @Nullable Date closingDate, List<String> values) {
+    public boolean when(int id, Date birthDate, List<String> values) {
         return id > 100;
     }
 

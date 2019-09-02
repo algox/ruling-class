@@ -13,9 +13,10 @@ import java.util.List;
 
 public class RuleExecutionContext implements RuleExecutionAuditor {
 
+    private static final ThreadLocal<RuleExecutionContext> CTX_HOLDER = new ThreadLocal<>();
+
     private final Bindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
-
     private final List<RuleExecution> audit = Collections.synchronizedList(new ArrayList<>());
 
     public static RuleExecutionContext create(Bindings bindings) {
@@ -32,6 +33,18 @@ public class RuleExecutionContext implements RuleExecutionAuditor {
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
         this.bindings = bindings;
         this.matchingStrategy = matchingStrategy;
+    }
+
+    public static final RuleExecutionContext get() {
+        return CTX_HOLDER.get();
+    }
+
+    public static final void set(RuleExecutionContext ctx) {
+        CTX_HOLDER.set(ctx);
+    }
+
+    public static final void clear() {
+        CTX_HOLDER.remove();
     }
 
     @Override

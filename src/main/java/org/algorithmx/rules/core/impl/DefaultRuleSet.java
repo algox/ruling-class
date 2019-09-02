@@ -12,7 +12,7 @@ public class DefaultRuleSet implements RuleSet {
     private final String description;
     private final RuleFactory ruleFactory;
 
-    private final LinkedList<Rule> actions = new LinkedList<>();
+    private final LinkedList<Rule> rules = new LinkedList<>();
     private final Map<String, Rule> ruleIndex = new HashMap<>();
 
     public DefaultRuleSet(String name, String description) {
@@ -43,7 +43,7 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public Iterator<Rule> iterator() {
-        return actions.iterator();
+        return rules.iterator();
     }
 
     @Override
@@ -64,11 +64,16 @@ public class DefaultRuleSet implements RuleSet {
         Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "RuleSet name must match ["
                 + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
 
-        actions.add(rule);
-
         if (name != null) {
+            if (ruleIndex.containsKey(name)) {
+                throw new UnrulyException("Rule with name [" + name + "] already exists in RuleSet [" + getName()
+                        + "]. Existing Rule [" + ruleIndex.get(name).getRuleDefinition().getRulingClass().getName() + "]");
+            }
+
             ruleIndex.put(name, rule);
         }
+
+        rules.add(rule);
 
         return this;
     }
@@ -87,11 +92,11 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public int size() {
-        return actions.size();
+        return rules.size();
     }
 
     @Override
     public Rule[] getRules() {
-        return actions.toArray(new Rule[actions.size()]);
+        return rules.toArray(new Rule[rules.size()]);
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
@@ -48,8 +47,8 @@ public class LoadTest {
         Assert.assertTrue("TestRule".equals(ruleDef.getName()));
         Assert.assertTrue("Test Description 1".equals(ruleDef.getDescription()));
 
-        ActionDefinition actionDef = ActionDefinition.load(TestRule1.class);
-        Assert.assertTrue(actionDef != null);
+        ActionDefinition[] actionDef = ActionDefinition.load(TestRule1.class);
+        Assert.assertTrue(actionDef != null && actionDef.length == 1);
     }
 
     @Test
@@ -76,15 +75,13 @@ public class LoadTest {
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getName().equals("closingDate"));
+        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getName().equals("birthDate"));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getType().equals(Date.class));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].isRequired() == false);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getAnnotations().length == 1);
 
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getIndex() == 2);
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getName().equals("values"));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].isRequired());
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getAnnotations().length == 0);
     }
 
@@ -100,28 +97,27 @@ public class LoadTest {
 
     @Test()
     public void loadTest6() {
-        ActionDefinition def = ActionDefinition.load(TestRule4.class);
+        ActionDefinition[] def = ActionDefinition.load(TestRule4.class);
 
-        Assert.assertTrue(def.getDescription().equals("calculatePayment"));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].getName().equals("id"));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].isRequired());
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.length == 1);
+        Assert.assertTrue(def[0].getDescription().equals("calculate"));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[0].getType().equals(int.class));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[0].isRequired());
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].getName().equals("closingDate"));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].isRequired());
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[1].getAnnotations().length == 0);
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[1].getName().equals("birthDate"));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[1].getType().equals(Date.class));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[1].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].getName().equals("values"));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].isRequired());
-        Assert.assertTrue(def.getAction().getParameterDefinitions()[2].getAnnotations().length == 0);
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[2].getName().equals("values"));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[2].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
+        Assert.assertTrue(def[0].getAction().getParameterDefinitions()[2].getAnnotations().length == 0);
     }
 
     @Test
     public void loadTest7() {
-        Condition.Condition2<Integer, String> rule2 = (Integer i, @Nullable String text) -> i > 100 && text != null;
+        Condition.Condition2<Integer, String> rule2 = (Integer i, String text) -> i > 100 && text != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition def = RuleDefinition.load(lambda, "TestRule2", "Some rule for testing");
 
@@ -130,14 +126,12 @@ public class LoadTest {
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getIndex() == 0);
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getName().equals("i"));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getType().equals(Integer.class));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].isRequired());
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getIndex() == 1);
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getName().equals("text"));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getType().equals(String.class));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].isRequired() == false);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getAnnotations().length == 1);
 
     }
 }

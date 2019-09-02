@@ -41,7 +41,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @return new instance of the SimpleBindings.
      */
-    static Bindings simpleBindings() {
+    static Bindings defaultBindings() {
         return new SimpleBindings();
     }
 

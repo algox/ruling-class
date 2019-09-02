@@ -1,7 +1,10 @@
 package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleEngine;
+import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.util.RuleUtils;
 import org.junit.Test;
 
@@ -13,7 +16,7 @@ public class RuleActionTest1 {
 
     @Test
     public void test1() {
-        Bindings bindings = Bindings.simpleBindings();
+        Bindings bindings = Bindings.defaultBindings();
         bindings.bind("x", String.class, "value");
         bindings.bind("y", Integer.class, 17);
         bindings.bind("z", Integer.class, 200);

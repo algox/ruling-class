@@ -55,4 +55,12 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
     public Iterator<ValidationError> iterator() {
         return errors.iterator();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Errors [" + System.lineSeparator());
+        errors.stream().forEach(error -> result.append(error.toString() + System.lineSeparator()));
+        result.append("]" + System.lineSeparator());
+        return result.toString();
+    }
 }

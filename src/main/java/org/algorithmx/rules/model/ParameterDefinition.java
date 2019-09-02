@@ -17,9 +17,8 @@
  */
 package org.algorithmx.rules.model;
 
-import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.algorithmx.rules.util.ReflectionUtils;
@@ -96,7 +95,7 @@ public final class ParameterDefinition {
     }
 
     private static boolean isRequired(Method method, int index) {
-        return !(method.getParameters()[index].getAnnotation(Nullable.class) != null);
+        return method.getParameters()[index].getType().isPrimitive();
     }
 
     public int getIndex() {

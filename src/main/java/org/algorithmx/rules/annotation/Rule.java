@@ -42,11 +42,4 @@ public @interface Rule {
      * @return Name of the Rule.
      */
     String name() default NOT_APPLICABLE;
-
-    /**
-     * Text describing what the Rule does.
-     *
-     * @return Description of the Rule.
-     */
-    String description() default NOT_APPLICABLE;
 }

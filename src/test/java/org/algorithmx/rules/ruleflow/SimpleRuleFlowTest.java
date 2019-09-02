@@ -15,7 +15,7 @@ public class SimpleRuleFlowTest {
 
     @Test
     public void simpleTest1() {
-        Bindings bindings = Bindings.simpleBindings()
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("y", String.class, "")
                 .bind("a", String.class, "")
                 .bind("b", String.class, "hello")

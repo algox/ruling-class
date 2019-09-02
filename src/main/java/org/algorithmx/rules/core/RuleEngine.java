@@ -16,21 +16,29 @@ public interface RuleEngine {
 
     void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException;
 
-    default void run(Rule rule, BindingDeclaration...bindings) {
-        run(rule, Bindings.simpleBindings().bind(bindings));
-    }
-
-    default void run(Rule rule, Bindings bindings) throws UnrulyException {
-        run(rule, RuleExecutionContext.create(bindings));
-    }
-
     void run(RuleSet rule, RuleExecutionContext ctx) throws UnrulyException;
 
-    default void run(RuleSet rule, BindingDeclaration...bindings) {
-        run(rule, Bindings.simpleBindings().bind(bindings));
+    default RuleExecutionContext run(Rule rule, BindingDeclaration...bindings) {
+        RuleExecutionContext result = RuleExecutionContext.create(Bindings.defaultBindings().bind(bindings));
+        run(rule, result);
+        return result;
     }
 
-    default void run(RuleSet rule, Bindings bindings) throws UnrulyException {
-        run(rule, RuleExecutionContext.create(bindings));
+    default RuleExecutionContext run(Rule rule, Bindings bindings) throws UnrulyException {
+        RuleExecutionContext result = RuleExecutionContext.create(bindings);
+        run(rule, result);
+        return result;
+    }
+
+    default RuleExecutionContext run(RuleSet rule, BindingDeclaration...bindings) {
+        RuleExecutionContext result = RuleExecutionContext.create(Bindings.defaultBindings().bind(bindings));
+        run(rule, result);
+        return result;
+    }
+
+    default RuleExecutionContext run(RuleSet rule, Bindings bindings) throws UnrulyException {
+        RuleExecutionContext result = RuleExecutionContext.create(bindings);
+        run(rule, result);
+        return result;
     }
 }

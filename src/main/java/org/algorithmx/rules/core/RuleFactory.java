@@ -3,7 +3,11 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
+import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
+import org.algorithmx.rules.util.ActionUtils;
+
+import java.util.Arrays;
 
 import static org.algorithmx.rules.util.RuleUtils.load;
 
@@ -24,7 +28,15 @@ public interface RuleFactory {
     }
 
     default Rule rule(Class<?> rulingClass) {
-        return rule(RuleDefinition.load(rulingClass));
+        Rule result = rule(RuleDefinition.load(rulingClass));
+        ActionDefinition[] actions = ActionDefinition.load(rulingClass);
+
+        if (actions != null) {
+            Arrays.sort(actions);
+            Arrays.stream(actions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));
+        }
+
+        return result;
     }
 
     default Rule rule(Condition condition) {
