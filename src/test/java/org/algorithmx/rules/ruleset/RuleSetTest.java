@@ -18,7 +18,6 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
@@ -43,7 +42,7 @@ public class RuleSetTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
-        Rule rule6 = ruleFactory.rule("testrule6", Condition.arg0(() -> true), "this test rule 6 ");
+        Rule rule6 = ruleFactory.rule(() -> true);
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", ruleFactory.rule((String y) -> y.equals(""))
