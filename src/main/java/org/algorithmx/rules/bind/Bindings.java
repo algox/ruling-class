@@ -37,20 +37,11 @@ import java.util.function.Supplier;
 public interface Bindings extends Iterable<Binding<?>> {
 
     /**
-     * Creates an instance of the SimpleBindings.
-     *
-     * @return new instance of the SimpleBindings.
-     */
-    static Bindings defaultBindings() {
-        return new SimpleBindings();
-    }
-
-    /**
      * Creates an instance of the ScopedBindings.
      *
      * @return new instance of the ScopedBindings.
      */
-    static ScopedBindings scopedBindings() {
+    static ScopedBindings defaultBindings() {
         return new SimpleScopedBindings();
     }
 

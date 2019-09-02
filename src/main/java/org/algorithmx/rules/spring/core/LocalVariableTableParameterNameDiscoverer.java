@@ -1,13 +1,13 @@
-package org.algorithmx.rules.spring.core;
-
-/*
- * Copyright 2002-2018 the original author or authors.
+/**
+ * This software is licensed under the Apache 2 license, quoted below.
+ *
+ * Copyright (c) 2019, algorithmx.org (dev@algorithmx.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,12 @@ package org.algorithmx.rules.spring.core;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.algorithmx.rules.spring.core;
+
+import org.algorithmx.rules.asm.*;
+import org.algorithmx.rules.spring.util.ClassUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,18 +30,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.algorithmx.rules.spring.util.ClassUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.algorithmx.rules.asm.ClassReader;
-import org.algorithmx.rules.asm.ClassVisitor;
-import org.algorithmx.rules.asm.Label;
-import org.algorithmx.rules.asm.MethodVisitor;
-import org.algorithmx.rules.asm.Opcodes;
-import org.algorithmx.rules.asm.AsmInfo;
-import org.algorithmx.rules.asm.Type;
 
 /**
  * Implementation of {@link ParameterNameDiscoverer} that uses the LocalVariableTable
