@@ -70,11 +70,24 @@ public final class RuleUtils {
         return RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
     }
 
+    /**
+     * Determines whether the given name is "valid" Rule Name. It needs to follow the following regex ^[a-zA-Z][a-zA-Z0-9]*?$
+     *
+     * @param ruleName desired Rule Name.
+     * @return true if the name is valid; false otherwise.
+     */
     public static boolean isValidRuleName(String ruleName) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
         return NAME_PATTERN.matcher(ruleName).matches();
     }
 
+    /**
+     * Merges the first rule with the rest of the Rules.
+     *
+     * @param rule new rule.
+     * @param others other rules.
+     * @return merged array of rules.
+     */
     public static Rule[] merge(Rule rule, Rule[] others) {
         Assert.isTrue(others != null && others.length > 0,
                 "others cannot be null and must have at least 1 element");

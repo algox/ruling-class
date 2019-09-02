@@ -26,10 +26,18 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Rule audit details. Contains all the details of a Rule Execution. It contains the details of the rule, all the associated
+ * rule parameters, result or error and the time of the execution.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public final class RuleExecution implements Comparable<RuleExecution> {
 
+    // Make sure we don't hold onto the actual rule definition
     private final WeakReference<RuleDefinition> ruleDefinition;
-    private final Map<String, String> args = new LinkedHashMap<>();
+    private final Map<String, String> params = new LinkedHashMap<>();
     private final Date time = new Date();
     private Boolean result;
     private Exception error;
@@ -40,28 +48,57 @@ public final class RuleExecution implements Comparable<RuleExecution> {
         this.ruleDefinition = new WeakReference<>(ruleDefinition);
     }
 
+    /**
+     * Returns the assocated Rule Definition. Could be null.
+     *
+     * @return rule definition (if avail).
+     */
     public RuleDefinition getRuleDefinition() {
         return ruleDefinition.get();
     }
 
+    /**
+     * Adds all the associated rule parameters.
+     *
+     * @param bindings rule parameters.
+     */
     public void add(Binding<Object>...bindings) {
         if (bindings == null || bindings.length == 0) return;
         Arrays.stream(bindings).forEach(this::add);
     }
 
+    /**
+     * Adds a rule parameter.
+     *
+     * @param binding rule parameter.
+     */
     public void add(Binding<Object> binding) {
         if (binding == null) return;
-        args.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
+        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
     }
 
-    public Map<String, String> getArgs() {
-        return args;
+    /**
+     * Retrieves all the rule parameters.
+     *
+     * @return rule parameters.
+     */
+    public Map<String, String> getParams() {
+        return params;
     }
 
+    /**
+     * Result of the Rule execution.
+     *
+     * @return true if the rule passed; false otherwise.
+     */
     public Boolean getResult() {
         return result;
     }
 
+    /**
+     * Return the exception that occurred during the execution of the rule/
+     * @return exception.
+     */
     public Exception getError() {
         return error;
     }
@@ -91,7 +128,7 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     public String toString() {
         return "RuleExecution{" +
                 "ruleDefinition=" + (ruleDefinition.get() != null ? ruleDefinition.get().getName() : "n/a") +
-                ", args=" + args +
+                ", args=" + params +
                 ", result=" + result +
                 ", error=" + error +
                 ", time=" + time +

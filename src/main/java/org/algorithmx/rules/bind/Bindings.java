@@ -368,7 +368,7 @@ public interface Bindings extends Iterable<Binding<?>> {
     }
 
     /**
-     * Retrieves the Binding identified by the given name.
+     * Retrieves the Binding identified by the given name and type.
      *
      * @param name name of the Binding.
      * @param type type of the Binding.

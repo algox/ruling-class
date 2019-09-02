@@ -24,6 +24,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Default implementation of the ScopedBindings.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class SimpleScopedBindings implements ScopedBindings {
 
     private final Stack<Bindings> scopes = new Stack<>();
@@ -44,7 +50,7 @@ public class SimpleScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public Iterable<Bindings> getReverseScopes() {
+    public Iterable<Bindings> getScopesInReverseOrder() {
         List<Bindings> result = scopes.subList(0, scopes.size());
         Collections.reverse(result);
         return result;
@@ -68,10 +74,18 @@ public class SimpleScopedBindings implements ScopedBindings {
         init();
     }
 
+    /**
+     * Creates a new scope and pushes it into the Stack.
+     */
     protected void init() {
         scopes.push(createScope());
     }
 
+    /**
+     * Creates a new scope.
+     *
+     * @return newly created Bindings.
+     */
     protected Bindings createScope() {
         return new SimpleBindings();
     }

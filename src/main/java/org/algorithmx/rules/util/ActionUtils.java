@@ -48,10 +48,25 @@ public final class ActionUtils {
         return ActionDefinition.load(serializedLambda, description);
     }
 
+    /**
+     * Creates a new Action from the given ActionDefinition and the target object.
+     *
+     * @param actionDefinition action definition.
+     * @param target target object.
+     * @return Action Object.
+     */
     public static Action create(ActionDefinition actionDefinition, Object target) {
         return new SimpleAction(actionDefinition, target);
     }
 
+    /**
+     * Creates a new Action from the given Then lambda and the target object.
+     *
+     * @param lambda Then lambda.
+     * @param description action description.
+     * @param target target object.
+     * @return Action Object.
+     */
     public static Action create(Then lambda, String description, Object target) {
         ActionDefinition actionDefinition = load(lambda, description);
         return create(actionDefinition, target);

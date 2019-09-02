@@ -24,6 +24,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Class containing all the details of a Validation Error. It contains Rule Name, error code, error message and all
+ * relevant parameters.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class ValidationError {
 
     private final String ruleName;
@@ -44,28 +51,62 @@ public class ValidationError {
         this.errorMessage = errorMessage;
     }
 
+    /**
+     * Name of the rule.
+     *
+     * @return rule name.
+     */
     public String getRuleName() {
         return ruleName;
     }
 
+    /**
+     * Associated Error code.
+     *
+     * @return validation error code.
+     */
     public String getErrorCode() {
         return errorCode;
     }
 
+    /**
+     * Optional error message.
+     *
+     * @return validation error message.
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * Associated rule parameters.
+     *
+     * @return validation rule parameters.
+     */
     public Map<String, String> getParameters() {
         if (params.size() == 0) return null;
         return Collections.unmodifiableMap(params);
     }
 
+    /**
+     * Adds a new rule parameter.
+     *
+     * @param name parameter name.
+     * @param value parameter value. Null or toString() value.
+     * @return error.
+     */
     public ValidationError param(String name, Object value) {
         params.put(name, value != null ? value.toString() : null);
         return this;
     }
 
+    /**
+     * Adds a new rule parameter.
+     *
+     * @param name parameter name.
+     * @param value parameter value.
+     * @return error.
+     */
     public ValidationError param(String name, String value) {
         params.put(name, value);
         return this;

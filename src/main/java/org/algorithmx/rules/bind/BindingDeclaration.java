@@ -26,24 +26,48 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
+/**
+ * Convenient Function to create Bindings in the form of name -&gt; value.
+ *
+ * For Example : name -&gt; String, value -&gt; Integer, salary -&gt; java.util.BigDecimal.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
+@FunctionalInterface
 public interface BindingDeclaration extends Function<String, Object>, Serializable {
 
     long serialVersionUID = -0L;
 
+    /**
+     * Retrieves the name of the Binding from the Function (Lambda).
+     *
+     * @return name of the Binding.
+     */
     default String name() {
+        // Serialize the Lambda to be able to retrieve the details of the Lambda.
         SerializedLambda lambda = LambdaUtils.getSafeSerializedLambda(this);
 
+        // It's not a Lambda
         if (lambda == null) {
             throw new UnrulyException("BindingDeclaration can only be used as a Lambda expression");
         }
 
+        // Find the class
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
+        // Find the method
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
+        // Get the parameter names. In this ase there will be a single parameter.
         String[] parameterNames = ReflectionUtils.getParameterNames(implementationMethod);
-
+        // Extract the name
         return parameterNames[0];
     }
 
+    /**
+     * Retrieves the type of the Binding from the Function (Lambda).
+     *
+     * @return type (class) of the Binding.
+     */
     default Object value() {
         return apply(name());
     }

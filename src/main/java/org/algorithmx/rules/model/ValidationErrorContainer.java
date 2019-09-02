@@ -26,6 +26,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Container for all validation errors.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class ValidationErrorContainer implements Iterable<ValidationError> {
 
     private final List<ValidationError> errors = Collections.synchronizedList(new ArrayList<>());
@@ -34,25 +40,62 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
         super();
     }
 
+    /**
+     * Adds a new validation error.
+     *
+     * @param error error to be added.
+     */
     public void add(ValidationError error) {
         Assert.notNull(error, "error cannot be null.");
         errors.add(error);
     }
 
+    /**
+     * Adds a new Validation Error with the given name and error code.
+     *
+     * @param ruleName rule name.
+     * @param errorCode validation error code.
+     * @return newly created Validation error.
+     */
     public ValidationError add(String ruleName, String errorCode) {
         return add(ruleName, errorCode, (String) null);
     }
 
+    /**
+     * Adds a new Validation Error with the given name, error code and error message.
+     *
+     * @param ruleName rule name.
+     * @param errorCode validation error code.
+     * @param errorMessage validation error message.
+     * @return newly created Validation error.
+     */
     public ValidationError add(String ruleName, String errorCode, String errorMessage) {
         ValidationError result = new ValidationError(ruleName, errorCode, errorMessage);
         errors.add(result);
         return result;
     }
 
+    /**
+     * Adds a new Validation Error with the given name, error code and the parameters.
+     *
+     * @param ruleName rule name.
+     * @param errorCode validation error code.
+     * @param params rule parameters.
+     * @return newly created Validation error.
+     */
     public ValidationError add(String ruleName, String errorCode, Binding<Object>...params) {
         return add(ruleName, errorCode, null, params);
     }
 
+    /**
+     * Adds a new Validation Error with the given name, error code, error message and the parameters.
+     *
+     * @param ruleName rule name.
+     * @param errorCode validation error code.
+     * @param errorMessage validation error message.
+     * @param params rule parameters.
+     * @return newly created Validation error.
+     */
     public ValidationError add(String ruleName, String errorCode, String errorMessage, Binding<Object>...params) {
         ValidationError result = add(ruleName, errorCode, errorMessage);
 
@@ -63,10 +106,20 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
         return result;
     }
 
+    /**
+     * Determines if this container has any associated errors.
+     *
+     * @return true if this containers has any errors; false otherwise.
+     */
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
 
+    /**
+     * Returns all the associated validation errors.
+     *
+     * @return validation errors.
+     */
     public ValidationError[] getErrors() {
         if (errors.isEmpty()) return null;
         return errors.toArray(new ValidationError[errors.size()]);
