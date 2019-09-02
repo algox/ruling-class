@@ -20,7 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.Bindings;
 
 /**
- *
+ * Rule Flow : Work in progress
  *
  * @author Max Arulananthan
  * @since 1.0

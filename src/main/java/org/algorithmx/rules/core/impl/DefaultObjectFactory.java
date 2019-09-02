@@ -27,8 +27,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+/**
+ * Default Object Factory implementation. Objects are created via reflection using the default ctor.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class DefaultObjectFactory implements ObjectFactory {
 
+    // Post Ctor cache by class.
     private final Map<Class<?>, Method> postConstructorCache = new WeakHashMap<>();
 
     public DefaultObjectFactory() {
@@ -37,26 +44,33 @@ public class DefaultObjectFactory implements ObjectFactory {
 
     @Override
     public <T> T create(Class<T> type) {
-        Assert.notNull(type, "type cannot be null");
+        Assert.notNull(type, "type cannot be null.");
+
         try {
+            // Call the default ctor
             T result = type.newInstance();
             Method postConstructor = null;
 
+            // Check if we cached the post constructor
             if (postConstructorCache.containsKey(type)) {
                 postConstructor = postConstructorCache.get(type);
             } else {
+                // Find the post constructor if one exists.
                 List<Method> postConstructors = ReflectionUtils.getPostConstructMethods(type);
 
+                // More than one post constructor
                 if (postConstructors.size() > 1) {
                     throw new UnrulyException("Invalid Number of @PostConstruct defined on class [" + type
                             + "]. Candidates [" + postConstructors + "]");
                 } else if (postConstructors.size() == 1) {
+                    // Cache the post constructor
                     postConstructor = postConstructors.get(0);
                     postConstructorCache.put(type, postConstructor);
                 }
             }
 
             if (postConstructor != null) {
+                // Call the Post Constructor
                 ReflectionUtils.invokePostConstruct(postConstructor, result);
             }
 

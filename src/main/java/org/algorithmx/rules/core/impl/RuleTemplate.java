@@ -24,6 +24,12 @@ import org.algorithmx.rules.util.ActionUtils;
 
 import java.util.LinkedList;
 
+/**
+ * Template class for creating Rules.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public abstract class RuleTemplate implements Rule {
 
     private final LinkedList<Action> actions = new LinkedList();

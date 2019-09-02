@@ -23,6 +23,12 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
+/**
+ * Default Rule Implementation (implements Identifiable).
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class DefaultRule extends RuleTemplate implements Identifiable {
 
     private final RuleDefinition ruleDefinition;
@@ -42,6 +48,7 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
         return methodExecutor.execute(target, ruleDefinition.getCondition(), args);
     }
 
+    @Override
     public RuleDefinition getRuleDefinition() {
         return ruleDefinition;
     }
@@ -66,8 +73,10 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
         return true;
     }
 
-    public void setMethodExecutor(BindableMethodExecutor methodExecutor) {
-        Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
-        this.methodExecutor = methodExecutor;
+    @Override
+    public String toString() {
+        return "DefaultRule{" +
+                "ruleDefinition=" + ruleDefinition +
+                '}';
     }
 }

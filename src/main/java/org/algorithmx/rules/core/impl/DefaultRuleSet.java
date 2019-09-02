@@ -30,6 +30,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * Default implementation of the RuleSet.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class DefaultRuleSet implements RuleSet {
 
     private final String name;
@@ -38,10 +44,6 @@ public class DefaultRuleSet implements RuleSet {
 
     private final LinkedList<Rule> rules = new LinkedList<>();
     private final Map<String, Rule> ruleIndex = new HashMap<>();
-
-    public DefaultRuleSet(String name, String description) {
-        this(name, description, RuleFactory.defaultFactory());
-    }
 
     public DefaultRuleSet(String name, String description, RuleFactory ruleFactory) {
         super();
@@ -120,5 +122,14 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public Rule[] getRules() {
         return rules.toArray(new Rule[rules.size()]);
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultRuleSet{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", rules='" + rules + '\'' +
+                '}';
     }
 }

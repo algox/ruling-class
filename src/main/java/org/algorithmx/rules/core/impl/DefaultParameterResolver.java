@@ -28,6 +28,12 @@ import org.algorithmx.rules.model.ParameterDefinition;
 
 import java.util.Set;
 
+/**
+ * Default Parameter Resolver implementation.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class DefaultParameterResolver implements ParameterResolver {
 
     public DefaultParameterResolver() {

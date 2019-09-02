@@ -25,7 +25,7 @@ import java.util.function.Predicate;
  * Rule class encapsulates all the properties/methods of a Rule within the framework. A Rule consists of two parts
  * a Condition and a list of associated Actions. You can think of it as a If (Condition).. then Action(s).
  *
- * The Condition is stateless and can be executed many times without any side effects.
+ * The Condition is stateless and should be able to execute many times without any side effects (idempotent).
  * The Action(s) can be stateful.
  *
  * A Rule Condition can be tested via :

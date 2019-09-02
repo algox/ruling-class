@@ -22,6 +22,13 @@ import org.algorithmx.rules.core.RuleExecutionContext;
 import org.algorithmx.rules.core.RuleFlow;
 import org.algorithmx.rules.spring.util.Assert;
 
+/**
+ * Work in progress.
+ *
+ * @param <T> Result Type
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public abstract class RuleFlowTemplate<T> implements RuleFlow<T> {
 
     private final RuleExecutionContext ctx;

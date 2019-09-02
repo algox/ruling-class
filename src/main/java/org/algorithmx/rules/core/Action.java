@@ -20,16 +20,33 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.model.ActionDefinition;
 
 /**
- *
+ * Action that associated with a Rule Condition. A Rule Action is executed when the Rule Condition it true.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 public interface Action {
 
-    void execute(Object...args);
+    /**
+     * Executes thr Action given all the arguments it needs.
+     *
+     * @param params Action parameters in necessary order.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    void execute(Object...params);
+
+    /**
+     * Meta information about the Action.
+     *
+     * @return Action meta information.
+     */
 
     ActionDefinition getActionDefinition();
 
+    /**
+     * The actual target instance the Action is associated to (usually a Rule).
+     *
+     * @return target instance.
+     */
     Object getTarget();
 }

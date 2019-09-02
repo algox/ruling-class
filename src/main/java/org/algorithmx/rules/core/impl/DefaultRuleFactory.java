@@ -23,6 +23,12 @@ import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
+/**
+ * Default implementation of the RuleFactory.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public final class DefaultRuleFactory implements RuleFactory {
 
     private final ObjectFactory objectFactory;
@@ -33,9 +39,9 @@ public final class DefaultRuleFactory implements RuleFactory {
         this.objectFactory = objectFactory;
     }
 
+    @Override
     public Rule rule(RuleDefinition ruleDefinition) {
-        return new DefaultRule(ruleDefinition,
-                ruleDefinition.isStatic()
+        return new DefaultRule(ruleDefinition, ruleDefinition.isStatic()
                         ? null
                         : objectFactory.create(ruleDefinition.getRulingClass()));
     }

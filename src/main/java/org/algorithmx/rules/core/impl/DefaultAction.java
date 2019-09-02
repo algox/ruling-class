@@ -22,6 +22,12 @@ import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
+/**
+ * Default Action implementation.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class DefaultAction implements Action {
 
     private final ActionDefinition actionDefinition;

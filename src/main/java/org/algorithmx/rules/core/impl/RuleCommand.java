@@ -30,41 +30,65 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.RuleExecution;
 
-public class RuleCommand {
+/**
+ * Command to execute the given rule and audit the results of the execution.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
+class RuleCommand {
 
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
 
-    public RuleCommand() {
+    RuleCommand() {
         super();
     }
 
-    public void execute(Rule rule, RuleExecutionContext ctx, RuleExecutionAuditor auditor) throws UnrulyException {
+    /**
+     * Execute the Rule and audits the results.
+     *
+     * @param rule rule to be executed.
+     * @param ctx state management.
+     * @param auditor auditor to keep track of the execution.
+     * @throws UnrulyException thrown if there are any runtime exceptions during the execution.
+     */
+    void execute(Rule rule, RuleExecutionContext ctx, RuleExecutionAuditor auditor) throws UnrulyException {
+        // Audit data
         RuleExecution audit = new RuleExecution(rule.getRuleDefinition());
 
         try {
+            // Set the RuleExecutionContext in the ThreadLocal so it can be accessed during the execution.
             RuleExecutionContext.set(ctx);
+            // Find all tne matching Bindings.
             Binding<Object>[] bindings = resolveArguments(rule.getRuleDefinition().getCondition(), parameterResolver,
                     ctx.bindings(), ctx.matchingStrategy());
-            boolean result = rule.isPass(getBindingValues(bindings));
-
+            // Store the matched Bindings
             audit.add(bindings);
+            // Execute the Rule
+            boolean result = rule.isPass(getBindingValues(bindings));
+            // Store the result of the Execution
             audit.setResult(result);
-
+            // The Condition passed
             if (result) {
+                // Execute any associated Actions.
                 for (Action action : rule.getActions()) {
                     Binding<Object>[] actionBindings = resolveArguments(action.getActionDefinition().getAction(),
                             parameterResolver, ctx.bindings(), ctx.matchingStrategy());
+                    // Store the matched Bindings
                     audit.add(actionBindings);
+                    // Execute the Action
                     action.execute(getBindingValues(actionBindings));
                 }
             }
         } catch (Exception e) {
+            // Store the error
             audit.setError(e);
             String ruleName = rule.isIdentifiable() ? ((Identifiable) rule).getName() : null;
             UnrulyException ex = new UnrulyException("Error trying to execute rule [" + (ruleName != null ? ruleName : "n/a") + "]", e);
             ex.setExecutionStack(ctx.getAuditItems());
             throw ex;
         } finally {
+            // Clear the ThreadLocal
             RuleExecutionContext.clear();
             auditor.audit(audit);
         }

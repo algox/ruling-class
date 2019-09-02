@@ -26,6 +26,13 @@ import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
 
+/**
+ * Default implementation of the Rule Engine. Execution of the Rule is delegated to the RuleCommand.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ * @see RuleCommand
+ */
 public class DefaultRuleEngine implements RuleEngine {
 
     public DefaultRuleEngine() {
@@ -35,7 +42,6 @@ public class DefaultRuleEngine implements RuleEngine {
     @Override
     public void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException {
         Assert.notNull(rule, "rule cannot be null.");
-
         RuleCommand command = new RuleCommand();
         command.execute(rule, ctx, ctx);
     }
