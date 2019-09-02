@@ -4,7 +4,7 @@
 
     <groupId>org.algorithmx</groupId>
     <artifactId>ruling-class</artifactId>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.75-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>Ruling Class</name>
