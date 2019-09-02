@@ -17,8 +17,8 @@
  */
 package org.algorithmx.rules.ruleflow;
 
-import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.bind.Bindings;import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.impl.RuleFlowTemplate;
 import org.junit.Test;
 

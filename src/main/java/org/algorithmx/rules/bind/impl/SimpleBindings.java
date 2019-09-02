@@ -17,10 +17,21 @@
  */
 package org.algorithmx.rules.bind.impl;
 
-import org.algorithmx.rules.bind.*;
+import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.BindingAlreadyExistsException;
+import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.InvalidBindingException;
+import org.algorithmx.rules.bind.NoSuchBindingException;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 

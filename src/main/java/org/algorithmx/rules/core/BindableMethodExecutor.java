@@ -48,6 +48,7 @@ public interface BindableMethodExecutor {
      * @param definition definition of the method being executed.
      * @param userArgs method arguments.
      * @param <T> generic type of the result.
-     * @return the result of the execution.*/
+     * @return the result of the execution.
+     */
     <T> T execute(Object target, MethodDefinition definition, Object...userArgs);
 }

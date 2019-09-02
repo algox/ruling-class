@@ -17,14 +17,18 @@
  */
 package org.algorithmx.rules.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Indicates the class with this annotation is Rule and it will follow the "rules" of a being a Rule.
  *
  * The only requirement for a class to be considered a Rule is to have a public "when" method (aka Condition in standard Rule terms).
  * The when method can take arbitrary number of arguments but must return a boolean value. The boolean is the result of
- * of the rule.
+ * of the rule. The Rule class can also have optionally one or more "then" methods (aka Then action in standard Rule terms).
  *
  * @author Max Arulananthan
  * @since 1.0

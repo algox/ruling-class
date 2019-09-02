@@ -17,7 +17,13 @@
  */
 package org.algorithmx.rules.spring.core;
 
-import org.algorithmx.rules.asm.*;
+import org.algorithmx.rules.asm.AsmInfo;
+import org.algorithmx.rules.asm.ClassReader;
+import org.algorithmx.rules.asm.ClassVisitor;
+import org.algorithmx.rules.asm.Label;
+import org.algorithmx.rules.asm.MethodVisitor;
+import org.algorithmx.rules.asm.Opcodes;
+import org.algorithmx.rules.asm.Type;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

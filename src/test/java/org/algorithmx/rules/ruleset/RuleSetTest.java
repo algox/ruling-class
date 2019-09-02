@@ -18,7 +18,10 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleFactory;
+import org.algorithmx.rules.core.RuleSet;
 import org.junit.Assert;
 import org.junit.Test;
 

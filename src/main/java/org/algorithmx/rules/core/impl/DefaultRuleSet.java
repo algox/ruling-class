@@ -17,11 +17,19 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.*;
+import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleFactory;
+import org.algorithmx.rules.core.RuleSet;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class DefaultRuleSet implements RuleSet {
 

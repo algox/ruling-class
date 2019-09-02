@@ -20,7 +20,11 @@ package org.algorithmx.rules.model;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ValidationErrorContainer implements Iterable<ValidationError> {
 

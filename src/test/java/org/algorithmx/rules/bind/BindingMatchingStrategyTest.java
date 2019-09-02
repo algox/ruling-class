@@ -21,7 +21,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Binding matching test cases.
@@ -146,7 +148,8 @@ public class BindingMatchingStrategyTest {
         Binding<Map<?, ?>> var5 = bindings.getBinding("key5");
         Binding<Map<String, String>> var6 = bindings.getBinding("key6");
 
-        Set<Binding<Number>> matches1 = BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy().match(bindings, "key3", Number.class);
+        Set<Binding<Number>> matches1 = BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()
+                .match(bindings, "key3", Number.class);
         Assert.assertTrue(matches1.size() == 1);
         Assert.assertTrue(matches1.contains(var3));
 
