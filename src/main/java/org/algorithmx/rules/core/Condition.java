@@ -20,7 +20,7 @@ package org.algorithmx.rules.core;
 import java.io.Serializable;
 
 /**
- *
+ * When Condition definition.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -28,10 +28,6 @@ import java.io.Serializable;
 public interface Condition extends Serializable {
 
     long serialVersionUID = -0L;
-
-    static Condition0 arg0(Condition0 arg) {
-        return arg;
-    }
 
     @FunctionalInterface
     interface Condition0 extends Condition {

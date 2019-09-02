@@ -53,7 +53,7 @@ public interface RuleExecutionAuditor extends Iterable<RuleExecution> {
 
     /**
      * Returns the audit trail.
-     * @return
+     * @return audit trail of the audit items.
      */
     Iterator<RuleExecution> getAuditItems();
 

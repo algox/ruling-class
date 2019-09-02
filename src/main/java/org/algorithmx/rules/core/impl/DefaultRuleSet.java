@@ -25,7 +25,6 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -64,6 +63,11 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public RuleFactory getRuleFactory() {
+        return ruleFactory;
     }
 
     @Override
@@ -106,13 +110,6 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public RuleSet add(Rule rule) {
         return add(rule.isIdentifiable() ? ((Identifiable) rule).getName() : null, rule);
-    }
-
-    @Override
-    public RuleSet add(Collection<Rule> rules) {
-        Assert.notNull(rules, "rules cannot be null.");
-        rules.stream().forEach(rule -> add(rule));
-        return this;
     }
 
     @Override

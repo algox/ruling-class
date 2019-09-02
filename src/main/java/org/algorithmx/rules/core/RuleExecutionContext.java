@@ -29,23 +29,38 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 
+ * Responsible for state management during Rule execution. This class provides access to everything that is required
+ * by the Rule Engine to execute a given set of Rules.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 public class RuleExecutionContext implements RuleExecutionAuditor {
 
+    // Holds on the RuleExecutionContext associated with the current Thread.
     private static final ThreadLocal<RuleExecutionContext> CTX_HOLDER = new ThreadLocal<>();
 
     private final Bindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
     private final List<RuleExecution> audit = Collections.synchronizedList(new ArrayList<>());
 
+    /**
+     * Creates a RuleExecutionContext given a set of Bindings. The default matching strategy will be used.
+     *
+     * @param bindings bindings.
+     * @return new RuleExecutionContext.
+     */
     public static RuleExecutionContext create(Bindings bindings) {
         return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
     }
 
+    /**
+     * Creates a RuleExecutionContext given a set of Bindings and matching strategy.
+     *
+     * @param bindings bindings.
+     * @param matchingStrategy binding matching strategy.
+     * @return new RuleExecutionContext.
+     */
     public static RuleExecutionContext create(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
         return new RuleExecutionContext(bindings, matchingStrategy);
     }
@@ -58,16 +73,47 @@ public class RuleExecutionContext implements RuleExecutionAuditor {
         this.matchingStrategy = matchingStrategy;
     }
 
+    /**
+     * Returns the RuleExecutionContext associated with the current Thread.
+     *
+     * @return RuleExecutionContext associated with the current Thread.
+     */
     public static final RuleExecutionContext get() {
         return CTX_HOLDER.get();
     }
 
+    /**
+     * Associated the given RuleExecutionContext with the current Thread.
+     *
+     * @param ctx RuleExecutionContext
+     */
     public static final void set(RuleExecutionContext ctx) {
         CTX_HOLDER.set(ctx);
     }
 
+    /**
+     * Clears any associations with the current Thread.
+     */
     public static final void clear() {
         CTX_HOLDER.remove();
+    }
+
+    /**
+     * Bindings to use.
+     *
+     * @return bindings.
+     */
+    public Bindings bindings() {
+        return bindings;
+    }
+
+    /**
+     * Matching strategy to use during the Rule execution.
+     *
+     * @return BindingMatchingStrategy.
+     */
+    public BindingMatchingStrategy matchingStrategy() {
+        return matchingStrategy;
     }
 
     @Override
@@ -90,13 +136,5 @@ public class RuleExecutionContext implements RuleExecutionAuditor {
     @Override
     public Iterator<RuleExecution> getAuditItems() {
         return audit.iterator();
-    }
-
-    public Bindings bindings() {
-        return bindings;
-    }
-
-    public BindingMatchingStrategy matchingStrategy() {
-        return matchingStrategy;
     }
 }
