@@ -1,4 +1,4 @@
-# Ruling-Class : Simple yet powerful Rule Engine for Java.
+# Ruling-Class : Simple yet powerful Java Rule Engine.
 
 <a>What is Ruling-Class ?</a>
 
