@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
 
 @Rule(name = "TestRule3")
@@ -26,6 +27,7 @@ public class TestRule3 {
         super();
     }
 
+    @Given
     public int when() {
         return 0;
     }

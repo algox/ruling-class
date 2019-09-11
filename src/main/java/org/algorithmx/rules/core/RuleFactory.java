@@ -22,9 +22,6 @@ import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.util.ActionUtils;
-
-import java.util.Arrays;
 
 import static org.algorithmx.rules.util.RuleUtils.load;
 
@@ -82,12 +79,12 @@ public interface RuleFactory {
      */
     default Rule rule(Class<?> rulingClass) {
         Rule result = rule(RuleDefinition.load(rulingClass));
-        ActionDefinition[] actions = ActionDefinition.load(rulingClass);
+        ActionDefinition[] thenActions = ActionDefinition.loadThenActions(rulingClass);
 
-        if (actions != null) {
+        if (thenActions != null) {
             // Sort the Action so that we have a predictable order to the execution of the Actions.
-            Arrays.sort(actions);
-            Arrays.stream(actions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));
+            //Arrays.sort(actions);
+            //Arrays.stream(actions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));
         }
 
         return result;

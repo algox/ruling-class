@@ -18,7 +18,9 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
+import org.algorithmx.rules.annotation.Then;
 
 import java.util.Date;
 import java.util.List;
@@ -30,11 +32,12 @@ public class TestRule4 {
         super();
     }
 
+    @Given
     public boolean when() {
         return true;
     }
 
-    @Description("calculate")
+    @Then @Description("calculate")
     public void then(int id, Date birthDate, List<Integer> values) {
 
     }

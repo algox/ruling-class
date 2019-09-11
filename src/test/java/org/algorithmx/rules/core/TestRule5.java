@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
+import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.bind.Bindings;
 
 import java.util.Date;
@@ -30,10 +32,12 @@ public class TestRule5 {
         super();
     }
 
+    @Given
     public boolean when(int id, Date birthDate, List<String> values) {
         return id > 100;
     }
 
+    @Then
     public void then(Bindings bindings) {
         int x = bindings.get("result");
         x += 2;

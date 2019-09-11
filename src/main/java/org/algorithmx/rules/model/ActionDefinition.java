@@ -18,9 +18,12 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Else;
+import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -37,7 +40,7 @@ import java.lang.reflect.Modifier;
  */
 public final class ActionDefinition implements Comparable<ActionDefinition> {
 
-    public static final String THEN_METHOD_NAME = "then";
+    //public static final String THEN_METHOD_NAME = "then";
 
     // Action class
     private final Class<?> actionClass;
@@ -57,16 +60,40 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     }
 
     /**
-     * Loads all the actions in the given class. A method is considered an Action if takes arbitrary number
-     * of arguments and returns nothing (ie: void) and the method is annotated with @Action.
+     * Loads all the Then actions in the given class. A method is considered an Action if takes arbitrary number
+     * of arguments and returns nothing (ie: void) and the method is annotated with @Then.
      *
      * @param c desired class
      * @return all the associated actions
      */
-    public static ActionDefinition[] load(Class<?> c) {
+    public static ActionDefinition[] loadThenActions(Class<?> c) {
+        return load(c, Then.class);
+    }
+
+    /**
+     * Loads all the Then actions in the given class. A method is considered an Action if takes arbitrary number
+     * of arguments and returns nothing (ie: void) and the method is annotated with @Else.
+     *
+     * @param c desired class
+     * @return all the associated actions
+     */
+    public static ActionDefinition[] loadElseActions(Class<?> c) {
+        return load(c, Else.class);
+    }
+
+    /**
+     * Loads all the actions in the given class. A method is considered an Action if takes arbitrary number
+     * of arguments and returns nothing (ie: void) and the method is annotated with given annotation.
+     *
+     * @param c desired class
+     * @param annotationClass desired Annotation Class.
+     * @param <T> Annotation Type.
+     * @return all the associated actions
+     */
+    private static <T extends Annotation> ActionDefinition[] load(Class<?> c, Class<T> annotationClass) {
         MethodDefinition[] actions = MethodDefinition.load(c, (Method method) ->
                 void.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers())
-                        && THEN_METHOD_NAME.equals(method.getName()));
+                        && method.getAnnotation(annotationClass) != null);
         if (actions == null || actions.length == 0) return null;
 
         ActionDefinition[] result = new ActionDefinition[actions.length];
@@ -82,7 +109,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     /**
      * Loads the action in the given Lambda. A method is considered an Action if takes arbitrary number
-     * of arguments and returns nothing (ie: void) and the method name is "then".
+     * of arguments and returns nothing (ie: void).
      *
      * @param lambda supplied lambda.
      * @param description action description.

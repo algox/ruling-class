@@ -108,6 +108,8 @@ public interface Rule extends Predicate<Object[]> {
      */
     Rule then(Action action);
 
+
+
     /**
      * Associates a new Action to the Rule. The Then Lambda is converted into an Action.
      *

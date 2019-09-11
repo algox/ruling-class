@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.validation;
 
+import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
+import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.model.ValidationErrorContainer;
 
 @Rule(name = "TestRule4")
@@ -27,10 +29,12 @@ public class TestRule4 {
         super();
     }
 
+    @Given
     public boolean when(Integer value) {
         return value != null && value < 40;
     }
 
+    @Then
     public void then(Integer value, ValidationErrorContainer errors) {
         errors.add("TestRule4", "Test.Error.400").param("value", value);
     }

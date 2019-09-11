@@ -111,7 +111,7 @@ public class ExecutorTest {
 
         bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, null, false);
 
-        ActionDefinition[] definition1 = ActionDefinition.load(TestRule5.class);
+        ActionDefinition[] definition1 = ActionDefinition.loadThenActions(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
 
         Assert.assertTrue(definition1.length == 1);

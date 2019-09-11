@@ -47,7 +47,7 @@ public class LoadTest {
         Assert.assertTrue("TestRule".equals(ruleDef.getName()));
         Assert.assertTrue("Test Description 1".equals(ruleDef.getDescription()));
 
-        ActionDefinition[] actionDef = ActionDefinition.load(TestRule1.class);
+        ActionDefinition[] actionDef = ActionDefinition.loadThenActions(TestRule1.class);
         Assert.assertTrue(actionDef != null && actionDef.length == 1);
     }
 
@@ -97,7 +97,7 @@ public class LoadTest {
 
     @Test()
     public void loadTest6() {
-        ActionDefinition[] def = ActionDefinition.load(TestRule4.class);
+        ActionDefinition[] def = ActionDefinition.loadThenActions(TestRule4.class);
 
         Assert.assertTrue(def.length == 1);
         Assert.assertTrue(def[0].getDescription().equals("calculate"));

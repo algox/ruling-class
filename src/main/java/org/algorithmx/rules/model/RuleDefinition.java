@@ -18,6 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -40,9 +41,7 @@ import java.util.Objects;
  */
 public final class RuleDefinition {
 
-    public static final String CONDITION_METHOD_NAME    = "when";
-
-    // Rule classNAME_PATTERN
+    // Rule class
     private final Class<?> rulingClass;
     // Name of the Rule
     private final String name;
@@ -79,14 +78,14 @@ public final class RuleDefinition {
         String ruleName = Rule.NOT_APPLICABLE.equals(rule.name()) ? c.getSimpleName() : rule.name();
 
         MethodDefinition[] conditions = MethodDefinition.load(c,
-                (Method method) -> CONDITION_METHOD_NAME.equals(method.getName())
+                (Method method) -> method.getAnnotation(Given.class) != null
                         && boolean.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers()));
 
-        Assert.isTrue(!(conditions.length == 0), CONDITION_METHOD_NAME + " method not defined on Rule class [" + c
-                + "]. Please define method public boolean " + CONDITION_METHOD_NAME + "(...)");
-        Assert.isTrue(conditions.length == 1, "multiple "+ CONDITION_METHOD_NAME + " methods " + conditions
-                + "] defined on Rule class [" + c + "]. Please define only a single "+ CONDITION_METHOD_NAME
-                + " method public boolean " + CONDITION_METHOD_NAME + "(...)");
+        Assert.isTrue(!(conditions.length == 0), "Rule Condition method not defined on Rule class ["
+                + c + "]. Please define method public boolean someMethod(...) and annotate it @Given.");
+        Assert.isTrue(conditions.length == 1, "Multiple methods annotated with @Given [" + conditions
+                + "] defined on Rule class [" + c + "]. Please define only a single method with @Given. public boolean "
+                + "someMethod(...)");
 
         Description descriptionAnnotation = c.getAnnotation(Description.class);
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null

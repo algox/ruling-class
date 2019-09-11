@@ -15,30 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core;
+package org.algorithmx.rules.annotation;
 
-import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.annotation.Given;
-import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.annotation.Then;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Date;
-import java.util.List;
 
-@Rule(name = "TestRule") @Description("Test Description 1")
-public class TestRule1 {
+/**
+ * Annotation to mark the Then method of a Rule.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Then {
 
-    public TestRule1() {
-        super();
-    }
-
-    @Given
-    public boolean when(int id, Date birthDate, List<String> values) {
-        return true;
-    }
-
-    @Then
-    public void then(int id) {
-        // do something
-    }
+    int order() default -1;
 }

@@ -26,6 +26,8 @@ import org.algorithmx.rules.model.ValidationErrorContainer;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.algorithmx.rules.core.Condition.*;
+
 public class ValidationTest1 {
 
     private RuleFactory ruleFactory;
@@ -69,5 +71,7 @@ public class ValidationTest1 {
 
         RuleExecutionContext ctx = ruleEngine.run(rules, value -> 75, errors -> new ValidationErrorContainer());
         System.err.println(ctx.bindings().get("errors").toString());
+
+        cond3((String a, String b, Integer c) -> c > 10);
     }
 }

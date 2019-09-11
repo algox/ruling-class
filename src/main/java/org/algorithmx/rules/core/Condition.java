@@ -29,6 +29,50 @@ public interface Condition extends Serializable {
 
     long serialVersionUID = -0L;
 
+    static Condition0 cond0(Condition0 condition) {
+        return condition;
+    }
+
+    static <A> Condition1<A> cond1(Condition1<A> condition) {
+        return condition;
+    }
+
+    static <A, B> Condition2<A, B> cond2(Condition2<A, B> condition) {
+        return condition;
+    }
+
+    static <A, B, C> Condition3<A, B, C> cond3(Condition3<A, B, C> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D> Condition4<A, B, C, D> cond4(Condition4<A, B, C, D> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D, E> Condition5<A, B, C, D, E> cond5(Condition5<A, B, C, D, E> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D, E, F> Condition6<A, B, C, D, E, F> cond6(Condition6<A, B, C, D, E, F> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D, E, F, G> Condition7<A, B, C, D, E, F, G> cond7(Condition7<A, B, C, D, E, F, G> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D, E, F, G, H> Condition8<A, B, C, D, E, F, G, H> cond8(Condition8<A, B, C, D, E, F, G, H> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D, E, F, G, H, I> Condition9<A, B, C, D, E, F, G, H, I> cond9(Condition9<A, B, C, D, E, F, G, H, I> condition) {
+        return condition;
+    }
+
+    static <A, B, C, D, E, F, G, H, I, J> Condition10<A, B, C, D, E, F, G, H, I, J> cond10(Condition10<A, B, C, D, E, F, G, H, I, J> condition) {
+        return condition;
+    }
+
     /**
      * When Condition interface taking no parameters.
      */
