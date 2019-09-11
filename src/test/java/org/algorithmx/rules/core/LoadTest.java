@@ -29,6 +29,8 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
+import static org.algorithmx.rules.core.Conditions.*;
+import static org.algorithmx.rules.core.Actions.*;
 /**
  * Tests for loading definitions.
  *
@@ -132,6 +134,14 @@ public class LoadTest {
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getName().equals("text"));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getType().equals(String.class));
         Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].isRequired() == false);
+    }
 
+    @Test
+    public void loadTest8() {
+        RuleFactory factory = RuleFactory.defaultFactory();
+        Rule rule1 = factory.rule(args3((Integer a, Date date, String x) -> a != null));
+        Rule rule2 = factory.rule(args4((Integer a, Date date, String x, String y) -> a != null))
+                .then(args2((Integer y, String z) -> {}))
+                .then(args3((Integer y, String z, Date date) -> {}));
     }
 }
