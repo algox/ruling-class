@@ -82,7 +82,7 @@ public interface RuleFactory {
         ActionDefinition[] thenActions = ActionDefinition.loadThenActions(rulingClass);
 
         if (thenActions != null) {
-            // TODO : Fix Then Else
+            // TODO : Fix Then Otherwise
             // Sort the Action so that we have a predictable order to the execution of the Actions.
             //Arrays.sort(actions);
             //Arrays.stream(actions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));

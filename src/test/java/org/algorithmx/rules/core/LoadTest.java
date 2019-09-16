@@ -139,9 +139,9 @@ public class LoadTest {
     @Test
     public void loadTest8() {
         RuleFactory factory = RuleFactory.defaultFactory();
-        Rule rule1 = factory.rule(args3((Integer a, Date date, String x) -> a != null));
-        Rule rule2 = factory.rule(args4((Integer a, Date date, String x, String y) -> a != null))
-                .then(args2((Integer y, String z) -> {}))
-                .then(args3((Integer y, String z, Date date) -> {}));
+        Rule rule1 = factory.rule(cond3((Integer a, Date date, String x) -> a != null));
+        Rule rule2 = factory.rule(cond4((Integer a, Date date, String x, String y) -> a != null))
+                .then(act2((Integer y, String z) -> {}))
+                .then(act3((Integer y, String z, Date date) -> {}));
     }
 }

@@ -18,7 +18,6 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.Conditions;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
@@ -26,6 +25,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+
+import static org.algorithmx.rules.core.Conditions.cond0;
+import static org.algorithmx.rules.core.Conditions.cond1;
+import static org.algorithmx.rules.core.Conditions.cond2;
+import static org.algorithmx.rules.core.Conditions.cond3;
 
 public class RuleSetTest {
 
@@ -43,14 +47,14 @@ public class RuleSetTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
-        Rule rule6 = ruleFactory.rule(Conditions.args0(() -> true));
+        Rule rule6 = ruleFactory.rule(cond0(() -> true));
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory.rule(Conditions.args1((String y) -> y.equals("")))
+                .add("test", ruleFactory.rule(cond1((String y) -> y.equals("")))
                         .then((String y) -> System.err.println(y)))
-                .add(ruleFactory.rule(Conditions.args2((String a, BigDecimal x) -> x != null))
+                .add(ruleFactory.rule(cond2((String a, BigDecimal x) -> x != null))
                                 .then(() -> System.err.println("XXX Hello")))
-                .add("testrule3", ruleFactory.rule(Conditions.args3((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
+                .add("testrule3", ruleFactory.rule(cond3((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
                         .then(() -> System.err.println("XXX oh yeah")))
                 .add(rule6.then(() -> System.err.println("XXX End")));
 

@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.algorithmx.rules.core.Conditions.*;
+
 /**
  * Tests for running the Rules.
  *
@@ -149,7 +151,7 @@ public class ExecutorTest {
     public void test6() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory.rule(Conditions.args2((String x, Integer y) -> y > 10));
+        Rule rule = ruleFactory.rule(cond2((String x, Integer y) -> y > 10));
         boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
     }
@@ -158,7 +160,7 @@ public class ExecutorTest {
     public void test7() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory.rule(Conditions.args2((String x, Integer y) -> y > 10));
+        Rule rule = ruleFactory.rule(cond2((String x, Integer y) -> y > 10));
         boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
     }
@@ -166,6 +168,6 @@ public class ExecutorTest {
     @Test
     public void test8() {
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        ruleFactory.rule(Conditions.args2((String x, Integer y) -> x.equalsIgnoreCase("x")));
+        ruleFactory.rule(cond2((String x, Integer y) -> x.equalsIgnoreCase("x")));
     }
 }

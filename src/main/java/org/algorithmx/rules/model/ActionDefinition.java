@@ -18,7 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.annotation.Else;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -72,13 +72,13 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     /**
      * Loads all the Then actions in the given class. A method is considered an Action if takes arbitrary number
-     * of arguments and returns nothing (ie: void) and the method is annotated with @Else.
+     * of arguments and returns nothing (ie: void) and the method is annotated with @Otherwise.
      *
      * @param c desired class
      * @return all the associated actions
      */
     public static ActionDefinition[] loadElseActions(Class<?> c) {
-        return load(c, Else.class);
+        return load(c, Otherwise.class);
     }
 
     /**

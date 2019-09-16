@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Annotation to mark the Else method of a Rule.
+ * Annotation to mark the Otherwise method of a Rule.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -33,5 +33,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Else {
+public @interface Otherwise {
 }

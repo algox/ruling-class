@@ -19,12 +19,13 @@ package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.Conditions;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.util.RuleUtils;
 import org.junit.Test;
+
+import static org.algorithmx.rules.core.Conditions.cond2;
 
 public class RuleActionTest1 {
 
@@ -40,7 +41,7 @@ public class RuleActionTest1 {
         bindings.bind("z", Integer.class, 200);
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule ruleWithAction = ruleFactory.rule(Conditions.args2((String x, Integer y) -> y > 10))
+        Rule ruleWithAction = ruleFactory.rule(cond2((String x, Integer y) -> y > 10))
                 .then((Integer z) -> System.err.println("YASS! [" + z + "]"))
                 .then((String x) -> System.err.println("MAN! [" + x + "]"));
         RuleEngine ruleEngine = RuleEngine.defaultRuleEngine();

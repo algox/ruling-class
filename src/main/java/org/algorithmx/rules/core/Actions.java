@@ -36,7 +36,7 @@ public final class Actions {
      * @param action desired action.
      * @return new Then Action with no parameters.
      */
-    public static Then.Then0 args0(Then.Then0 action) {
+    public static Then.Then0 act0(Then.Then0 action) {
         return action;
     }
 
@@ -47,7 +47,7 @@ public final class Actions {
      * @param <A> generic type of the first parameter.
      * @return new Then Action with one parameter.
      */
-    public static <A> Then.Then1 args1(Then.Then1<A> action) {
+    public static <A> Then.Then1 act1(Then.Then1<A> action) {
         return action;
     }
 
@@ -59,7 +59,7 @@ public final class Actions {
      * @param <B> generic type of the second parameter.
      * @return new Then Action with two parameter.
      */
-    public static <A, B> Then.Then2 args2(Then.Then2<A, B> action) {
+    public static <A, B> Then.Then2 act2(Then.Then2<A, B> action) {
         return action;
     }
 
@@ -72,7 +72,7 @@ public final class Actions {
      * @param <C> generic type of the third parameter.
      * @return new Then Action with three parameter.
      */
-    public static <A, B, C> Then.Then3 args3(Then.Then3<A, B, C> action) {
+    public static <A, B, C> Then.Then3 act3(Then.Then3<A, B, C> action) {
         return action;
     }
 
@@ -86,7 +86,7 @@ public final class Actions {
      * @param <D> generic type of the fourth parameter.
      * @return new Then Action with four parameter.
      */
-    public static <A, B, C, D> Then.Then4 args4(Then.Then4<A, B, C, D> action) {
+    public static <A, B, C, D> Then.Then4 act4(Then.Then4<A, B, C, D> action) {
         return action;
     }
 
@@ -101,7 +101,7 @@ public final class Actions {
      * @param <E> generic type of the fifth parameter.
      * @return new Then Action with five parameter.
      */
-    public static <A, B, C, D, E> Then.Then5 args5(Then.Then5<A, B, C, D, E> action) {
+    public static <A, B, C, D, E> Then.Then5 act5(Then.Then5<A, B, C, D, E> action) {
         return action;
     }
 
@@ -117,7 +117,7 @@ public final class Actions {
      * @param <F> generic type of the sixth parameter.
      * @return new Then Action with six parameter.
      */
-    public static <A, B, C, D, E, F> Then.Then6 args6(Then.Then6<A, B, C, D, E, F> action) {
+    public static <A, B, C, D, E, F> Then.Then6 act6(Then.Then6<A, B, C, D, E, F> action) {
         return action;
     }
 
@@ -134,7 +134,7 @@ public final class Actions {
      * @param <G> generic type of the seventh parameter.
      * @return new Then Action with seven parameter.
      */
-    public static <A, B, C, D, E, F, G> Then.Then7 args7(Then.Then7<A, B, C, D, E, F, G> action) {
+    public static <A, B, C, D, E, F, G> Then.Then7 act7(Then.Then7<A, B, C, D, E, F, G> action) {
         return action;
     }
 
@@ -152,7 +152,7 @@ public final class Actions {
      * @param <H> generic type of the eighth parameter.
      * @return new Then Action with eight parameter.
      */
-    public static <A, B, C, D, E, F, G, H> Then.Then8 args8(Then.Then8<A, B, C, D, E, F, G, H> action) {
+    public static <A, B, C, D, E, F, G, H> Then.Then8 act8(Then.Then8<A, B, C, D, E, F, G, H> action) {
         return action;
     }
 
@@ -171,7 +171,7 @@ public final class Actions {
      * @param <I> generic type of the ninth parameter.
      * @return new Then Action with nine parameter.
      */
-    public static <A, B, C, D, E, F, G, H, I> Then.Then9 args9(Then.Then9<A, B, C, D, E, F, G, H, I> action) {
+    public static <A, B, C, D, E, F, G, H, I> Then.Then9 act9(Then.Then9<A, B, C, D, E, F, G, H, I> action) {
         return action;
     }
 
@@ -191,7 +191,7 @@ public final class Actions {
      * @param <J> generic type of the ninth parameter.
      * @return new Then Action with ten parameter.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> Then.Then10 args10(Then.Then10<A, B, C, D, E, F, G, H, I, J> action) {
+    public static <A, B, C, D, E, F, G, H, I, J> Then.Then10 act10(Then.Then10<A, B, C, D, E, F, G, H, I, J> action) {
         return action;
     }
 
