@@ -20,32 +20,32 @@ package org.algorithmx.rules.core;
 import java.io.Serializable;
 
 /**
- * Then Action definition.
+ * ActionConsumer definition.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Then extends Serializable {
+public interface ActionConsumer extends Serializable {
 
     long serialVersionUID = -0L;
 
     /**
-     * Then Action interface taking no parameters.
+     * ActionConsumer Action interface taking no parameters.
      */
     @FunctionalInterface
-    interface Then0 extends Then {
+    interface ActionConsumer0 extends ActionConsumer {
         void then();
     }
 
     /**
-     * Then Action interface taking one parameter.
+     * ActionConsumer Action interface taking one parameter.
      * @param <A> generic type of the first parameter.
      */
     @FunctionalInterface
-    interface Then1<A> extends Then {
+    interface ActionConsumer1<A> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          */
         void then(A param1);
@@ -57,10 +57,10 @@ public interface Then extends Serializable {
      * @param <B> generic type of the second parameter.
      */
     @FunctionalInterface
-    interface Then2<A, B> extends Then {
+    interface ActionConsumer2<A, B> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          */
@@ -74,10 +74,10 @@ public interface Then extends Serializable {
      * @param <C> generic type of the third parameter.
      */
     @FunctionalInterface
-    interface Then3<A, B, C> extends Then {
+    interface ActionConsumer3<A, B, C> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -93,10 +93,10 @@ public interface Then extends Serializable {
      * @param <D> generic type of the fourth parameter.
      */
     @FunctionalInterface
-    interface Then4<A, B, C, D> extends Then {
+    interface ActionConsumer4<A, B, C, D> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -114,10 +114,10 @@ public interface Then extends Serializable {
      * @param <E> generic type of the fifth parameter.
      */
     @FunctionalInterface
-    interface Then5<A, B, C, D, E> extends Then {
+    interface ActionConsumer5<A, B, C, D, E> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -137,10 +137,10 @@ public interface Then extends Serializable {
      * @param <F> generic type of the sixth parameter.
      */
     @FunctionalInterface
-    interface Then6<A, B, C, D, E, F> extends Then {
+    interface ActionConsumer6<A, B, C, D, E, F> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -162,10 +162,10 @@ public interface Then extends Serializable {
      * @param <G> generic type of the seventh parameter.
      */
     @FunctionalInterface
-    interface Then7<A, B, C, D, E, F, G> extends Then {
+    interface ActionConsumer7<A, B, C, D, E, F, G> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -189,10 +189,10 @@ public interface Then extends Serializable {
      * @param <H> generic type of the eighth parameter.
      */
     @FunctionalInterface
-    interface Then8<A, B, C, D, E, F, G, H> extends Then {
+    interface ActionConsumer8<A, B, C, D, E, F, G, H> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -218,10 +218,10 @@ public interface Then extends Serializable {
      * @param <I> generic type of the ninth parameter.
      */
     @FunctionalInterface
-    interface Then9<A, B, C, D, E, F, G, H, I> extends Then {
+    interface ActionConsumer9<A, B, C, D, E, F, G, H, I> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.
@@ -249,10 +249,10 @@ public interface Then extends Serializable {
      * @param <J> generic type of the ninth parameter.
      */
     @FunctionalInterface
-    interface Then10<A, B, C, D, E, F, G, H, I, J> extends Then {
+    interface ActionConsumer10<A, B, C, D, E, F, G, H, I, J> extends ActionConsumer {
 
         /**
-         * Then Action.
+         * ActionConsumer Action.
          * @param param1 first parameter.
          * @param param2 second parameter.
          * @param param3 third parameter.

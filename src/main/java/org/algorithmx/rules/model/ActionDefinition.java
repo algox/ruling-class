@@ -40,8 +40,6 @@ import java.lang.reflect.Modifier;
  */
 public final class ActionDefinition implements Comparable<ActionDefinition> {
 
-    //public static final String THEN_METHOD_NAME = "then";
-
     // Action class
     private final Class<?> actionClass;
     // Description of the Action
@@ -60,8 +58,8 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     }
 
     /**
-     * Loads all the Then actions in the given class. A method is considered an Action if takes arbitrary number
-     * of arguments and returns nothing (ie: void) and the method is annotated with @Then.
+     * Loads all the ActionConsumer actions in the given class. A method is considered an Action if takes arbitrary number
+     * of arguments and returns nothing (ie: void) and the method is annotated with @ActionConsumer.
      *
      * @param c desired class
      * @return all the associated actions
@@ -71,7 +69,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     }
 
     /**
-     * Loads all the Then actions in the given class. A method is considered an Action if takes arbitrary number
+     * Loads all the ActionConsumer actions in the given class. A method is considered an Action if takes arbitrary number
      * of arguments and returns nothing (ie: void) and the method is annotated with @Otherwise.
      *
      * @param c desired class

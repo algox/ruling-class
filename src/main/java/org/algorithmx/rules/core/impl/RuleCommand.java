@@ -79,6 +79,15 @@ class RuleCommand {
                     // Execute the Action
                     action.execute(getBindingValues(actionBindings));
                 }
+            // Otherwise
+            } else if (rule.getOtherwiseAction() != null) {
+                Binding<Object>[] otherwiseActionBindings = resolveArguments(rule.getOtherwiseAction()
+                                .getActionDefinition().getAction(),
+                        parameterResolver, ctx.bindings(), ctx.matchingStrategy());
+                // Store the matched Bindings
+                audit.add(otherwiseActionBindings);
+                // Execute the Otherwise Action
+                rule.getOtherwiseAction().execute(getBindingValues(otherwiseActionBindings));
             }
         } catch (Exception e) {
             // Store the error

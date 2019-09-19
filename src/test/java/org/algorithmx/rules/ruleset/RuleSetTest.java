@@ -26,6 +26,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+import static org.algorithmx.rules.core.Actions.act0;
+import static org.algorithmx.rules.core.Actions.act1;
 import static org.algorithmx.rules.core.Conditions.cond0;
 import static org.algorithmx.rules.core.Conditions.cond1;
 import static org.algorithmx.rules.core.Conditions.cond2;
@@ -51,12 +53,12 @@ public class RuleSetTest {
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", ruleFactory.rule(cond1((String y) -> y.equals("")))
-                        .then((String y) -> System.err.println(y)))
+                        .then(act1((String y) -> System.err.println(y))))
                 .add(ruleFactory.rule(cond2((String a, BigDecimal x) -> x != null))
-                                .then(() -> System.err.println("XXX Hello")))
+                                .then(act0(() -> System.err.println("XXX Hello"))))
                 .add("testrule3", ruleFactory.rule(cond3((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
-                        .then(() -> System.err.println("XXX oh yeah")))
-                .add(rule6.then(() -> System.err.println("XXX End")));
+                        .then(act0(() -> System.err.println("XXX oh yeah"))))
+                .add(rule6.then(act0(() -> System.err.println("XXX End"))));
 
         Rule rule1 = rules.getRule("test");
         Rule rule3 = rules.getRule("testrule3");

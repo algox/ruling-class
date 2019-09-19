@@ -18,6 +18,7 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.bind.Bindings;
@@ -42,5 +43,10 @@ public class TestRule5 {
         int x = bindings.get("result");
         x += 2;
         bindings.set("result", x);
+    }
+
+    @Otherwise
+    public void otherwise() {
+        throw new IllegalStateException();
     }
 }

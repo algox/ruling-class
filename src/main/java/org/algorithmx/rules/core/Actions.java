@@ -18,7 +18,7 @@
 package org.algorithmx.rules.core;
 
 /**
- * Convenient way to create Then Actions (ie. Lambda creation).
+ * Convenient way to create ActionConsumer Actions (ie. Lambda creation).
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -31,67 +31,67 @@ public final class Actions {
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with no parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with no parameters) is converted into an Action.
      *
      * @param action desired action.
-     * @return new Then Action with no parameters.
+     * @return new ActionConsumer Action with no parameters.
      */
-    public static Then.Then0 act0(Then.Then0 action) {
+    public static ActionConsumer.ActionConsumer0 act0(ActionConsumer.ActionConsumer0 action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with one parameter) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with one parameter) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
-     * @return new Then Action with one parameter.
+     * @return new ActionConsumer Action with one parameter.
      */
-    public static <A> Then.Then1 act1(Then.Then1<A> action) {
+    public static <A> ActionConsumer.ActionConsumer1 act1(ActionConsumer.ActionConsumer1<A> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with two parameter) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with two parameter) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
-     * @return new Then Action with two parameter.
+     * @return new ActionConsumer Action with two parameter.
      */
-    public static <A, B> Then.Then2 act2(Then.Then2<A, B> action) {
+    public static <A, B> ActionConsumer.ActionConsumer2 act2(ActionConsumer.ActionConsumer2<A, B> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with three parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with three parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
-     * @return new Then Action with three parameter.
+     * @return new ActionConsumer Action with three parameter.
      */
-    public static <A, B, C> Then.Then3 act3(Then.Then3<A, B, C> action) {
+    public static <A, B, C> ActionConsumer.ActionConsumer3 act3(ActionConsumer.ActionConsumer3<A, B, C> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with four parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with four parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
-     * @return new Then Action with four parameter.
+     * @return new ActionConsumer Action with four parameter.
      */
-    public static <A, B, C, D> Then.Then4 act4(Then.Then4<A, B, C, D> action) {
+    public static <A, B, C, D> ActionConsumer.ActionConsumer4 act4(ActionConsumer.ActionConsumer4<A, B, C, D> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with five parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with five parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
@@ -99,14 +99,14 @@ public final class Actions {
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
-     * @return new Then Action with five parameter.
+     * @return new ActionConsumer Action with five parameter.
      */
-    public static <A, B, C, D, E> Then.Then5 act5(Then.Then5<A, B, C, D, E> action) {
+    public static <A, B, C, D, E> ActionConsumer.ActionConsumer5 act5(ActionConsumer.ActionConsumer5<A, B, C, D, E> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with six parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with six parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
@@ -115,14 +115,14 @@ public final class Actions {
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
-     * @return new Then Action with six parameter.
+     * @return new ActionConsumer Action with six parameter.
      */
-    public static <A, B, C, D, E, F> Then.Then6 act6(Then.Then6<A, B, C, D, E, F> action) {
+    public static <A, B, C, D, E, F> ActionConsumer.ActionConsumer6 act6(ActionConsumer.ActionConsumer6<A, B, C, D, E, F> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with seven parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with seven parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
@@ -132,14 +132,14 @@ public final class Actions {
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
-     * @return new Then Action with seven parameter.
+     * @return new ActionConsumer Action with seven parameter.
      */
-    public static <A, B, C, D, E, F, G> Then.Then7 act7(Then.Then7<A, B, C, D, E, F, G> action) {
+    public static <A, B, C, D, E, F, G> ActionConsumer.ActionConsumer7 act7(ActionConsumer.ActionConsumer7<A, B, C, D, E, F, G> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with eight parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with eight parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
@@ -150,14 +150,14 @@ public final class Actions {
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
-     * @return new Then Action with eight parameter.
+     * @return new ActionConsumer Action with eight parameter.
      */
-    public static <A, B, C, D, E, F, G, H> Then.Then8 act8(Then.Then8<A, B, C, D, E, F, G, H> action) {
+    public static <A, B, C, D, E, F, G, H> ActionConsumer.ActionConsumer8 act8(ActionConsumer.ActionConsumer8<A, B, C, D, E, F, G, H> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with nine parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with nine parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
@@ -169,14 +169,14 @@ public final class Actions {
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
-     * @return new Then Action with nine parameter.
+     * @return new ActionConsumer Action with nine parameter.
      */
-    public static <A, B, C, D, E, F, G, H, I> Then.Then9 act9(Then.Then9<A, B, C, D, E, F, G, H, I> action) {
+    public static <A, B, C, D, E, F, G, H, I> ActionConsumer.ActionConsumer9 act9(ActionConsumer.ActionConsumer9<A, B, C, D, E, F, G, H, I> action) {
         return action;
     }
 
     /**
-     * Creates a new Then Action. The Lambda (with ten parameters) is converted into an Action.
+     * Creates a new ActionConsumer Action. The Lambda (with ten parameters) is converted into an Action.
      *
      * @param action desired action.
      * @param <A> generic type of the first parameter.
@@ -189,9 +189,9 @@ public final class Actions {
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
      * @param <J> generic type of the ninth parameter.
-     * @return new Then Action with ten parameter.
+     * @return new ActionConsumer Action with ten parameter.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> Then.Then10 act10(Then.Then10<A, B, C, D, E, F, G, H, I, J> action) {
+    public static <A, B, C, D, E, F, G, H, I, J> ActionConsumer.ActionConsumer10 act10(ActionConsumer.ActionConsumer10<A, B, C, D, E, F, G, H, I, J> action) {
         return action;
     }
 

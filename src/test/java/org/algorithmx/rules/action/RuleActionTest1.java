@@ -18,6 +18,7 @@
 package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.Actions;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleEngine;
@@ -42,8 +43,8 @@ public class RuleActionTest1 {
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         Rule ruleWithAction = ruleFactory.rule(cond2((String x, Integer y) -> y > 10))
-                .then((Integer z) -> System.err.println("YASS! [" + z + "]"))
-                .then((String x) -> System.err.println("MAN! [" + x + "]"));
+                .then(Actions.act1((Integer z) -> System.err.println("YASS! [" + z + "]")))
+                .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")));
         RuleEngine ruleEngine = RuleEngine.defaultRuleEngine();
         ruleEngine.run(ruleWithAction, bindings);
 

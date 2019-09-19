@@ -18,7 +18,7 @@
 package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.Then;
+import org.algorithmx.rules.core.ActionConsumer;
 import org.algorithmx.rules.core.impl.DefaultAction;
 import org.algorithmx.rules.model.ActionDefinition;
 
@@ -39,12 +39,12 @@ public final class ActionUtils {
     /**
      * Loads a new ActionDefinition from the given Action Lambda and Description.
      *
-     * @param lambda then action lambda.
+     * @param consumer then action lambda.
      * @param description Action Description.
      * @return new Action Definition.
      */
-    public static ActionDefinition load(Then lambda, String description) {
-        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(lambda);
+    public static ActionDefinition load(ActionConsumer consumer, String description) {
+        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(consumer);
         return ActionDefinition.load(serializedLambda, description);
     }
 
@@ -60,14 +60,14 @@ public final class ActionUtils {
     }
 
     /**
-     * Creates a new Action from the given Then lambda and the target object.
+     * Creates a new Action from the given ActionConsumer lambda and the target object.
      *
-     * @param lambda Then lambda.
+     * @param lambda ActionConsumer lambda.
      * @param description action description.
      * @param target target object.
      * @return Action Object.
      */
-    public static Action create(Then lambda, String description, Object target) {
+    public static Action create(ActionConsumer lambda, String description, Object target) {
         ActionDefinition actionDefinition = load(lambda, description);
         return create(actionDefinition, target);
     }

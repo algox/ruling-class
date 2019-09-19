@@ -137,9 +137,9 @@ public class ExecutorTest {
 
         bindings.bind("binds", TypeReference.with(Bindings.class), bindings, null, false);
 
-        Then.Then3<Integer, String, Bindings> action = (Integer id, String y, Bindings binds) -> binds.set("result", 10);
+        ActionConsumer.ActionConsumer3<Integer, String, Bindings> action = (Integer id, String y, Bindings binds) -> binds.set("result", 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
-        ActionDefinition definition = ActionDefinition.load(lambda,"Then!");
+        ActionDefinition definition = ActionDefinition.load(lambda,"ActionConsumer!");
         executor.execute(action, definition.getAction(),
                 resolver.resolveAsBindingValues(definition.getAction(), bindings,
                         BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));

@@ -22,6 +22,9 @@ import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
+import org.algorithmx.rules.util.ActionUtils;
+
+import java.util.Arrays;
 
 import static org.algorithmx.rules.util.RuleUtils.load;
 
@@ -82,10 +85,15 @@ public interface RuleFactory {
         ActionDefinition[] thenActions = ActionDefinition.loadThenActions(rulingClass);
 
         if (thenActions != null) {
-            // TODO : Fix Then Otherwise
             // Sort the Action so that we have a predictable order to the execution of the Actions.
-            //Arrays.sort(actions);
-            //Arrays.stream(actions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));
+            Arrays.sort(thenActions);
+            Arrays.stream(thenActions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));
+        }
+
+        ActionDefinition[] elseActions = ActionDefinition.loadElseActions(rulingClass);
+
+        if (elseActions != null && elseActions.length > 1) {
+
         }
 
         return result;

@@ -101,6 +101,13 @@ public interface Rule extends Predicate<Object[]> {
     Action[] getActions();
 
     /**
+     * Otherwise Action.
+     *
+     * @return otherwise Action for this Rule.
+     */
+    Action getOtherwiseAction();
+
+    /**
      * Associates a new Action to the Rule.
      *
      * @param action desired action.
@@ -109,163 +116,42 @@ public interface Rule extends Predicate<Object[]> {
     Rule then(Action action);
 
     /**
-     * Associates a new Action to the Rule. The Then Lambda is converted into an Action.
+     * Associates a new Action to the Rule. The ActionConsumer Lambda is converted into an Action.
      *
      * @param action desired action.
      * @return this so other Actions can be associated fluently.
      */
-    Rule then(Then action);
+    Rule then(ActionConsumer action);
 
     /**
-     * Associates a new Action to the Rule. The Then Lambda is converted into an Action.
+     * Associates a new Action to the Rule. The ActionConsumer Lambda is converted into an Action.
      *
      * @param action desired action.
      * @param description description of the Action.
      * @return this so other Actions can be associated fluently.
      */
-    Rule then(Then action, String description);
+    Rule then(ActionConsumer action, String description);
 
     /**
-     * Associates a new Action to the Rule. The Then Lambda (with no parameters) is converted into an Action.
+     * Associates a OtherwiseAction to the Rule (if one isn't present already).
      *
      * @param action desired action.
-     * @return this so other Actions can be associated fluently.
+     * @throws UnrulyException if an otherwise action is already associated to this Rule.
      */
-    Rule then(Then.Then0 action);
+    void otherwise(Action action);
 
     /**
-     * Associates a new Action to the Rule. The Then Lambda (with no parameters) is converted into an Action.
+     * Associates a new Action to the Rule (if one isn't present already). The ActionConsumer Lambda is converted into an Action.
      *
      * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @return this so other Actions can be associated fluently.
      */
-    <A> Rule then(Then.Then1<A> action);
+    void otherwise(ActionConsumer action);
 
     /**
-     * Associates a new Action to the Rule. The Then Lambda (with two parameters) is converted into an Action.
+     * Associates a new Action to the Rule (if one isn't present already). The ActionConsumer Lambda is converted into an Action.
      *
      * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @return this so other Actions can be associated fluently.
+     * @param description description of the Action.
      */
-    <A, B> Rule then(Then.Then2<A, B> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with three parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C> Rule then(Then.Then3<A, B, C> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with four parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D> Rule then(Then.Then4<A, B, C, D> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with five parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @param <E> generic type of the fifth parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D, E> Rule then(Then.Then5<A, B, C, D, E> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with six parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @param <E> generic type of the fifth parameter.
-     * @param <F> generic type of the sixth parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D, E, F> Rule then(Then.Then6<A, B, C, D, E, F> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with seven parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @param <E> generic type of the fifth parameter.
-     * @param <F> generic type of the sixth parameter.
-     * @param <G> generic type of the seventh parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D, E, F, G> Rule then(Then.Then7<A, B, C, D, E, F, G> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with eight parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @param <E> generic type of the fifth parameter.
-     * @param <F> generic type of the sixth parameter.
-     * @param <G> generic type of the seventh parameter.
-     * @param <H> generic type of the eighth parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D, E, F, G, H> Rule then(Then.Then8<A, B, C, D, E, F, G, H> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with nine parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @param <E> generic type of the fifth parameter.
-     * @param <F> generic type of the sixth parameter.
-     * @param <G> generic type of the seventh parameter.
-     * @param <H> generic type of the eighth parameter.
-     * @param <I> generic type of the ninth parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D, E, F, G, H, I> Rule then(Then.Then9<A, B, C, D, E, F, G, H, I> action);
-
-    /**
-     * Associates a new Action to the Rule. The Then Lambda (with ten parameters) is converted into an Action.
-     *
-     * @param action desired action.
-     * @param <A> generic type of the first parameter.
-     * @param <B> generic type of the second parameter.
-     * @param <C> generic type of the third parameter.
-     * @param <D> generic type of the fourth parameter.
-     * @param <E> generic type of the fifth parameter.
-     * @param <F> generic type of the sixth parameter.
-     * @param <G> generic type of the seventh parameter.
-     * @param <H> generic type of the eighth parameter.
-     * @param <I> generic type of the ninth parameter.
-     * @param <J> generic type of the ninth parameter.
-     * @return this so other Actions can be associated fluently.
-     */
-    <A, B, C, D, E, F, G, H, I, J> Rule then(Then.Then10<A, B, C, D, E, F, G, H, I, J> action);
-
+    void otherwise(ActionConsumer action, String description);
 }
