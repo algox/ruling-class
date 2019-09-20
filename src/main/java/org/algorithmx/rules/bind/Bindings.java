@@ -17,14 +17,22 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.impl.SimpleBindings;
 import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
+import org.algorithmx.rules.bind.impl.SimpleBindings;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -264,6 +272,96 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
      */
     <T> Bindings bind(Collection<Binding<T>> bindings);
+
+    /**
+     * Binds each readable property on the given Bean.
+     *
+     * @param bean parent bean.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     */
+    default Bindings bindProperties(Object bean) {
+        return bindProperties(bean, (String name) -> name);
+    }
+
+    /**
+     * Binds each readable property on the given Bean.
+     *
+     * @param bean parent bean.
+     * @param nameGenerator generator that will determine the Binding name for each property.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     */
+    default Bindings bindProperties(Object bean, Function<String, String> nameGenerator) {
+        Assert.notNull(bean, "bean cannot be null.");
+        Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
+
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+
+            // Go through all the readable properties
+            for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+                if (propertyDescriptor.getReadMethod() != null) {
+                    try {
+                        // Get the value via the getter
+                        Object value = propertyDescriptor.getReadMethod().invoke(bean);
+                        // Bind the property
+                        bind(nameGenerator.apply(propertyDescriptor.getName()), TypeReference.with(
+                                propertyDescriptor.getReadMethod().getGenericReturnType()), value);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        // Couldn't get the value
+                        throw new UnrulyException("Error trying to retrieve property [" + propertyDescriptor.getName()
+                                + "] on Bean class [" + bean.getClass() + "]", e);
+                    }
+                }
+            }
+        } catch (IntrospectionException e) {
+            throw new UnrulyException("Error trying to Introspect [" + bean.getClass() + "]", e);
+        }
+
+        return this;
+    }
+
+    /**
+     * Binds each declared field on the given Bean.
+     *
+     * @param bean parent bean.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     */
+    default Bindings bindFields(Object bean) {
+        return bindFields(bean, (String name) -> name);
+    }
+
+    /**
+     * Binds each declared field on the given Bean.
+     *
+     * @param bean parent bean.
+     * @param nameGenerator generator that will determine the Binding name for each field.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     */
+    default Bindings bindFields(Object bean, Function<String, String> nameGenerator) {
+        Assert.notNull(bean, "bean cannot be null.");
+        Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
+
+        Field[] fields = bean.getClass().getFields();
+
+        // Go through all the fields
+        for (Field field : fields) {
+            try {
+                Object value = field.get(bean);
+                bind(nameGenerator.apply(field.getName()), TypeReference.with(field.getGenericType()), value);
+            } catch (IllegalAccessException e) {
+                // Couldn't get the value
+                throw new UnrulyException("Error trying to retrieve field [" + field.getName()
+                        + "] on Bean class [" + bean.getClass() + "]", e);
+            }
+        }
+
+        return this;
+    }
+
 
     /**
      * Retrieves the number of Bindings.
