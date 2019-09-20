@@ -22,10 +22,17 @@ import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.spring.util.Assert;
 
 import javax.annotation.PostConstruct;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -88,4 +95,47 @@ public final class ReflectionUtils {
         }
     }
 
+    /**
+     * Invoke the given consumer on the filtered properties in the target class.
+     *
+     * @param targetClass the target class to analyze.
+     * @param filter to find the right candidates.
+     * @param consumer the callback to invoke for each property.
+     * @throws IntrospectionException thrown if there was issues retrieving the BeanInfo.
+     */
+    public static void traverseProperties(Class<?> targetClass, Predicate<PropertyDescriptor> filter,
+                                          Consumer<PropertyDescriptor> consumer) throws IntrospectionException {
+        Assert.notNull(targetClass, "targetClass cannot be null.");
+        Assert.notNull(consumer, "consumer cannot be null.");
+
+        BeanInfo beanInfo = Introspector.getBeanInfo(targetClass);
+
+        // Go through all the properties
+        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+            if (filter != null && !filter.test(propertyDescriptor)) continue;
+            consumer.accept(propertyDescriptor);
+        }
+    }
+
+    /**
+     * Invoke the given consumer on the filtered properties in the target class.
+     *
+     * @param targetClass the target class to analyze.
+     * @param filter to find the right candidates.
+     * @param consumer the callback to invoke for each field.
+     */
+    public static void traverseFields(Class<?> targetClass, Predicate<Field> filter,
+                                          Consumer<Field> consumer) {
+        Assert.notNull(targetClass, "targetClass cannot be null.");
+        Assert.notNull(consumer, "consumer cannot be null.");
+
+        Field[] fields = targetClass.getFields();
+
+        // Go through all the fields
+        for (Field field : fields) {
+            if (filter != null && !filter.test(field)) continue;
+            field.setAccessible(true);
+            consumer.accept(field);
+        }
+    }
 }

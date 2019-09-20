@@ -21,12 +21,9 @@ import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
 import org.algorithmx.rules.bind.impl.SimpleBindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.ReflectionUtils;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -297,24 +294,20 @@ public interface Bindings extends Iterable<Binding<?>> {
         Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
 
         try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
-
-            // Go through all the readable properties
-            for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-                if (propertyDescriptor.getReadMethod() != null) {
-                    try {
-                        // Get the value via the getter
-                        Object value = propertyDescriptor.getReadMethod().invoke(bean);
-                        // Bind the property
-                        bind(nameGenerator.apply(propertyDescriptor.getName()), TypeReference.with(
-                                propertyDescriptor.getReadMethod().getGenericReturnType()), value);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        // Couldn't get the value
-                        throw new UnrulyException("Error trying to retrieve property [" + propertyDescriptor.getName()
-                                + "] on Bean class [" + bean.getClass() + "]", e);
-                    }
-                }
-            }
+            ReflectionUtils.traverseProperties(bean.getClass(), property -> property.getReadMethod() != null,
+                    property -> {
+                        try {
+                            // Get the value via the getter
+                            Object value = property.getReadMethod().invoke(bean);
+                            // Bind the property
+                            bind(nameGenerator.apply(property.getName()), TypeReference.with(
+                                    property.getReadMethod().getGenericReturnType()), value);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            // Couldn't get the value
+                            throw new UnrulyException("Error trying to retrieve property [" + property.getName()
+                                    + "] on Bean class [" + bean.getClass() + "]", e);
+                        }
+                    });
         } catch (IntrospectionException e) {
             throw new UnrulyException("Error trying to Introspect [" + bean.getClass() + "]", e);
         }
@@ -345,10 +338,7 @@ public interface Bindings extends Iterable<Binding<?>> {
         Assert.notNull(bean, "bean cannot be null.");
         Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
 
-        Field[] fields = bean.getClass().getFields();
-
-        // Go through all the fields
-        for (Field field : fields) {
+        ReflectionUtils.traverseFields(bean.getClass(), null, field -> {
             try {
                 Object value = field.get(bean);
                 bind(nameGenerator.apply(field.getName()), TypeReference.with(field.getGenericType()), value);
@@ -357,7 +347,7 @@ public interface Bindings extends Iterable<Binding<?>> {
                 throw new UnrulyException("Error trying to retrieve field [" + field.getName()
                         + "] on Bean class [" + bean.getClass() + "]", e);
             }
-        }
+        });
 
         return this;
     }
