@@ -44,6 +44,8 @@ public class RuleExecutionContext implements RuleExecutionAuditor {
     private final BindingMatchingStrategy matchingStrategy;
     private final List<RuleExecution> audit = Collections.synchronizedList(new ArrayList<>());
 
+    // TODO : Stop When()
+
     /**
      * Creates a RuleExecutionContext given a set of Bindings. The default matching strategy will be used.
      *

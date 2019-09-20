@@ -35,19 +35,21 @@ public class ValidationError {
 
     private final String ruleName;
     private final String errorCode;
+    private final Severity severity;
     private final String errorMessage;
     private final Map<String, String> params = new LinkedHashMap<>();
 
-    public ValidationError(String ruleName, String errorCode) {
-        this(ruleName, errorCode, null);
+    public ValidationError(String ruleName, String errorCode, String errorMessage) {
+        this(ruleName, errorCode, Severity.ERROR, errorMessage);
     }
 
-    public ValidationError(String ruleName, String errorCode, String errorMessage) {
+    public ValidationError(String ruleName, String errorCode, Severity severity, String errorMessage) {
         super();
         Assert.notNull(ruleName, "ruleName cannot be null.");
         Assert.notNull(errorCode, "errorCode cannot be null.");
         this.ruleName = ruleName;
         this.errorCode = errorCode;
+        this.severity = severity == null ? Severity.ERROR : severity;
         this.errorMessage = errorMessage;
     }
 
@@ -67,6 +69,15 @@ public class ValidationError {
      */
     public String getErrorCode() {
         return errorCode;
+    }
+
+    /**
+     * Severity of this error.
+     *
+     * @return error severity.
+     */
+    public Severity getSeverity() {
+        return severity;
     }
 
     /**
@@ -131,6 +142,7 @@ public class ValidationError {
         return "ValidationError{" +
                 "ruleName='" + ruleName + '\'' +
                 ", errorCode='" + errorCode + '\'' +
+                ", severity=" + severity +
                 ", errorMessage='" + errorMessage + '\'' +
                 ", params=" + params +
                 '}';

@@ -107,12 +107,58 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
     }
 
     /**
+     * Determines if this container has any associated errors (errors of severity FATAL or ERROR).
+     *
+     * @return true if this containers has any errors (errors of severity FATAL or ERROR); false otherwise.
+     */
+    public boolean hasSevereErrors() {
+        return errors.stream().filter(e -> e.getSeverity() == Severity.FATAL || e.getSeverity() == Severity.ERROR).count() > 0;
+    }
+
+    /**
      * Determines if this container has any associated errors.
      *
      * @return true if this containers has any errors; false otherwise.
      */
     public boolean hasErrors() {
-        return !errors.isEmpty();
+        return getErrorCount(Severity.ERROR) > 0;
+    }
+
+    /**
+     * Returns the number of errors with the desired severity.
+     *
+     * @param severity desired severity.
+     * @return number of errors with the desired severity.
+     */
+    public long getErrorCount(Severity severity) {
+        return errors.stream().filter(e -> e.getSeverity() == severity).count();
+    }
+
+    /**
+     * Determines if there are any FATAL errors in this container.
+     *
+     * @return true if there are any FATAL errors; false otherwise.
+     */
+    public boolean hasFataErrors() {
+        return getErrorCount(Severity.FATAL) > 0;
+    }
+
+    /**
+     * Determines if there are any WARNINGS in this container.
+     *
+     * @return true if there are any WARNINGS; false otherwise.
+     */
+    public boolean hasWarnings() {
+        return getErrorCount(Severity.WARNING) > 0;
+    }
+
+    /**
+     * Determines if there are any INFO messages in this container.
+     *
+     * @return true if there are any INFO messages; false otherwise.
+     */
+    public boolean hasInfoMessages() {
+        return getErrorCount(Severity.INFO) > 0;
     }
 
     /**
