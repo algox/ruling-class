@@ -54,18 +54,18 @@ public interface RuleEngine {
      * @param ctx state management for the Rule execution.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException;
+    void run(Rule rule, RuleContext ctx) throws UnrulyException;
 
     /**
      * Executes the given Rule. If the Rule Condition is true then any associated Actions will be executed.
      *
      * @param rule rule to execute.
      * @param bindings bindings to use for the Rule execution.
-     * @return RuleExecutionContext that was used for the execution.
+     * @return RuleContext that was used for the execution.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleExecutionContext run(Rule rule, BindingDeclaration...bindings) {
-        RuleExecutionContext result = RuleExecutionContext.create(Bindings.defaultBindings().bind(bindings));
+    default RuleContext run(Rule rule, BindingDeclaration...bindings) {
+        RuleContext result = RuleContext.create(Bindings.defaultBindings().bind(bindings));
         run(rule, result);
         return result;
     }
@@ -75,11 +75,11 @@ public interface RuleEngine {
      *
      * @param rule rule to execute.
      * @param bindings bindings to use for the Rule execution.
-     * @return RuleExecutionContext that was used for the execution.
+     * @return RuleContext that was used for the execution.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleExecutionContext run(Rule rule, Bindings bindings) throws UnrulyException {
-        RuleExecutionContext result = RuleExecutionContext.create(bindings);
+    default RuleContext run(Rule rule, Bindings bindings) throws UnrulyException {
+        RuleContext result = RuleContext.create(bindings);
         run(rule, result);
         return result;
     }
@@ -91,18 +91,18 @@ public interface RuleEngine {
      * @param ctx state management for the Rule execution.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(RuleSet rule, RuleExecutionContext ctx) throws UnrulyException;
+    void run(RuleSet rule, RuleContext ctx) throws UnrulyException;
 
     /**
      * Executes the given Rules. If the Rule Condition is true then any associated Actions will be executed.
      *
      * @param rule rules to execute.
      * @param bindings bindings to use for the Rule execution.
-     * @return RuleExecutionContext that was used for the execution.
+     * @return RuleContext that was used for the execution.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleExecutionContext run(RuleSet rule, BindingDeclaration...bindings) {
-        RuleExecutionContext result = RuleExecutionContext.create(Bindings.defaultBindings().bind(bindings));
+    default RuleContext run(RuleSet rule, BindingDeclaration...bindings) {
+        RuleContext result = RuleContext.create(Bindings.defaultBindings().bind(bindings));
         run(rule, result);
         return result;
     }
@@ -112,11 +112,11 @@ public interface RuleEngine {
      *
      * @param rule rules to execute.
      * @param bindings bindings to use for the Rule execution.
-     * @return RuleExecutionContext that was used for the execution.
+     * @return RuleContext that was used for the execution.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleExecutionContext run(RuleSet rule, Bindings bindings) throws UnrulyException {
-        RuleExecutionContext result = RuleExecutionContext.create(bindings);
+    default RuleContext run(RuleSet rule, Bindings bindings) throws UnrulyException {
+        RuleContext result = RuleContext.create(bindings);
         run(rule, result);
         return result;
     }

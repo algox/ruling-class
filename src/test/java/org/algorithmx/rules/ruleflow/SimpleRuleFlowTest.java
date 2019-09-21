@@ -17,7 +17,8 @@
  */
 package org.algorithmx.rules.ruleflow;
 
-import org.algorithmx.rules.bind.Bindings;import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.impl.RuleFlowTemplate;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class SimpleRuleFlowTest {
 
     private static class RuleFlow1 extends RuleFlowTemplate<Integer> {
 
-        public RuleFlow1(RuleExecutionContext ctx) {
+        public RuleFlow1(RuleContext ctx) {
             super(ctx);
         }
 

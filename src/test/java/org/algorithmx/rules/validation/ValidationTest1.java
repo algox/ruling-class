@@ -18,8 +18,8 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleEngine;
-import org.algorithmx.rules.core.RuleExecutionContext;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.model.ValidationErrorContainer;
@@ -67,7 +67,7 @@ public class ValidationTest1 {
                 .add(TestRule4.class)
                 .add(TestRule5.class);
 
-        RuleExecutionContext ctx = ruleEngine.run(rules, value -> 75, errors -> new ValidationErrorContainer());
+        RuleContext ctx = ruleEngine.run(rules, value -> 75, errors -> new ValidationErrorContainer());
         System.err.println(ctx.bindings().get("errors").toString());
     }
 }

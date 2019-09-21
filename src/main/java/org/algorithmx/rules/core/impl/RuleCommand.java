@@ -24,8 +24,8 @@ import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.ParameterResolver;
 import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.RuleExecutionAuditor;
-import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.core.RuleContext;
+import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.RuleExecution;
@@ -52,13 +52,13 @@ class RuleCommand {
      * @param auditor auditor to keep track of the execution.
      * @throws UnrulyException thrown if there are any runtime exceptions during the execution.
      */
-    void execute(Rule rule, RuleExecutionContext ctx, RuleExecutionAuditor auditor) throws UnrulyException {
+    void execute(Rule rule, RuleContext ctx, RuleAuditor auditor) throws UnrulyException {
         // Audit data
         RuleExecution audit = new RuleExecution(rule.getRuleDefinition());
 
         try {
-            // Set the RuleExecutionContext in the ThreadLocal so it can be accessed during the execution.
-            RuleExecutionContext.set(ctx);
+            // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
+            RuleContext.set(ctx);
             // Find all tne matching Bindings.
             Binding<Object>[] bindings = resolveArguments(rule.getRuleDefinition().getCondition(), parameterResolver,
                     ctx.bindings(), ctx.matchingStrategy());
@@ -98,7 +98,7 @@ class RuleCommand {
             throw ex;
         } finally {
             // Clear the ThreadLocal
-            RuleExecutionContext.clear();
+            RuleContext.clear();
             auditor.audit(audit);
         }
     }

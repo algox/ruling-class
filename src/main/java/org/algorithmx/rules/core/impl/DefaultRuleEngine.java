@@ -18,8 +18,8 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleEngine;
-import org.algorithmx.rules.core.RuleExecutionContext;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
@@ -40,14 +40,14 @@ public class DefaultRuleEngine implements RuleEngine {
     }
 
     @Override
-    public void run(Rule rule, RuleExecutionContext ctx) throws UnrulyException {
+    public void run(Rule rule, RuleContext ctx) throws UnrulyException {
         Assert.notNull(rule, "rule cannot be null.");
         RuleCommand command = new RuleCommand();
         command.execute(rule, ctx, ctx);
     }
 
     @Override
-    public void run(RuleSet rules, RuleExecutionContext ctx) throws UnrulyException {
+    public void run(RuleSet rules, RuleContext ctx) throws UnrulyException {
         Arrays.stream(rules.getRules()).forEach(rule -> run(rule, ctx));
     }
 }

@@ -18,7 +18,7 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.RuleExecutionContext;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleFlow;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -31,9 +31,9 @@ import org.algorithmx.rules.spring.util.Assert;
  */
 public abstract class RuleFlowTemplate<T> implements RuleFlow<T> {
 
-    private final RuleExecutionContext ctx;
+    private final RuleContext ctx;
 
-    public RuleFlowTemplate(RuleExecutionContext ctx) {
+    public RuleFlowTemplate(RuleContext ctx) {
         super();
         Assert.notNull(ctx, "ctx cannot be null.");
         this.ctx = ctx;

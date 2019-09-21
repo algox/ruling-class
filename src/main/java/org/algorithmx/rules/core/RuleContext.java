@@ -35,10 +35,10 @@ import java.util.List;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RuleExecutionContext implements RuleExecutionAuditor {
+public class RuleContext implements RuleAuditor {
 
-    // Holds on the RuleExecutionContext associated with the current Thread.
-    private static final ThreadLocal<RuleExecutionContext> CTX_HOLDER = new ThreadLocal<>();
+    // Holds on the RuleContext associated with the current Thread.
+    private static final ThreadLocal<RuleContext> CTX_HOLDER = new ThreadLocal<>();
 
     private final Bindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
@@ -47,27 +47,27 @@ public class RuleExecutionContext implements RuleExecutionAuditor {
     // TODO : Stop When()
 
     /**
-     * Creates a RuleExecutionContext given a set of Bindings. The default matching strategy will be used.
+     * Creates a RuleContext given a set of Bindings. The default matching strategy will be used.
      *
      * @param bindings bindings.
-     * @return new RuleExecutionContext.
+     * @return new RuleContext.
      */
-    public static RuleExecutionContext create(Bindings bindings) {
-        return new RuleExecutionContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
+    public static RuleContext create(Bindings bindings) {
+        return new RuleContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
     }
 
     /**
-     * Creates a RuleExecutionContext given a set of Bindings and matching strategy.
+     * Creates a RuleContext given a set of Bindings and matching strategy.
      *
      * @param bindings bindings.
      * @param matchingStrategy binding matching strategy.
-     * @return new RuleExecutionContext.
+     * @return new RuleContext.
      */
-    public static RuleExecutionContext create(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
-        return new RuleExecutionContext(bindings, matchingStrategy);
+    public static RuleContext create(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
+        return new RuleContext(bindings, matchingStrategy);
     }
 
-    private RuleExecutionContext(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
+    private RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
         super();
         Assert.notNull(bindings, "bindings cannot be null");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
@@ -76,20 +76,20 @@ public class RuleExecutionContext implements RuleExecutionAuditor {
     }
 
     /**
-     * Returns the RuleExecutionContext associated with the current Thread.
+     * Returns the RuleContext associated with the current Thread.
      *
-     * @return RuleExecutionContext associated with the current Thread.
+     * @return RuleContext associated with the current Thread.
      */
-    public static final RuleExecutionContext get() {
+    public static final RuleContext get() {
         return CTX_HOLDER.get();
     }
 
     /**
-     * Associated the given RuleExecutionContext with the current Thread.
+     * Associated the given RuleContext with the current Thread.
      *
-     * @param ctx RuleExecutionContext
+     * @param ctx RuleContext
      */
-    public static final void set(RuleExecutionContext ctx) {
+    public static final void set(RuleContext ctx) {
         CTX_HOLDER.set(ctx);
     }
 

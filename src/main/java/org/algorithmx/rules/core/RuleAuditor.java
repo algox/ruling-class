@@ -28,7 +28,7 @@ import java.util.Iterator;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface RuleExecutionAuditor extends Iterable<RuleExecution> {
+public interface RuleAuditor extends Iterable<RuleExecution> {
 
     /**
      * Stores a audit item for the execution of a Rule.
