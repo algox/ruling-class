@@ -28,6 +28,15 @@ import java.util.Set;
 public interface BindingMatchingStrategy {
 
     /**
+     * Returns the default Strategy.
+     *
+     * @return default strategy.
+     */
+    static BindingMatchingStrategy getDefault() {
+        return BindingMatchingStrategyType.getDefault().getStrategy();
+    }
+
+    /**
      * Returns a set a Bindings that match a set criteria that is determined by the implementing class.
      *
      * @param bindings bindings.

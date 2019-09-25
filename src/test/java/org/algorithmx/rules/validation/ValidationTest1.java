@@ -68,6 +68,6 @@ public class ValidationTest1 {
                 .add(TestRule5.class);
 
         RuleContext ctx = ruleEngine.run(rules, value -> 75, errors -> new ValidationErrorContainer());
-        System.err.println(ctx.bindings().get("errors").toString());
+        System.err.println(ctx.getBindings().get("errors").toString());
     }
 }

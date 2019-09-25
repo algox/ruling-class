@@ -20,13 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.model.RuleExecution;
 import org.algorithmx.rules.spring.util.Assert;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Responsible for state management during Rule execution. This class provides access to everything that is required
@@ -35,25 +29,32 @@ import java.util.List;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RuleContext implements RuleAuditor {
+public class RuleContext {
 
     // Holds on the RuleContext associated with the current Thread.
     private static final ThreadLocal<RuleContext> CTX_HOLDER = new ThreadLocal<>();
 
-    private final Bindings bindings;
-    private final BindingMatchingStrategy matchingStrategy;
-    private final List<RuleExecution> audit = Collections.synchronizedList(new ArrayList<>());
-
-    // TODO : Stop When()
+    private Bindings bindings;
+    private RuleAuditor auditor;
+    private Condition stopWhen;
+    private BindingMatchingStrategy matchingStrategy;
+    private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
 
     /**
-     * Creates a RuleContext given a set of Bindings. The default matching strategy will be used.
+     * Default Ctor.
+     * @see RuleContextBuilder
+     */
+    RuleContext() {
+        super();
+    }
+
+    /**
+     * Creates a RuleContext given a set of Bindings.
      *
      * @param bindings bindings.
-     * @return new RuleContext.
      */
-    public static RuleContext create(Bindings bindings) {
-        return new RuleContext(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
+    public RuleContext(Bindings bindings) {
+        this(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
     }
 
     /**
@@ -61,13 +62,8 @@ public class RuleContext implements RuleAuditor {
      *
      * @param bindings bindings.
      * @param matchingStrategy binding matching strategy.
-     * @return new RuleContext.
      */
-    public static RuleContext create(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
-        return new RuleContext(bindings, matchingStrategy);
-    }
-
-    private RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
+    public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
         super();
         Assert.notNull(bindings, "bindings cannot be null");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
@@ -101,42 +97,105 @@ public class RuleContext implements RuleAuditor {
     }
 
     /**
-     * Bindings to use.
+     * Returns the Bindings.
      *
-     * @return bindings.
+     * @return Bindings. Cannot be null.
      */
-    public Bindings bindings() {
+    public Bindings getBindings() {
         return bindings;
     }
 
     /**
-     * Matching strategy to use during the Rule execution.
+     * Sets the Bindings.
      *
-     * @return BindingMatchingStrategy.
+     * @param bindings Bindings. Cannot be null.
      */
-    public BindingMatchingStrategy matchingStrategy() {
+    public void setBindings(Bindings bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
+        this.bindings = bindings;
+    }
+
+    /**
+     * Condition that determines when execution should stop.
+     *
+     * @return stopping condition.
+     */
+    public Condition getStopWhen() {
+        return stopWhen;
+    }
+
+    /**
+     * Set the Execution Stopping Condition.
+     *
+     * @param stopWhen stopping condition.
+     */
+    public void setStopWhen(Condition stopWhen) {
+        this.stopWhen = stopWhen;
+    }
+
+    /**
+     * Returns the matching strategy to be used.
+     *
+     * @return matching strategy (cannot be null).
+     */
+    public BindingMatchingStrategy getMatchingStrategy() {
         return matchingStrategy;
     }
 
-    @Override
-    public void audit(RuleExecution execution) {
-        this.audit.add(execution);
+    /**
+     * Sets the matching strategy.
+     *
+     * @param matchingStrategy matching strategy.
+     */
+    public void setMatchingStrategy(BindingMatchingStrategy matchingStrategy) {
+        Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
+        this.matchingStrategy = matchingStrategy;
     }
 
-    @Override
-    public RuleExecution getFirstAuditItem() {
-        int size = audit.size();
-        return size > 0 ? audit.get(0) : null;
+    /**
+     * Determines whether the rule auditing is enabled.
+     *
+     * @return true if Rule Auditing is enabled. False otherwise.
+     */
+    public boolean isAuditingEnabled() {
+        return auditor != null;
     }
 
-    @Override
-    public RuleExecution getLastAuditItem() {
-        int size = audit.size();
-        return size > 0 ? audit.get(size - 1) : null;
+    /**
+     * Auditor to use for Rule execution tracking.
+     *
+     * @return Rule Auditor. Can be null.
+     */
+    public RuleAuditor getAuditor() {
+        return auditor;
     }
 
-    @Override
-    public Iterator<RuleExecution> getAuditItems() {
-        return audit.iterator();
+    /**
+     * Set the Rule Auditor to be used.
+     *
+     * @param auditor Rule auditor.
+     */
+    public void setAuditor(RuleAuditor auditor) {
+        Assert.notNull(auditor, "auditor cannot be null.");
+        this.auditor = auditor;
+    }
+
+    /**
+     * Returns the parameter resolver being used.
+     *
+     * @return parameter resolver. Cannot be null.
+     */
+    public ParameterResolver getParameterResolver() {
+        return parameterResolver;
+    }
+
+    /**
+     * Sets the Parameter resolver to use.
+     *
+     * @param parameterResolver parameter resolver to use.
+     */
+    public void setParameterResolver(ParameterResolver parameterResolver) {
+        Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
+        this.parameterResolver = parameterResolver;
     }
 }

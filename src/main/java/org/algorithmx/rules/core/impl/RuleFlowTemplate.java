@@ -41,7 +41,7 @@ public abstract class RuleFlowTemplate<T> implements RuleFlow<T> {
 
     @Override
     public final Bindings bindings() {
-        return ctx.bindings();
+        return ctx.getBindings();
     }
 
     /*@Override

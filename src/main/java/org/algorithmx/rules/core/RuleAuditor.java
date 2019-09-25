@@ -17,18 +17,28 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.core.impl.DefaultRuleAuditor;
 import org.algorithmx.rules.model.RuleExecution;
 
 import java.util.Iterator;
 
 /**
  * As the name suggests this class is responsible for auditing the execution of a Rule. Keeps an audit trail of all the
- * Rule executions.
+ * Rule executions during the Rule Engine "run".
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 public interface RuleAuditor extends Iterable<RuleExecution> {
+
+    /**
+     * Creates the default implementation of RuleAuditor.
+     *
+     * @return default implementation.
+     */
+    static RuleAuditor defaultRuleAuditor() {
+        return new DefaultRuleAuditor();
+    }
 
     /**
      * Stores a audit item for the execution of a Rule.

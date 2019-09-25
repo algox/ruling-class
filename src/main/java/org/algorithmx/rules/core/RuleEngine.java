@@ -65,7 +65,7 @@ public interface RuleEngine {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default RuleContext run(Rule rule, BindingDeclaration...bindings) {
-        RuleContext result = RuleContext.create(Bindings.defaultBindings().bind(bindings));
+        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
         run(rule, result);
         return result;
     }
@@ -79,7 +79,7 @@ public interface RuleEngine {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default RuleContext run(Rule rule, Bindings bindings) throws UnrulyException {
-        RuleContext result = RuleContext.create(bindings);
+        RuleContext result = new RuleContext(bindings);
         run(rule, result);
         return result;
     }
@@ -102,7 +102,7 @@ public interface RuleEngine {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default RuleContext run(RuleSet rule, BindingDeclaration...bindings) {
-        RuleContext result = RuleContext.create(Bindings.defaultBindings().bind(bindings));
+        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
         run(rule, result);
         return result;
     }
@@ -116,7 +116,7 @@ public interface RuleEngine {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default RuleContext run(RuleSet rule, Bindings bindings) throws UnrulyException {
-        RuleContext result = RuleContext.create(bindings);
+        RuleContext result = new RuleContext(bindings);
         run(rule, result);
         return result;
     }

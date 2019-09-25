@@ -43,7 +43,7 @@ public class DefaultRuleEngine implements RuleEngine {
     public void run(Rule rule, RuleContext ctx) throws UnrulyException {
         Assert.notNull(rule, "rule cannot be null.");
         RuleCommand command = new RuleCommand();
-        command.execute(rule, ctx, ctx);
+        command.execute(rule, ctx);
     }
 
     @Override

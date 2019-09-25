@@ -25,7 +25,6 @@ import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.ParameterResolver;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;
-import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.RuleExecution;
@@ -49,10 +48,9 @@ class RuleCommand {
      *
      * @param rule rule to be executed.
      * @param ctx state management.
-     * @param auditor auditor to keep track of the execution.
      * @throws UnrulyException thrown if there are any runtime exceptions during the execution.
      */
-    void execute(Rule rule, RuleContext ctx, RuleAuditor auditor) throws UnrulyException {
+    void execute(Rule rule, RuleContext ctx) throws UnrulyException {
         // Audit data
         RuleExecution audit = new RuleExecution(rule.getRuleDefinition());
 
@@ -61,7 +59,7 @@ class RuleCommand {
             RuleContext.set(ctx);
             // Find all tne matching Bindings.
             Binding<Object>[] bindings = resolveArguments(rule.getRuleDefinition().getCondition(), parameterResolver,
-                    ctx.bindings(), ctx.matchingStrategy());
+                    ctx.getBindings(), ctx.getMatchingStrategy());
             // Store the matched Bindings
             audit.add(bindings);
             // Execute the Rule
@@ -73,7 +71,7 @@ class RuleCommand {
                 // Execute any associated Actions.
                 for (Action action : rule.getActions()) {
                     Binding<Object>[] actionBindings = resolveArguments(action.getActionDefinition().getAction(),
-                            parameterResolver, ctx.bindings(), ctx.matchingStrategy());
+                            parameterResolver, ctx.getBindings(), ctx.getMatchingStrategy());
                     // Store the matched Bindings
                     audit.add(actionBindings);
                     // Execute the Action
@@ -83,7 +81,7 @@ class RuleCommand {
             } else if (rule.getOtherwiseAction() != null) {
                 Binding<Object>[] otherwiseActionBindings = resolveArguments(rule.getOtherwiseAction()
                                 .getActionDefinition().getAction(),
-                        parameterResolver, ctx.bindings(), ctx.matchingStrategy());
+                        parameterResolver, ctx.getBindings(), ctx.getMatchingStrategy());
                 // Store the matched Bindings
                 audit.add(otherwiseActionBindings);
                 // Execute the Otherwise Action
@@ -94,12 +92,12 @@ class RuleCommand {
             audit.setError(e);
             String ruleName = rule.isIdentifiable() ? ((Identifiable) rule).getName() : null;
             UnrulyException ex = new UnrulyException("Error trying to execute rule [" + (ruleName != null ? ruleName : "n/a") + "]", e);
-            ex.setExecutionStack(ctx.getAuditItems());
+            if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
         } finally {
             // Clear the ThreadLocal
             RuleContext.clear();
-            auditor.audit(audit);
+            if (ctx.isAuditingEnabled()) ctx.getAuditor().audit(audit);
         }
     }
 
