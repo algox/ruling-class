@@ -19,7 +19,7 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
 import org.algorithmx.rules.bind.impl.SimpleBindings;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ReflectionUtils;
 

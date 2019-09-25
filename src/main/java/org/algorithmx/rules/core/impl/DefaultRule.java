@@ -19,7 +19,7 @@ package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.Identifiable;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 

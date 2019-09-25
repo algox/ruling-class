@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.impl;
+package org.algorithmx.rules.bind.impl;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
-import org.algorithmx.rules.core.ParameterResolver;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
 

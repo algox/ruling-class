@@ -21,7 +21,7 @@ import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 

@@ -20,6 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**

@@ -20,7 +20,7 @@ package org.algorithmx.rules.core.impl;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.ActionConsumer;
 import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.util.ActionUtils;
 
 import java.util.LinkedList;

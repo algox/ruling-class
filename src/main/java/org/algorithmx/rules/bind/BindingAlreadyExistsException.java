@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 
 /**
  * Thrown when you attempt to declare an already existing Binding.

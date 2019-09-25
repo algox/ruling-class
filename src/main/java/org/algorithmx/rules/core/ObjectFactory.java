@@ -18,6 +18,7 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
+import org.algorithmx.rules.error.UnrulyException;
 
 /**
  * Factory use to create Objects. Framework requires Object instances to be created (such as Rules), the ObjectFactory is

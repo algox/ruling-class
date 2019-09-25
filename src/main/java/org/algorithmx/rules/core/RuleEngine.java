@@ -20,6 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.DefaultRuleEngine;
+import org.algorithmx.rules.error.UnrulyException;
 
 /**
  * RuleEngine is responsible for executing the given Rules. It also keeps an audit trail of the execution.

@@ -20,11 +20,12 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.impl.NoOpRuleAuditor;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**
- * Builder class to properly build a RuleContext with the belss & whistles.
+ * Builder class to properly build a RuleContext with the bells and whistles.
  *
  * @author Max Arulananthan
  * @since 1.0

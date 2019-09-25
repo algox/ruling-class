@@ -22,10 +22,10 @@ import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Identifiable;
-import org.algorithmx.rules.core.ParameterResolver;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.RuleExecution;
 

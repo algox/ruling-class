@@ -18,7 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.algorithmx.rules.util.ReflectionUtils;
