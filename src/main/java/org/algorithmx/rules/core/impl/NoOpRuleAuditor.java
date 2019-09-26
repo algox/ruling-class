@@ -39,7 +39,7 @@ public class NoOpRuleAuditor implements RuleAuditor {
     }
 
     @Override
-    public void audit(RuleExecution auditItem) {
+    public void audit(RuleExecution ruleExecution) {
         // Do nothing
     }
 

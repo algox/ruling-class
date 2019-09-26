@@ -43,9 +43,9 @@ public interface RuleAuditor extends Iterable<RuleExecution> {
     /**
      * Stores a audit item for the execution of a Rule.
      *
-     * @param auditItem Rule Audit details.
+     * @param ruleExecution Rule Audit details.
      */
-    void audit(RuleExecution auditItem);
+    void audit(RuleExecution ruleExecution);
 
     /**
      * Returns the first audit item.

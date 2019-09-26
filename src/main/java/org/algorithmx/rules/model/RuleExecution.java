@@ -45,10 +45,20 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     private Boolean pass;
     private WeakReference<Exception> error;
 
-    public RuleExecution(RuleDefinition ruleDefinition) {
+    public RuleExecution(RuleDefinition ruleDefinition, boolean pass, Binding<Object>...bindings) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null.");
         this.ruleDefinition = new WeakReference<>(ruleDefinition);
+        this.pass = pass;
+        add(bindings);
+    }
+
+    public RuleExecution(RuleDefinition ruleDefinition, Exception error, Binding<Object>...bindings) {
+        super();
+        Assert.notNull(ruleDefinition, "ruleDefinition cannot be null.");
+        this.ruleDefinition = new WeakReference<>(ruleDefinition);
+        this.error = new WeakReference<>(error);
+        add(bindings);
     }
 
     /**
@@ -58,26 +68,6 @@ public final class RuleExecution implements Comparable<RuleExecution> {
      */
     public RuleDefinition getRuleDefinition() {
         return ruleDefinition.get();
-    }
-
-    /**
-     * Adds all the associated rule parameters.
-     *
-     * @param bindings rule parameters.
-     */
-    public void add(Binding<Object>...bindings) {
-        if (bindings == null || bindings.length == 0) return;
-        Arrays.stream(bindings).forEach(this::add);
-    }
-
-    /**
-     * Adds a rule parameter.
-     *
-     * @param binding rule parameter.
-     */
-    public void add(Binding<Object> binding) {
-        if (binding == null) return;
-        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
     }
 
     /**
@@ -117,24 +107,6 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     }
 
     /**
-     * Sets the result value of the Rule Condition.
-     *
-     * @param result Did the Rule Condition pass?
-     */
-    public void setPass(Boolean result) {
-        this.pass = result;
-    }
-
-    /**
-     * Sets the error on the audit.
-     *
-     * @param error execution error.
-     */
-    public void setError(Exception error) {
-        this.error = new WeakReference<>(error);
-    }
-
-    /**
      * Time when the Rule condition was run.
      *
      * @return time of Rule execution.
@@ -150,6 +122,26 @@ public final class RuleExecution implements Comparable<RuleExecution> {
      */
     public boolean isError() {
         return error != null;
+    }
+
+    /**
+     * Adds all the associated rule parameters.
+     *
+     * @param bindings rule parameters.
+     */
+    private void add(Binding<Object>...bindings) {
+        if (bindings == null || bindings.length == 0) return;
+        Arrays.stream(bindings).forEach(this::add);
+    }
+
+    /**
+     * Adds a rule parameter.
+     *
+     * @param binding rule parameter.
+     */
+    private void add(Binding<Object> binding) {
+        if (binding == null) return;
+        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
     }
 
     @Override

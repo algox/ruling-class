@@ -31,7 +31,6 @@ import java.util.Arrays;
  *
  * @author Max Arulananthan
  * @since 1.0
- * @see RuleCommand
  */
 public class DefaultRuleEngine implements RuleEngine {
 

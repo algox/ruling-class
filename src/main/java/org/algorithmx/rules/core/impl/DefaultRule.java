@@ -21,8 +21,10 @@ import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.model.ActionExecution;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.model.RuleExecution;
 import org.algorithmx.rules.spring.util.Assert;
@@ -54,53 +56,70 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
 
     @Override
     public void run(RuleContext ctx) throws UnrulyException {
-        // Audit data
-        RuleExecution audit = ctx.isAuditingEnabled() ? new RuleExecution(getRuleDefinition()) : null;
+        RuleAuditor auditor = ctx.getAuditor();
+        Binding<Object>[] bindings = null;
+        RuleExecution ruleExecution;
+        boolean result;
 
         try {
             // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
             RuleContext.set(ctx);
             // Find all tne matching Bindings.
-            Binding<Object>[] bindings = ctx.getParameterResolver().resolveAsBindings(
+            // TODO : Throw BindingException?
+            bindings = ctx.getParameterResolver().resolveAsBindings(
                     ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
-            // Audit the matched Bindings
-            if (audit != null) audit.add(bindings);
             // Execute the Rule
-            boolean result = isPass(getBindingValues(bindings));
+            result = isPass(getBindingValues(bindings));
             // Store the result of the Execution
-            if (audit != null) audit.setPass(result);
-
-            // The Condition passed
-            if (result) {
-                // Execute any associated Actions.
-                for (Action action : getActions()) {
-                    runAction(ctx, action, audit);
-                }
-            } else if (getOtherwiseAction() != null) {
-                runAction(ctx, getOtherwiseAction(), audit);
-            }
-
+            ruleExecution = new RuleExecution(getRuleDefinition(), result, bindings);
+            auditor.audit(ruleExecution);
         } catch (Exception e) {
             // Store the error
-            audit.setError(e);
-            UnrulyException ex = new UnrulyException("Error trying to execute rule [" + getName() + "]", e);
+            auditor.audit(new RuleExecution(getRuleDefinition(), e, bindings));
+            UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
             if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
         } finally {
             // Clear the ThreadLocal
             RuleContext.clear();
-            if (ctx.isAuditingEnabled()) ctx.getAuditor().audit(audit);
+        }
+
+        // The Condition passed
+        if (result) {
+            // Execute any associated Actions.
+            for (Action action : getActions()) {
+                runAction(ctx, action, ruleExecution);
+            }
+        } else if (getOtherwiseAction() != null) {
+            // Condition failed
+            runAction(ctx, getOtherwiseAction(), ruleExecution);
         }
     }
 
-    protected void runAction(RuleContext ctx, Action action, RuleExecution audit) {
-        // Execute any associated Actions.
-        Binding<Object>[] actionBindings = ctx.getParameterResolver().resolveAsBindings(action.getActionDefinition().getAction(),
-                ctx.getBindings(), ctx.getMatchingStrategy());
-        // Store the matched Bindings
-        if (audit != null) audit.add(actionBindings);
-        // Execute the Action
-        action.execute(getBindingValues(actionBindings));
+    protected void runAction(RuleContext ctx, Action action, RuleExecution ruleExecution) {
+        Binding<Object>[] actionBindings = null;
+
+        try {
+            // Set the RuleContext so it can be accessed during the execution.
+            RuleContext.set(ctx);
+            // Execute any associated Actions.
+            actionBindings = ctx.getParameterResolver().resolveAsBindings(action.getActionDefinition().getAction(),
+                    ctx.getBindings(), ctx.getMatchingStrategy());
+            // Execute the Action
+            action.execute(getBindingValues(actionBindings));
+            // Store the action audit
+            ruleExecution.add(new ActionExecution(action.getActionDefinition(), actionBindings));
+        } catch (Exception e) {
+            // Store the action audit
+            ruleExecution.add(new ActionExecution(action.getActionDefinition(), e, actionBindings));
+            // TODO : Need a proper Rule action name
+            UnrulyException ex = new UnrulyException("Error trying to execute rule action", e);
+            if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
+            throw ex;
+        } finally {
+            // Clear the ThreadLocal
+            RuleContext.clear();
+        }
     }
 
     @Override

@@ -17,10 +17,19 @@ public class ActionExecution implements Comparable<ActionExecution> {
     private final Date time = new Date();
     private WeakReference<Exception> error;
 
-    public ActionExecution(ActionDefinition actionDefinition) {
+    public ActionExecution(ActionDefinition actionDefinition, Binding<Object>...bindings) {
         super();
         Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
         this.actionDefinition = new WeakReference<>(actionDefinition);
+        add(bindings);
+    }
+
+    public ActionExecution(ActionDefinition actionDefinition, Exception error, Binding<Object>...bindings) {
+        super();
+        Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
+        this.error = new WeakReference<>(error);
+        this.actionDefinition = new WeakReference<>(actionDefinition);
+        add(bindings);
     }
 
     /**
@@ -30,26 +39,6 @@ public class ActionExecution implements Comparable<ActionExecution> {
      */
     public ActionDefinition getActionDefinition() {
         return actionDefinition.get();
-    }
-
-    /**
-     * Adds all the associated action parameters.
-     *
-     * @param bindings action parameters.
-     */
-    public void add(Binding<Object>...bindings) {
-        if (bindings == null || bindings.length == 0) return;
-        Arrays.stream(bindings).forEach(this::add);
-    }
-
-    /**
-     * Adds a action parameter.
-     *
-     * @param binding action parameter.
-     */
-    public void add(Binding<Object> binding) {
-        if (binding == null) return;
-        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
     }
 
     /**
@@ -67,15 +56,6 @@ public class ActionExecution implements Comparable<ActionExecution> {
      */
     public Exception getError() {
         return error.get();
-    }
-
-    /**
-     * Sets the error on the audit.
-     *
-     * @param error execution error.
-     */
-    public void setError(Exception error) {
-        this.error = new WeakReference<>(error);
     }
 
     /**
@@ -99,6 +79,26 @@ public class ActionExecution implements Comparable<ActionExecution> {
     @Override
     public int compareTo(ActionExecution o) {
         return time.compareTo(o.getTime());
+    }
+
+    /**
+     * Adds all the associated action parameters.
+     *
+     * @param bindings action parameters.
+     */
+    private void add(Binding<Object>...bindings) {
+        if (bindings == null || bindings.length == 0) return;
+        Arrays.stream(bindings).forEach(this::add);
+    }
+
+    /**
+     * Adds a action parameter.
+     *
+     * @param binding action parameter.
+     */
+    private void add(Binding<Object> binding) {
+        if (binding == null) return;
+        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
     }
 
     @Override
