@@ -35,6 +35,7 @@ import org.algorithmx.rules.model.RuleExecution;
  * @author Max Arulananthan
  * @since 1.0
  */
+@Deprecated
 class RuleCommand {
 
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
@@ -65,7 +66,7 @@ class RuleCommand {
             // Execute the Rule
             boolean result = rule.isPass(getBindingValues(bindings));
             // Store the result of the Execution
-            audit.setResult(result);
+            audit.setPass(result);
             // The Condition passed
             if (result) {
                 // Execute any associated Actions.

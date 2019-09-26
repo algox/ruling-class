@@ -23,8 +23,10 @@ import org.algorithmx.rules.spring.util.Assert;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Rule audit details. Contains all the details of a Rule Execution. It contains the details of the rule, all the associated
@@ -38,9 +40,10 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     // Make sure we don't hold onto the actual rule definition
     private final WeakReference<RuleDefinition> ruleDefinition;
     private final Map<String, String> params = new LinkedHashMap<>();
+    private final Set<ActionExecution> actions = new HashSet<>();
     private final Date time = new Date();
-    private Boolean result;
-    private Exception error;
+    private Boolean pass;
+    private WeakReference<Exception> error;
 
     public RuleExecution(RuleDefinition ruleDefinition) {
         super();
@@ -78,6 +81,16 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     }
 
     /**
+     * Adds an Action audit to the Rule Audit.
+     *
+     * @param action action audit to be added.
+     */
+    public void add(ActionExecution action) {
+        Assert.notNull(action, "action cannot be null.");
+        this.actions.add(action);
+    }
+
+    /**
      * Retrieves all the rule parameters.
      *
      * @return rule parameters.
@@ -87,12 +100,12 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     }
 
     /**
-     * Result of the Rule execution.
+     * Did the Rule Condition pass?
      *
      * @return true if the rule passed; false otherwise.
      */
-    public Boolean getResult() {
-        return result;
+    public Boolean isSuccess() {
+        return pass;
     }
 
     /**
@@ -100,21 +113,41 @@ public final class RuleExecution implements Comparable<RuleExecution> {
      * @return exception.
      */
     public Exception getError() {
-        return error;
+        return error.get();
     }
 
-    public void setResult(Boolean result) {
-        this.result = result;
+    /**
+     * Sets the result value of the Rule Condition.
+     *
+     * @param result Did the Rule Condition pass?
+     */
+    public void setPass(Boolean result) {
+        this.pass = result;
     }
 
+    /**
+     * Sets the error on the audit.
+     *
+     * @param error execution error.
+     */
     public void setError(Exception error) {
-        this.error = error;
+        this.error = new WeakReference<>(error);
     }
 
+    /**
+     * Time when the Rule condition was run.
+     *
+     * @return time of Rule execution.
+     */
     public Date getTime() {
         return time;
     }
 
+    /**
+     * Did an error happen during the execution.
+     *
+     * @return Rule execution error?
+     */
     public boolean isError() {
         return error != null;
     }
@@ -129,7 +162,7 @@ public final class RuleExecution implements Comparable<RuleExecution> {
         return "RuleExecution{" +
                 "ruleDefinition=" + (ruleDefinition.get() != null ? ruleDefinition.get().getName() : "n/a") +
                 ", args=" + params +
-                ", result=" + result +
+                ", pass=" + pass +
                 ", error=" + error +
                 ", time=" + time +
                 '}';
