@@ -180,5 +180,12 @@ public class BindTest {
                 .bind("key", () -> "Hello World!", TypeReference.with(String.class))
                 .set("key", "new value");
     }
+
+    @Test
+    public void testSelfAware() {
+        Bindings bindings1 = Bindings.defaultBindings();
+        Binding<Bindings> bindings2 = bindings1.getBinding(Bindings.SELF_BIND_NAME, Bindings.class);
+        Assert.assertNotNull(bindings2);
+    }
 }
 

@@ -49,43 +49,6 @@ public interface RuleEngine {
     }
 
     /**
-     * Executes the given Rule. If the Rule Condition is true then any associated Actions will be executed.
-     *
-     * @param rule rule to execute.
-     * @param ctx state management for the Rule execution.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    void run(Rule rule, RuleContext ctx) throws UnrulyException;
-
-    /**
-     * Executes the given Rule. If the Rule Condition is true then any associated Actions will be executed.
-     *
-     * @param rule rule to execute.
-     * @param bindings bindings to use for the Rule execution.
-     * @return RuleContext that was used for the execution.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default RuleContext run(Rule rule, BindingDeclaration...bindings) {
-        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
-        run(rule, result);
-        return result;
-    }
-
-    /**
-     * Executes the given Rule. If the Rule Condition is true then any associated Actions will be executed.
-     *
-     * @param rule rule to execute.
-     * @param bindings bindings to use for the Rule execution.
-     * @return RuleContext that was used for the execution.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default RuleContext run(Rule rule, Bindings bindings) throws UnrulyException {
-        RuleContext result = new RuleContext(bindings);
-        run(rule, result);
-        return result;
-    }
-
-    /**
      * Executes the given Rules. If the Rule Condition is true then any associated Actions will be executed.
      *
      * @param rule rules to execute.

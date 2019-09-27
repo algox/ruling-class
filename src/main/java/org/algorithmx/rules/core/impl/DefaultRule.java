@@ -21,6 +21,7 @@ import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.ResultExtractor;
 import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
@@ -55,11 +56,18 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
     }
 
     @Override
+    public <T> T run(RuleContext ctx, ResultExtractor<T> extractor) throws UnrulyException {
+        run(ctx);
+        // Extract the result from the Bindings.
+        return extractor.extract(ctx.getBindings());
+    }
+
+    @Override
     public void run(RuleContext ctx) throws UnrulyException {
         RuleAuditor auditor = ctx.getAuditor();
         Binding<Object>[] bindings = null;
         RuleExecution ruleExecution;
-        boolean result;
+        boolean pass;
 
         try {
             // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
@@ -69,9 +77,9 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
             bindings = ctx.getParameterResolver().resolveAsBindings(
                     ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Rule
-            result = isPass(getBindingValues(bindings));
+            pass = isPass(getBindingValues(bindings));
             // Store the result of the Execution
-            ruleExecution = new RuleExecution(getRuleDefinition(), result, bindings);
+            ruleExecution = new RuleExecution(getRuleDefinition(), pass, bindings);
             auditor.audit(ruleExecution);
         } catch (Exception e) {
             // Store the error
@@ -85,7 +93,7 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
         }
 
         // The Condition passed
-        if (result) {
+        if (pass) {
             // Execute any associated Actions.
             for (Action action : getActions()) {
                 runAction(ctx, action, ruleExecution);

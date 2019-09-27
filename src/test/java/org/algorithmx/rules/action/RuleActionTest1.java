@@ -21,7 +21,6 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Actions;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.util.RuleUtils;
 import org.junit.Test;
@@ -45,8 +44,7 @@ public class RuleActionTest1 {
         Rule ruleWithAction = ruleFactory.rule(cond2((String x, Integer y) -> y > 10))
                 .then(Actions.act1((Integer z) -> System.err.println("YASS! [" + z + "]")))
                 .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")));
-        RuleEngine ruleEngine = RuleEngine.defaultRuleEngine();
-        ruleEngine.run(ruleWithAction, bindings);
+        ruleWithAction.run(bindings);
 
         RuleUtils.load((Condition.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
     }

@@ -17,6 +17,8 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 
@@ -79,6 +81,75 @@ public interface Rule extends Predicate<Object[]> {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     void run(RuleContext ctx) throws UnrulyException;
+
+    /**
+     * Executes the Rule Condition based on the given Bindings. If the result is true then any associated Actions are executed;
+     * if the result is false then the Otherwise condition will be executed (if one exists).
+     *
+     * @param bindings used to derive the parameters required for this Rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default void run(Bindings bindings) throws UnrulyException {
+        RuleContext result = new RuleContext(bindings);
+        run(result);
+    }
+
+    /**
+     * Executes the Rule Condition based on the given Bindings. If the result is true then any associated Actions are executed;
+     * if the result is false then the Otherwise condition will be executed (if one exists). Finally a result is extracted
+     * from the given Bindings.
+     *
+     * @param bindings used to derive the parameters required for this Rule.
+     * @param extractor result extractor from the Bindings.
+     * @param <T> desired type.
+     * @return result of the Rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default <T> T run(Bindings bindings, ResultExtractor<T> extractor) throws UnrulyException {
+        RuleContext result = new RuleContext(bindings);
+        return run(result, extractor);
+    }
+
+    /**
+     * Executes the Rule Condition based on the given Bindings. If the result is true then any associated Actions are executed;
+     * if the result is false then the Otherwise condition will be executed (if one exists).
+     *
+     * @param bindings used to derive the parameters required for this Rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default void run(BindingDeclaration...bindings) {
+        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
+        run(result);
+    }
+
+    /**
+     * Executes the Rule Condition based on the given Bindings. If the result is true then any associated Actions are executed;
+     * if the result is false then the Otherwise condition will be executed (if one exists). Finally a result is extracted
+     * from the given Bindings.
+     *
+     * @param bindings used to derive the parameters required for this Rule.
+     * @param extractor result extractor from the Bindings.
+     * @param <T> desired type.
+     * @return result of the Rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default <T> T run(ResultExtractor<T> extractor, BindingDeclaration...bindings) {
+        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
+        return run(result, extractor);
+    }
+
+    /**
+     * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
+     * if the result is false then the Otherwise condition will be executed (if one exists). Finally a result will be
+     * extracted using the extractor.
+     *
+     * @param ctx used to derive the parameters required for this Rule.
+     * @param extractor result extractor (cannot be null).
+     * @param <T> desired type.
+     * @return result of the Rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    <T> T run(RuleContext ctx, ResultExtractor<T> extractor) throws UnrulyException;
 
     /**
      * Determines if this Rule can be Identified with a name.

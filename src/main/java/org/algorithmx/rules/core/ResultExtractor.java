@@ -15,29 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.impl;
+package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.core.RuleContext;
-import org.algorithmx.rules.core.RuleEngine;
-import org.algorithmx.rules.core.RuleSet;
-import org.algorithmx.rules.error.UnrulyException;
-
-import java.util.Arrays;
+import org.algorithmx.rules.bind.Bindings;
 
 /**
- * Default implementation of the Rule Engine. Execution of the Rule is delegated to the RuleCommand.
+ * Extracts the result from the Bindings.
+ *
+ * @param <T> desired result type.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public class DefaultRuleEngine implements RuleEngine {
+@FunctionalInterface
+public interface ResultExtractor<T> {
 
-    public DefaultRuleEngine() {
-        super();
-    }
-
-    @Override
-    public void run(RuleSet rules, RuleContext ctx) throws UnrulyException {
-        Arrays.stream(rules.getRules()).forEach(rule -> rule.run(ctx));
-    }
+    /**
+     * Extract the result out of the Bindings.
+     *
+     * @param bindings bindings that were used.
+     * @return result of the Rule.
+     */
+    T extract(Bindings bindings);
 }
