@@ -17,10 +17,12 @@
  */
 package org.algorithmx.rules.core.impl;
 
+import org.algorithmx.rules.core.ResultExtractor;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
 
@@ -37,6 +39,17 @@ public class DefaultRuleEngine implements RuleEngine {
     }
 
     @Override
+    public void run(RuleContext ctx, RuleSet... rules) throws UnrulyException {
+        Assert.notNull(rules, "rules cannot be null.");
+        Arrays.stream(rules).forEach(ruleSet -> run(ruleSet, ctx));
+    }
+
+    @Override
+    public <T> T run(RuleContext ctx, ResultExtractor<T> extractor, RuleSet... rules) throws UnrulyException {
+        run(ctx, rules);
+        return extractor.extract(ctx.getBindings());
+    }
+
     public void run(RuleSet rules, RuleContext ctx) throws UnrulyException {
         Arrays.stream(rules.getRules()).forEach(rule -> rule.run(ctx));
     }

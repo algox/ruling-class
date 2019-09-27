@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.DefaultRuleEngine;
 import org.algorithmx.rules.error.UnrulyException;
 
@@ -51,37 +49,21 @@ public interface RuleEngine {
     /**
      * Executes the given Rules. If the Rule Condition is true then any associated Actions will be executed.
      *
-     * @param rule rules to execute.
      * @param ctx state management for the Rule execution.
+     * @param rules rules to execute.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(RuleSet rule, RuleContext ctx) throws UnrulyException;
+    void run(RuleContext ctx, RuleSet...rules) throws UnrulyException;
 
     /**
      * Executes the given Rules. If the Rule Condition is true then any associated Actions will be executed.
      *
-     * @param rule rules to execute.
-     * @param bindings bindings to use for the Rule execution.
-     * @return RuleContext that was used for the execution.
+     * @param ctx state management for the Rule execution.
+     * @param extractor retrieves the result from the Bindings.
+     * @param rules rules to execute.
+     * @param <T> desired type.
+     * @return result.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleContext run(RuleSet rule, BindingDeclaration...bindings) {
-        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
-        run(rule, result);
-        return result;
-    }
-
-    /**
-     * Executes the given Rules. If the Rule Condition is true then any associated Actions will be executed.
-     *
-     * @param rule rules to execute.
-     * @param bindings bindings to use for the Rule execution.
-     * @return RuleContext that was used for the execution.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default RuleContext run(RuleSet rule, Bindings bindings) throws UnrulyException {
-        RuleContext result = new RuleContext(bindings);
-        run(rule, result);
-        return result;
-    }
+    <T> T run(RuleContext ctx, ResultExtractor<T> extractor, RuleSet...rules) throws UnrulyException;
 }

@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
@@ -71,6 +72,18 @@ public class RuleContextBuilder {
     }
 
     /**
+     * Sets the Bindings to use.
+     *
+     * @param bindings Bindings to use.
+     * @return this for fluency.
+     */
+    public RuleContextBuilder bindWith(BindingDeclaration...bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
+        this.bindings = Bindings.defaultBindings().bind(bindings);
+        return this;
+    }
+
+    /**
      * Sets the Stop Condition.
      *
      * @param condition execution stop condition.
@@ -110,8 +123,6 @@ public class RuleContextBuilder {
         this.auditor = auditor;
         return this;
     }
-
-
 
     /**
      * Builds a Rule Context with desired parameters.

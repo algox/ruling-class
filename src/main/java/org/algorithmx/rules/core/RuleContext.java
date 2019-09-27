@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
@@ -56,6 +57,15 @@ public class RuleContext {
      */
     public RuleContext(Bindings bindings) {
         this(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
+    }
+
+    /**
+     * Creates a RuleContext given a set of Bindings.
+     *
+     * @param bindings bindings.
+     */
+    public RuleContext(BindingDeclaration...bindings) {
+        this(Bindings.defaultBindings().bind(bindings), BindingMatchingStrategyType.getDefault().getStrategy());
     }
 
     /**
