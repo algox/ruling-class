@@ -90,8 +90,8 @@ public interface Rule extends Predicate<Object[]> {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default void run(Bindings bindings) throws UnrulyException {
-        RuleContext result = new RuleContext(bindings);
-        run(result);
+        RuleContext ctx = new RuleContext(bindings);
+        run(ctx);
     }
 
     /**
@@ -106,8 +106,8 @@ public interface Rule extends Predicate<Object[]> {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default <T> T run(Bindings bindings, ResultExtractor<T> extractor) throws UnrulyException {
-        RuleContext result = new RuleContext(bindings);
-        return run(result, extractor);
+        RuleContext ctx = new RuleContext(bindings);
+        return run(ctx, extractor);
     }
 
     /**
@@ -118,8 +118,8 @@ public interface Rule extends Predicate<Object[]> {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default void run(BindingDeclaration...bindings) {
-        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
-        run(result);
+        RuleContext ctx = new RuleContext(Bindings.defaultBindings().bind(bindings));
+        run(ctx);
     }
 
     /**
@@ -134,8 +134,8 @@ public interface Rule extends Predicate<Object[]> {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default <T> T run(ResultExtractor<T> extractor, BindingDeclaration...bindings) {
-        RuleContext result = new RuleContext(Bindings.defaultBindings().bind(bindings));
-        return run(result, extractor);
+        RuleContext ctx = new RuleContext(Bindings.defaultBindings().bind(bindings));
+        return run(ctx, extractor);
     }
 
     /**

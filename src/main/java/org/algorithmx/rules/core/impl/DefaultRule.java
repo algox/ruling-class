@@ -69,6 +69,7 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
         RuleExecution ruleExecution;
         boolean pass;
 
+        // TODO : Execute stopWhen
         try {
             // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
             RuleContext.set(ctx);
