@@ -41,13 +41,26 @@ import java.util.function.Supplier;
  */
 public interface Bindings extends Iterable<Binding<?>> {
 
+    // Binding name for itself.
+    String SELF_BIND_NAME = "bindings";
+
+    /**
+     * Creates an instance of the ScopedBindings with a self reference.
+     *
+     * @return new instance of the ScopedBindings with a self reference.
+     */
+    static ScopedBindings defaultBindings() {
+        return defaultBindings(true);
+    }
+
     /**
      * Creates an instance of the ScopedBindings.
      *
+     * @param selfAware self aware of itself (reference to itself in the Bindings).
      * @return new instance of the ScopedBindings.
      */
-    static ScopedBindings defaultBindings() {
-        return new DefaultScopedBindings();
+    static ScopedBindings defaultBindings(boolean selfAware) {
+        return new DefaultScopedBindings(selfAware);
     }
 
     /**

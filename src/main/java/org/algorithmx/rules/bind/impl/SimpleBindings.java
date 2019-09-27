@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -45,9 +46,25 @@ public class SimpleBindings implements Bindings {
 
     // Stores all the Bindings
     private final Map<String, Binding<?>> bindings = createBindings();
+    private final boolean selfAware;
 
+    /**
+     * Default Ctor. Self Reference added.
+     */
     public SimpleBindings() {
+        this(true);
+    }
+
+    /**
+     * Creates Bindings.
+     *
+     * @param selfAware if true self reference binding is added.
+     */
+    public SimpleBindings(boolean selfAware) {
         super();
+        this.selfAware = selfAware;
+        // Create a self bind
+        init(selfAware);
     }
 
     @Override
@@ -94,6 +111,7 @@ public class SimpleBindings implements Bindings {
     @Override
     public void clear() {
         bindings.clear();
+        init(selfAware);
     }
 
     @Override
@@ -161,11 +179,20 @@ public class SimpleBindings implements Bindings {
     }
 
     /**
+     * Initialize the Bindings with a self reference.
+     *
+     * @param selfAware if a Binding to itself must be created.
+     */
+    protected void init(boolean selfAware) {
+        if (selfAware) bind(Bindings.SELF_BIND_NAME, Bindings.class, this, null, false);
+    }
+
+    /**
      * Creates the data structure to store all the Bindings.
      *
      * @return creates the data structure that will ultimately store the Bindings. Defaulted to HashMap.
      */
     protected Map<String, Binding<?>> createBindings() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 }

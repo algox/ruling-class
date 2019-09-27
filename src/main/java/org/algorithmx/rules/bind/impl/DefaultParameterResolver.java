@@ -46,6 +46,7 @@ public class DefaultParameterResolver implements ParameterResolver {
         Binding<Object>[] result = new Binding[definition.getParameterDefinitions().length];
         int index = 0;
 
+        // TODO : Create BindingException and add all the info (matches etc)
         for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
             // Find all the matching bindings
             Set<Binding<Object>> bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),

@@ -76,7 +76,7 @@ public class BindTest {
 
     @Test
     public void testBind5() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = Bindings.defaultBindings(false);
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<Integer>>(){});
         bindings.bind("key3", TypeReference.with(BigDecimal.class));
