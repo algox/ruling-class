@@ -207,7 +207,8 @@ public interface ScopedBindings extends Bindings {
     @Override
     default <T> Bindings bind(String name, TypeReference<T> type, T initialValue, Predicate<T> validationCheck,
                               boolean mutable) throws BindingAlreadyExistsException, InvalidBindingException {
-        return getCurrentScope().bind(name, type, initialValue, validationCheck, mutable);
+        getCurrentScope().bind(name, type, initialValue, validationCheck, mutable);
+        return this;
     }
 
     /**
@@ -220,7 +221,8 @@ public interface ScopedBindings extends Bindings {
      */
     @Override
     default <T> Bindings bind(Binding<T> binding) {
-        return getCurrentScope().bind(binding);
+        getCurrentScope().bind(binding);
+        return this;
     }
 
     /**
@@ -235,7 +237,8 @@ public interface ScopedBindings extends Bindings {
      */
     @Override
     default <T> Bindings bind(Collection<Binding<T>> bindings) {
-        return getCurrentScope().bind(bindings);
+        getCurrentScope().bind(bindings);
+        return this;
     }
 
     /**
@@ -250,6 +253,7 @@ public interface ScopedBindings extends Bindings {
      */
     @Override
     default <T> Bindings bind(String name, Supplier<T> valueSupplier, TypeReference<T> type) throws BindingAlreadyExistsException {
-        return getCurrentScope().bind(name, valueSupplier, type);
+        getCurrentScope().bind(name, valueSupplier, type);
+        return this;
     }
 }
