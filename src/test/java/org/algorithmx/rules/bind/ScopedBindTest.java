@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Basic Scoped Binding tests.
+ *
+ * @author Max Arulananthan
+ */
 public class ScopedBindTest {
 
     public ScopedBindTest() {

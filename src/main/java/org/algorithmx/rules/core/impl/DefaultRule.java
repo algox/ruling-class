@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.Identifiable;
@@ -65,7 +65,7 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
     @Override
     public void run(RuleContext ctx) throws UnrulyException {
         RuleAuditor auditor = ctx.getAuditor();
-        Binding<Object>[] bindings = null;
+        ParameterResolver.ParameterMatch[] matches = null;
         RuleExecution ruleExecution;
         boolean pass;
 
@@ -75,16 +75,16 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
             RuleContext.set(ctx);
             // Find all tne matching Bindings.
             // TODO : Throw BindingException?
-            bindings = ctx.getParameterResolver().resolveAsBindings(
+            matches = ctx.getParameterResolver().resolveAsBindings(
                     ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Rule
-            pass = isPass(getBindingValues(bindings));
+            pass = isPass(ctx.getParameterResolver().resolveAsBindingValues(matches));
             // Store the result of the Execution
-            ruleExecution = new RuleExecution(getRuleDefinition(), pass, bindings);
-            auditor.audit(ruleExecution);
+            ruleExecution = new RuleExecution(getRuleDefinition(), pass, matches);
+            if (auditor != null) auditor.audit(ruleExecution);
         } catch (Exception e) {
             // Store the error
-            auditor.audit(new RuleExecution(getRuleDefinition(), e, bindings));
+            if (auditor != null) auditor.audit(new RuleExecution(getRuleDefinition(), e, matches));
             UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
             if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
@@ -106,21 +106,21 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
     }
 
     protected void runAction(RuleContext ctx, Action action, RuleExecution ruleExecution) {
-        Binding<Object>[] actionBindings = null;
+        ParameterResolver.ParameterMatch[] matches = null;
 
         try {
             // Set the RuleContext so it can be accessed during the execution.
             RuleContext.set(ctx);
             // Execute any associated Actions.
-            actionBindings = ctx.getParameterResolver().resolveAsBindings(action.getActionDefinition().getAction(),
+            matches = ctx.getParameterResolver().resolveAsBindings(action.getActionDefinition().getAction(),
                     ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Action
-            action.execute(getBindingValues(actionBindings));
+            action.execute(ctx.getParameterResolver().resolveAsBindingValues(matches));
             // Store the action audit
-            ruleExecution.add(new ActionExecution(action.getActionDefinition(), actionBindings));
+            ruleExecution.add(new ActionExecution(action.getActionDefinition(), matches));
         } catch (Exception e) {
             // Store the action audit
-            ruleExecution.add(new ActionExecution(action.getActionDefinition(), e, actionBindings));
+            ruleExecution.add(new ActionExecution(action.getActionDefinition(), e, matches));
             // TODO : Need a proper Rule action name
             UnrulyException ex = new UnrulyException("Error trying to execute rule action", e);
             if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
@@ -154,18 +154,6 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
     @Override
     public final boolean isIdentifiable() {
         return true;
-    }
-
-    private Object[] getBindingValues(Binding<Object>[] bindings) {
-        if (bindings == null || bindings.length == 0) return null;
-
-        Object[] result = new Object[bindings.length];
-
-        for (int i = 0; i < result.length; i++) {
-            result[i] = bindings[i] == null ? null : bindings[i].getValue();
-        }
-
-        return result;
     }
 
     @Override

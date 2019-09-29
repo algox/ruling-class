@@ -1,6 +1,6 @@
 package org.algorithmx.rules.model;
 
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.ref.WeakReference;
@@ -17,19 +17,19 @@ public class ActionExecution implements Comparable<ActionExecution> {
     private final Date time = new Date();
     private WeakReference<Exception> error;
 
-    public ActionExecution(ActionDefinition actionDefinition, Binding<Object>...bindings) {
+    public ActionExecution(ActionDefinition actionDefinition, ParameterResolver.ParameterMatch...matches) {
         super();
         Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
         this.actionDefinition = new WeakReference<>(actionDefinition);
-        add(bindings);
+        add(matches);
     }
 
-    public ActionExecution(ActionDefinition actionDefinition, Exception error, Binding<Object>...bindings) {
+    public ActionExecution(ActionDefinition actionDefinition, Exception error, ParameterResolver.ParameterMatch...matches) {
         super();
         Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
         this.error = new WeakReference<>(error);
         this.actionDefinition = new WeakReference<>(actionDefinition);
-        add(bindings);
+        add(matches);
     }
 
     /**
@@ -84,21 +84,24 @@ public class ActionExecution implements Comparable<ActionExecution> {
     /**
      * Adds all the associated action parameters.
      *
-     * @param bindings action parameters.
+     * @param matches action parameter matches.
      */
-    private void add(Binding<Object>...bindings) {
-        if (bindings == null || bindings.length == 0) return;
-        Arrays.stream(bindings).forEach(this::add);
+    private void add(ParameterResolver.ParameterMatch...matches) {
+        if (matches == null || matches.length == 0) return;
+        Arrays.stream(matches).forEach(this::add);
     }
 
     /**
      * Adds a action parameter.
      *
-     * @param binding action parameter.
+     * @param match action parameter match.
      */
-    private void add(Binding<Object> binding) {
-        if (binding == null) return;
-        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
+    private void add(ParameterResolver.ParameterMatch match) {
+        if (match == null) return;
+        Object value = match.getBinding().getValue();
+        params.put(match.getDefinition().getName(), value != null
+                ? value.toString() : null
+                + "[Binding = " + match.getBinding().getName() + "]");
     }
 
     @Override

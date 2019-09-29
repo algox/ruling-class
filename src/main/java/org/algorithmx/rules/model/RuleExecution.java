@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.model;
 
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.ref.WeakReference;
@@ -45,20 +45,20 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     private Boolean pass;
     private WeakReference<Exception> error;
 
-    public RuleExecution(RuleDefinition ruleDefinition, boolean pass, Binding<Object>...bindings) {
+    public RuleExecution(RuleDefinition ruleDefinition, boolean pass, ParameterResolver.ParameterMatch...matches) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null.");
         this.ruleDefinition = new WeakReference<>(ruleDefinition);
         this.pass = pass;
-        add(bindings);
+        add(matches);
     }
 
-    public RuleExecution(RuleDefinition ruleDefinition, Exception error, Binding<Object>...bindings) {
+    public RuleExecution(RuleDefinition ruleDefinition, Exception error, ParameterResolver.ParameterMatch...matches) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null.");
         this.ruleDefinition = new WeakReference<>(ruleDefinition);
         this.error = new WeakReference<>(error);
-        add(bindings);
+        add(matches);
     }
 
     /**
@@ -127,21 +127,24 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     /**
      * Adds all the associated rule parameters.
      *
-     * @param bindings rule parameters.
+     * @param matches rule parameters.
      */
-    private void add(Binding<Object>...bindings) {
-        if (bindings == null || bindings.length == 0) return;
-        Arrays.stream(bindings).forEach(this::add);
+    private void add(ParameterResolver.ParameterMatch...matches) {
+        if (matches == null || matches.length == 0) return;
+        Arrays.stream(matches).forEach(this::add);
     }
 
     /**
      * Adds a rule parameter.
      *
-     * @param binding rule parameter.
+     * @param match rule parameter.
      */
-    private void add(Binding<Object> binding) {
-        if (binding == null) return;
-        params.put(binding.getName(), binding.getValue() != null ? binding.getValue().toString() : null);
+    private void add(ParameterResolver.ParameterMatch match) {
+        if (match == null) return;
+        Object value = match.getBinding().getValue();
+        params.put(match.getDefinition().getName(), value != null
+                ? value.toString() : null
+                + "[Binding = " + match.getBinding().getName() + "]");
     }
 
     @Override

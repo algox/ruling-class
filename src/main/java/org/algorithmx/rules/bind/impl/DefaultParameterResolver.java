@@ -41,9 +41,9 @@ public class DefaultParameterResolver implements ParameterResolver {
     }
 
     @Override
-    public Binding<Object>[] resolveAsBindings(MethodDefinition definition, Bindings ctx,
+    public ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings ctx,
                                                BindingMatchingStrategy matchingStrategy) {
-        Binding<Object>[] result = new Binding[definition.getParameterDefinitions().length];
+        ParameterMatch[] result = new ParameterMatch[definition.getParameterDefinitions().length];
         int index = 0;
 
         // TODO : Create BindingException and add all the info (matches etc)
@@ -70,7 +70,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                 }
 
                 // We found a match!
-                result[index] = binding;
+                result[index] = new ParameterMatch(parameterDefinition, binding);
             } else {
                 // Too many matches found; cannot proceed.
                 throw new UnrulyException("Found too many [" + matches + "] Binding matches for param ["

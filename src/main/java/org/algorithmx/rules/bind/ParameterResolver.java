@@ -17,9 +17,11 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.bind.impl.DefaultParameterResolver;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
+import org.algorithmx.rules.model.ParameterDefinition;
+import org.algorithmx.rules.spring.util.Assert;
 
 /**
  * Resolves a method's parameters from the given Bindings and a MatchingStrategy.
@@ -39,15 +41,16 @@ public interface ParameterResolver {
     }
 
     /**
-     * Resolves the method parameters into an array of Bindings. We use the matching strategy to resolves each parameter.
+     * Resolves the method parameters into an array of matches (binding + parameter defn).
+     * We use the matching strategy to resolves each parameter.
      *
      * @param definition method meta information.
      * @param bindings available bindings.
      * @param matchingStrategy matching strategy to use to resolve the bindings.
-     * @return arrays of matching Bindings.
+     * @return arrays of matches.
      * @throws UnrulyException if the Binding Strategy failed.
      */
-    Binding<Object>[] resolveAsBindings(MethodDefinition definition, Bindings bindings,
+    ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings bindings,
                                         BindingMatchingStrategy matchingStrategy) throws UnrulyException;
 
     /**
@@ -61,16 +64,51 @@ public interface ParameterResolver {
      */
     default Object[] resolveAsBindingValues(MethodDefinition definition, Bindings bindings,
                                             BindingMatchingStrategy matchingStrategy) throws UnrulyException {
-        Binding<Object>[] bindingValues = resolveAsBindings(definition, bindings, matchingStrategy);
+        ParameterMatch[] matches = resolveAsBindings(definition, bindings, matchingStrategy);
+        return resolveAsBindingValues(matches);
+    }
 
-        if (bindingValues == null) return null;
+    /**
+     * Resolves the parameter matches to values.
+     *
+     * @param matches parameter matches.
+     * @return resulting values.
+     */
+    default Object[] resolveAsBindingValues(ParameterMatch[] matches) throws UnrulyException {
+        if (matches == null) return null;
 
-        Object[] result = new Object[bindingValues.length];
+        Object[] result = new Object[matches.length];
 
         for (int i = 0; i < result.length; i++) {
-            result[i] = bindingValues[i] != null ? bindingValues[i].getValue() : null;
+            result[i] = matches[i] != null
+                    ? (matches[i].definition.isBinding() ? matches[i].binding : matches[i].binding.getValue())
+                    : null;
         }
 
         return result;
+    }
+
+    /**
+     * Stores the parameter with its corresponding matched binding.
+     */
+    class ParameterMatch {
+        private final ParameterDefinition definition;
+        private final Binding<Object> binding;
+
+        public ParameterMatch(ParameterDefinition definition, Binding<Object> binding) {
+            super();
+            Assert.notNull(definition, "definition cannot be null.");
+            Assert.notNull(binding, "binding cannot be null.");
+            this.definition = definition;
+            this.binding = binding;
+        }
+
+        public ParameterDefinition getDefinition() {
+            return definition;
+        }
+
+        public Binding<Object> getBinding() {
+            return binding;
+        }
     }
 }

@@ -18,6 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
@@ -25,6 +26,7 @@ import org.algorithmx.rules.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
@@ -45,6 +47,7 @@ public final class ParameterDefinition {
     private final String name;
     private final String description;
     private final Type type;
+    private final boolean binding;
     private final boolean required;
     private final Annotation[] annotations;
 
@@ -54,8 +57,21 @@ public final class ParameterDefinition {
         Assert.notNull(name, "Parameter name cannot be null");
         Assert.notNull(type, "Parameter type cannot be null");
 
+        Type derivedType = type;
+        boolean binding = false;
+
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+
+            if (Binding.class.equals(parameterizedType.getRawType())) {
+                binding = true;
+                derivedType = parameterizedType.getActualTypeArguments()[0];
+            }
+        }
+
         this.name = name;
-        this.type = type;
+        this.type = derivedType;
+        this.binding = binding;
         this.description = description;
         this.index = index;
         this.annotations = annotations;
@@ -84,7 +100,7 @@ public final class ParameterDefinition {
                         + method.getParameters()[i].getType() + "] Use ["
                         + ClassUtils.getWrapperClass(method.getParameters()[i].getType()) + "] instead");
             }
-
+            
             Description descriptionAnnotation = method.getParameters()[i].getAnnotation(Description.class);
             result[i] = new ParameterDefinition(i, parameterNames[i], method.getGenericParameterTypes()[i],
                     descriptionAnnotation != null ? descriptionAnnotation.value() : null, required,
@@ -110,6 +126,10 @@ public final class ParameterDefinition {
         return type;
     }
 
+    public boolean isBinding() {
+        return binding;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -128,6 +148,7 @@ public final class ParameterDefinition {
                 "index=" + index +
                 ", name='" + name + '\'' +
                 ", type=" + type +
+                ", binding=" + binding +
                 ", required=" + required +
                 ", annotations=" + Arrays.toString(annotations) +
                 '}';

@@ -33,7 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.algorithmx.rules.core.Conditions.*;
+import static org.algorithmx.rules.core.Conditions.cond2;
+import static org.algorithmx.rules.core.Conditions.cond3;
 
 /**
  * Tests for running the Rules.
@@ -138,7 +139,7 @@ public class ExecutorTest {
 
         bindings.bind("binds", TypeReference.with(Bindings.class), bindings, null, false);
 
-        ActionConsumer.ActionConsumer3<Integer, String, Bindings> action = (Integer id, String y, Bindings binds) -> binds.set("result", 10);
+        ActionConsumer.ActionConsumer3<?, ?, ?> action = (Integer id, List<String> values, Bindings binds) -> binds.set("result", 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
         ActionDefinition definition = ActionDefinition.load(lambda,"ActionConsumer!");
         executor.execute(action, definition.getAction(),
@@ -150,25 +151,19 @@ public class ExecutorTest {
 
     @Test
     public void test6() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory.rule(cond2((String x, Integer y) -> y > 10));
-        boolean result = rule.isPass("hello world", 20);
+        // TODO : Fix generic mapping with lambdas
+        List<Integer> values = new ArrayList<>();
+        Rule rule = ruleFactory.rule(cond3((String x, Integer y, List<String> a) -> y > 10));
+        boolean result = rule.isPass("hello world", 20, values);
         Assert.assertTrue(result);
     }
 
     @Test
     public void test7() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         Rule rule = ruleFactory.rule(cond2((String x, Integer y) -> y > 10));
         boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
-    }
-
-    @Test
-    public void test8() {
-        RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        ruleFactory.rule(cond2((String x, Integer y) -> x.equalsIgnoreCase("x")));
     }
 }
