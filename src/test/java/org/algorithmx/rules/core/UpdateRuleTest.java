@@ -1,6 +1,7 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.algorithmx.rules.core.Actions.act1;
@@ -23,6 +24,6 @@ public class UpdateRuleTest {
                 .then(act1((Bindings bindings) -> bindings.set("y", 100)));
         rule.run(binds);
 
-        System.err.println((int) binds.get("y"));
+        Assert.assertTrue((int) binds.get("y") == 100);
     }
 }
