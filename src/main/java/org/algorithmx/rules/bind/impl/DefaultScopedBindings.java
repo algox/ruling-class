@@ -104,4 +104,19 @@ public class DefaultScopedBindings implements ScopedBindings {
     protected Bindings createScope() {
         return new SimpleBindings(false);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Scoped Bindings {" + System.lineSeparator());
+
+        for (Bindings scope : scopes) {
+            result.append("start scope" + System.lineSeparator());
+            result.append(scope);
+            result.append(System.lineSeparator());
+            result.append("end scope" + System.lineSeparator());
+            result.append(System.lineSeparator());
+        }
+
+        return result.toString();
+    }
 }

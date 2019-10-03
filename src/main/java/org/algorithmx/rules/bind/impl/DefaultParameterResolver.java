@@ -17,12 +17,12 @@
  */
 package org.algorithmx.rules.bind.impl;
 
-import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.error.BindingException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
 
@@ -42,11 +42,10 @@ public class DefaultParameterResolver implements ParameterResolver {
 
     @Override
     public ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings ctx,
-                                               BindingMatchingStrategy matchingStrategy) {
+                                               BindingMatchingStrategy matchingStrategy) throws BindingException {
         ParameterMatch[] result = new ParameterMatch[definition.getParameterDefinitions().length];
         int index = 0;
 
-        // TODO : Create BindingException and add all the info (matches etc)
         for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
             // Find all the matching bindings
             Set<Binding<Object>> bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),
@@ -55,9 +54,7 @@ public class DefaultParameterResolver implements ParameterResolver {
 
             // Looks like we are missing a required parameter
             if (bindings.size() == 0 && parameterDefinition.isRequired()) {
-                throw new UnrulyException("Unable to find a matching Binding for required param ["
-                        + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]");
-
+                throw new BindingException(parameterDefinition, definition.getMethod(), bindings, matchingStrategy, ctx);
             } else if (matches == 0 && !parameterDefinition.isRequired()) {
                 // Default to null
                 result[index] = null;
@@ -65,18 +62,15 @@ public class DefaultParameterResolver implements ParameterResolver {
                 Binding<Object> binding = bindings.stream().findFirst().get();
 
                 if (parameterDefinition.isRequired() && binding.getValue() == null) {
-                    throw new UnrulyException("Missing required param value for [" + parameterDefinition.getName()
-                            + "] method [" + definition.getMethod() + "]. Binding used [" + binding + "]");
+                    throw new BindingException(parameterDefinition, definition.getMethod(), bindings, matchingStrategy, ctx);
                 }
 
                 // We found a match!
                 result[index] = new ParameterMatch(parameterDefinition, binding);
             } else {
                 // Too many matches found; cannot proceed.
-                throw new UnrulyException("Found too many [" + matches + "] Binding matches for param ["
-                        + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]. Matches found ["
-                        + bindings.toString() + "] using BindingMatchingStrategy ["
-                        + matchingStrategy.getClass().getSimpleName() + "]");
+                throw new BindingException("Found too many [" + matches + "]", parameterDefinition,
+                        definition.getMethod(), bindings, matchingStrategy, ctx);
             }
 
             index++;

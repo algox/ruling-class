@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.DefaultParameterResolver;
+import org.algorithmx.rules.error.BindingException;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
@@ -51,7 +52,7 @@ public interface ParameterResolver {
      * @throws UnrulyException if the Binding Strategy failed.
      */
     ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings bindings,
-                                        BindingMatchingStrategy matchingStrategy) throws UnrulyException;
+                                        BindingMatchingStrategy matchingStrategy) throws BindingException;
 
     /**
      * Resolves the method parameters into an array of values. We use the matching strategy to resolves each parameter.
@@ -63,7 +64,7 @@ public interface ParameterResolver {
      * @throws UnrulyException if the Binding Strategy failed.
      */
     default Object[] resolveAsBindingValues(MethodDefinition definition, Bindings bindings,
-                                            BindingMatchingStrategy matchingStrategy) throws UnrulyException {
+                                            BindingMatchingStrategy matchingStrategy) throws BindingException {
         ParameterMatch[] matches = resolveAsBindings(definition, bindings, matchingStrategy);
         return resolveAsBindingValues(matches);
     }
@@ -74,7 +75,7 @@ public interface ParameterResolver {
      * @param matches parameter matches.
      * @return resulting values.
      */
-    default Object[] resolveAsBindingValues(ParameterMatch[] matches) throws UnrulyException {
+    default Object[] resolveAsBindingValues(ParameterMatch[] matches) throws BindingException {
         if (matches == null) return null;
 
         Object[] result = new Object[matches.length];

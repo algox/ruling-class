@@ -195,4 +195,17 @@ public class SimpleBindings implements Bindings {
     protected Map<String, Binding<?>> createBindings() {
         return new ConcurrentHashMap<>();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Bindings {" + System.lineSeparator());
+
+        for (Binding<?> binding : bindings.values()) {
+            if (binding.get() instanceof Bindings) continue;
+            result.append(binding.toString() + System.lineSeparator());
+        }
+
+        result.append("}");
+        return result.toString();
+    }
 }

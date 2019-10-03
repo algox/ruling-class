@@ -173,10 +173,11 @@ class DefaultBinding<T> implements Binding<T> {
 
     @Override
     public String toString() {
-        return "DefaultBinding {" +
+        Object value = valueSupplier.get();
+        return "Binding {" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", value=" + valueSupplier.get() +
+                ", value=" + (value instanceof Binding ? "" : (value != null ? value.toString() : "null")) +
                 '}';
     }
 
