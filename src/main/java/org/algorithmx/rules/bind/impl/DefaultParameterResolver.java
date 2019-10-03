@@ -55,7 +55,7 @@ public class DefaultParameterResolver implements ParameterResolver {
 
             // Looks like we are missing a required parameter
             if (bindings.size() == 0 && parameterDefinition.isRequired()) {
-                throw new UnrulyException("Unable to find a matching Binding for param ["
+                throw new UnrulyException("Unable to find a matching Binding for required param ["
                         + parameterDefinition.getName() + "] on method [" + definition.getMethod() + "]");
 
             } else if (matches == 0 && !parameterDefinition.isRequired()) {

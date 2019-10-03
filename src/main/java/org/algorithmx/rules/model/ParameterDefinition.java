@@ -18,6 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
@@ -29,6 +30,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Defines a parameter within a method that is to be isPass dynamically (such as "when" and "then")
@@ -43,13 +45,23 @@ import java.util.Arrays;
  */
 public final class ParameterDefinition {
 
+    private static final SpecialParameter[] SPECIAL_PARAMETERS = new SpecialParameter[4];
+
+    // Special Handling class handlers
+    static {
+        SPECIAL_PARAMETERS[0] = new ParameterizedBindingType();
+        SPECIAL_PARAMETERS[1] = new ParameterizedOptionalType();
+        SPECIAL_PARAMETERS[2] = new BindingType();
+        SPECIAL_PARAMETERS[3] = new OptionalType();
+    }
+
     private final int index;
     private final String name;
     private final String description;
     private final Type type;
-    private final boolean binding;
     private final boolean required;
     private final Annotation[] annotations;
+    private final SpecialParameter specialParameter;
 
     private ParameterDefinition(int index, String name, Type type, String description, boolean required, Annotation...annotations) {
         super();
@@ -57,25 +69,15 @@ public final class ParameterDefinition {
         Assert.notNull(name, "Parameter name cannot be null");
         Assert.notNull(type, "Parameter type cannot be null");
 
-        Type derivedType = type;
-        boolean binding = false;
-
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-
-            if (Binding.class.equals(parameterizedType.getRawType())) {
-                binding = true;
-                derivedType = parameterizedType.getActualTypeArguments()[0];
-            }
-        }
+        SpecialParameter specialParameter = findSpecialParameter(type);
 
         this.name = name;
-        this.type = derivedType;
-        this.binding = binding;
+        this.type = specialParameter != null ? specialParameter.deriveType(type) : type;
         this.description = description;
         this.index = index;
         this.annotations = annotations;
-        this.required = required;
+        this.required = specialParameter != null ? specialParameter.isRequired() : required;
+        this.specialParameter = specialParameter;
     }
 
     /**
@@ -111,33 +113,117 @@ public final class ParameterDefinition {
     }
 
     private static boolean isRequired(Method method, int index) {
+        Nullable nullableAnnotation = method.getParameters()[index].getAnnotation(Nullable.class);
+        // There is a Nullable annotation; It is optional.
+        if (nullableAnnotation != null) return false;
         return method.getParameters()[index].getType().isPrimitive();
     }
 
+    /**
+     * See if the parameter needs special handling.
+     *
+     * @param type param type.
+     * @return true if param requires special handling; false otherwise.
+     */
+    private SpecialParameter findSpecialParameter(Type type) {
+        SpecialParameter result = null;
+
+        for (SpecialParameter sp : SPECIAL_PARAMETERS) {
+            if (sp.isApplicable(type)) {
+                result = sp;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the index of the parameter.
+     *
+     * @return Parameter index.
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * Returns the name of the parameter.
+     *
+     * @return name of the parameter.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the Type of the parameter.
+     *
+     * @return type of the parameter.
+     */
     public Type getType() {
         return type;
     }
 
-    public boolean isBinding() {
-        return binding;
+    /**
+     * Returns whether this parameter requires special handling (Binding, Optional etc).
+     *
+     * @return true if it requires special handling; false otherwise.
+     */
+    public boolean isSpecialParameter() {
+        return specialParameter != null;
     }
 
+    /**
+     * Returns the special parameter if one is found.
+     *
+     * @return special parameter if one is found; null otherwise.
+     */
+    public SpecialParameter getSpecialParameter() {
+        return specialParameter;
+    }
+
+    /**
+     * Returns the parameter description.
+     *
+     * @return parameter description.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Determines if this parameter is required.
+     *
+     * @return true if required; false otherwise.
+     */
     public boolean isRequired() {
         return required;
     }
 
+    /**
+     * Returns true if this is a Binding.
+     *
+     * @return true if this is a Binding; false otherwise.
+     */
+    public boolean isBinding() {
+        return specialParameter instanceof ParameterizedBindingType || specialParameter instanceof BindingType;
+    }
+
+    /**
+     * Returns true if this is Optional.
+     *
+     * @return true if this is a Optional; false otherwise.
+     */
+    public boolean isOptional() {
+        return specialParameter instanceof ParameterizedOptionalType || specialParameter instanceof OptionalType;
+    }
+
+    /**
+     * Returns all the associated annotations for this parameter.
+     *
+     * @return all annotations for this parameter.
+     */
     public Annotation[] getAnnotations() {
         return annotations;
     }
@@ -148,9 +234,171 @@ public final class ParameterDefinition {
                 "index=" + index +
                 ", name='" + name + '\'' +
                 ", type=" + type +
-                ", binding=" + binding +
+                ", specialParameter=" + specialParameter +
                 ", required=" + required +
                 ", annotations=" + Arrays.toString(annotations) +
                 '}';
+    }
+
+    /**
+     * Defines the properties of Parameter that has some special handling.
+     *
+     */
+    public interface SpecialParameter {
+
+        /**
+         * Determines if the parameter is special parameter.
+         *
+         * @param param input parameter.
+         * @return true if it is applicable; false otherwise.
+         */
+        boolean isApplicable(Object param);
+
+        /**
+         * Derive the bindable type.
+         *
+         * @param param input param.
+         * @return derived param.
+         */
+        Type deriveType(Object param);
+
+        /**
+         * Returns if this parameter is required.
+         * @return true if it is required; false otherwise.
+         */
+        boolean isRequired();
+
+        /**
+         * Retrive the value from the given Binding.
+         *
+         * @param binding input binding.
+         * @param <B> Binding Type.
+         * @return coerced value.
+         */
+        <B> Object getValue(Binding<B> binding);
+    }
+
+    /**
+     * Binding with a parameterized type.
+     */
+    private static class ParameterizedBindingType implements SpecialParameter {
+
+        public ParameterizedBindingType() {
+            super();
+        }
+
+        @Override
+        public boolean isApplicable(Object param) {
+            return param instanceof ParameterizedType && Binding.class.equals(((ParameterizedType) param).getRawType());
+        }
+
+        @Override
+        public Type deriveType(Object param) {
+            return ((ParameterizedType) param).getActualTypeArguments()[0];
+        }
+
+        @Override
+        public boolean isRequired() {
+            return true;
+        }
+
+        @Override
+        public <B> Object getValue(Binding<B> binding) {
+            return binding;
+        }
+    }
+
+    /**
+     * Optional with a parameterized type.
+     */
+    private static class ParameterizedOptionalType implements SpecialParameter {
+
+        public ParameterizedOptionalType() {
+            super();
+        }
+
+        @Override
+        public boolean isApplicable(Object param) {
+            return param instanceof ParameterizedType && Optional.class.equals(((ParameterizedType) param).getRawType());
+        }
+
+        @Override
+        public Type deriveType(Object param) {
+            return ((ParameterizedType) param).getActualTypeArguments()[0];
+        }
+
+        @Override
+        public boolean isRequired() {
+            return false;
+        }
+
+        @Override
+        public <B> Object getValue(Binding<B> binding) {
+            Object result = binding.getValue();
+            return result == null ? Optional.empty() : Optional.of(result);
+        }
+    }
+
+    /**
+     * Just the Binding class (ie: generic info not available). This usually happens with compiler does not store the
+     * generic info for the lambda. JavaC!
+     */
+    private static class BindingType implements SpecialParameter {
+
+        public BindingType() {
+            super();
+        }
+
+        @Override
+        public boolean isApplicable(Object param) {
+            return Binding.class.equals(param);
+        }
+
+        @Override
+        public Type deriveType(Object param) {
+            return Object.class;
+        }
+
+        @Override
+        public boolean isRequired() {
+            return true;
+        }
+
+        @Override
+        public <B> Object getValue(Binding<B> binding) {
+            return binding.get();
+        }
+    }
+
+    /**
+     * Just the Optional class (ie: generic info not available). This usually happens with compiler does not store the
+     * generic info for the lambda. JavaC!
+     */
+    private static class OptionalType implements SpecialParameter {
+
+        public OptionalType() {
+            super();
+        }
+
+        @Override
+        public boolean isApplicable(Object param) {
+            return Optional.class.equals(param);
+        }
+
+        @Override
+        public Type deriveType(Object param) {
+            return Object.class;
+        }
+
+        @Override
+        public boolean isRequired() {
+            return false;
+        }
+
+        @Override
+        public <B> Object getValue(Binding<B> binding) {
+            Object result = binding.getValue();
+            return result == null ? Optional.empty() : Optional.of(result);
+        }
     }
 }

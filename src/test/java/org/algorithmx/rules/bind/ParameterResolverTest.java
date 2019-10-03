@@ -17,18 +17,17 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.Conditions;
 import org.algorithmx.rules.model.ParameterDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Binding Parameter tests.
@@ -41,7 +40,7 @@ public class ParameterResolverTest {
         super();
     }
 
-    @Test @Ignore
+    @Test
     public void testBindableParameter1() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod1", int.class, Map.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
@@ -49,14 +48,14 @@ public class ParameterResolverTest {
         Assert.assertTrue(!parameters[1].isBinding());
     }
 
-    @Test @Ignore
+    @Test
     public void testBindableParameter2() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod2", Binding.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
         Assert.assertTrue(parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
     }
 
-    @Test @Ignore
+    @Test
     public void testBindableParameter3() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod3", String.class, Integer.class, Binding.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
@@ -68,11 +67,14 @@ public class ParameterResolverTest {
 
     @Test
     public void testBindableParameter4() {
-        Condition.Condition2<Integer, List<String>> x = Conditions.cond2((Integer a, List<String> b) -> a > 10);
-        SerializedLambda lambda = LambdaUtils.getSerializedLambda(x);
+        SerializedLambda lambda = LambdaUtils.getSerializedLambda(Conditions.cond3((Integer a, Binding<List<String>> b,
+                Optional<Integer> x) -> a > 10));
         Class c = LambdaUtils.getImplementationClass(lambda);
         Method m = LambdaUtils.getImplementationMethod(lambda, c);
-        ParameterDefinition.load(m);
+        ParameterDefinition[] parameters = ParameterDefinition.load(m);
+        Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
+        Assert.assertTrue(parameters[1].isBinding() && parameters[1].getType().equals(Object.class));
+        Assert.assertTrue(parameters[2].isOptional() && parameters[2].getType().equals(Object.class));
     }
 
     static class TestClass {
