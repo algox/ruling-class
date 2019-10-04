@@ -4,7 +4,7 @@
 
     <groupId>org.algorithmx</groupId>
     <artifactId>ruling-class</artifactId>
-    <version>0.8.3-SNAPSHOT</version>
+    <version>0.8.3</version>
     <packaging>jar</packaging>
 
     <name>Ruling Class</name>
@@ -291,7 +291,7 @@
         <url>https://github.com/algorithmx-org/ruling-class</url>
         <connection>scm:git:git://github.com/algorithmx-org/ruling-class.git</connection>
         <developerConnection>scm:git:git://github.com/algorithmx-org/ruling-class.git</developerConnection>
-        <tag>v0.76</tag>
+        <tag>ruling-class-0.8.3</tag>
     </scm>
 
     <distributionManagement>
