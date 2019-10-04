@@ -51,7 +51,6 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
         super();
         Assert.notNull(actionClass, "action class cannot be null");
         Assert.notNull(action, "action cannot be null");
-
         this.actionClass = actionClass;
         this.description = description;
         this.action = action;
@@ -135,6 +134,10 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
         return actionClass;
     }
 
+    public String getActionName() {
+        return action.getMethod().getName();
+    }
+
     public String getDescription() {
         return description;
     }
@@ -156,6 +159,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     public String toString() {
         return "ActionDefinition{" +
                 "actionClass=" + actionClass +
+                "actionName=" + getActionName() +
                 ", description='" + description + '\'' +
                 ", action=" + action +
                 '}';

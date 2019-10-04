@@ -18,6 +18,7 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.model.ValidationErrorContainer;
@@ -37,5 +38,10 @@ public class TestRule2 {
     @Then
     public void then(Integer value, ValidationErrorContainer errors) {
         errors.add("TestRule2", "Test.Error.200").param("value", value);
+    }
+
+    @Otherwise
+    public void otherwise(Integer value, ValidationErrorContainer errors) {
+        errors.add("TestRule2", "Test.Error.3000").param("value", value);
     }
 }

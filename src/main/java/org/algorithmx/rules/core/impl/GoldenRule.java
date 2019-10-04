@@ -36,14 +36,14 @@ import org.algorithmx.rules.spring.util.Assert;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class DefaultRule extends RuleTemplate implements Identifiable {
+public class GoldenRule extends RuleTemplate implements Identifiable {
 
     private final BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
 
-    public DefaultRule(RuleDefinition ruleDefinition, Object target) {
+    public GoldenRule(RuleDefinition ruleDefinition, Object target) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
@@ -74,7 +74,6 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
             // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
             RuleContext.set(ctx);
             // Find all tne matching Bindings.
-            // TODO : Throw BindingException?
             matches = ctx.getParameterResolver().resolveAsBindings(
                     ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Rule
@@ -121,8 +120,8 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
         } catch (Exception e) {
             // Store the action audit
             ruleExecution.add(new ActionExecution(action.getActionDefinition(), e, matches));
-            // TODO : Need a proper Rule action name
-            UnrulyException ex = new UnrulyException("Error trying to execute rule action", e);
+            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
+                    + action.getActionDefinition().getActionName() + "]", e);
             if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
         } finally {
@@ -158,7 +157,7 @@ public class DefaultRule extends RuleTemplate implements Identifiable {
 
     @Override
     public String toString() {
-        return "DefaultRule{" +
+        return "GoldenRule{" +
                 "ruleDefinition=" + ruleDefinition +
                 '}';
     }

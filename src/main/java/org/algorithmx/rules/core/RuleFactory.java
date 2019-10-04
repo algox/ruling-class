@@ -20,6 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.util.ActionUtils;
@@ -93,7 +94,12 @@ public interface RuleFactory {
         ActionDefinition[] elseActions = ActionDefinition.loadElseActions(rulingClass);
 
         if (elseActions != null && elseActions.length > 1) {
-
+            StringBuilder names = new StringBuilder();
+            Arrays.stream(elseActions).forEach(action -> names.append(action.getActionName() + " "));
+                throw new UnrulyException("Multiple otherwise conditions found on Rule [" + rulingClass.getName()
+                        + "]. A Rule can only have one otherwise action. Found [" + names + "]");
+        } else if (elseActions != null && elseActions.length == 1) {
+            result.otherwise(ActionUtils.create(elseActions[0], result.getTarget()));
         }
 
         return result;

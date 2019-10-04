@@ -25,6 +25,7 @@ import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.model.ValidationErrorContainer;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ValidationTest1 {
@@ -59,7 +60,7 @@ public class ValidationTest1 {
         System.err.println(bindings.get("errors").toString());
     }
 
-    @Test
+    @Test @Ignore
     public void test2() {
         RuleSet rules = ruleFactory.rules("RuleSet2", "Test Rule Set")
                 .add(TestRule1.class)
