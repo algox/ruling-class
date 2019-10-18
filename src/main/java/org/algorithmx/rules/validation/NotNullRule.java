@@ -17,11 +17,13 @@
  */
 package org.algorithmx.rules.validation;
 
+import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.RulingClass;
 import org.algorithmx.rules.spring.util.Assert;
@@ -33,7 +35,7 @@ import org.algorithmx.rules.spring.util.Assert;
  * @since 1.0
  */
 @Rule
-@Description("Given binding cannot be null")
+@Description("Given binding cannot be null.")
 public class NotNullRule extends RulingClass {
 
     private final String bindingName;
@@ -73,7 +75,7 @@ public class NotNullRule extends RulingClass {
      * @return true if the Binding is present and the value is not null.
      */
     @Given
-    public boolean when(Bindings bindings) {
+    public boolean when(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) Bindings bindings) {
         Binding binding = bindings.getBinding(bindingName);
         return binding != null && binding.get() != null;
     }
@@ -84,7 +86,7 @@ public class NotNullRule extends RulingClass {
      * @param errors error container.
      */
     @Otherwise
-    public void otherwise(ValidationErrorContainer errors) {
+    public void otherwise(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) ValidationErrorContainer errors) {
         errors.add(getName(), errorCode, errorMessage).param(bindingName, null);
     }
 }

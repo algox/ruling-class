@@ -77,10 +77,9 @@ public class ValidationTest1 {
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("b",1)
-                .bind("errors", ValidationErrorContainer.class, new ValidationErrorContainer());
+                .bind("e", ValidationErrorContainer.class, new ValidationErrorContainer());
 
         ruleEngine.run(RuleContextBuilder.create()
                 .bindWith(bindings).build(), rules);
-        System.err.println(bindings.get("errors").toString());
     }
 }

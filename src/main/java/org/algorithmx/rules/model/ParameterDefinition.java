@@ -17,9 +17,11 @@
  */
 package org.algorithmx.rules.model;
 
+import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
@@ -62,6 +64,7 @@ public final class ParameterDefinition {
     private final boolean required;
     private final Annotation[] annotations;
     private final SpecialParameter specialParameter;
+    private final BindingMatchingStrategyType customMatchingStrategyType;
 
     private ParameterDefinition(int index, String name, Type type, String description, boolean required, Annotation...annotations) {
         super();
@@ -78,6 +81,7 @@ public final class ParameterDefinition {
         this.annotations = annotations;
         this.required = specialParameter != null ? specialParameter.isRequired() : required;
         this.specialParameter = specialParameter;
+        this.customMatchingStrategyType = getCustomMatchingStrategyType(annotations);
     }
 
     /**
@@ -131,6 +135,25 @@ public final class ParameterDefinition {
         for (SpecialParameter sp : SPECIAL_PARAMETERS) {
             if (sp.isApplicable(type)) {
                 result = sp;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds the custom matching strategy if one is present.
+     *
+     * @param annotations all the annotation on the parameter.
+     * @return matching strategy if one is present; null otherwise.
+     */
+    private BindingMatchingStrategyType getCustomMatchingStrategyType(Annotation...annotations) {
+        BindingMatchingStrategyType result = null;
+
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof Bind) {
+                result = ((Bind) annotation).using();
                 break;
             }
         }
@@ -228,15 +251,21 @@ public final class ParameterDefinition {
         return annotations;
     }
 
+    public BindingMatchingStrategyType getCustomMatchingStrategyType() {
+        return customMatchingStrategyType;
+    }
+
     @Override
     public String toString() {
         return "ParameterDefinition{" +
                 "index=" + index +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", type=" + type +
-                ", specialParameter=" + specialParameter +
                 ", required=" + required +
                 ", annotations=" + Arrays.toString(annotations) +
+                ", specialParameter=" + specialParameter +
+                ", customMatchingStrategyType=" + customMatchingStrategyType +
                 '}';
     }
 

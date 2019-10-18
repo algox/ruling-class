@@ -47,8 +47,12 @@ public class DefaultParameterResolver implements ParameterResolver {
         int index = 0;
 
         for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
+            // See if the parameter is overriding the matching strategy to be used.
+            BindingMatchingStrategy matcher = parameterDefinition.getCustomMatchingStrategyType() != null
+                    ? parameterDefinition.getCustomMatchingStrategyType().getStrategy()
+                    : matchingStrategy;
             // Find all the matching bindings
-            Set<Binding<Object>> bindings = matchingStrategy.match(ctx, parameterDefinition.getName(),
+            Set<Binding<Object>> bindings = matcher.match(ctx, parameterDefinition.getName(),
                     TypeReference.with(parameterDefinition.getType()));
             int matches = bindings.size();
 
