@@ -187,5 +187,20 @@ public class BindTest {
         Binding<Bindings> bindings2 = bindings1.getBinding(Bindings.SELF_BIND_NAME, Bindings.class);
         Assert.assertNotNull(bindings2);
     }
+
+    @Test
+    public void testBindWithNoType() {
+        List<Integer> values = new ArrayList<>();
+
+        Bindings bindings = Bindings.defaultBindings(false)
+                .bind("a", 25)
+                .bind("b", "Hello world")
+                .bind("c", values);
+
+        Assert.assertTrue(bindings.size() == 3);
+        Assert.assertTrue(bindings.contains("a", int.class));
+        Assert.assertTrue(bindings.contains("b", String.class));
+        Assert.assertTrue(bindings.contains("c", ArrayList.class));
+    }
 }
 

@@ -94,6 +94,57 @@ public interface Bindings extends Iterable<Binding<?>> {
      * Declares a new Binding given a name, type and an initial value.
      *
      * @param name name of the Binding.
+     * @param initialValue initial value of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @see Binding
+     */
+    default <T> Bindings bind(String name, T initialValue) {
+        Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
+        return bind(name, TypeReference.with(type), initialValue, null, true);
+    }
+
+    /**
+     * Declares a new Binding given a name, type and an initial value.
+     *
+     * @param name name of the Binding.
+     * @param initialValue initial value of the Binding.
+     * @param validationCheck validation to be performed when the value is changed.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @see Binding
+     */
+    default <T> Bindings bind(String name, T initialValue, Predicate<T> validationCheck) {
+        Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
+        return bind(name, TypeReference.with(type), initialValue, validationCheck, true);
+    }
+
+    /**
+     * Declares a new Binding given a name, type and an initial value.
+     *
+     * @param name name of the Binding.
+     * @param initialValue initial value of the Binding.
+     * @param validationCheck validation to be performed when the value is changed.
+     * @param mutable determines whether the value is mutable.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @see Binding
+     */
+    default <T> Bindings bind(String name, T initialValue, Predicate<T> validationCheck, boolean mutable) {
+        Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
+        return bind(name, TypeReference.with(type), initialValue, validationCheck, mutable);
+    }
+
+    /**
+     * Declares a new Binding given a name, type and an initial value.
+     *
+     * @param name name of the Binding.
      * @param type type of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
