@@ -40,19 +40,20 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     String getDescription();
 
     /**
-     * Returns the RuleFactory that is associated with this RulSet.
-     *
-     * @return associated RuleFactory.
-     */
-    RuleFactory getRuleFactory();
-
-    /**
      * Retrieves a Rule with the given name in this RuleSet.
      *
      * @param ruleName desired rule name.
      * @return Rule if found; null otherwise.
      */
     Rule getRule(String ruleName);
+
+    /**
+     * Retrieves a Rule with the given implementation class in this RuleSet.
+     *
+     * @param ruleClass implementation class.
+     * @return Rule if found; null otherwise.
+     */
+    Rule getRule(Class<?> ruleClass);
 
     /**
      * Size of this RuleSet (ie. number of Rules in this RuleSet)
@@ -92,5 +93,23 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      * @return this RuleSet (for fluency).
      */
     RuleSet add(String name, Rule rule);
+
+    /**
+     * Removes the listed Rules from this RuleSet.
+     *
+     * @param ruleNames Rules to exclude.
+     * @return this RuleSet (minus the excluded Rules) for fluency.
+     * @throws org.algorithmx.rules.error.UnrulyException if any of the excluded Rules do not exist in this RuleSet.
+     */
+    RuleSet remove(String...ruleNames);
+
+    /**
+     * Removes the listed Rules from this RuleSet.
+     *
+     * @param ruleClasses Rules to exclude.
+     * @return this RuleSet (minus the excluded Rules) for fluency.
+     * @throws org.algorithmx.rules.error.UnrulyException if any of the excluded Rules do not exist in this RuleSet.
+     */
+    RuleSet remove(Class<?>...ruleClasses);
 }
 

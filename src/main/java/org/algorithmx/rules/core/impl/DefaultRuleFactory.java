@@ -41,7 +41,7 @@ public final class DefaultRuleFactory implements RuleFactory {
 
     @Override
     public Rule rule(RuleDefinition ruleDefinition) {
-        return new KindRuler(ruleDefinition, ruleDefinition.isStatic()
+        return new RulingClass(ruleDefinition, ruleDefinition.isStatic()
                         ? null
                         : objectFactory.create(ruleDefinition.getRulingClass()));
     }

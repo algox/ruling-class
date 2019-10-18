@@ -68,11 +68,6 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleFactory getRuleFactory() {
-        return ruleFactory;
-    }
-
-    @Override
     public Iterator<Rule> iterator() {
         return rules.iterator();
     }
@@ -81,6 +76,20 @@ public class DefaultRuleSet implements RuleSet {
     public Rule getRule(String ruleName) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
         return ruleIndex.get(ruleName);
+    }
+
+    public Rule getRule(Class<?> ruleClass) {
+        Assert.notNull(ruleClass, "ruleName cannot be null.");
+        Rule result = null;
+
+        for (Rule rule : rules) {
+            if (ruleClass.equals(rule.getRuleDefinition().getRulingClass())) {
+                result = rule;
+                break;
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -122,6 +131,42 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public Rule[] getRules() {
         return rules.toArray(new Rule[rules.size()]);
+    }
+
+    @Override
+    public RuleSet remove(String... ruleNames) {
+        Assert.notNull(ruleNames, "ruleNames cannot be null.");
+
+        for (String ruleName : ruleNames) {
+            Rule rule = getRule(ruleName);
+
+            if (rule == null) {
+                throw new UnrulyException("Rule [" + ruleName + "] not found in RuleSet [" + name + "]");
+            }
+
+            rules.remove(rule);
+            ruleIndex.remove(ruleName);
+        }
+
+        return this;
+    }
+
+    @Override
+    public RuleSet remove(Class<?>... ruleClasses) {
+        Assert.notNull(ruleClasses, "ruleClasses cannot be null.");
+
+        for (Class<?> ruleClass : ruleClasses) {
+            Rule rule = getRule(ruleClass);
+
+            if (rule == null) {
+                throw new UnrulyException("Rule Class [" + ruleClass + "] not found in RuleSet [" + name + "]");
+            }
+
+            rules.remove(rule);
+            ruleIndex.remove(rule.getRuleDefinition().getName());
+        }
+
+        return this;
     }
 
     @Override

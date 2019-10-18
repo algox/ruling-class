@@ -36,14 +36,14 @@ import org.algorithmx.rules.spring.util.Assert;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class KindRuler extends RuleTemplate implements Identifiable {
+public class RulingClass extends RuleTemplate implements Identifiable {
 
     private final BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
 
-    public KindRuler(RuleDefinition ruleDefinition, Object target) {
+    public RulingClass(RuleDefinition ruleDefinition, Object target) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
@@ -157,7 +157,7 @@ public class KindRuler extends RuleTemplate implements Identifiable {
 
     @Override
     public String toString() {
-        return "KindRuler{" +
+        return "RulingClass{" +
                 "ruleDefinition=" + ruleDefinition +
                 '}';
     }
