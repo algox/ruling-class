@@ -21,7 +21,6 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
-import org.algorithmx.rules.model.ValidationErrorContainer;
 
 @Rule(name = "TestRule5")
 public class TestRule5 {

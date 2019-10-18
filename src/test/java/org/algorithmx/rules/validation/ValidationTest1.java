@@ -23,9 +23,7 @@ import org.algorithmx.rules.core.RuleContextBuilder;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
-import org.algorithmx.rules.model.ValidationErrorContainer;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ValidationTest1 {
@@ -57,10 +55,9 @@ public class ValidationTest1 {
                 .bind("errors", ValidationErrorContainer.class, new ValidationErrorContainer());
 
         ruleEngine.run(new RuleContext(bindings), rules);
-        System.err.println(bindings.get("errors").toString());
     }
 
-    @Test @Ignore
+    @Test
     public void test2() {
         RuleSet rules = ruleFactory.rules("RuleSet2", "Test Rule Set")
                 .add(TestRule1.class)
@@ -71,5 +68,19 @@ public class ValidationTest1 {
 
         ruleEngine.run(RuleContextBuilder.create()
                 .bindWith(value -> 75, errors -> new ValidationErrorContainer()).build(), rules);
+    }
+
+    @Test
+    public void testNotNullRule() {
+        RuleSet rules = ruleFactory.rules("RuleSet2", "Test Rule Set")
+                .add(new NotNullRule("a", "error.100"));
+
+        Bindings bindings = Bindings.defaultBindings()
+                .bind("b",1)
+                .bind("errors", ValidationErrorContainer.class, new ValidationErrorContainer());
+
+        ruleEngine.run(RuleContextBuilder.create()
+                .bindWith(bindings).build(), rules);
+        System.err.println(bindings.get("errors").toString());
     }
 }

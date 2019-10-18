@@ -21,7 +21,6 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
-import org.algorithmx.rules.model.ValidationErrorContainer;
 
 @Rule(name = "TestRule1")
 public class TestRule1 {
@@ -47,11 +46,6 @@ public class TestRule1 {
 
     @Otherwise
     public void otherwise(Integer value, ValidationErrorContainer errors) {
-        errors.add("TestRule1", "Test.Error.2000").param("value", value);
-    }
-
-    @Otherwise
-    public void otherwise2(Integer value, ValidationErrorContainer errors) {
         errors.add("TestRule1", "Test.Error.2000").param("value", value);
     }
 }

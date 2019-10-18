@@ -20,12 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
-import org.algorithmx.rules.error.UnrulyException;
-import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.util.ActionUtils;
-
-import java.util.Arrays;
 
 import static org.algorithmx.rules.util.RuleUtils.load;
 
@@ -78,30 +73,12 @@ public interface RuleFactory {
     /**
      * Creates a Rule from the given implementation class. The Actions will be ordered by the number of arguments they have.
      *
-     * @param rulingClass Rule Implementation class/
+     * @param ruleClass Rule Implementation class.
      * @return a new Rule Instance.
      */
-    default Rule rule(Class<?> rulingClass) {
-        Rule result = rule(RuleDefinition.load(rulingClass));
-        ActionDefinition[] thenActions = ActionDefinition.loadThenActions(rulingClass);
-
-        if (thenActions != null) {
-            // Sort the Action so that we have a predictable order to the execution of the Actions.
-            Arrays.sort(thenActions);
-            Arrays.stream(thenActions).forEach(action -> result.then(ActionUtils.create(action, result.getTarget())));
-        }
-
-        ActionDefinition[] elseActions = ActionDefinition.loadElseActions(rulingClass);
-
-        if (elseActions != null && elseActions.length > 1) {
-            StringBuilder names = new StringBuilder();
-            Arrays.stream(elseActions).forEach(action -> names.append(action.getActionName() + " "));
-                throw new UnrulyException("Multiple otherwise conditions found on Rule [" + rulingClass.getName()
-                        + "]. A Rule can only have one otherwise action. Found [" + names + "]");
-        } else if (elseActions != null && elseActions.length == 1) {
-            result.otherwise(ActionUtils.create(elseActions[0], result.getTarget()));
-        }
-
+    default Rule rule(Class<?> ruleClass) {
+        Rule result = rule(RuleDefinition.load(ruleClass));
+        result.loadActions(ruleClass);
         return result;
     }
 

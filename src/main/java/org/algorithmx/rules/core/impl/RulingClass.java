@@ -20,7 +20,6 @@ package org.algorithmx.rules.core.impl;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.ResultExtractor;
 import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.RuleContext;
@@ -36,7 +35,7 @@ import org.algorithmx.rules.spring.util.Assert;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RulingClass extends RuleTemplate implements Identifiable {
+public class RulingClass extends RuleTemplate {
 
     private final BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
@@ -48,6 +47,13 @@ public class RulingClass extends RuleTemplate implements Identifiable {
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
+    }
+
+    protected RulingClass() {
+        super();
+        this.ruleDefinition = RuleDefinition.load(getClass());
+        this.target = this;
+        loadActions(getClass());
     }
 
     @Override

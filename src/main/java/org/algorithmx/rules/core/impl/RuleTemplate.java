@@ -19,10 +19,13 @@ package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.ActionConsumer;
+import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.util.ActionUtils;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -31,7 +34,7 @@ import java.util.LinkedList;
  * @author Max Arulananthan
  * @since 1.0
  */
-public abstract class RuleTemplate implements Rule {
+public abstract class RuleTemplate implements Rule, Identifiable {
 
     private final LinkedList<Action> actions = new LinkedList();
     private Action otherwiseAction = null;
@@ -83,5 +86,27 @@ public abstract class RuleTemplate implements Rule {
     @Override
     public void otherwise(ActionConsumer action, String description) {
         otherwise(ActionUtils.create(action, description, getTarget()));
+    }
+
+    @Override
+    public void loadActions(Class<?> actionClass) {
+        ActionDefinition[] thenActions = ActionDefinition.loadThenActions(actionClass);
+
+        if (thenActions != null) {
+            // Sort the Action so that we have a predictable order to the execution of the Actions.
+            Arrays.sort(thenActions);
+            Arrays.stream(thenActions).forEach(action -> then(ActionUtils.create(action, this.getTarget())));
+        }
+
+        ActionDefinition[] elseActions = ActionDefinition.loadElseActions(actionClass);
+
+        if (elseActions != null && elseActions.length > 1) {
+            StringBuilder names = new StringBuilder();
+            Arrays.stream(elseActions).forEach(action -> names.append(action.getActionName() + " "));
+            throw new UnrulyException("Multiple otherwise conditions found on Rule [" + getName()
+                    + "]. A Rule can only have one otherwise action. Found [" + names + "]");
+        } else if (elseActions != null && elseActions.length == 1) {
+            otherwise(ActionUtils.create(elseActions[0], this.getTarget()));
+        }
     }
 }

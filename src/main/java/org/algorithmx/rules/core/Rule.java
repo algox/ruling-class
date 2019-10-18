@@ -235,4 +235,11 @@ public interface Rule extends Predicate<Object[]> {
      * @param description description of the Action.
      */
     void otherwise(ActionConsumer action, String description);
+
+    /**
+     * Loads all the declared actions from the given class and attaches them to this Rule.
+     *
+     * @param actionClass class with all the actions.
+     */
+    void loadActions(Class<?> actionClass);
 }
