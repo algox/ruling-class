@@ -59,7 +59,7 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      * @return newly created Validation error.
      */
     public ValidationError add(String ruleName, String errorCode) {
-        return add(ruleName, errorCode, (String) null);
+        return add(ruleName, errorCode, Severity.ERROR, null);
     }
 
     /**
@@ -67,11 +67,12 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      *
      * @param ruleName rule name.
      * @param errorCode validation error code.
+     * @param severity severity of the error.
      * @param errorMessage validation error message.
      * @return newly created Validation error.
      */
-    public ValidationError add(String ruleName, String errorCode, String errorMessage) {
-        ValidationError result = new ValidationError(ruleName, errorCode, errorMessage);
+    public ValidationError add(String ruleName, String errorCode, Severity severity, String errorMessage) {
+        ValidationError result = new ValidationError(ruleName, errorCode, severity, errorMessage);
         errors.add(result);
         return result;
     }
@@ -85,7 +86,7 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      * @return newly created Validation error.
      */
     public ValidationError add(String ruleName, String errorCode, Binding<Object>...params) {
-        return add(ruleName, errorCode, null, params);
+        return add(ruleName, errorCode, Severity.ERROR, null, params);
     }
 
     /**
@@ -93,12 +94,13 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      *
      * @param ruleName rule name.
      * @param errorCode validation error code.
+     * @param severity severity of the error.
      * @param errorMessage validation error message.
      * @param params rule parameters.
      * @return newly created Validation error.
      */
-    public ValidationError add(String ruleName, String errorCode, String errorMessage, Binding<Object>...params) {
-        ValidationError result = add(ruleName, errorCode, errorMessage);
+    public ValidationError add(String ruleName, String errorCode, Severity severity, String errorMessage, Binding<Object>...params) {
+        ValidationError result = add(ruleName, errorCode, severity, errorMessage);
 
         if (params != null) {
             Arrays.stream(params).forEach(binding -> result.param(binding.getName(), binding.getTextValue()));
@@ -170,6 +172,15 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
     public ValidationError[] getErrors() {
         if (errors.isEmpty()) return null;
         return errors.toArray(new ValidationError[errors.size()]);
+    }
+
+    /**
+     * Returns the number of errors in this container.
+     *
+     * @return size of the container.
+     */
+    public int size() {
+        return errors.size();
     }
 
     @Override

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public final class RuleUtils {
 
-    public static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9]*?$";
+    public static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9-_]*?$";
     private static final Pattern NAME_PATTERN           = Pattern.compile(RULE_NAME_REGEX);
 
     private RuleUtils() {

@@ -58,7 +58,7 @@ public final class MethodDefinition {
      * @return all matching MethodDefinitions
      */
     public static MethodDefinition[] load(Class<?> c, Predicate<Method> predicate) {
-        Method[] matches = Arrays.stream(c.getDeclaredMethods())
+        Method[] matches = Arrays.stream(c.getMethods())
                 .filter(predicate)
                 .toArray(size -> new Method[size]);
         return load(c, matches);

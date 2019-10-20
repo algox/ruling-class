@@ -17,12 +17,14 @@
  */
 package org.algorithmx.rules.validation;
 
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleContextBuilder;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,13 +75,17 @@ public class ValidationTest1 {
     @Test
     public void testNotNullRule() {
         RuleSet rules = ruleFactory.rules("RuleSet2", "Test Rule Set")
-                .add(new NotNullRule("a", "error.100"));
+                .add(new NotNullRule("a", "Error.100"))
+                .add(new ValidationRule<>("NotNullRule", "a", "Error.200",
+                        "a cannot be null", (Binding<Object> a) -> a != null && a.get() != null));
+        ValidationErrorContainer errors = new ValidationErrorContainer();
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("b",1)
-                .bind("e", ValidationErrorContainer.class, new ValidationErrorContainer());
+                .bind("e", errors);
 
         ruleEngine.run(RuleContextBuilder.create()
                 .bindWith(bindings).build(), rules);
+        Assert.assertTrue(errors.size() == 2);
     }
 }

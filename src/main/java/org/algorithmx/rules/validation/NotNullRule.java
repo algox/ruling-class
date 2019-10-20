@@ -17,16 +17,10 @@
  */
 package org.algorithmx.rules.validation;
 
-import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.annotation.Given;
-import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingMatchingStrategyType;
-import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.impl.RulingClass;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.model.Severity;
 
 /**
  * Not Null validation Rule. Check to make sure the binding is declared and the value is not null.
@@ -36,11 +30,7 @@ import org.algorithmx.rules.spring.util.Assert;
  */
 @Rule
 @Description("Given binding cannot be null.")
-public class NotNullRule extends RulingClass {
-
-    private final String bindingName;
-    private final String errorCode;
-    private final String errorMessage;
+public class NotNullRule extends ValidationRuleTemplate {
 
     /**
      * Ctor taking in the binding name and error code.
@@ -49,7 +39,7 @@ public class NotNullRule extends RulingClass {
      * @param errorCode error code to be returned.
      */
     public NotNullRule(String bindingName, String errorCode) {
-        this(bindingName, errorCode, "Binding [" + bindingName + "] cannot be null.");
+        this(bindingName, errorCode, Severity.FATAL, "[" + bindingName + "] cannot be null.");
     }
 
     /**
@@ -57,36 +47,15 @@ public class NotNullRule extends RulingClass {
      *
      * @param bindingName name of the Binding.
      * @param errorCode error code to be returned.
+     * @param severity severity of the error.
      * @param errorMessage error message to be returned.
      */
-    public NotNullRule(String bindingName, String errorCode, String errorMessage) {
-        super();
-        Assert.notNull(bindingName, "bindingName cannot be null.");
-        Assert.notNull(errorCode, "errorCode cannot be null.");
-        this.bindingName = bindingName;
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    public NotNullRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName + "_" + NotNullRule.class.getSimpleName(), bindingName, errorCode, severity, errorMessage);
     }
 
-    /**
-     * Rule condition : Check if the Binding is present and value is not null.
-     *
-     * @param bindings takes in all the Bindings.
-     * @return true if the Binding is present and the value is not null.
-     */
-    @Given
-    public boolean when(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) Bindings bindings) {
-        Binding binding = bindings.getBinding(bindingName);
+    @Override
+    protected boolean when(Binding binding) {
         return binding != null && binding.get() != null;
-    }
-
-    /**
-     * Rule Action : add the desired error code and message to the error container.
-     *
-     * @param errors error container.
-     */
-    @Otherwise
-    public void otherwise(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) ValidationErrorContainer errors) {
-        errors.add(getName(), errorCode, errorMessage).param(bindingName, null);
     }
 }

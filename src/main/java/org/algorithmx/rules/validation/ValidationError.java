@@ -48,6 +48,7 @@ public class ValidationError {
         super();
         Assert.notNull(ruleName, "ruleName cannot be null.");
         Assert.notNull(errorCode, "errorCode cannot be null.");
+        Assert.notNull(severity, "severity cannot be null.");
         this.ruleName = ruleName;
         this.errorCode = errorCode;
         this.severity = severity == null ? Severity.ERROR : severity;
