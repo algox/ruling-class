@@ -24,6 +24,7 @@ import org.algorithmx.rules.core.RuleContextBuilder;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
+import org.algorithmx.rules.validation.rules.NotNullRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

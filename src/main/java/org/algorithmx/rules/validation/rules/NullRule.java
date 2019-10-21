@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.validation;
+package org.algorithmx.rules.validation.rules;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.model.Severity;
+import org.algorithmx.rules.validation.ValidationRuleTemplate;
 
 /**
- * Not Null validation Rule. Check to make sure the binding is declared and the value is not null.
+ * Null validation Rule. Check to make sure the binding is either not defined or is null.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Given binding cannot be null.")
-public class NotNullRule extends ValidationRuleTemplate {
+@Description("Given binding must be null.")
+public class NullRule extends ValidationRuleTemplate {
 
     /**
      * Ctor taking in the binding name and error code.
@@ -38,8 +39,8 @@ public class NotNullRule extends ValidationRuleTemplate {
      * @param bindingName name of the Binding.
      * @param errorCode error code to be returned.
      */
-    public NotNullRule(String bindingName, String errorCode) {
-        this(bindingName, errorCode, Severity.FATAL, "[" + bindingName + "] cannot be null.");
+    public NullRule(String bindingName, String errorCode) {
+        this(bindingName, errorCode, Severity.FATAL, "[" + bindingName + "] must be null.");
     }
 
     /**
@@ -50,12 +51,12 @@ public class NotNullRule extends ValidationRuleTemplate {
      * @param severity severity of the error.
      * @param errorMessage error message to be returned.
      */
-    public NotNullRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName + "_" + NotNullRule.class.getSimpleName(), bindingName, errorCode, severity, errorMessage);
+    public NullRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName + "_" + NullRule.class.getSimpleName(), bindingName, errorCode, severity, errorMessage);
     }
 
     @Override
     protected boolean when(Binding binding) {
-        return binding != null && binding.get() != null;
+        return binding == null || binding.get() == null;
     }
 }
