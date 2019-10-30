@@ -195,9 +195,10 @@ public class BindTest {
         Bindings bindings = Bindings.defaultBindings(false)
                 .bind("a", 25)
                 .bind("b", "Hello world")
-                .bind("c", values);
+                .bind("c", values)
+                .bind("d", Integer.class, null);
 
-        Assert.assertTrue(bindings.size() == 3);
+        Assert.assertTrue(bindings.size() == 4);
         Assert.assertTrue(bindings.contains("a", int.class));
         Assert.assertTrue(bindings.contains("b", String.class));
         Assert.assertTrue(bindings.contains("c", ArrayList.class));

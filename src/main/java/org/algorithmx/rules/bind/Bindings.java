@@ -55,7 +55,7 @@ public interface Bindings extends Iterable<Binding<?>> {
 
     /**
      * Creates an instance of the ScopedBindings.
-     *
+     *Supplier
      * @param selfAware self aware of itself (reference to itself in the Bindings).
      * @return new instance of the ScopedBindings.
      */
@@ -110,15 +110,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      * Declares a new Binding given a name, type and an initial value.
      *
      * @param name name of the Binding.
-     * @param initialValue initial value of the Binding.
      * @param validationCheck validation to be performed when the value is changed.
+     * @param initialValue initial value of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, T initialValue, Predicate<T> validationCheck) {
+    default <T> Bindings bind(String name, Predicate<T> validationCheck, T initialValue) {
         Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
         return bind(name, TypeReference.with(type), initialValue, validationCheck, true);
     }
