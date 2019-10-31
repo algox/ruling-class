@@ -21,7 +21,10 @@ import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.model.Severity;
-import org.algorithmx.rules.validation.ValidationRuleTemplate;
+import org.algorithmx.rules.validation.FunctionalValidationRule;
+import org.algorithmx.rules.validation.ValidationError;
+
+import java.util.function.Supplier;
 
 /**
  * Must Be Defined validation Rule. Check to make sure the binding exists.
@@ -31,32 +34,39 @@ import org.algorithmx.rules.validation.ValidationRuleTemplate;
  */
 @Rule
 @Description("Given binding must exist.")
-public class MustExistRule extends ValidationRuleTemplate {
+public class MustBeDefinedRule extends FunctionalValidationRule<Object> {
 
     /**
-     * Ctor taking in the binding name and error code.
+     * Ctor taking in the binding supplier and error code.
      *
-     * @param bindingName name of the Binding.
+     * @param supplier binding supplier.
      * @param errorCode error code to be returned.
      */
-    public MustExistRule(String bindingName, String errorCode) {
-        this(bindingName, errorCode, Severity.FATAL, "[" + bindingName + "] must be defined.");
+    public MustBeDefinedRule(Supplier<Binding<Object>> supplier, String errorCode) {
+        this(supplier, errorCode, Severity.FATAL, "["
+                + getBindingName(supplier) + "] must be null.");
     }
 
     /**
-     * Ctor taking in the binding name, error code and error message.
+     * Ctor taking in the binding supplier, error code, severity and error message.
      *
-     * @param bindingName name of the Binding.
+     * @param supplier binding supplier.
      * @param errorCode error code to be returned.
      * @param severity severity of the error.
      * @param errorMessage error message to be returned.
      */
-    public MustExistRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName + "_" + MustExistRule.class.getSimpleName(), bindingName, errorCode, severity, errorMessage);
+    public MustBeDefinedRule(Supplier<Binding<Object>> supplier, String errorCode, Severity severity, String errorMessage) {
+        this(supplier, new ValidationError(getBindingName(supplier) + "_" + MustBeDefinedRule.class.getSimpleName(),
+                errorCode, severity, errorMessage));
     }
 
-    @Override
-    protected boolean when(Binding binding) {
-        return binding != null;
+    /**
+     * Ctor taking in the binding supplier and error.
+     *
+     * @param supplier binding supplier.
+     * @param error validation error.
+     */
+    public MustBeDefinedRule(Supplier<Binding<Object>> supplier, ValidationError error) {
+        super(supplier, binding -> binding != null, error);
     }
 }

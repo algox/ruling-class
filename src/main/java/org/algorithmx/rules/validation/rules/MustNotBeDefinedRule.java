@@ -27,14 +27,14 @@ import org.algorithmx.rules.validation.ValidationError;
 import java.util.function.Supplier;
 
 /**
- * Not Null validation Rule. Check to make sure the binding is declared and the value is not null.
+ * Must Not Be Defined validation Rule. Check to make sure the binding does not exist.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Given binding cannot be null.")
-public class NotNullRule extends FunctionalValidationRule<Object> {
+@Description("Given binding must exist.")
+public class MustNotBeDefinedRule extends FunctionalValidationRule<Object> {
 
     /**
      * Ctor taking in the binding supplier and error code.
@@ -42,7 +42,7 @@ public class NotNullRule extends FunctionalValidationRule<Object> {
      * @param supplier binding supplier.
      * @param errorCode error code to be returned.
      */
-    public NotNullRule(Supplier<Binding<Object>> supplier, String errorCode) {
+    public MustNotBeDefinedRule(Supplier<Binding<Object>> supplier, String errorCode) {
         this(supplier, errorCode, Severity.FATAL, "["
                 + getBindingName(supplier) + "] must be null.");
     }
@@ -55,8 +55,8 @@ public class NotNullRule extends FunctionalValidationRule<Object> {
      * @param severity severity of the error.
      * @param errorMessage error message to be returned.
      */
-    public NotNullRule(Supplier<Binding<Object>> supplier, String errorCode, Severity severity, String errorMessage) {
-        this(supplier, new ValidationError(getBindingName(supplier) + "_" + NotNullRule.class.getSimpleName(),
+    public MustNotBeDefinedRule(Supplier<Binding<Object>> supplier, String errorCode, Severity severity, String errorMessage) {
+        this(supplier, new ValidationError(getBindingName(supplier) + "_" + MustNotBeDefinedRule.class.getSimpleName(),
                 errorCode, severity, errorMessage));
     }
 
@@ -66,7 +66,7 @@ public class NotNullRule extends FunctionalValidationRule<Object> {
      * @param supplier binding supplier.
      * @param error validation error.
      */
-    public NotNullRule(Supplier<Binding<Object>> supplier, ValidationError error) {
-        super(supplier, binding -> binding != null && binding.get() != null, error);
+    public MustNotBeDefinedRule(Supplier<Binding<Object>> supplier, ValidationError error) {
+        super(supplier, binding -> binding == null, error);
     }
 }

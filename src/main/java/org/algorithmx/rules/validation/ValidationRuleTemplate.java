@@ -22,10 +22,10 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.impl.RulingClass;
-import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
+
+import java.util.function.Supplier;
 
 /**
  * Template class for writing Validation rules based on a single Binding.
@@ -36,75 +36,72 @@ import org.algorithmx.rules.spring.util.Assert;
 public abstract class ValidationRuleTemplate<T> extends RulingClass {
 
     private final ValidationError error;
-    private final String ruleName;
-    private final String bindingName;
+    private final Supplier<Binding<T>> supplier;
 
     /**
      * Ctor taking in the error, rule name and the binding.
      *
+     * @param supplier Binding supplier.
      * @param error validation error.
-     * @param ruleName rule name to make sure its unique (in a RuleSet).
-     * @param bindingName name of the Binding.
      */
-    protected ValidationRuleTemplate(ValidationError error, String ruleName, String bindingName) {
+    protected ValidationRuleTemplate(Supplier<Binding<T>> supplier, ValidationError error) {
         super();
         Assert.notNull(error, "error cannot be null.");
-        Assert.notNull(ruleName, "ruleName cannot be null.");
-        Assert.notNull(bindingName, "bindingName cannot be null.");
+        Assert.notNull(supplier, "supplier cannot be null.");
         this.error = error;
-        this.ruleName = ruleName;
-        this.bindingName = bindingName;
-    }
-
-    /**
-     * Ctor taking in the rule name, error code, severity and error message.
-     *
-     * @param ruleName rule name to make sure its unique (in a RuleSet).
-     * @param bindingName name of the Binding.
-     * @param errorCode error code to be returned.
-     * @param severity error severity.
-     * @param errorMessage error message to be returned.
-     */
-    protected ValidationRuleTemplate(String ruleName, String bindingName, String errorCode, Severity severity, String errorMessage) {
-        this(new ValidationError(ruleName, errorCode, severity, errorMessage), ruleName, bindingName);
+        this.supplier = supplier;
     }
 
     /**
      * Rule condition : Check if the Binding is present and value is not null.
      *
-     * @param bindings takes in all the Bindings.
-     * @return true if the Binding is present and the value is not null.
+     * @return true if the validation condition is met; false otherwise.
      */
     @Given
-    public boolean when(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) Bindings bindings) {
-        Binding<T> binding = bindings.getBinding(bindingName);
-        return when(binding);
+    public boolean when() {
+        return when(supplier.get());
     }
 
     /**
      * Delegating method to do the actual condition check.
      *
-     * @param binding matched binding.
+     * @param value Binding value.
      * @return true if condition is satisfied; false otherwise.
      */
-    protected abstract boolean when(Binding<T> binding);
+    protected abstract boolean when(Binding<T> value);
 
     /**
      * Rule Action : add the desired error code and message to the error container.
      *
-     * @param bindings takes in all the Bindings.
      * @param errors error container.
      */
     @Otherwise
-    public void otherwise(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) Bindings bindings,
-                          @Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) ValidationErrorContainer errors) {
-        Binding binding = bindings.getBinding(bindingName);
-        errors.add(error.param(bindingName, binding != null && binding.getValue() != null ? binding.getValue().toString() : null));
+    public void otherwise(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) ValidationErrorContainer errors) {
+        Binding<T> binding = supplier.get();
+
+        if (binding != null) {
+            error.param(binding.getName(), binding != null && binding.getValue() != null
+                    ? binding.getValue().toString()
+                    : null);
+        }
+
+        errors.add(error);
     }
 
     @Override
     public String getName() {
-        return ruleName;
+        return supplier.get() != null ? supplier.get().getName() + "_" + super.getName() : super.getName();
     }
 
+    /**
+     * Retrieves the name of the Binding if one is avail.
+     *
+     * @param supplier Binding supplier.
+     * @param <T> generic type of the Binding.
+     * @return name of the Binding if one is avail; blank otherwise.
+     */
+    protected static <T> String getBindingName(Supplier<Binding<T>> supplier) {
+        if (supplier == null) return "";
+        return supplier.get() != null ? supplier.get().getName() : "'";
+    }
 }

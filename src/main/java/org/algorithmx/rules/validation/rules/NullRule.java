@@ -21,7 +21,10 @@ import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.model.Severity;
-import org.algorithmx.rules.validation.ValidationRuleTemplate;
+import org.algorithmx.rules.validation.FunctionalValidationRule;
+import org.algorithmx.rules.validation.ValidationError;
+
+import java.util.function.Supplier;
 
 /**
  * Null validation Rule. Check to make sure the binding is either not defined or is null.
@@ -31,32 +34,39 @@ import org.algorithmx.rules.validation.ValidationRuleTemplate;
  */
 @Rule
 @Description("Given binding must be null.")
-public class NullRule extends ValidationRuleTemplate {
+public class NullRule extends FunctionalValidationRule<Object> {
 
     /**
-     * Ctor taking in the binding name and error code.
+     * Ctor taking in the binding supplier and error code.
      *
-     * @param bindingName name of the Binding.
+     * @param supplier binding supplier.
      * @param errorCode error code to be returned.
      */
-    public NullRule(String bindingName, String errorCode) {
-        this(bindingName, errorCode, Severity.FATAL, "[" + bindingName + "] must be null.");
+    public NullRule(Supplier<Binding<Object>> supplier, String errorCode) {
+        this(supplier, errorCode, Severity.FATAL, "["
+                + getBindingName(supplier) + "] must be null.");
     }
 
     /**
-     * Ctor taking in the binding name, error code and error message.
+     * Ctor taking in the binding supplier, error code, severity and error message.
      *
-     * @param bindingName name of the Binding.
+     * @param supplier binding supplier.
      * @param errorCode error code to be returned.
      * @param severity severity of the error.
      * @param errorMessage error message to be returned.
      */
-    public NullRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName + "_" + NullRule.class.getSimpleName(), bindingName, errorCode, severity, errorMessage);
+    public NullRule(Supplier<Binding<Object>> supplier, String errorCode, Severity severity, String errorMessage) {
+        this(supplier, new ValidationError(getBindingName(supplier) + "_" + NullRule.class.getSimpleName(),
+                errorCode, severity, errorMessage));
     }
 
-    @Override
-    protected boolean when(Binding binding) {
-        return binding == null || binding.get() == null;
+    /**
+     * Ctor taking in the binding supplier and error.
+     *
+     * @param supplier binding supplier.
+     * @param error validation error.
+     */
+    public NullRule(Supplier<Binding<Object>> supplier, ValidationError error) {
+        super(supplier, binding -> binding != null && binding.get() == null, error);
     }
 }

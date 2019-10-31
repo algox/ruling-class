@@ -17,8 +17,9 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.core.Identifiable;
+
 import java.lang.reflect.Type;
-import java.util.function.Supplier;
 
 /**
  * A binding between a name and a value of a type.
@@ -29,7 +30,7 @@ import java.util.function.Supplier;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Binding<T> extends Supplier<T> {
+public interface Binding<T> extends Identifiable {
 
 	String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
 
@@ -56,7 +57,6 @@ public interface Binding<T> extends Supplier<T> {
     	return true;
 	}
 
-	@Override
 	default T get() {
 		return getValue();
 	}
