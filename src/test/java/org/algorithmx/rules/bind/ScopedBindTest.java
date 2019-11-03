@@ -52,12 +52,12 @@ public class ScopedBindTest {
         Assert.assertTrue(bindings.contains("key3", BigDecimal.class));
         Assert.assertTrue(bindings.contains("key4", new TypeReference<Map<ArrayList<?>, List<Integer>>>() {
         }));
-        Assert.assertTrue(bindings.size() == 5);
+        Assert.assertTrue(bindings.size() == 4);
     }
 
     @Test
     public void testBind2() {
-        ScopedBindings bindings = Bindings.defaultBindings(false);
+        ScopedBindings bindings = Bindings.defaultBindings();
         bindings.bind("key1", String.class, "value");
         Assert.assertTrue(bindings.get("key1").equals("value"));
         bindings.newScope();

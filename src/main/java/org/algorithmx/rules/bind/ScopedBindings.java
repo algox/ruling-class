@@ -64,6 +64,14 @@ public interface ScopedBindings extends Bindings {
     Bindings newScope();
 
     /**
+     * Pushed the given scope to the top of Stack.
+     *
+     * @param bindings existing bindings.
+     * @return the newly scoped Bindings.
+     */
+    Bindings newScope(Bindings bindings);
+
+    /**
      * Pops the working Bindings off the Stack.
      *
      * @return the removed Bindings.

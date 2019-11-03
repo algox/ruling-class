@@ -76,7 +76,7 @@ public class BindTest {
 
     @Test
     public void testBind5() {
-        Bindings bindings = Bindings.defaultBindings(false);
+        Bindings bindings = Bindings.defaultBindings();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<Integer>>(){});
         bindings.bind("key3", TypeReference.with(BigDecimal.class));
@@ -182,17 +182,10 @@ public class BindTest {
     }
 
     @Test
-    public void testSelfAware() {
-        Bindings bindings1 = Bindings.defaultBindings();
-        Binding<Bindings> bindings2 = bindings1.getBinding(Bindings.SELF_BIND_NAME, Bindings.class);
-        Assert.assertNotNull(bindings2);
-    }
-
-    @Test
     public void testBindWithNoType() {
         List<Integer> values = new ArrayList<>();
 
-        Bindings bindings = Bindings.defaultBindings(false)
+        Bindings bindings = Bindings.defaultBindings()
                 .bind("a", 25)
                 .bind("b", "Hello world")
                 .bind("c", values)

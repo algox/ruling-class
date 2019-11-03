@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.core.impl.NoOpRuleAuditor;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -131,8 +132,13 @@ public class RuleContextBuilder {
      */
     public RuleContext build() {
         RuleContext result  = new RuleContext();
+        ScopedBindings rootBindings = Bindings.defaultBindings();
+
+        rootBindings.bind("ruleContext", RuleContext.class, result);
+        rootBindings.newScope(bindings);
+
         result.setAuditor(auditor);
-        result.setBindings(bindings);
+        result.setBindings(rootBindings);
         result.setMatchingStrategy(matchingStrategy);
         result.setStopWhen(stopWhen);
         return result;

@@ -20,8 +20,6 @@ package org.algorithmx.rules.util;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +48,15 @@ public class FormattedText {
         Assert.notNull(text, "text cannot be null.");
         this.text = text;
         this.markers = markers;
+    }
+
+    /**
+     * Determines if the given text does truly requires formatting.
+     *
+     * @return true if formatting is required; false otherwise.
+     */
+    public boolean requiresFormatting() {
+        return markers.size() > 0;
     }
 
     /**
@@ -132,7 +139,7 @@ public class FormattedText {
                 '}';
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         FormattedText text = FormattedText.parse("hello there {firstName} testing {lastName} { age | %20d } DOB {dob}");
         System.err.println(text);
         Map<String, Object> values = new HashMap<>();
@@ -141,5 +148,5 @@ public class FormattedText {
         values.put("age", 35);
         values.put("dob", new Date());
         System.err.println(text.format(values));
-    }
+    }*/
 }

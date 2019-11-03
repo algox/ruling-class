@@ -18,14 +18,10 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleContextBuilder;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
-import org.algorithmx.rules.model.Severity;
-import org.algorithmx.rules.validation.rules.NotNullRule;
-import org.algorithmx.rules.validation.rules.PastDateRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +56,7 @@ public class ValidationTest1 {
                 .bind("value", Integer.class, 1)
                 .bind("errors", ValidationErrorContainer.class, new ValidationErrorContainer());
 
-        ruleEngine.run(new RuleContext(bindings), rules);
+        ruleEngine.run(RuleContextBuilder.create().bindWith(bindings).build(), rules);
     }
 
     @Test
@@ -85,15 +81,27 @@ public class ValidationTest1 {
                 .bind("e", errors);
 
         RuleSet rules = ruleFactory.rules("RuleSet2", "Test Rule Set")
-                .add(new NotNullRule(() -> bindings.getBinding("b"), "Error.100"))
-                .add(new PastDateRule(() -> bindings.getBinding("d"), "Error.200"))
-                .add(new FunctionalValidationRule<>(() -> bindings.getBinding("b"),
-                        b -> b != null,
-                        new ValidationError("SomeRule", "Error.200", Severity.ERROR,
-                        "a cannot be null")));
+                .add(new NotNullRule("Error.100", () -> bindings.getBinding("b")))
+                .add(new PastDateRule("Error.200", () -> bindings.getBinding("d")));
 
         ruleEngine.run(RuleContextBuilder.create()
                 .bindWith(bindings).build(), rules);
         Assert.assertTrue(errors.size() == 0);
     }
+
+    @Test
+    public void testFutureDateRule() {
+        ValidationErrorContainer errors = new ValidationErrorContainer();
+        Bindings bindings = Bindings.defaultBindings()
+                .bind("d", new Date())
+                .bind("e", errors);
+
+        RuleSet rules = ruleFactory.rules("RuleSet", "Test Rule Set")
+                .add(new FutureDateRule("Error.100", "d"));
+
+        ruleEngine.run(RuleContextBuilder.create()
+                .bindWith(bindings).build(), rules);
+        System.err.println(errors);
+    }
+
 }

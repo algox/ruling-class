@@ -20,36 +20,38 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.model.Severity;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Validation Rule based on the given Function.
+ * Must Not Be Defined validation Rule. Check to make sure the binding does not exist.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Validation Rule based on the given Function.")
-public class FunctionalValidationRule<T> extends ValidationRuleTemplate<T> {
+@Description("Given binding must not exist.")
+public class MustNotBeDefinedRule extends BindingValidationRule<Object> {
 
-    private final Function<Binding<T>, Boolean> condition;
+    public MustNotBeDefinedRule(String pattern, String errorCode, String bindingName) {
+        super(errorCode, Severity.FATAL, null, value -> true, bindingName);
+    }
 
-    /**
-     * Ctor taking in the error, rule name, binding name, and the validating function.
-     *
-     * @param supplier Binding supplier.
-     * @param condition validating function.
-     * @param error validation error.
-     */
-    public FunctionalValidationRule(Supplier<Binding<T>> supplier, Function<Binding<T>, Boolean> condition, ValidationError error) {
-        super(supplier, error);
-        this.condition = condition;
+    public MustNotBeDefinedRule(String pattern, String errorCode, Supplier<Binding<Object>> supplier) {
+        super(errorCode, Severity.FATAL, null, value -> true, supplier);
     }
 
     @Override
-    protected final boolean when(Binding<T> binding) {
-        return condition.apply(binding);
+    protected boolean when(Binding<Object> binding) {
+        return binding == null;
+    }
+
+    @Override
+    public String getErrorMessage() {
+        if (super.getErrorMessage() != null) return super.getErrorMessage();
+        String bindingName = getBindingName();
+        if (bindingName == null) bindingName = "NOT BOUND";
+        return "Binding [" + bindingName + "] is already defined.";
     }
 }

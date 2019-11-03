@@ -33,16 +33,10 @@ import java.util.Stack;
 public class DefaultScopedBindings implements ScopedBindings {
 
     private final Stack<Bindings> scopes = new Stack<>();
-    private final boolean selfAware;
 
     public DefaultScopedBindings() {
-        this(true);
-    }
-
-    public DefaultScopedBindings(boolean selfAware) {
         super();
-        this.selfAware = selfAware;
-        init(selfAware);
+        init();
     }
 
     @Override
@@ -70,6 +64,12 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
+    public Bindings newScope(Bindings scope) {
+        scopes.push(scope);
+        return scope;
+    }
+
+    @Override
     public Bindings endScope() {
         return scopes.pop();
     }
@@ -77,22 +77,14 @@ public class DefaultScopedBindings implements ScopedBindings {
     @Override
     public void clear() {
         scopes.clear();
-        init(selfAware);
+        init();
     }
 
     /**
      * Creates a new scope and pushes it into the Stack.
      *
-     * @param selfAware if a Binding to itself must be created.
      */
-    protected void init(boolean selfAware) {
-        // Add a self reference.
-        if (selfAware) {
-            Bindings rootBindings = createScope();
-            rootBindings.bind(Bindings.SELF_BIND_NAME, ScopedBindings.class, this);
-            scopes.push(rootBindings);
-        }
-
+    protected void init() {
         scopes.push(createScope());
     }
 

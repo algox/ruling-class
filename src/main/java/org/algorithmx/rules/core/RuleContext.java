@@ -17,9 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
-import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.spring.util.Assert;
@@ -48,38 +46,6 @@ public class RuleContext {
      */
     RuleContext() {
         super();
-    }
-
-    /**
-     * Creates a RuleContext given a set of Bindings.
-     *
-     * @param bindings bindings.
-     */
-    public RuleContext(Bindings bindings) {
-        this(bindings, BindingMatchingStrategyType.getDefault().getStrategy());
-    }
-
-    /**
-     * Creates a RuleContext given a set of Bindings.
-     *
-     * @param bindings bindings.
-     */
-    public RuleContext(BindingDeclaration...bindings) {
-        this(Bindings.defaultBindings().bind(bindings), BindingMatchingStrategyType.getDefault().getStrategy());
-    }
-
-    /**
-     * Creates a RuleContext given a set of Bindings and matching strategy.
-     *
-     * @param bindings bindings.
-     * @param matchingStrategy binding matching strategy.
-     */
-    public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy) {
-        super();
-        Assert.notNull(bindings, "bindings cannot be null");
-        Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
-        this.bindings = bindings;
-        this.matchingStrategy = matchingStrategy;
     }
 
     /**
