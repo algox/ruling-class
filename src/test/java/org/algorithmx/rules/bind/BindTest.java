@@ -17,7 +17,10 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.core.RuleEngine;
+import org.algorithmx.rules.core.RuleFactory;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -33,8 +36,17 @@ import java.util.Set;
  */
 public class BindTest {
 
+    private RuleFactory ruleFactory;
+    private RuleEngine ruleEngine;
+
     public BindTest() {
         super();
+    }
+
+    @Before
+    public void init() {
+        this.ruleFactory = RuleFactory.defaultFactory();
+        this.ruleEngine = RuleEngine.defaultRuleEngine();
     }
 
     @Test

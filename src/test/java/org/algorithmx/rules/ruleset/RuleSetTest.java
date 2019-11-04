@@ -19,9 +19,12 @@ package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleContextBuilder;
+import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -35,11 +38,20 @@ import static org.algorithmx.rules.core.Conditions.cond3;
 
 public class RuleSetTest {
 
+    private RuleFactory ruleFactory;
+    private RuleEngine ruleEngine;
+
     public RuleSetTest() {
         super();
     }
 
-    @Test
+    @Before
+    public void init() {
+        this.ruleFactory = RuleFactory.defaultFactory();
+        this.ruleEngine = RuleEngine.defaultRuleEngine();
+    }
+
+    //@Test
     public void test1() {
         Bindings bindings = Bindings.defaultBindings()
                 .bind("y", String.class, "")
@@ -64,5 +76,19 @@ public class RuleSetTest {
         Rule rule3 = rules.getRule("testrule3");
 
         Assert.assertTrue(rule3.isPass("", "hello", 20));
+    }
+
+    @Test
+    public void testBind12() {
+        Bindings bindings = Bindings.defaultBindings()
+                .bind("key1", String.class, "value")
+                .bind("key2", String.class, "value");
+
+        RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
+                .add("test", ruleFactory.rule(cond1((String key1) -> key1.equals("")))
+                        .then(act1((String key2) -> System.err.println(key2))));
+
+        ruleEngine.run(RuleContextBuilder.create()
+                .bindWith(bindings).build(), rules);
     }
 }
