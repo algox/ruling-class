@@ -253,14 +253,13 @@ public class ValidationTest {
                 .bindWith(bindings).build(), rules);
 
         Assert.assertTrue(errors.size() == 1);
-        System.err.println(errors);
     }
 
     @Rule
     public static class TestValidationRule extends ValidationRule {
 
         public TestValidationRule() {
-            super("Error.101", Severity.ERROR, "Invalid input {x} {z}");
+            super("Error.101", Severity.ERROR, "Invalid input ${x} ${z}");
         }
 
         @Given

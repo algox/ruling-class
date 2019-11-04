@@ -36,6 +36,7 @@ public class FormattedText {
 
     private enum STATE {TEXT, PARAMETER_NAME, FORMAT}
 
+    private static final char START_PREFIX  = '$';
     private static final char START_CHAR    = '{';
     private static final char END_CHAR      = '}';
     private static final char START_FORMAT  = '|';
@@ -103,8 +104,8 @@ public class FormattedText {
         for (int index = 0; index < text.toCharArray().length; index++) {
             char c = text.charAt(index);
 
-            if (c == START_CHAR && state == STATE.TEXT) {
-                startIndex = index;
+            if (index > 0 && text.charAt(index - 1) == START_PREFIX && c == START_CHAR && state == STATE.TEXT) {
+                startIndex = index - 1;
                 state = STATE.PARAMETER_NAME;
                 parameterName = new StringBuilder();
                 continue;
@@ -138,15 +139,4 @@ public class FormattedText {
                 ", markers=" + markers +
                 '}';
     }
-
-    /*public static void main(String[] args) {
-        FormattedText text = FormattedText.parse("hello there {firstName} testing {lastName} { age | %20d } DOB {dob}");
-        System.err.println(text);
-        Map<String, Object> values = new HashMap<>();
-        values.put("firstName", "Max");
-        values.put("lastName", "Arul");
-        values.put("age", 35);
-        values.put("dob", new Date());
-        System.err.println(text.format(values));
-    }*/
 }
