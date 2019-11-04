@@ -19,18 +19,34 @@ import java.util.function.Supplier;
  */
 @Rule
 @Description("Value is in between the desired (min,max) range (inclusive).")
-public class WithInRangeRule extends BindingValidationRule<Object> {
+public class RangeRule extends BindingValidationRule<Object> {
 
     private final long min;
     private final long max;
 
-    public WithInRangeRule(long min, long max, String errorCode, String bindingName) {
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param min desired Min value.
+     * @param max desired Max value.
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
+    public RangeRule(long min, long max, String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, value -> isInRange(value, min, max), bindingName);
         this.min = min;
         this.max = max;
     }
 
-    public WithInRangeRule(long min, long max, String errorCode, Supplier<Binding<Object>> supplier) {
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param min desired Min value.
+     * @param max desired Max value.
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
+    public RangeRule(long min, long max, String errorCode, Supplier<Binding<Object>> supplier) {
         super(errorCode, Severity.FATAL, null, value -> isInRange(value, min, max), supplier);
         this.min = min;
         this.max = max;
@@ -44,6 +60,16 @@ public class WithInRangeRule extends BindingValidationRule<Object> {
         return max;
     }
 
+    /**
+     * Determines if the given object (size/length) is greater than or equal to the Min value and less than or equal to
+     * the Max value.
+     *
+     * @param value Object.
+     * @param min given Object.
+     * @param min Minimum value.
+     * @param max Maximum value.
+     * @return
+     */
     private static boolean isInRange(Object value, long min, long max) {
         if (value == null) return false;
 
@@ -63,7 +89,7 @@ public class WithInRangeRule extends BindingValidationRule<Object> {
             return Array.getLength(value) >= min && Array.getLength(value) <= max;
         }
 
-        throw new UnrulyException("WithInRangeRule is not supported on type [" + value.getClass()
+        throw new UnrulyException("RangeRule is not supported on type [" + value.getClass()
                 + "] only supported on numbers, string, collections, maps and arrays");
     }
 

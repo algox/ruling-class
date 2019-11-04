@@ -34,11 +34,23 @@ import java.util.function.Supplier;
 @Description("Binding must exist.")
 public class MustBeDefinedRule extends BindingValidationRule<Object> {
 
-    public MustBeDefinedRule(String pattern, String errorCode, String bindingName) {
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
+    public MustBeDefinedRule(String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, value -> true, bindingName);
     }
 
-    public MustBeDefinedRule(String pattern, String errorCode, Supplier<Binding<Object>> supplier) {
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
+    public MustBeDefinedRule(String errorCode, Supplier<Binding<Object>> supplier) {
         super(errorCode, Severity.FATAL, null, value -> true, supplier);
     }
 

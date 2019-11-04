@@ -17,16 +17,34 @@ import java.util.function.Supplier;
 @Description("String value has length.")
 public class StringHasLengthRule extends BindingValidationRule<String> {
 
-    public StringHasLengthRule(String pattern, String errorCode, String bindingName) {
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
+    public StringHasLengthRule(String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, value -> hasLength(value), bindingName);
     }
 
-    public StringHasLengthRule(String pattern, String errorCode, Supplier<Binding<String>> supplier) {
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
+    public StringHasLengthRule(String errorCode, Supplier<Binding<String>> supplier) {
         super(errorCode, Severity.FATAL, null, value -> hasLength(value), supplier);
     }
 
-    private static boolean hasLength(String str) {
-        return (str != null && !str.isEmpty());
+    /**
+     * Determines whether the given text is not empty.
+     *
+     * @param text given text.
+     * @return true if not empty; false otherwise.
+     */
+    private static boolean hasLength(String text) {
+        return (text != null && !text.isEmpty());
     }
 
     @Override

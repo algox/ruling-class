@@ -23,21 +23,41 @@ public class MinRule extends BindingValidationRule<Object> {
 
     private final long min;
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param min desired Min value.
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
     public MinRule(long min, String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, value -> isGreaterThanMin(value, min), bindingName);
         this.min = min;
     }
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param min desired Min value.
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
     public MinRule(long min, String errorCode, Supplier<Binding<Object>> supplier) {
         super(errorCode, Severity.FATAL, null, value -> isGreaterThanMin(value, min), supplier);
         this.min = min;
     }
 
-
     public long getMin() {
         return min;
     }
 
+    /**
+     * Determines if the given object (size/length) is greater than or equal to the Min value.
+     *
+     * @param value given Object.
+     * @param min Minimum size.
+     * @return given object (size/length) greater than the size of the Object.
+     */
     private static boolean isGreaterThanMin(Object value, long min) {
         if (value == null) return false;
 

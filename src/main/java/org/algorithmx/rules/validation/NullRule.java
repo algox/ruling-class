@@ -34,10 +34,22 @@ import java.util.function.Supplier;
 @Description("Given value must be null.")
 public class NullRule extends BindingValidationRule<Object> {
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
     public NullRule(String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, value -> value == null, bindingName);
     }
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
     public NullRule(String errorCode, Supplier<Binding<Object>> supplier) {
         super(errorCode, Severity.FATAL, null, value -> value == null, supplier);
     }

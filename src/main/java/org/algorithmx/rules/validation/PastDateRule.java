@@ -18,14 +18,32 @@ import java.util.function.Supplier;
 @Description("Date binding is in the past.")
 public class PastDateRule extends BindingValidationRule<Date> {
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
     public PastDateRule(String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, date -> isPast(date), bindingName);
     }
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
     public PastDateRule(String errorCode, Supplier<Binding<Date>> supplier) {
         super(errorCode, Severity.FATAL, null, date -> isPast(date), supplier);
     }
 
+    /**
+     * Determines if the given date is in the past.
+     *
+     * @param date given date.
+     * @return true if the given date is in the past; false otherwise.
+     */
     private static boolean isPast(Date date) {
         Date currentDate = new Date();
         return date != null && currentDate.after(date);

@@ -20,11 +20,25 @@ public class PatternMatchRule extends BindingValidationRule<String> {
 
     private final String pattern;
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param pattern desired pattern.
+     * @param errorCode error code.
+     * @param bindingName name of the Binding.
+     */
     public PatternMatchRule(String pattern, String errorCode, String bindingName) {
         super(errorCode, Severity.FATAL, null, value -> matches(value, Pattern.compile(pattern)), bindingName);
         this.pattern = pattern;
     }
 
+    /**
+     * Ctor taking the error code and name of the Binding.
+     *
+     * @param pattern desired regex pattern.
+     * @param errorCode error code.
+     * @param supplier Binding.
+     */
     public PatternMatchRule(String pattern, String errorCode, Supplier<Binding<String>> supplier) {
         super(errorCode, Severity.FATAL, null, value -> matches(value, Pattern.compile(pattern)), supplier);
         this.pattern = pattern;
@@ -34,6 +48,13 @@ public class PatternMatchRule extends BindingValidationRule<String> {
         return pattern;
     }
 
+    /**
+     * Determines whether the given value matches the desired regex pattern.
+     *
+     * @param value text value.
+     * @param pattern desired pattern.
+     * @return true if the text matches the pattern; false otherwise.
+     */
     private static boolean matches(String value, Pattern pattern) {
         return value != null && pattern.matcher(value).matches();
     }
