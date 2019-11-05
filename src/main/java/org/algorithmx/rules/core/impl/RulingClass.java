@@ -19,7 +19,6 @@ package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.ResultExtractor;
 import org.algorithmx.rules.core.RuleAuditor;
@@ -29,6 +28,7 @@ import org.algorithmx.rules.model.ActionExecution;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.model.RuleExecution;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.ConditionUtils;
 
 /**
  * Default Rule Implementation (implements Identifiable).
@@ -37,8 +37,6 @@ import org.algorithmx.rules.spring.util.Assert;
  * @since 1.0
  */
 public class RulingClass extends RuleTemplate {
-
-    private final BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
@@ -49,14 +47,14 @@ public class RulingClass extends RuleTemplate {
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
-        this.condition = new DefaultCondition(ruleDefinition.getCondition(), target);
+        this.condition = ConditionUtils.create(ruleDefinition.getCondition(), target);
     }
 
     protected RulingClass() {
         super();
         this.ruleDefinition = RuleDefinition.load(getClass());
         this.target = this;
-        this.condition = new DefaultCondition(ruleDefinition.getCondition(), target);
+        this.condition = ConditionUtils.create(ruleDefinition.getCondition(), target);
         loadActions(getClass());
     }
 
@@ -75,25 +73,19 @@ public class RulingClass extends RuleTemplate {
     @Override
     public void run(RuleContext ctx) throws UnrulyException {
         RuleAuditor auditor = ctx.getAuditor();
-        ParameterResolver.ParameterMatch[] matches = null;
+        Condition.ConditionResult result;
         RuleExecution ruleExecution;
-        boolean pass;
 
         // TODO : Execute stopWhen
         try {
             // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
             RuleContext.set(ctx);
-            // Find all tne matching Bindings.
-            matches = ctx.getParameterResolver().resolveAsBindings(
-                    ruleDefinition.getCondition().getMethodDefintion(), ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Rule
-            pass = isPass(ctx.getParameterResolver().resolveAsBindingValues(matches));
+            result = condition.isPass(ctx);
             // Store the result of the Execution
-            ruleExecution = new RuleExecution(getRuleDefinition(), pass, matches);
+            ruleExecution = new RuleExecution(getRuleDefinition(), result.isPass(), result.getMatches());
             if (auditor != null) auditor.audit(ruleExecution);
         } catch (Exception e) {
-            // Store the error
-            if (auditor != null) auditor.audit(new RuleExecution(getRuleDefinition(), e, matches));
             UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
             if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
@@ -103,7 +95,7 @@ public class RulingClass extends RuleTemplate {
         }
 
         // The Condition passed
-        if (pass) {
+        if (result.isPass()) {
             // Execute any associated Actions.
             for (Action action : getActions()) {
                 runAction(ctx, action, ruleExecution);
@@ -115,21 +107,15 @@ public class RulingClass extends RuleTemplate {
     }
 
     protected void runAction(RuleContext ctx, Action action, RuleExecution ruleExecution) {
-        ParameterResolver.ParameterMatch[] matches = null;
 
         try {
             // Set the RuleContext so it can be accessed during the execution.
             RuleContext.set(ctx);
-            // Execute any associated Actions.
-            matches = ctx.getParameterResolver().resolveAsBindings(action.getActionDefinition().getAction(),
-                    ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Action
-            action.execute(ctx.getParameterResolver().resolveAsBindingValues(matches));
+            ParameterResolver.ParameterMatch[] matches = action.execute(ctx);
             // Store the action audit
             ruleExecution.add(new ActionExecution(action.getActionDefinition(), matches));
         } catch (Exception e) {
-            // Store the action audit
-            ruleExecution.add(new ActionExecution(action.getActionDefinition(), e, matches));
             UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
                     + action.getActionDefinition().getActionName() + "]", e);
             if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());

@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 
@@ -27,6 +28,20 @@ import org.algorithmx.rules.model.ActionDefinition;
  * @since 1.0
  */
 public interface Action {
+
+    /**
+     * Derives all the arguments and executes this Action.
+     *
+     * @param ctx Rule Context.
+     * @return Arguments that were used for the execution.
+     * @throws UnrulyException thrown if there are any errors during the Condition execution.
+     */
+    default ParameterResolver.ParameterMatch[] execute(RuleContext ctx) throws UnrulyException {
+        ParameterResolver.ParameterMatch[] result = ctx.getParameterResolver().resolveAsBindings(
+                getActionDefinition().getMethodDefinition(), ctx.getBindings(), ctx.getMatchingStrategy());
+        execute(ctx.getParameterResolver().resolveAsBindingValues(result));
+        return result;
+    }
 
     /**
      * Executes thr Action given all the arguments it needs.

@@ -17,11 +17,14 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;
 
+import java.util.Arrays;
+
 /**
- * When Condition definition.
+ * Given Condition definition.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -29,7 +32,21 @@ import org.algorithmx.rules.model.ConditionDefinition;
 public interface Condition  {
 
     /**
-     * Executes thr Condition given all the arguments it needs.
+     * Derives all the arguments and executed this Condition.
+     *
+     * @param ctx Rule Context.
+     * @return true if the Condition passed; false otherwise. Plus the arguments that were used for the execution.
+     * @throws UnrulyException thrown if there are any errors during the Condition execution.
+     */
+    default ConditionResult isPass(RuleContext ctx) throws UnrulyException {
+        ParameterResolver.ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
+                getConditionDefinition().getMethodDefinition(), ctx.getBindings(), ctx.getMatchingStrategy());
+        boolean result = isPass(ctx.getParameterResolver().resolveAsBindingValues(matches));
+        return new ConditionResult(result, matches);
+    }
+
+    /**
+     * Executes the Condition given all the arguments it needs.
      *
      * @param params Condition parameters in necessary order.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
@@ -50,4 +67,43 @@ public interface Condition  {
      * @return target instance.
      */
     Object getTarget();
+
+    /**
+     * Result of the execution of the Condition.
+     */
+    class ConditionResult {
+        private boolean pass;
+        private ParameterResolver.ParameterMatch[] matches;
+
+        private ConditionResult(boolean pass, ParameterResolver.ParameterMatch[] matches) {
+            super();
+            this.pass = pass;
+            this.matches = matches;
+        }
+
+        /**
+         * Determines whether the Condition passed or not.
+         * @return true if the Condition passed; false otherwise.
+         */
+        public boolean isPass() {
+            return pass;
+        }
+
+        /**
+         * Returns all the matched parameters that were used in the Condition execution.
+         *
+         * @return parameter matches.
+         */
+        public ParameterResolver.ParameterMatch[] getMatches() {
+            return matches;
+        }
+
+        @Override
+        public String toString() {
+            return "ConditionResult{" +
+                    "pass=" + pass +
+                    ", matches=" + Arrays.toString(matches) +
+                    '}';
+        }
+    }
 }

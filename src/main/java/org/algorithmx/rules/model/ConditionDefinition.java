@@ -103,7 +103,7 @@ public class ConditionDefinition {
         return description;
     }
 
-    public MethodDefinition getMethodDefintion() {
+    public MethodDefinition getMethodDefinition() {
         return condition;
     }
 

@@ -49,7 +49,7 @@ public class DefaultAction implements Action {
 
     @Override
     public void execute(Object... args) {
-        methodExecutor.execute(target, actionDefinition.getAction(), args);
+        methodExecutor.execute(target, actionDefinition.getMethodDefinition(), args);
     }
 
     @Override

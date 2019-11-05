@@ -50,7 +50,7 @@ public class DefaultCondition implements Condition {
 
     @Override
     public boolean isPass(Object... args) throws UnrulyException {
-        return methodExecutor.execute(target, conditionDefinition.getMethodDefintion(), args);
+        return methodExecutor.execute(target, conditionDefinition.getMethodDefinition(), args);
     }
 
     @Override

@@ -142,7 +142,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
         return description;
     }
 
-    public MethodDefinition getAction() {
+    public MethodDefinition getMethodDefinition() {
         return action;
     }
 
