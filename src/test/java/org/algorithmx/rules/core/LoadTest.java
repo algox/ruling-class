@@ -61,30 +61,30 @@ public class LoadTest {
 
         Assert.assertTrue("TestRule".equals(def.getName()));
         Assert.assertTrue(def.getCondition() != null);
-        Assert.assertTrue(def.getCondition().getMethod().equals(m));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getMethod().equals(m));
     }
 
     @Test
     public void loadTest3() {
         RuleDefinition def = RuleDefinition.load(TestRule1.class);
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions().length == 3);
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getIndex() == 0);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getName().equals("id"));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].isRequired());
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getIndex() == 0);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getType().equals(int.class));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].isRequired());
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getName().equals("birthDate"));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].isRequired() == false);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].getIndex() == 1);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].getName().equals("birthDate"));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].getType().equals(Date.class));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].isRequired() == false);
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getIndex() == 2);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getName().equals("values"));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[2].getAnnotations().length == 0);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[2].getIndex() == 2);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[2].getName().equals("values"));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[2].getAnnotations().length == 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -119,21 +119,21 @@ public class LoadTest {
 
     @Test
     public void loadTest7() {
-        Condition.Condition2<Integer, String> rule2 = (Integer i, String text) -> i > 100 && text != null;
+        ConditionConsumer.Condition2<Integer, String> rule2 = (Integer i, String text) -> i > 100 && text != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition def = RuleDefinition.load(lambda, "TestRule2", "Some rule for testing");
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions().length == 2);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions().length == 2);
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getIndex() == 0);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getName().equals("i"));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getType().equals(Integer.class));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getIndex() == 0);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getName().equals("i"));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getType().equals(Integer.class));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getName().equals("text"));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].getType().equals(String.class));
-        Assert.assertTrue(def.getCondition().getParameterDefinitions()[1].isRequired() == false);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].getIndex() == 1);
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].getName().equals("text"));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].getType().equals(String.class));
+        Assert.assertTrue(def.getCondition().getMethodDefintion().getParameterDefinitions()[1].isRequired() == false);
     }
 
     @Test

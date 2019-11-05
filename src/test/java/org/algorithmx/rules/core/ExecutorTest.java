@@ -59,8 +59,8 @@ public class ExecutorTest {
 
         RuleDefinition definition1 = RuleDefinition.load(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
-        boolean result = executor.execute(rule5, definition1.getCondition(),
-                resolver.resolveAsBindingValues(definition1.getCondition(), bindings,
+        boolean result = executor.execute(rule5, definition1.getCondition().getMethodDefintion(),
+                resolver.resolveAsBindingValues(definition1.getCondition().getMethodDefintion(), bindings,
                         BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
     }
@@ -75,11 +75,11 @@ public class ExecutorTest {
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
 
-        Condition.Condition3<Integer, String, BigDecimal> rule3 = (Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null;
+        ConditionConsumer.Condition3<Integer, String, BigDecimal> rule3 = (Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null;
         SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(rule3);
         RuleDefinition definition2 = RuleDefinition.load(lambda1, "Rule3", " Test Rule 3");
-        boolean result = executor.execute(rule3, definition2.getCondition(),
-                resolver.resolveAsBindingValues(definition2.getCondition(), bindings,
+        boolean result = executor.execute(rule3, definition2.getCondition().getMethodDefintion(),
+                resolver.resolveAsBindingValues(definition2.getCondition().getMethodDefintion(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(!result);
     }
@@ -93,11 +93,11 @@ public class ExecutorTest {
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
-        Condition.Condition2<Integer, String> rule2 = (Integer x, String y) -> x > 10 && y != null;
+        ConditionConsumer.Condition2<Integer, String> rule2 = (Integer x, String y) -> x > 10 && y != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition definition = RuleDefinition.load(lambda, "Rule2", " Test Rule 2");
-        boolean result = executor.execute(rule2, definition.getCondition(),
-                resolver.resolveAsBindingValues(definition.getCondition(), bindings,
+        boolean result = executor.execute(rule2, definition.getCondition().getMethodDefintion(),
+                resolver.resolveAsBindingValues(definition.getCondition().getMethodDefintion(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
     }

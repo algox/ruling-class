@@ -17,44 +17,45 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.model.ActionDefinition;
+import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.model.ConditionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**
- * Default Action implementation.
+ * Default Condition implementation.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public class DefaultAction implements Action {
+public class DefaultCondition implements Condition {
 
     private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
-    private final ActionDefinition actionDefinition;
+    private final ConditionDefinition conditionDefinition;
     private final Object target;
 
     /**
      * Ctor taking meta information and the target object.
      *
-     * @param actionDefinition meta info.
+     * @param conditionDefinition meta info.
      * @param target action target.
      */
-    public DefaultAction(ActionDefinition actionDefinition, Object target) {
+    public DefaultCondition(ConditionDefinition conditionDefinition, Object target) {
         super();
-        Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
-        this.actionDefinition = actionDefinition;
+        Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
+        this.conditionDefinition = conditionDefinition;
         this.target = target;
     }
 
     @Override
-    public void execute(Object... args) {
-        methodExecutor.execute(target, actionDefinition.getAction(), args);
+    public boolean isPass(Object... args) throws UnrulyException {
+        return methodExecutor.execute(target, conditionDefinition.getMethodDefintion(), args);
     }
 
     @Override
-    public ActionDefinition getActionDefinition() {
-        return actionDefinition;
+    public ConditionDefinition getConditionDefinition() {
+        return conditionDefinition;
     }
 
     @Override

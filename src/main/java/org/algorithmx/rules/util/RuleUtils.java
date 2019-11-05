@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
@@ -65,7 +65,7 @@ public final class RuleUtils {
      * @param description Rule Description.
      * @return new Rule Definition.
      */
-    public static RuleDefinition load(Condition condition, String name, String description) {
+    public static RuleDefinition load(ConditionConsumer condition, String name, String description) {
         Assert.notNull(condition, "condition cannot be null.");
         return RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
     }

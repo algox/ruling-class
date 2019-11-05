@@ -88,7 +88,7 @@ public interface RuleFactory {
      * @param condition When Condition (usually implemented as a Lambda).
      * @return a new Rule Instance.
      */
-    default Rule rule(Condition condition) {
+    default Rule rule(ConditionConsumer condition) {
         return rule(load(condition, null, null));
     }
 
@@ -99,7 +99,7 @@ public interface RuleFactory {
      * @param condition when Condition.
      * @return a new Identifiable Rule Instance.
      */
-    default Rule rule(String name, Condition condition) {
+    default Rule rule(String name, ConditionConsumer condition) {
         return rule(load(condition, name, null));
     }
 
@@ -111,7 +111,7 @@ public interface RuleFactory {
      * @param description Rule description.
      * @return a new Identifiable Rule Instance.
      */
-    default Rule rule(String name, Condition condition, String description) {
+    default Rule rule(String name, ConditionConsumer condition, String description) {
         return rule(load(condition, name, description));
     }
 }

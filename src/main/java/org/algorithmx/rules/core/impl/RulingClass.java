@@ -20,6 +20,7 @@ package org.algorithmx.rules.core.impl;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
+import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.ResultExtractor;
 import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.RuleContext;
@@ -41,24 +42,27 @@ public class RulingClass extends RuleTemplate {
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
+    private final Condition condition;
 
     public RulingClass(RuleDefinition ruleDefinition, Object target) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
+        this.condition = new DefaultCondition(ruleDefinition.getCondition(), target);
     }
 
     protected RulingClass() {
         super();
         this.ruleDefinition = RuleDefinition.load(getClass());
         this.target = this;
+        this.condition = new DefaultCondition(ruleDefinition.getCondition(), target);
         loadActions(getClass());
     }
 
     @Override
     public boolean isPass(Object...args) throws UnrulyException {
-        return methodExecutor.execute(target, ruleDefinition.getCondition(), args);
+        return condition.isPass(args);
     }
 
     @Override
@@ -81,7 +85,7 @@ public class RulingClass extends RuleTemplate {
             RuleContext.set(ctx);
             // Find all tne matching Bindings.
             matches = ctx.getParameterResolver().resolveAsBindings(
-                    ruleDefinition.getCondition(), ctx.getBindings(), ctx.getMatchingStrategy());
+                    ruleDefinition.getCondition().getMethodDefintion(), ctx.getBindings(), ctx.getMatchingStrategy());
             // Execute the Rule
             pass = isPass(ctx.getParameterResolver().resolveAsBindingValues(matches));
             // Store the result of the Execution

@@ -18,15 +18,12 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.util.RuleUtils;
 
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 /**
@@ -48,9 +45,10 @@ public final class RuleDefinition {
     // Description of the Rule
     private final String description;
     // when method
-    private final MethodDefinition condition;
+    //private final MethodDefinition condition;
+    private final ConditionDefinition condition;
 
-    public RuleDefinition(Class<?> rulingClass, String name, String description, MethodDefinition condition) {
+    public RuleDefinition(Class<?> rulingClass, String name, String description, ConditionDefinition condition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
@@ -76,21 +74,10 @@ public final class RuleDefinition {
         Assert.notNull(rule, "Desired Rule class [" + c.getName() + "] is not annotated with @Rule");
 
         String ruleName = Rule.NOT_APPLICABLE.equals(rule.name()) ? c.getSimpleName() : rule.name();
-
-        MethodDefinition[] conditions = MethodDefinition.load(c,
-                (Method method) -> method.getAnnotation(Given.class) != null
-                        && boolean.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers()));
-
-        Assert.isTrue(!(conditions.length == 0), "Rule Condition method not defined on Rule class ["
-                + c + "]. Please define method public boolean someMethod(...) and annotate it @Given.");
-        Assert.isTrue(conditions.length == 1, "Multiple methods annotated with @Given [" + conditions
-                + "] defined on Rule class [" + c + "]. Please define only a single method with @Given. public boolean "
-                + "someMethod(...)");
-
         Description descriptionAnnotation = c.getAnnotation(Description.class);
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
-                : null, conditions[0]);
+                : null, ConditionDefinition.load(c));
     }
 
     /**
@@ -104,14 +91,8 @@ public final class RuleDefinition {
      */
     public static RuleDefinition load(SerializedLambda lambda, String ruleName, String ruleDescription) {
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
-        Assert.notNull(implementationClass, "implementationClass cannot be null");
-        Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
-        Assert.notNull(implementationMethod, "implementationMethod cannot be null");
-        Assert.isTrue(boolean.class.equals(implementationMethod.getReturnType()),
-                "Lambda method not implemented correctly. Please define method public boolean when(...)");
-
-        MethodDefinition[] conditions = MethodDefinition.load(implementationClass, implementationMethod);
-        return new RuleDefinition(implementationClass, ruleName, ruleDescription, conditions[0]);
+        return new RuleDefinition(implementationClass, ruleName, ruleDescription,
+                ConditionDefinition.load(lambda, null));
     }
 
     /**
@@ -146,7 +127,7 @@ public final class RuleDefinition {
      *
      * @return meta information rule implementing method.
      */
-    public MethodDefinition getCondition() {
+    public ConditionDefinition getCondition() {
         return condition;
     }
 

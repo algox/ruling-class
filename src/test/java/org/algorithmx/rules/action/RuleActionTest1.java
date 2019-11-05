@@ -19,7 +19,7 @@ package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Actions;
-import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.util.RuleUtils;
@@ -46,6 +46,6 @@ public class RuleActionTest1 {
                 .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")));
         ruleWithAction.run(bindings);
 
-        RuleUtils.load((Condition.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
+        RuleUtils.load((ConditionConsumer.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
     }
 }

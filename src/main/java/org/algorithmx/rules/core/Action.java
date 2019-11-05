@@ -34,7 +34,7 @@ public interface Action {
      * @param params Action parameters in necessary order.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void execute(Object...params);
+    void execute(Object...params) throws UnrulyException;
 
     /**
      * Meta information about the Action.
