@@ -31,14 +31,12 @@ import org.algorithmx.rules.spring.util.Assert;
  */
 public class RuleContext {
 
-    // Holds on the RuleContext associated with the current Thread.
-    private static final ThreadLocal<RuleContext> CTX_HOLDER = new ThreadLocal<>();
-
     private Bindings bindings;
-    private RuleAuditor auditor;
     private Condition stopWhen;
     private BindingMatchingStrategy matchingStrategy;
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
+
+    private RuleExecutionState state = null;
 
     /**
      * Default Ctor.
@@ -46,31 +44,6 @@ public class RuleContext {
      */
     RuleContext() {
         super();
-    }
-
-    /**
-     * Returns the RuleContext associated with the current Thread.
-     *
-     * @return RuleContext associated with the current Thread.
-     */
-    public static final RuleContext get() {
-        return CTX_HOLDER.get();
-    }
-
-    /**
-     * Associated the given RuleContext with the current Thread.
-     *
-     * @param ctx RuleContext
-     */
-    public static final void set(RuleContext ctx) {
-        CTX_HOLDER.set(ctx);
-    }
-
-    /**
-     * Clears any associations with the current Thread.
-     */
-    public static final void clear() {
-        CTX_HOLDER.remove();
     }
 
     /**
@@ -130,34 +103,6 @@ public class RuleContext {
     }
 
     /**
-     * Determines whether the rule auditing is enabled.
-     *
-     * @return true if Rule Auditing is enabled. False otherwise.
-     */
-    public boolean isAuditingEnabled() {
-        return auditor != null;
-    }
-
-    /**
-     * Auditor to use for Rule execution tracking.
-     *
-     * @return Rule Auditor. Can be null.
-     */
-    public RuleAuditor getAuditor() {
-        return auditor;
-    }
-
-    /**
-     * Set the Rule Auditor to be used.
-     *
-     * @param auditor Rule auditor.
-     */
-    public void setAuditor(RuleAuditor auditor) {
-        Assert.notNull(auditor, "auditor cannot be null.");
-        this.auditor = auditor;
-    }
-
-    /**
      * Returns the parameter resolver being used.
      *
      * @return parameter resolver. Cannot be null.
@@ -174,5 +119,35 @@ public class RuleContext {
     public void setParameterResolver(ParameterResolver parameterResolver) {
         Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
         this.parameterResolver = parameterResolver;
+    }
+
+    /**
+     * Set the execution state to RUNNING.
+     */
+    public void start() {
+        this.state = RuleExecutionState.RUNNING;
+    }
+
+    /**
+     * Set the execution state to FINISHED.
+     */
+    public void finish() {
+        this.state = RuleExecutionState.FINISHED;
+    }
+
+    /**
+     * Set the execution state to ERROR.
+     */
+    public void error() {
+        this.state = RuleExecutionState.ERROR;
+    }
+
+    /**
+     * Returns the current execution state of this context.
+     *
+     * @return current execution state.
+     */
+    public RuleExecutionState getState() {
+        return state;
     }
 }

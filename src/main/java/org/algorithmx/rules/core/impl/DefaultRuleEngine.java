@@ -41,13 +41,25 @@ public class DefaultRuleEngine implements RuleEngine {
     @Override
     public void run(RuleContext ctx, RuleSet... rules) throws UnrulyException {
         Assert.notNull(rules, "rules cannot be null.");
-        Arrays.stream(rules).forEach(ruleSet -> run(ruleSet, ctx));
+        ctx.start();
+        Arrays
+                .stream(rules)
+                .forEach(ruleSet -> run(ruleSet, ctx));
+        ctx.finish();
     }
 
     @Override
     public <T> T run(RuleContext ctx, ResultExtractor<T> extractor, RuleSet... rules) throws UnrulyException {
-        run(ctx, rules);
-        return extractor.extract(ctx.getBindings());
+        try {
+            run(ctx, rules);
+            return extractor.extract(ctx.getBindings());
+        } catch (UnrulyException e) {
+            ctx.error();
+            throw e;
+        } catch (Exception e) {
+            ctx.error();
+            throw new UnrulyException(e);
+        }
     }
 
     public void run(RuleSet rules, RuleContext ctx) throws UnrulyException {

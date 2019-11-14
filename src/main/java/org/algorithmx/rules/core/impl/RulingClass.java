@@ -17,16 +17,12 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.ResultExtractor;
-import org.algorithmx.rules.core.RuleAuditor;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
-import org.algorithmx.rules.model.ActionExecution;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.model.RuleExecution;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ConditionUtils;
 
@@ -72,57 +68,44 @@ public class RulingClass extends RuleTemplate {
 
     @Override
     public void run(RuleContext ctx) throws UnrulyException {
-        RuleAuditor auditor = ctx.getAuditor();
-        Condition.ConditionResult result;
-        RuleExecution ruleExecution;
+        boolean result;
 
         // TODO : Execute stopWhen
         try {
-            // Set the RuleContext in the ThreadLocal so it can be accessed during the execution.
-            RuleContext.set(ctx);
             // Execute the Rule
             result = condition.isPass(ctx);
-            // Store the result of the Execution
-            ruleExecution = new RuleExecution(getRuleDefinition(), result.isPass(), result.getMatches());
-            if (auditor != null) auditor.audit(ruleExecution);
         } catch (Exception e) {
             UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
-            if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
-        } finally {
-            // Clear the ThreadLocal
-            RuleContext.clear();
         }
 
         // The Condition passed
-        if (result.isPass()) {
+        if (result) {
             // Execute any associated Actions.
             for (Action action : getActions()) {
-                runAction(ctx, action, ruleExecution);
+                runAction(ctx, action);
             }
         } else if (getOtherwiseAction() != null) {
             // Condition failed
-            runAction(ctx, getOtherwiseAction(), ruleExecution);
+            runAction(ctx, getOtherwiseAction());
         }
     }
 
-    protected void runAction(RuleContext ctx, Action action, RuleExecution ruleExecution) {
+    /**
+     * Executes the Action associated with the Condition.
+     *
+     * @param ctx Rule Context.
+     * @param action desired action to execute.
+     */
+    protected void runAction(RuleContext ctx, Action action) {
 
         try {
-            // Set the RuleContext so it can be accessed during the execution.
-            RuleContext.set(ctx);
             // Execute the Action
-            ParameterResolver.ParameterMatch[] matches = action.execute(ctx);
-            // Store the action audit
-            ruleExecution.add(new ActionExecution(action.getActionDefinition(), matches));
+            action.execute(ctx);
         } catch (Exception e) {
             UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
                     + action.getActionDefinition().getActionName() + "]", e);
-            if (ctx.isAuditingEnabled()) ex.setExecutionStack(ctx.getAuditor().getAuditItems());
             throw ex;
-        } finally {
-            // Clear the ThreadLocal
-            RuleContext.clear();
         }
     }
 

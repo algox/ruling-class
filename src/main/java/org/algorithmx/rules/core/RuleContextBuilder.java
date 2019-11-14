@@ -23,7 +23,6 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.ScopedBindings;
-import org.algorithmx.rules.core.impl.NoOpRuleAuditor;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**
@@ -37,7 +36,6 @@ public class RuleContextBuilder {
     private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.getDefault();
     private Bindings bindings = Bindings.defaultBindings();
     private Condition stopWhen = null;
-    private RuleAuditor auditor =  RuleAuditor.defaultRuleAuditor();
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
 
     private RuleContextBuilder() {
@@ -97,35 +95,6 @@ public class RuleContextBuilder {
     }
 
     /**
-     * Enables Rule Execution Auditing.
-     * @return this for fluency.
-     */
-    public RuleContextBuilder audit() {
-        this.auditor = RuleAuditor.defaultRuleAuditor();
-        return this;
-    }
-
-    /**
-     * Disables Rule Execution.
-     * @return this for fluency.
-     */
-    public RuleContextBuilder doNotAudit() {
-        this.auditor = new NoOpRuleAuditor();
-        return this;
-    }
-
-    /**
-     * Audit Rule Execution with the given auditor.
-     *
-     * @param auditor desired auditor.
-     * @return this for fluency.
-     */
-    public RuleContextBuilder auditWith(RuleAuditor auditor) {
-        this.auditor = auditor;
-        return this;
-    }
-
-    /**
      * Builds a Rule Context with desired parameters.
      *
      * @return new Rule Context.
@@ -135,9 +104,9 @@ public class RuleContextBuilder {
         ScopedBindings rootBindings = Bindings.defaultBindings();
 
         rootBindings.bind("ruleContext", RuleContext.class, result);
+        rootBindings.bind("bindings", Bindings.class, bindings);
         rootBindings.newScope(bindings);
 
-        result.setAuditor(auditor);
         result.setBindings(rootBindings);
         result.setMatchingStrategy(matchingStrategy);
         result.setStopWhen(stopWhen);
