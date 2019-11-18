@@ -18,7 +18,9 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.Action;
+import org.algorithmx.rules.core.ActionConsumer;
 import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;
@@ -50,6 +52,7 @@ public class DefaultRuleSet implements RuleSet {
     private Action preAction = null;
     private Action postAction = null;
 
+    private boolean mutable = true;
     private final LinkedList<Rule> rules = new LinkedList<>();
     private final Map<String, Rule> ruleIndex = new HashMap<>();
 
@@ -101,13 +104,8 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleSet add(Class<?> rulingClass) {
-        add(ruleFactory.rule(rulingClass));
-        return this;
-    }
-
-    @Override
     public RuleSet add(String name, Rule rule) {
+
         Assert.notNull(rule, "rule cannot be null.");
         Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "RuleSet name must match ["
                 + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
@@ -129,6 +127,44 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public RuleSet add(Rule rule) {
         return add(rule.isIdentifiable() ? ((Identifiable) rule).getName() : null, rule);
+    }
+
+    @Override
+    public RuleSet add(Class<?> rulingClass) {
+        add(ruleFactory.rule(rulingClass));
+        return this;
+    }
+
+    @Override
+    public RuleSet add(String name, ConditionConsumer given, ActionConsumer...actions) {
+        Rule rule = ruleFactory.rule(name, given);
+
+        if (actions != null) {
+            for (ActionConsumer action : actions) {
+                rule.then(action);
+            }
+        }
+
+        add(rule);
+
+        return this;
+    }
+
+    @Override
+    public RuleSet add(String name, ConditionConsumer given, ActionConsumer then, ActionConsumer otherwise) {
+        Rule rule = ruleFactory.rule(name, given);
+
+        if (then != null) {
+            rule.then(then);
+        }
+
+        if (otherwise != null) {
+            rule.otherwise(otherwise);
+        }
+
+        add(rule);
+
+        return this;
     }
 
     @Override
