@@ -22,6 +22,7 @@ package org.algorithmx.rules.core;
  *
  * RUNNING - Rules are executing.
  * FINISHED - Rules have successfully finished execution.
+ * STOPPED - Stop condition was met and the execution is halted.
  * ERROR - There was an exception during the execution and rules have stopped executing.
  *
  * @author Max Arulananthan
@@ -29,7 +30,7 @@ package org.algorithmx.rules.core;
  */
 public enum RuleExecutionState {
 
-    RUNNING, FINISHED, ERROR;
+    RUNNING, STOPPED, FINISHED, ERROR;
 
     /**
      * Determines whether the rules are running.
@@ -46,7 +47,7 @@ public enum RuleExecutionState {
      * @return true if state is FINISHED or ERROR.
      */
     public boolean isStopped() {
-        return this == ERROR && this == FINISHED;
+        return this == STOPPED;
     }
 
     /**

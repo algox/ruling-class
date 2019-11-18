@@ -19,7 +19,6 @@ package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.ResultExtractor;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
@@ -60,20 +59,26 @@ public class RulingClass extends RuleTemplate {
     }
 
     @Override
-    public <T> T run(RuleContext ctx, ResultExtractor<T> extractor) throws UnrulyException {
-        run(ctx);
-        // Extract the result from the Bindings.
-        return extractor.extract(ctx.getBindings());
-    }
-
-    @Override
     public void run(RuleContext ctx) throws UnrulyException {
+
+        // Check to make sure we are still running
+        if (!ctx.getState().isRunning()) {
+            return;
+        }
+
+        // Check to see if we need to stop the execution
+        if (ctx.getStopWhen() != null && ctx.getStopWhen().isPass(ctx)) {
+            ctx.stop();
+            return;
+        }
+
         boolean result;
 
-        // TODO : Execute stopWhen
         try {
             // Execute the Rule
             result = condition.isPass(ctx);
+        } catch (UnrulyException e) {
+            throw e;
         } catch (Exception e) {
             UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
             throw ex;
@@ -102,6 +107,8 @@ public class RulingClass extends RuleTemplate {
         try {
             // Execute the Action
             action.execute(ctx);
+        } catch (UnrulyException e) {
+            throw e;
         } catch (Exception e) {
             UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
                     + action.getActionDefinition().getActionName() + "]", e);

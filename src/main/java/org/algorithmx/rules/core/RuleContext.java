@@ -129,6 +129,22 @@ public class RuleContext {
     }
 
     /**
+     * Determines whether the Execution State is RUNNING.
+     *
+     * @return true if Execution State is RUNNING; false otherwise.
+     */
+    public boolean isRunning() {
+        return getState().isRunning();
+    }
+
+    /**
+     * Set the execution state to STOPPED.
+     */
+    public void stop() {
+        this.state = RuleExecutionState.STOPPED;
+    }
+
+    /**
      * Set the execution state to FINISHED.
      */
     public void finish() {

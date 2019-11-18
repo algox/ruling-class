@@ -54,16 +54,4 @@ public interface RuleEngine {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     void run(RuleContext ctx, RuleSet...rules) throws UnrulyException;
-
-    /**
-     * Executes the given Rules. If the Rule Condition is true then any associated Actions will be executed.
-     *
-     * @param ctx state management for the Rule execution.
-     * @param extractor retrieves the result from the Bindings.
-     * @param rules rules to execute.
-     * @param <T> desired type.
-     * @return result.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    <T> T run(RuleContext ctx, ResultExtractor<T> extractor, RuleSet...rules) throws UnrulyException;
 }

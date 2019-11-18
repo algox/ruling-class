@@ -17,8 +17,11 @@
  */
 package org.algorithmx.rules.core.impl;
 
+import org.algorithmx.rules.core.Action;
+import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
@@ -41,6 +44,11 @@ public class DefaultRuleSet implements RuleSet {
     private final String name;
     private final String description;
     private final RuleFactory ruleFactory;
+
+    private Condition preCondition = null;
+    private Condition stopWhen = null;
+    private Action preAction = null;
+    private Action postAction = null;
 
     private final LinkedList<Rule> rules = new LinkedList<>();
     private final Map<String, Rule> ruleIndex = new HashMap<>();
@@ -167,6 +175,53 @@ public class DefaultRuleSet implements RuleSet {
         }
 
         return this;
+    }
+
+    @Override
+    public void run(RuleContext ctx) throws UnrulyException {
+
+        // Run the PreCondition if there is one.
+        if (preCondition != null && !preCondition.isPass(ctx)) {
+            return;
+        }
+
+        // Run the PreAction if there is one.
+        if (preAction != null) {
+            preAction.execute(ctx);
+        }
+
+        try {
+            for (Rule rule : this) {
+                rule.run(ctx);
+                // Check to see if we need to stop?
+                if (stopWhen != null && stopWhen.isPass(ctx)) break;
+            }
+        } finally {
+            // Run the PostAction if there is one.
+            if (postAction != null) {
+                postAction.execute(ctx);
+            }
+        }
+    }
+
+    @Override
+    public void preCondition(Condition condition) {
+        this.preCondition = condition;
+    }
+
+    @Override
+    public void preAction(Action action) {
+        this.preAction = action;
+    }
+
+    @Override
+    public void postAction(Action action) {
+        this.postAction = action;
+    }
+
+    @Override
+    public void stopWhen(Condition condition) {
+        this.stopWhen = condition;
     }
 
     @Override

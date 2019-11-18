@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.ResultExtractor;
+import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleSet;
@@ -41,6 +41,7 @@ public class DefaultRuleEngine implements RuleEngine {
     @Override
     public void run(RuleContext ctx, RuleSet... rules) throws UnrulyException {
         Assert.notNull(rules, "rules cannot be null.");
+
         ctx.start();
         Arrays
                 .stream(rules)
@@ -48,21 +49,15 @@ public class DefaultRuleEngine implements RuleEngine {
         ctx.finish();
     }
 
-    @Override
-    public <T> T run(RuleContext ctx, ResultExtractor<T> extractor, RuleSet... rules) throws UnrulyException {
-        try {
-            run(ctx, rules);
-            return extractor.extract(ctx.getBindings());
-        } catch (UnrulyException e) {
-            ctx.error();
-            throw e;
-        } catch (Exception e) {
-            ctx.error();
-            throw new UnrulyException(e);
-        }
-    }
-
     public void run(RuleSet rules, RuleContext ctx) throws UnrulyException {
-        Arrays.stream(rules.getRules()).forEach(rule -> rule.run(ctx));
+
+        // Make sure the state is Running.
+        if (!ctx.isRunning()) return;
+
+        for (Rule rule : rules) {
+            rule.run(ctx);
+            // Check to see if we should stop.
+            if (!ctx.isRunning()) break;
+        }
     }
 }
