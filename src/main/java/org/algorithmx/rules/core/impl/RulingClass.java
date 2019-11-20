@@ -17,9 +17,7 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
@@ -43,6 +41,7 @@ public class RulingClass extends RuleTemplate {
         this.ruleDefinition = ruleDefinition;
         this.target = target;
         this.condition = ConditionUtils.create(ruleDefinition.getCondition(), target);
+        loadActions(ruleDefinition.getRulingClass());
     }
 
     protected RulingClass() {
@@ -54,66 +53,13 @@ public class RulingClass extends RuleTemplate {
     }
 
     @Override
-    public boolean isPass(Object...args) throws UnrulyException {
-        return condition.isPass(args);
+    public Condition getCondition() {
+        return condition;
     }
 
     @Override
-    public void run(RuleContext ctx) throws UnrulyException {
-
-        // Check to make sure we are still running
-        if (!ctx.getState().isRunning()) {
-            return;
-        }
-
-        // Check to see if we need to stop the execution
-        if (ctx.getStopWhen() != null && ctx.getStopWhen().isPass(ctx)) {
-            ctx.stop();
-            return;
-        }
-
-        boolean result;
-
-        try {
-            // Execute the Rule
-            result = condition.isPass(ctx);
-        } catch (UnrulyException e) {
-            throw e;
-        } catch (Exception e) {
-            UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
-            throw ex;
-        }
-
-        // The Condition passed
-        if (result) {
-            // Execute any associated Actions.
-            for (Action action : getActions()) {
-                runAction(ctx, action);
-            }
-        } else if (getOtherwiseAction() != null) {
-            // Condition failed
-            runAction(ctx, getOtherwiseAction());
-        }
-    }
-
-    /**
-     * Executes the Action associated with the Condition.
-     *
-     * @param ctx Rule Context.
-     * @param action desired action to execute.
-     */
-    protected void runAction(RuleContext ctx, Action action) {
-
-        try {
-            // Execute the Action
-            action.execute(ctx);
-        } catch (UnrulyException e) {
-            throw e;
-        } catch (Exception e) {
-            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
-                    + action.getActionDefinition().getActionName() + "]", e);
-            throw ex;
-        }
+    public boolean isPass(Object...args) throws UnrulyException {
+        return condition.isPass(args);
     }
 
     @Override

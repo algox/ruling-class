@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 
@@ -74,39 +72,6 @@ public interface Rule extends Predicate<Object[]> {
     }
 
     /**
-     * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
-     * if the result is false then the Otherwise condition will be executed (if one exists).
-     *
-     * @param ctx used to derive the parameters required for this Rule.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    void run(RuleContext ctx) throws UnrulyException;
-
-    /**
-     * Executes the Rule Condition based on the given Bindings. If the result is true then any associated Actions are executed;
-     * if the result is false then the Otherwise condition will be executed (if one exists).
-     *
-     * @param bindings used to derive the parameters required for this Rule.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default void run(Bindings bindings) throws UnrulyException {
-        RuleContext ctx = RuleContextBuilder.create().bindWith(bindings).build();
-        run(ctx);
-    }
-
-    /**
-     * Executes the Rule Condition based on the given Bindings. If the result is true then any associated Actions are executed;
-     * if the result is false then the Otherwise condition will be executed (if one exists).
-     *
-     * @param bindings used to derive the parameters required for this Rule.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default void run(BindingDeclaration...bindings) {
-        RuleContext ctx = RuleContextBuilder.create().bindWith(bindings).build();
-        run(ctx);
-    }
-
-    /**
      * Determines if this Rule can be Identified with a name.
      *
      * @return true if the Rule implements Identifiable.
@@ -128,6 +93,13 @@ public interface Rule extends Predicate<Object[]> {
      * @return Rule meta information.
      */
     RuleDefinition getRuleDefinition();
+
+    /**
+     * Rule Condition.
+     *
+     * @return Rule Condition.
+     */
+    Condition getCondition();
 
     /**
      * Any associated Actions.
@@ -190,11 +162,4 @@ public interface Rule extends Predicate<Object[]> {
      * @param description description of the Action.
      */
     void otherwise(ActionConsumer action, String description);
-
-    /**
-     * Loads all the declared actions from the given class and attaches them to this Rule.
-     *
-     * @param actionClass class with all the actions.
-     */
-    void loadActions(Class<?> actionClass);
 }

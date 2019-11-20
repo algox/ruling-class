@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.impl;
 
+import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleEngine;
@@ -55,9 +56,94 @@ public class DefaultRuleEngine implements RuleEngine {
         if (!ctx.isRunning()) return;
 
         for (Rule rule : rules) {
-            rule.run(ctx);
+            run(ctx, rule);
             // Check to see if we should stop.
             if (!ctx.isRunning()) break;
         }
     }
+
+    @Override
+    public void run(RuleContext ctx, Rule rule) throws UnrulyException {
+
+        // Check to make sure we are still running
+        if (!ctx.getState().isRunning()) {
+            return;
+        }
+
+        // Check to see if we need to stop the execution
+        if (ctx.getStopWhen() != null && ctx.getStopWhen().isPass(ctx)) {
+            ctx.stop();
+            return;
+        }
+
+        boolean result;
+
+        try {
+            // Execute the Rule
+            result = rule.getCondition().isPass(ctx);
+        } catch (UnrulyException e) {
+            throw e;
+        } catch (Exception e) {
+            UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
+            throw ex;
+        }
+
+        // The Condition passed
+        if (result) {
+            // Execute any associated Actions.
+            for (Action action : rule.getActions()) {
+                runAction(ctx, action);
+            }
+        } else if (rule.getOtherwiseAction() != null) {
+            // Condition failed
+            runAction(ctx, rule.getOtherwiseAction());
+        }
+    }
+
+    /**
+     * Executes the Action associated with the Condition.
+     *
+     * @param ctx Rule Context.
+     * @param action desired action to execute.
+     */
+    protected void runAction(RuleContext ctx, Action action) {
+
+        try {
+            // Execute the Action
+            action.execute(ctx);
+        } catch (UnrulyException e) {
+            throw e;
+        } catch (Exception e) {
+            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
+                    + action.getActionDefinition().getActionName() + "]", e);
+            throw ex;
+        }
+    }
+
+    public void run(RuleContext ctx, RuleSet ruleSet) throws UnrulyException {
+
+        // Run the PreCondition if there is one.
+        if (ruleSet.getPreCondition() != null && !ruleSet.getPreCondition().isPass(ctx)) {
+            return;
+        }
+
+        // Run the PreAction if there is one.
+        if (ruleSet.getPreAction() != null) {
+            ruleSet.getPreAction().execute(ctx);
+        }
+
+        try {
+            for (Rule rule : ruleSet) {
+                //rule.run(ctx);
+                // Check to see if we need to stop?
+                if (ruleSet.getStopCondition() != null && ruleSet.getStopCondition().isPass(ctx)) break;
+            }
+        } finally {
+            // Run the PostAction if there is one.
+            if (ruleSet.getPostAction() != null) {
+                ruleSet.getPostAction().execute(ctx);
+            }
+        }
+    }
+
 }

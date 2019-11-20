@@ -88,8 +88,12 @@ public abstract class RuleTemplate implements Rule, Identifiable {
         otherwise(ActionUtils.create(action, description, getTarget()));
     }
 
-    @Override
-    public void loadActions(Class<?> actionClass) {
+    /**
+     * Loads all the declared actions from the given class and attaches them to this Rule.
+     *
+     * @param actionClass class with all the actions.
+     */
+    protected void loadActions(Class<?> actionClass) {
         ActionDefinition[] thenActions = ActionDefinition.loadThenActions(actionClass);
 
         if (thenActions != null) {

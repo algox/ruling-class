@@ -44,7 +44,6 @@ public class RuleActionTest1 {
         Rule ruleWithAction = ruleFactory.rule(cond2((String x, Integer y) -> y > 10))
                 .then(Actions.act1((Integer z) -> System.err.println("YASS! [" + z + "]")))
                 .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")));
-        ruleWithAction.run(bindings);
 
         RuleUtils.load((ConditionConsumer.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
     }

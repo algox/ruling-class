@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.error.UnrulyException;
-
 /**
  * RuleSet is a logical grouping of Rules.
  *
@@ -49,11 +47,25 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     void preCondition(Condition condition);
 
     /**
-     * PreAction(Optional) to be performed after the execution of the Rules. The PostAction
+     * Returns the Condition (if one exists) to be met before the execution of the Rules.
+     *
+     * @return pre check before execution of the Rules.
+     */
+    Condition getPreCondition();
+
+    /**
+     * PreAction(Optional) to be performed after the execution of the Rules.
      *
      * @param action pre action before the execution of the Rules.
      */
     void preAction(Action action);
+
+    /**
+     * Returns the action performed after the execution of the Rules.
+     *
+     * @return pre action before the execution of the Rules.
+     */
+    Action getPreAction();
 
     /**
      * PostAction(Optional) to be performed after the execution of the Rules.
@@ -63,11 +75,25 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     void postAction(Action action);
 
     /**
+     * Returns the action to be performed after the execution of the Rules.
+     *
+     * @return post action after the execution of the Rules.
+     */
+    Action getPostAction();
+
+    /**
      * Condition that determines when execution should stop.
      *
      * @param condition stopping condition.
      */
     void stopWhen(Condition condition);
+
+    /**
+     * Returns the Condition that determines when execution should stop.
+     *
+     * @return stopping condition.
+     */
+    Condition getStopCondition();
 
     /**
      * Retrieves a Rule with the given name in this RuleSet.
@@ -162,13 +188,5 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      * @throws org.algorithmx.rules.error.UnrulyException if any of the excluded Rules do not exist in this RuleSet.
      */
     RuleSet remove(Class<?>...ruleClasses);
-
-    /**
-     * Executes the Rules in this RuleSet based on the RuleSet order. The Execution is halted if the Stop condition is met.
-     *
-     * @param ctx state management for the Rule execution.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    void run(RuleContext ctx) throws UnrulyException;
 }
 

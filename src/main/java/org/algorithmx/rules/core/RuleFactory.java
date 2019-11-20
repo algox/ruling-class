@@ -77,9 +77,7 @@ public interface RuleFactory {
      * @return a new Rule Instance.
      */
     default Rule rule(Class<?> ruleClass) {
-        Rule result = rule(RuleDefinition.load(ruleClass));
-        result.loadActions(ruleClass);
-        return result;
+        return rule(RuleDefinition.load(ruleClass));
     }
 
     /**
