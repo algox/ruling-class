@@ -113,7 +113,7 @@ public abstract class ValidationRule extends RulingClass {
      */
     protected Map<String, Binding> resolveParameters(RuleContext ctx) {
         ParameterResolver.ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
-                getRuleDefinition().getCondition().getMethodDefinition(), ctx.getBindings(), ctx.getMatchingStrategy());
+                getRuleDefinition().getConditionDefinition().getMethodDefinition(), ctx.getBindings(), ctx.getMatchingStrategy());
 
         Map<String, Binding> result = new LinkedHashMap<>();
 

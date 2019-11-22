@@ -53,38 +53,68 @@ public abstract class RuleTemplate implements Rule, Identifiable {
         return otherwiseAction;
     }
 
-    @Override
-    public Rule then(Action action) {
+    /**
+     * Associates a new Action to the Rule.
+     *
+     * @param action desired action.
+     * @return this so other Actions can be associated fluently.
+     */
+    protected Rule then(Action action) {
         actions.add(action);
         return this;
     }
 
-    @Override
-    public Rule then(ActionConsumer action) {
+    /**
+     * Associates a new Action to the Rule. The ActionConsumer Lambda is converted into an Action.
+     *
+     * @param action desired action.
+     * @return this so other Actions can be associated fluently.
+     */
+    protected Rule then(ActionConsumer action) {
         return then(action, null);
     }
 
-    @Override
-    public Rule then(ActionConsumer action, String description) {
+    /**
+     * Associates a new Action to the Rule. The ActionConsumer Lambda is converted into an Action.
+     *
+     * @param action desired action.
+     * @param description description of the Action.
+     * @return this so other Actions can be associated fluently.
+     */
+    protected Rule then(ActionConsumer action, String description) {
         actions.add(ActionUtils.create(action, description, getTarget()));
         return this;
     }
 
-    @Override
-    public void otherwise(Action action) {
+    /**
+     * Associates a OtherwiseAction to the Rule (if one isn't present already).
+     *
+     * @param action desired action.
+     * @throws UnrulyException if an otherwise action is already associated to this Rule.
+     */
+    protected void otherwise(Action action) {
         if (otherwiseAction != null) {
             throw new UnrulyException("This Rule already has an otherwise action associated to it.");
         }
         this.otherwiseAction = action;
     }
 
-    @Override
-    public void otherwise(ActionConsumer action) {
+    /**
+     * Associates a new Action to the Rule (if one isn't present already). The ActionConsumer Lambda is converted into an Action.
+     *
+     * @param action desired action.
+     */
+    protected void otherwise(ActionConsumer action) {
         otherwise(ActionUtils.create(action, null, getTarget()));
     }
 
-    @Override
-    public void otherwise(ActionConsumer action, String description) {
+    /**
+     * Associates a new Action to the Rule (if one isn't present already). The ActionConsumer Lambda is converted into an Action.
+     *
+     * @param action desired action.
+     * @param description description of the Action.
+     */
+    protected void otherwise(ActionConsumer action, String description) {
         otherwise(ActionUtils.create(action, description, getTarget()));
     }
 

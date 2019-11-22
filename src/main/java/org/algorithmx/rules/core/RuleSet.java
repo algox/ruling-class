@@ -151,27 +151,6 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     RuleSet add(String name, Rule rule);
 
     /**
-     * Adds the given Rule to this RuleSet with the desired name.
-     *
-     * @param name name of the Rule.
-     * @param given when condition.
-     * @param actions then actions.
-     * @return this RuleSet (for fluency).
-     */
-    RuleSet add(String name, ConditionConsumer given, ActionConsumer...actions);
-
-    /**
-     * Adds the given Rule to this RuleSet with the desired name.
-     *
-     * @param name name of the Rule.
-     * @param given when condition.
-     * @param then then action.
-     * @param otherwise otherwise action.
-     * @return this RuleSet (for fluency).
-     */
-    RuleSet add(String name, ConditionConsumer given, ActionConsumer then, ActionConsumer otherwise);
-
-    /**
      * Removes the listed Rules from this RuleSet.
      *
      * @param ruleNames Rules to exclude.

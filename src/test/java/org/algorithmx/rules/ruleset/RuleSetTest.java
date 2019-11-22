@@ -61,16 +61,25 @@ public class RuleSetTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
-        Rule rule6 = ruleFactory.rule(cond0(() -> true));
+        Rule rule6 = ruleFactory.rule()
+                .given(cond0(() -> true))
+                .then(act0(() -> System.err.println("XXX End")))
+                .build();
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory.rule(cond1((String y) -> y.equals("")))
-                        .then(act1((String y) -> System.err.println(y))))
-                .add(ruleFactory.rule(cond2((String a, BigDecimal x) -> x != null))
-                                .then(act0(() -> System.err.println("XXX Hello"))))
-                .add("testrule3", ruleFactory.rule(cond3((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
-                        .then(act0(() -> System.err.println("XXX oh yeah"))))
-                .add(rule6.then(act0(() -> System.err.println("XXX End"))));
+                .add("test", ruleFactory.rule()
+                        .given(cond1((String y) -> y.equals("")))
+                        .then(act1((String y) -> System.err.println(y)))
+                        .build())
+                .add(ruleFactory.rule()
+                        .given(cond2((String a, BigDecimal x) -> x != null))
+                        .then(act0(() -> System.err.println("XXX Hello")))
+                        .build())
+                .add("testrule3", ruleFactory.rule()
+                        .given(cond3((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
+                        .then(act0(() -> System.err.println("XXX oh yeah")))
+                        .build())
+                .add(rule6);
 
         Rule rule1 = rules.getRule("test");
         Rule rule3 = rules.getRule("testrule3");
@@ -85,8 +94,10 @@ public class RuleSetTest {
                 .bind("key2", String.class, "value");
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory.rule(cond1((String key1) -> key1.equals("")))
-                        .then(act1((String key2) -> System.err.println(key2))));
+                .add("test", ruleFactory.rule()
+                        .given(cond1((String key1) -> key1.equals("")))
+                        .then(act1((String key2) -> System.err.println(key2)))
+                        .build());
 
         ruleEngine.run(RuleContextBuilder.create()
                 .bindWith(bindings).build(), rules);

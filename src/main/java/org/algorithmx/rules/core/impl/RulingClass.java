@@ -17,11 +17,14 @@
  */
 package org.algorithmx.rules.core.impl;
 
+import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ConditionUtils;
+
+import java.util.List;
 
 /**
  * Default Rule Implementation (implements Identifiable).
@@ -35,20 +38,55 @@ public class RulingClass extends RuleTemplate {
     private final Object target;
     private final Condition condition;
 
+    /**
+     * Rule wrapped around a external target object (ie: Rule defined in an external class).
+     *
+     * @param ruleDefinition rule meta information.
+     * @param target object where the Rule is actually defined.
+     */
     public RulingClass(RuleDefinition ruleDefinition, Object target) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
-        this.condition = ConditionUtils.create(ruleDefinition.getCondition(), target);
+        this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
         loadActions(ruleDefinition.getRulingClass());
     }
 
+    /**
+     * Rule that fully externally defined.
+     *
+     * @param ruleDefinition meta information.
+     * @param target target Rule class.
+     * @param thenActions all the Then actions (optional).
+     * @param otherwiseAction the Otherwise action (optional);
+     */
+    public RulingClass(RuleDefinition ruleDefinition, Object target, List<Action> thenActions, Action otherwiseAction) {
+        super();
+        Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
+        this.ruleDefinition = ruleDefinition;
+        this.target = target;
+        this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
+
+        // Then actions (optional)
+        if (thenActions != null) {
+            thenActions.stream().forEach(action -> then(action));
+        }
+
+        // Otherwise action (Optional)
+        if (otherwiseAction != null) {
+            otherwise(otherwiseAction);
+        }
+    }
+
+    /**
+     * Ctor used to subclasses than are actually implementing the rule.
+     */
     protected RulingClass() {
         super();
         this.ruleDefinition = RuleDefinition.load(getClass());
         this.target = this;
-        this.condition = ConditionUtils.create(ruleDefinition.getCondition(), target);
+        this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
         loadActions(getClass());
     }
 

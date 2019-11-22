@@ -41,9 +41,11 @@ public class RuleActionTest1 {
         bindings.bind("z", Integer.class, 200);
 
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule ruleWithAction = ruleFactory.rule(cond2((String x, Integer y) -> y > 10))
+        Rule ruleWithAction = ruleFactory.rule()
+                .given(cond2((String x, Integer y) -> y > 10))
                 .then(Actions.act1((Integer z) -> System.err.println("YASS! [" + z + "]")))
-                .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")));
+                .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")))
+                .build();
 
         RuleUtils.load((ConditionConsumer.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
     }

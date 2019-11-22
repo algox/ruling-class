@@ -22,8 +22,6 @@ import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
 import org.algorithmx.rules.model.RuleDefinition;
 
-import static org.algorithmx.rules.util.RuleUtils.load;
-
 /**
  * Factory to produce Rules.
  *
@@ -81,35 +79,11 @@ public interface RuleFactory {
     }
 
     /**
-     * Creates a new Rule based on the given Condition.
+     * Creates a new RuleBuilder
      *
-     * @param condition When Condition (usually implemented as a Lambda).
-     * @return a new Rule Instance.
+     * @return a new RuleBuilder Instance.
      */
-    default Rule rule(ConditionConsumer condition) {
-        return rule(load(condition, null, null));
-    }
-
-    /**
-     * Creates a Identifiable Rule given a name and condition.
-     *
-     * @param name Rule name.
-     * @param condition when Condition.
-     * @return a new Identifiable Rule Instance.
-     */
-    default Rule rule(String name, ConditionConsumer condition) {
-        return rule(load(condition, name, null));
-    }
-
-    /**
-     * Creates a Identifiable Rule given a name and condition.
-     *
-     * @param name Rule name.
-     * @param condition when Condition.
-     * @param description Rule description.
-     * @return a new Identifiable Rule Instance.
-     */
-    default Rule rule(String name, ConditionConsumer condition, String description) {
-        return rule(load(condition, name, description));
+    default RuleBuilder rule() {
+        return new RuleBuilder();
     }
 }

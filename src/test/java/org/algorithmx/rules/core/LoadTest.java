@@ -60,31 +60,31 @@ public class LoadTest {
         Method m = TestRule1.class.getDeclaredMethod("when", int.class, Date.class, List.class);
 
         Assert.assertTrue("TestRule".equals(def.getName()));
-        Assert.assertTrue(def.getCondition() != null);
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getMethod().equals(m));
+        Assert.assertTrue(def.getConditionDefinition() != null);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getMethod().equals(m));
     }
 
     @Test
     public void loadTest3() {
         RuleDefinition def = RuleDefinition.load(TestRule1.class);
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions().length == 3);
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getIndex() == 0);
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("id"));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].isRequired());
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getIndex() == 0);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(int.class));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].isRequired());
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("birthDate"));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].isRequired() == false);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getIndex() == 1);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("birthDate"));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(Date.class));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].isRequired() == false);
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[2].getIndex() == 2);
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[2].getName().equals("values"));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[2].getAnnotations().length == 0);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getIndex() == 2);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getName().equals("values"));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getAnnotations().length == 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -123,25 +123,28 @@ public class LoadTest {
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition def = RuleDefinition.load(lambda, "TestRule2", "Some rule for testing");
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions().length == 2);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions().length == 2);
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getIndex() == 0);
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("i"));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(Integer.class));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getIndex() == 0);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("i"));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(Integer.class));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("text"));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(String.class));
-        Assert.assertTrue(def.getCondition().getMethodDefinition().getParameterDefinitions()[1].isRequired() == false);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getIndex() == 1);
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("text"));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(String.class));
+        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].isRequired() == false);
     }
 
     @Test
     public void loadTest8() {
         RuleFactory factory = RuleFactory.defaultFactory();
-        Rule rule1 = factory.rule(cond3((Integer a, Date date, String x) -> a != null));
-        Rule rule2 = factory.rule(cond4((Integer a, Date date, String x, String y) -> a != null))
+        Rule rule1 = factory.rule()
+                .given(cond3((Integer a, Date date, String x) -> a != null))
+                .build();
+        Rule rule2 = factory.rule().given(cond4((Integer a, Date date, String x, String y) -> a != null))
                 .then(act2((Integer y, String z) -> {}))
-                .then(act3((Integer y, String z, Date date) -> {}));
+                .then(act3((Integer y, String z, Date date) -> {}))
+                .build();
     }
 }

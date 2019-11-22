@@ -31,7 +31,7 @@ import java.util.Objects;
  *
  * The only requirement for a class to be considered a Rule is to have a "when" method (aka Condition in standard Rule terms).
  * The when method can take arbitrary number of arguments but must return a boolean value. The boolean is the result of
- * the condition of the rule.
+ * the conditionDefinition of the rule.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -45,10 +45,10 @@ public final class RuleDefinition {
     // Description of the Rule
     private final String description;
     // when method
-    //private final MethodDefinition condition;
-    private final ConditionDefinition condition;
+    //private final MethodDefinition conditionDefinition;
+    private final ConditionDefinition conditionDefinition;
 
-    public RuleDefinition(Class<?> rulingClass, String name, String description, ConditionDefinition condition) {
+    public RuleDefinition(Class<?> rulingClass, String name, String description, ConditionDefinition conditionDefinition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
         Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
@@ -57,7 +57,7 @@ public final class RuleDefinition {
         this.rulingClass = rulingClass;
         this.name = name;
         this.description = description;
-        this.condition = condition;
+        this.conditionDefinition = conditionDefinition;
     }
 
     /**
@@ -127,17 +127,17 @@ public final class RuleDefinition {
      *
      * @return meta information rule implementing method.
      */
-    public ConditionDefinition getCondition() {
-        return condition;
+    public ConditionDefinition getConditionDefinition() {
+        return conditionDefinition;
     }
 
     /**
-     * Determines if the condition is a statically implemented method call (such as a lambda).
+     * Determines if the conditionDefinition is a statically implemented method call (such as a lambda).
      *
      * @return true if statically implemented; false otherwise.
      */
     public boolean isStatic() {
-        return condition.isStatic();
+        return conditionDefinition.isStatic();
     }
 
     @Override
@@ -159,7 +159,7 @@ public final class RuleDefinition {
                 "rulingClass=" + rulingClass +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", condition=" + condition +
+                ", conditionDefinition=" + conditionDefinition +
                 '}';
     }
 }

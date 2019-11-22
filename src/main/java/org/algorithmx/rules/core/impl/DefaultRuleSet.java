@@ -18,9 +18,7 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.ActionConsumer;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
@@ -130,38 +128,6 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public RuleSet add(Class<?> rulingClass) {
         add(ruleFactory.rule(rulingClass));
-        return this;
-    }
-
-    @Override
-    public RuleSet add(String name, ConditionConsumer given, ActionConsumer...actions) {
-        Rule rule = ruleFactory.rule(name, given);
-
-        if (actions != null) {
-            for (ActionConsumer action : actions) {
-                rule.then(action);
-            }
-        }
-
-        add(rule);
-
-        return this;
-    }
-
-    @Override
-    public RuleSet add(String name, ConditionConsumer given, ActionConsumer then, ActionConsumer otherwise) {
-        Rule rule = ruleFactory.rule(name, given);
-
-        if (then != null) {
-            rule.then(then);
-        }
-
-        if (otherwise != null) {
-            rule.otherwise(otherwise);
-        }
-
-        add(rule);
-
         return this;
     }
 
