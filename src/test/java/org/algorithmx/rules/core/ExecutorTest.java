@@ -154,7 +154,9 @@ public class ExecutorTest {
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
         // TODO : Fix generic mapping with lambdas
         List<Integer> values = new ArrayList<>();
-        Rule rule = ruleFactory.rule()
+        Rule rule = ruleFactory
+                .rule()
+                .name("rule1")
                 .given(cond3((String x, Integer y, List<String> a) -> y > 10))
                 .build();
         boolean result = rule.isPass("hello world", 20, values);
@@ -164,7 +166,9 @@ public class ExecutorTest {
     @Test
     public void test7() {
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory.rule()
+        Rule rule = ruleFactory
+                .rule()
+                .name("rule1")
                 .given(cond2((String x, Integer y) -> y > 10))
                 .build();
         boolean result = rule.isPass("hello world", 20);

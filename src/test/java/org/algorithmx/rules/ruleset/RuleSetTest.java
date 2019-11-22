@@ -67,7 +67,9 @@ public class RuleSetTest {
                 .build();
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory.rule()
+                .add("test", ruleFactory
+                        .rule()
+                        .name("test")
                         .given(cond1((String y) -> y.equals("")))
                         .then(act1((String y) -> System.err.println(y)))
                         .build())
@@ -94,7 +96,9 @@ public class RuleSetTest {
                 .bind("key2", String.class, "value");
 
         RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory.rule()
+                .add("test", ruleFactory
+                        .rule()
+                        .name("test")
                         .given(cond1((String key1) -> key1.equals("")))
                         .then(act1((String key2) -> System.err.println(key2)))
                         .build());
