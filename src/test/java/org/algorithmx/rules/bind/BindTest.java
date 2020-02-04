@@ -174,25 +174,6 @@ public class BindTest {
 
     }
 
-    @Test(expected = InvalidBindingException.class)
-    public void testValidation() {
-        Bindings.defaultBindings()
-                .bind("key",  String.class, "hello world!", (String s) -> !s.contains("hello"), true);
-    }
-
-    @Test
-    public void testSupplier1() {
-        Bindings bindings = Bindings.defaultBindings().bind("key", () -> "Hello World!", TypeReference.with(String.class));
-        Assert.assertTrue(bindings.get("key").equals("Hello World!"));
-    }
-
-    @Test(expected = InvalidBindingException.class)
-    public void testSupplier2() {
-        Bindings.defaultBindings()
-                .bind("key", () -> "Hello World!", TypeReference.with(String.class))
-                .set("key", "new value");
-    }
-
     @Test
     public void testBindWithNoType() {
         List<Integer> values = new ArrayList<>();
@@ -207,6 +188,13 @@ public class BindTest {
         Assert.assertTrue(bindings.contains("a", int.class));
         Assert.assertTrue(bindings.contains("b", String.class));
         Assert.assertTrue(bindings.contains("c", ArrayList.class));
+    }
+
+    @Test
+    public void testBindingBuilder() {
+        Binding binding = BindingBuilder.name("a").type(Integer.class).value(200).create();
+        Assert.assertTrue(binding.getName().equals("a"));
+        Assert.assertTrue(binding.get().equals(200));
     }
 }
 

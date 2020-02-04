@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Bindings with Scopes. Allows the user to create/remove scopes around the Bindings. Each Binding is tied to a
@@ -204,7 +202,6 @@ public interface ScopedBindings extends Bindings {
      * @param name name of the Binding.
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
      * @param mutable determines whether the value is mutable.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
@@ -213,9 +210,9 @@ public interface ScopedBindings extends Bindings {
      * @see Binding
      */
     @Override
-    default <T> Bindings bind(String name, TypeReference<T> type, T initialValue, Predicate<T> validationCheck,
-                              boolean mutable) throws BindingAlreadyExistsException, InvalidBindingException {
-        getCurrentScope().bind(name, type, initialValue, validationCheck, mutable);
+    default <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
+            throws BindingAlreadyExistsException, InvalidBindingException {
+        getCurrentScope().bind(name, type, initialValue, mutable);
         return this;
     }
 
@@ -246,22 +243,6 @@ public interface ScopedBindings extends Bindings {
     @Override
     default <T> Bindings bind(Collection<Binding<T>> bindings) {
         getCurrentScope().bind(bindings);
-        return this;
-    }
-
-    /**
-     * Declares a new Binding given a name, type, the value retrieved using the supplied Supplier into the current scope.
-     *
-     * @param name name of the Binding.
-     * @param valueSupplier the value of the Binding will be retrieved using this Supplier.
-     * @param type type reference of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     */
-    @Override
-    default <T> Bindings bind(String name, Supplier<T> valueSupplier, TypeReference<T> type) throws BindingAlreadyExistsException {
-        getCurrentScope().bind(name, valueSupplier, type);
         return this;
     }
 }

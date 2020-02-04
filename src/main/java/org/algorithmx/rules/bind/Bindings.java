@@ -17,8 +17,8 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.bind.impl.DefaultBindings;
 import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
-import org.algorithmx.rules.bind.impl.SimpleBindings;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ReflectionUtils;
@@ -30,8 +30,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * The interface that is used to store and find Bindings.
@@ -61,7 +59,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      */
     default Bindings bind(BindingDeclaration... declarations)  {
         Assert.notNull(declarations, "declarations cannot be null");
-        Bindings result = new SimpleBindings();
+        Bindings result = new DefaultBindings();
         Arrays.stream(declarations).forEach(result::bind);
         return result;
     }
@@ -93,42 +91,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      */
     default <T> Bindings bind(String name, T initialValue) {
         Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
-        return bind(name, TypeReference.with(type), initialValue, null, true);
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param initialValue initial value of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    default <T> Bindings bind(String name, Predicate<T> validationCheck, T initialValue) {
-        Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
-        return bind(name, TypeReference.with(type), initialValue, validationCheck, true);
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param mutable determines whether the value is mutable.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    default <T> Bindings bind(String name, T initialValue, Predicate<T> validationCheck, boolean mutable) {
-        Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
-        return bind(name, TypeReference.with(type), initialValue, validationCheck, mutable);
+        return bind(name, TypeReference.with(type), initialValue, true);
     }
 
     /**
@@ -143,7 +106,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @see Binding
      */
     default <T> Bindings bind(String name, Class<T> type) {
-        return bind(name, TypeReference.with(type), null, null, true);
+        return bind(name, TypeReference.with(type), null, true);
     }
 
     /**
@@ -158,7 +121,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @see Binding
      */
     default <T> Bindings bind(String name, TypeReference<T> type) {
-        return bind(name, type, null, null, true);
+        return bind(name, type, null, true);
     }
 
     /**
@@ -174,7 +137,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @see Binding
      */
     default <T> Bindings bind(String name, Class<T> type, T initialValue) {
-        return bind(name, TypeReference.with(type), initialValue, null, true);
+        return bind(name, TypeReference.with(type), initialValue, true);
     }
 
     /**
@@ -190,24 +153,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @see Binding
      */
     default <T> Bindings bind(String name, TypeReference<T> type, T initialValue) {
-        return bind(name, type, initialValue, null, true);
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    default <T> Bindings bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck) {
-        return bind(name, TypeReference.with(type), initialValue, validationCheck, true);
+        return bind(name, type, initialValue, true);
     }
 
     /**
@@ -216,77 +162,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param name name of the Binding.
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
+     * @param mutable determines whether the value can be changed.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, TypeReference<T> type, T initialValue, Predicate<T> validationCheck) {
-        return bind(name, type, initialValue, validationCheck, true);
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param mutable determines whether the value is mutable.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    default <T> Bindings bind(String name, Class<T> type, T initialValue, Predicate<T> validationCheck, boolean mutable) {
-        return bind(name, TypeReference.with(type), initialValue, validationCheck, mutable);
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param validationCheck validation to be performed when the value is changed.
-     * @param mutable determines whether the value is mutable.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    <T> Bindings bind(String name, TypeReference<T> type, T initialValue, Predicate<T> validationCheck, boolean mutable)
+    <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException;
-
-    /**
-     * Declares a new Binding given a name, type and the value will be retrieved using the supplied Supplier.
-     *
-     * @param name name of the Binding.
-     * @param valueSupplier the value of the Binding will be retrieved using this Supplier.
-     * @param type type reference of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     */
-    default <T> Bindings bind(String name, Supplier<T> valueSupplier, Class<T> type) {
-        return bind(name, valueSupplier, TypeReference.with(type));
-    }
-
-    /**
-     * Declares a new Binding given a name, type and the value will be retrieved using the supplied Supplier.
-     *
-     * @param name name of the Binding.
-     * @param valueSupplier the value of the Binding will be retrieved using this Supplier.
-     * @param type type reference of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     */
-    <T> Bindings bind(String name, Supplier<T> valueSupplier, TypeReference<T> type) throws BindingAlreadyExistsException;
 
     /**
      * Binds the given Binding into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
@@ -296,7 +180,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
      */
-    <T> Bindings bind(Binding<T> binding);
+    <T> Bindings bind(Binding<T> binding) throws BindingAlreadyExistsException;
 
     /**
      * Binds all the given Bindings into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.

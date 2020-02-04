@@ -20,7 +20,6 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingAlreadyExistsException;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.InvalidBindingException;
 import org.algorithmx.rules.bind.NoSuchBindingException;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
@@ -33,8 +32,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Default implementation of the Bindings.
@@ -42,7 +39,7 @@ import java.util.function.Supplier;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class SimpleBindings implements Bindings {
+public class DefaultBindings implements Bindings {
 
     // Stores all the Bindings
     private final Map<String, Binding<?>> bindings = createBindings();
@@ -51,7 +48,7 @@ public class SimpleBindings implements Bindings {
     /**
      * Default Ctor. Self Reference added.
      */
-    public SimpleBindings() {
+    public DefaultBindings() {
         this(true);
     }
 
@@ -60,7 +57,7 @@ public class SimpleBindings implements Bindings {
      *
      * @param selfAware if true self reference binding is added.
      */
-    public SimpleBindings(boolean selfAware) {
+    public DefaultBindings(boolean selfAware) {
         super();
         this.selfAware = selfAware;
         // Create a self bind
@@ -68,18 +65,9 @@ public class SimpleBindings implements Bindings {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Bindings bind(String name, TypeReference<T> typeRef, T initialValue, Predicate<T> validationCheck, boolean mutable)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        DefaultBinding<T> result = new DefaultBinding(name, typeRef.getType(), initialValue, validationCheck);
-        result.setMutable(mutable);
-        bind(result);
-        return this;
-    }
-
-    @Override
-    public <T> Bindings bind(String name, Supplier<T> valueSupplier, TypeReference<T> typeRef) throws BindingAlreadyExistsException {
-        DefaultBinding<T> result = new DefaultBinding(name, typeRef.getType(), valueSupplier);
+    public <T> Bindings bind(String name, TypeReference type, T value, boolean mutable) throws BindingAlreadyExistsException {
+        Assert.notNull(type, "type cannot be null");
+        DefaultBinding<T> result = new DefaultBinding(name, type.getType(), value, mutable);
         bind(result);
         return this;
     }
@@ -87,10 +75,10 @@ public class SimpleBindings implements Bindings {
     @Override
     public <T> Bindings bind(Binding<T> binding) {
         Assert.notNull(binding, "binding cannot be null");
-        // Try and put the Binding
-        Binding<?> existingBinding = bindings.putIfAbsent(binding.getName(), binding);
         // Looks like we already have a binding
-        if (existingBinding != null) throw new BindingAlreadyExistsException(binding.getName());
+        if (bindings.containsKey(binding.getName())) throw new BindingAlreadyExistsException(binding.getName());
+        // Put the Binding
+        bindings.putIfAbsent(binding.getName(), binding);
         return this;
     }
 
@@ -184,7 +172,7 @@ public class SimpleBindings implements Bindings {
      * @param selfAware if a Binding to itself must be created.
      */
     protected void init(boolean selfAware) {
-        if (selfAware) bind(Bindings.SELF_BIND_NAME, Bindings.class, this, null, false);
+        if (selfAware) bind(Bindings.SELF_BIND_NAME, TypeReference.with(Bindings.class), this, false);
     }
 
     /**

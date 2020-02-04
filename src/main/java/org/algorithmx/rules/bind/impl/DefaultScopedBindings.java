@@ -94,7 +94,7 @@ public class DefaultScopedBindings implements ScopedBindings {
      * @return newly created Bindings.
      */
     protected Bindings createScope() {
-        return new SimpleBindings(false);
+        return new DefaultBindings(false);
     }
 
     @Override

@@ -113,7 +113,7 @@ public class ExecutorTest {
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
                 .bind("result", int.class, 0);
 
-        bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, null, false);
+        bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, false);
 
         ActionDefinition[] definition1 = ActionDefinition.loadThenActions(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
@@ -137,7 +137,7 @@ public class ExecutorTest {
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
                 .bind("result", int.class, 0);
 
-        bindings.bind("binds", TypeReference.with(Bindings.class), bindings, null, false);
+        bindings.bind("binds", TypeReference.with(Bindings.class), bindings, false);
 
         ActionConsumer.ActionConsumer3<?, ?, ?> action = (Integer id, List<String> values, Bindings binds) -> binds.set("result", 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
