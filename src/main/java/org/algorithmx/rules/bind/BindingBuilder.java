@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.bind.impl.DefaultBinding;
 import org.algorithmx.rules.spring.util.Assert;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -95,9 +96,52 @@ public class BindingBuilder {
      * @param supplier value supplier of the Binding. supplier.get() will be called immediately.
      * @return this for fluency.
      */
-    public BindingBuilder value(Supplier supplier) {
+    public <T> BindingBuilder value(Supplier<T> supplier) {
         Assert.notNull(supplier, "supplier cannot be null");
         this.value = supplier.get();
+        return this;
+    }
+
+    /**
+     * Value of the Bindings.
+     *
+     * @param supplier value supplier of the Binding. If supplier.get() throws a NullPointerException then the
+     *                 value will be null.
+     * @return this for fluency.
+     */
+    public <T> BindingBuilder nullSafeValue(Supplier<T> supplier) {
+        return nullSafeValue(supplier, null);
+    }
+
+    /**
+     * Value of the Bindings.
+     *
+     * @param supplier value supplier of the Binding. If supplier.get() throws a NullPointerException then the
+     *                 value will use the defaultValue.
+     * @param defaultValue value to use in case if the Supplier throws a NullPointerException.
+     * @return this for fluency.
+     */
+    public <T> BindingBuilder nullSafeValue(Supplier<T> supplier, T defaultValue) {
+        Assert.notNull(supplier, "supplier cannot be null");
+
+        try {
+            this.value = supplier.get();
+        } catch (NullPointerException e) {
+            this.value = defaultValue;
+        }
+        
+        return this;
+    }
+
+    /**
+     * Value of the Bindings.
+     *
+     * @param optionalValue optional value of the Binding. optionalValue.get() will be called immediately.
+     * @return this for fluency.
+     */
+    public <T> BindingBuilder value(Optional<T> optionalValue) {
+        Assert.notNull(optionalValue, "optionalValue cannot be null");
+        this.value = optionalValue.isPresent() ? optionalValue.get() : null;
         return this;
     }
 
