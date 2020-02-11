@@ -40,7 +40,7 @@ public class ConditionDefinition {
     // Condition class
     private final Class<?> conditionClass;
     // Description of the Condition
-    private final String description;
+    private String description;
     // given method
     private final MethodDefinition condition;
 
@@ -101,6 +101,10 @@ public class ConditionDefinition {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public MethodDefinition getMethodDefinition() {

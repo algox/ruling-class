@@ -24,6 +24,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -39,15 +41,19 @@ public final class MethodDefinition {
     private final Method method;
     private final MethodHandle methodHandle;
     private final ParameterDefinition[] parameterDefinitions;
+    private final Map<String, ParameterDefinition> paramNameMap = new HashMap<>();
 
     private MethodDefinition(Method method, MethodHandle methodHandle, ParameterDefinition...parameterDefinitions) {
         super();
         Assert.notNull(method, "method cannot be null");
         Assert.notNull(method, "methodHandle cannot be null");
-
         this.method = method;
         this.methodHandle = methodHandle;
         this.parameterDefinitions = parameterDefinitions;
+
+        if (parameterDefinitions == null || parameterDefinitions.length == 0) return;
+        // Create the param name map
+        Arrays.stream(parameterDefinitions).forEach(param -> paramNameMap.put(param.getName(), param));
     }
 
     /**
@@ -105,6 +111,26 @@ public final class MethodDefinition {
      */
     public ParameterDefinition[] getParameterDefinitions() {
         return parameterDefinitions;
+    }
+
+    /**
+     * Parameter Definition at the given index.
+     *
+     * @param index parameter index.
+     * @return Parameter Definition.
+     */
+    public ParameterDefinition getParameterDefinition(int index) {
+        return getParameterDefinitions()[index];
+    }
+
+    /**
+     * Parameter Definition with the given name.
+     *
+     * @param name parameter name.
+     * @return Parameter Definition.
+     */
+    public ParameterDefinition getParameterDefinition(String name) {
+        return paramNameMap.get(name);
     }
 
     /**

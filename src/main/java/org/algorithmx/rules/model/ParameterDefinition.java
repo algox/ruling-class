@@ -60,7 +60,7 @@ public final class ParameterDefinition {
     private final int index;
     private final String name;
     private final String description;
-    private final Type type;
+    private Type type;
     private final boolean required;
     private final Annotation[] annotations;
     private final SpecialParameter specialParameter;
@@ -186,6 +186,15 @@ public final class ParameterDefinition {
      */
     public Type getType() {
         return type;
+    }
+
+    /**
+     * Overrides the Type of the parameter.
+     *
+     * @param type desired type.
+     */
+    public void setType(Type type) {
+        this.type = type;
     }
 
     /**
