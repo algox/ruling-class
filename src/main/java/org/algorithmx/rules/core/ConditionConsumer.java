@@ -10,7 +10,7 @@ public interface ConditionConsumer extends Serializable {
      * When Condition interface taking no parameters.
      */
     @FunctionalInterface
-    interface Condition0 extends ConditionConsumer {
+    interface ConditionConsumer0 extends ConditionConsumer {
 
         /**
          * When condition.
@@ -24,7 +24,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <A> generic type of the first parameter.
      */
     @FunctionalInterface
-    interface Condition1<A> extends ConditionConsumer {
+    interface ConditionConsumer1<A> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -40,7 +40,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <B> generic type of the second parameter.
      */
     @FunctionalInterface
-    interface Condition2<A, B> extends ConditionConsumer {
+    interface ConditionConsumer2<A, B> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -58,7 +58,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <C> generic type of the third parameter.
      */
     @FunctionalInterface
-    interface Condition3<A, B, C> extends ConditionConsumer {
+    interface ConditionConsumer3<A, B, C> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -78,7 +78,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <D> generic type of the fourth parameter.
      */
     @FunctionalInterface
-    interface Condition4<A, B, C, D> extends ConditionConsumer {
+    interface ConditionConsumer4<A, B, C, D> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -100,7 +100,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <E> generic type of the fifth parameter.
      */
     @FunctionalInterface
-    interface Condition5<A, B, C, D, E> extends ConditionConsumer {
+    interface ConditionConsumer5<A, B, C, D, E> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -124,7 +124,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <F> generic type of the sixth parameter.
      */
     @FunctionalInterface
-    interface Condition6<A, B, C, D, E, F> extends ConditionConsumer {
+    interface ConditionConsumer6<A, B, C, D, E, F> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -150,7 +150,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <G> generic type of the seventh parameter.
      */
     @FunctionalInterface
-    interface Condition7<A, B, C, D, E, F, G> extends ConditionConsumer {
+    interface ConditionConsumer7<A, B, C, D, E, F, G> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -178,7 +178,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <H> generic type of the eighth parameter.
      */
     @FunctionalInterface
-    interface Condition8<A, B, C, D, E, F, G, H> extends ConditionConsumer {
+    interface ConditionConsumer8<A, B, C, D, E, F, G, H> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -208,7 +208,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <I> generic type of the ninth parameter.
      */
     @FunctionalInterface
-    interface Condition9<A, B, C, D, E, F, G, H, I> extends ConditionConsumer {
+    interface ConditionConsumer9<A, B, C, D, E, F, G, H, I> extends ConditionConsumer {
 
         /**
          * When condition.
@@ -240,7 +240,7 @@ public interface ConditionConsumer extends Serializable {
      * @param <J> generic type of the ninth parameter.
      */
     @FunctionalInterface
-    interface Condition10<A, B, C, D, E, F, G, H, I, J> extends ConditionConsumer {
+    interface ConditionConsumer10<A, B, C, D, E, F, G, H, I, J> extends ConditionConsumer {
 
         /**
          * When condition.

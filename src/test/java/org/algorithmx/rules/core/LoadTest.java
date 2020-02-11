@@ -119,7 +119,7 @@ public class LoadTest {
 
     @Test
     public void loadTest7() {
-        ConditionConsumer.Condition2<Integer, String> rule2 = (Integer i, String text) -> i > 100 && text != null;
+        ConditionConsumer.ConditionConsumer2<Integer, String> rule2 = (Integer i, String text) -> i > 100 && text != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
         RuleDefinition def = RuleDefinition.load(lambda, "TestRule2", "Some rule for testing");
 

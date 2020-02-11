@@ -47,6 +47,6 @@ public class RuleActionTest1 {
                 .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")))
                 .build();
 
-        RuleUtils.load((ConditionConsumer.Condition3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
+        RuleUtils.load((ConditionConsumer.ConditionConsumer3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
     }
 }

@@ -23,7 +23,7 @@ package org.algorithmx.rules.core;
  * @author Max Arulananthan
  * @since 1.0
  */
-
+@Deprecated
 public final class Actions {
 
     private Actions() {

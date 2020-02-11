@@ -42,10 +42,10 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     // Action class
     private final Class<?> actionClass;
-    // Description of the Action
-    private final String description;
     // then method
     private final MethodDefinition action;
+    // Description of the Action
+    private String description;
 
     private ActionDefinition(Class<?> actionClass, String description, MethodDefinition action) {
         super();
@@ -140,6 +140,10 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public MethodDefinition getMethodDefinition() {

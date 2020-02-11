@@ -39,10 +39,10 @@ public class ConditionDefinition {
 
     // Condition class
     private final Class<?> conditionClass;
-    // Description of the Condition
-    private String description;
     // given method
     private final MethodDefinition condition;
+    // Description of the Condition
+    private String description;
 
     private ConditionDefinition(Class<?> conditionClass, String description, MethodDefinition condition) {
         super();

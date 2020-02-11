@@ -40,9 +40,9 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test1() {
-        ConditionConsumer.Condition1<Integer> rule1 = (Integer x) -> x > 10;
+        ConditionConsumer.ConditionConsumer1<Integer> rule1 = (Integer x) -> x > 10;
 
-        ConditionConsumer.Condition1<Integer> rule2 = new ConditionConsumer.Condition1<Integer>() {
+        ConditionConsumer.ConditionConsumer1<Integer> rule2 = new ConditionConsumer.ConditionConsumer1<Integer>() {
             static final long serialVersionUID = 0L;
 
             @Override
@@ -65,7 +65,7 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test2() {
-        ConditionConsumer.Condition3<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
+        ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule3);
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
@@ -82,7 +82,7 @@ public final class LambdaUtilsTest {
     @Test
     public void test3() throws NoSuchMethodException {
 
-        ConditionConsumer.Condition3<Integer, String, BigDecimal> rule3 = new ConditionConsumer.Condition3<Integer, String, BigDecimal>() {
+        ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal> rule3 = new ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal>() {
             static final long serialVersionUID = 0L;
             @Override
             public boolean when(Integer xxx, String value, BigDecimal salary) {

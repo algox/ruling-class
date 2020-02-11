@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.build.BindingBuilder;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
 import org.junit.Assert;

@@ -15,8 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind;
+package org.algorithmx.rules.build;
 
+import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.impl.DefaultBinding;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -94,6 +96,7 @@ public class BindingBuilder {
      * Value of the Bindings.
      *
      * @param supplier value supplier of the Binding. supplier.get() will be called immediately.
+     * @param <T> generic type of the supplier.
      * @return this for fluency.
      */
     public <T> BindingBuilder value(Supplier<T> supplier) {
@@ -107,6 +110,7 @@ public class BindingBuilder {
      *
      * @param supplier value supplier of the Binding. If supplier.get() throws a NullPointerException then the
      *                 value will be null.
+     * @param <T> generic type of the supplier.
      * @return this for fluency.
      */
     public <T> BindingBuilder nullSafeValue(Supplier<T> supplier) {
@@ -119,6 +123,7 @@ public class BindingBuilder {
      * @param supplier value supplier of the Binding. If supplier.get() throws a NullPointerException then the
      *                 value will use the defaultValue.
      * @param defaultValue value to use in case if the Supplier throws a NullPointerException.
+     * @param <T> generic type of the supplier.
      * @return this for fluency.
      */
     public <T> BindingBuilder nullSafeValue(Supplier<T> supplier, T defaultValue) {
@@ -137,6 +142,7 @@ public class BindingBuilder {
      * Value of the Bindings.
      *
      * @param optionalValue optional value of the Binding. optionalValue.get() will be called immediately.
+     * @param <T> generic type of the Optional value.
      * @return this for fluency.
      */
     public <T> BindingBuilder value(Optional<T> optionalValue) {

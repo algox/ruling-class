@@ -23,6 +23,7 @@ package org.algorithmx.rules.core;
  * @author Max Arulananthan
  * @since 1.0
  */
+@Deprecated
 public final class Conditions {
 
     private Conditions() {
@@ -35,7 +36,7 @@ public final class Conditions {
      * @param condition desired condition.
      * @return new Condition with no arguments.
      */
-    public static ConditionConsumer.Condition0 cond0(ConditionConsumer.Condition0 condition) {
+    public static ConditionConsumer.ConditionConsumer0 cond0(ConditionConsumer.ConditionConsumer0 condition) {
         return condition;
     }
 
@@ -46,7 +47,7 @@ public final class Conditions {
      * @param <A> generic type of the first parameter.
      * @return new Condition with one arguments.
      */
-    public static <A> ConditionConsumer.Condition1<A> cond1(ConditionConsumer.Condition1<A> condition) {
+    public static <A> ConditionConsumer.ConditionConsumer1<A> cond1(ConditionConsumer.ConditionConsumer1<A> condition) {
         return condition;
     }
 
@@ -58,7 +59,7 @@ public final class Conditions {
      * @param <B> generic type of the second parameter.
      * @return new Condition with two arguments.
      */
-    public static <A, B> ConditionConsumer.Condition2<A, B> cond2(ConditionConsumer.Condition2<A, B> condition) {
+    public static <A, B> ConditionConsumer.ConditionConsumer2<A, B> cond2(ConditionConsumer.ConditionConsumer2<A, B> condition) {
         return condition;
     }
 
@@ -71,7 +72,7 @@ public final class Conditions {
      * @param <C> generic type of the third parameter.
      * @return new Condition with three arguments.
      */
-    public static <A, B, C> ConditionConsumer.Condition3<A, B, C> cond3(ConditionConsumer.Condition3<A, B, C> condition) {
+    public static <A, B, C> ConditionConsumer.ConditionConsumer3<A, B, C> cond3(ConditionConsumer.ConditionConsumer3<A, B, C> condition) {
         return condition;
     }
 
@@ -85,7 +86,7 @@ public final class Conditions {
      * @param <D> generic type of the fourth parameter.
      * @return new Condition with four arguments.
      */
-    public static <A, B, C, D> ConditionConsumer.Condition4<A, B, C, D> cond4(ConditionConsumer.Condition4<A, B, C, D> condition) {
+    public static <A, B, C, D> ConditionConsumer.ConditionConsumer4<A, B, C, D> cond4(ConditionConsumer.ConditionConsumer4<A, B, C, D> condition) {
         return condition;
     }
 
@@ -100,8 +101,8 @@ public final class Conditions {
      * @param <E> generic type of the fifth parameter.
      * @return new Condition with five arguments.
      */
-    public static <A, B, C, D, E> ConditionConsumer.Condition5<A, B, C, D, E> cond5(
-            ConditionConsumer.Condition5<A, B, C, D, E> condition) {
+    public static <A, B, C, D, E> ConditionConsumer.ConditionConsumer5<A, B, C, D, E> cond5(
+            ConditionConsumer.ConditionConsumer5<A, B, C, D, E> condition) {
         return condition;
     }
 
@@ -117,8 +118,8 @@ public final class Conditions {
      * @param <F> generic type of the sixth parameter.
      * @return new Condition with six arguments.
      */
-    public static <A, B, C, D, E, F> ConditionConsumer.Condition6<A, B, C, D, E, F> cond6(
-            ConditionConsumer.Condition6<A, B, C, D, E, F> condition) {
+    public static <A, B, C, D, E, F> ConditionConsumer.ConditionConsumer6<A, B, C, D, E, F> cond6(
+            ConditionConsumer.ConditionConsumer6<A, B, C, D, E, F> condition) {
         return condition;
     }
 
@@ -135,8 +136,8 @@ public final class Conditions {
      * @param <G> generic type of the seventh parameter.
      * @return new Condition with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> ConditionConsumer.Condition7<A, B, C, D, E, F, G> cond7(
-            ConditionConsumer.Condition7<A, B, C, D, E, F, G> condition) {
+    public static <A, B, C, D, E, F, G> ConditionConsumer.ConditionConsumer7<A, B, C, D, E, F, G> cond7(
+            ConditionConsumer.ConditionConsumer7<A, B, C, D, E, F, G> condition) {
         return condition;
     }
 
@@ -154,8 +155,8 @@ public final class Conditions {
      * @param <H> generic type of the eighth parameter.
      * @return new Condition with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> ConditionConsumer.Condition8<A, B, C, D, E, F, G, H> cond8(
-            ConditionConsumer.Condition8<A, B, C, D, E, F, G, H> condition) {
+    public static <A, B, C, D, E, F, G, H> ConditionConsumer.ConditionConsumer8<A, B, C, D, E, F, G, H> cond8(
+            ConditionConsumer.ConditionConsumer8<A, B, C, D, E, F, G, H> condition) {
         return condition;
     }
 
@@ -174,8 +175,8 @@ public final class Conditions {
      * @param <I> generic type of the ninth parameter.
      * @return new Condition with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> ConditionConsumer.Condition9<A, B, C, D, E, F, G, H, I> cond9(
-            ConditionConsumer.Condition9<A, B, C, D, E, F, G, H, I> condition) {
+    public static <A, B, C, D, E, F, G, H, I> ConditionConsumer.ConditionConsumer9<A, B, C, D, E, F, G, H, I> cond9(
+            ConditionConsumer.ConditionConsumer9<A, B, C, D, E, F, G, H, I> condition) {
         return condition;
     }
 
@@ -195,8 +196,8 @@ public final class Conditions {
      * @param <J> generic type of the ninth parameter.
      * @return new Condition with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> ConditionConsumer.Condition10<A, B, C, D, E, F, G, H, I, J> cond10(
-            ConditionConsumer.Condition10<A, B, C, D, E, F, G, H, I, J> condition) {
+    public static <A, B, C, D, E, F, G, H, I, J> ConditionConsumer.ConditionConsumer10<A, B, C, D, E, F, G, H, I, J> cond10(
+            ConditionConsumer.ConditionConsumer10<A, B, C, D, E, F, G, H, I, J> condition) {
         return condition;
     }
 }

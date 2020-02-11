@@ -50,7 +50,7 @@ public class ReflectionUtilsTest {
 
     @Test
     public void parameterNamesTest2() throws NoSuchMethodException {
-        ConditionConsumer.Condition3<Integer, String, List<Float>> lambda = (Integer a, String b, List<Float> c) -> a > 100;
+        ConditionConsumer.ConditionConsumer3<Integer, String, List<Float>> lambda = (Integer a, String b, List<Float> c) -> a > 100;
         SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(lambda);
         Assert.assertTrue(serializedLambda != null);
         Class<?> c = LambdaUtils.getImplementationClass(serializedLambda);
