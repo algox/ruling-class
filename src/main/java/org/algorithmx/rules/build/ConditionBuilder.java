@@ -35,12 +35,14 @@ import java.lang.reflect.Type;
  */
 public final class ConditionBuilder {
 
+    private final ConditionConsumer conditionConsumer;
     private final ConditionDefinition definition;
 
-    private ConditionBuilder(ConditionConsumer condition) {
+    private ConditionBuilder(ConditionConsumer conditionConsumer) {
         super();
-        Assert.notNull(condition, "condition cannot be null");
-        this.definition = ConditionUtils.load(condition, null);
+        Assert.notNull(conditionConsumer, "conditionConsumer cannot be null");
+        this.conditionConsumer = conditionConsumer;
+        this.definition = ConditionUtils.load(conditionConsumer, null);
     }
 
     /**
@@ -283,5 +285,13 @@ public final class ConditionBuilder {
      */
     public Condition build() {
         return ConditionUtils.create(definition, null);
+    }
+
+    public ConditionConsumer getConditionConsumer() {
+        return conditionConsumer;
+    }
+
+    public ConditionDefinition getDefinition() {
+        return definition;
     }
 }

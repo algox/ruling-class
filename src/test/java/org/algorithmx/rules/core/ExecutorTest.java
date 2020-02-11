@@ -21,6 +21,7 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.build.ConditionBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -75,10 +76,10 @@ public class ExecutorTest {
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
 
-        ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal> rule3 = (Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null;
-        SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(rule3);
+        ConditionBuilder builder = ConditionBuilder.with3Args((Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null);
+        SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(builder.getConditionConsumer());
         RuleDefinition definition2 = RuleDefinition.load(lambda1, "Rule3", " Test Rule 3");
-        boolean result = executor.execute(rule3, definition2.getConditionDefinition().getMethodDefinition(),
+        boolean result = executor.execute(builder.build(), definition2.getConditionDefinition().getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition2.getConditionDefinition().getMethodDefinition(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(!result);
