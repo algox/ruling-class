@@ -40,24 +40,22 @@ public final class RuleDefinition {
 
     // Rule class
     private final Class<?> rulingClass;
-    // Name of the Rule
-    private final String name;
-    // Description of the Rule
-    private final String description;
     // when method
     //private final MethodDefinition conditionDefinition;
     private final ConditionDefinition conditionDefinition;
 
+    // Name of the Rule
+    private String name;
+    // Description of the Rule
+    private String description;
+
     public RuleDefinition(Class<?> rulingClass, String name, String description, ConditionDefinition conditionDefinition) {
         super();
         Assert.notNull(rulingClass, "Rule class cannot be null.");
-        Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "Rule name must match ["
-                + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
         this.rulingClass = rulingClass;
-        this.name = name;
         this.description = description;
         this.conditionDefinition = conditionDefinition;
+        setName(name);
     }
 
     /**
@@ -120,6 +118,17 @@ public final class RuleDefinition {
      */
     public String getDescription() {
         return description;
+    }
+
+    public void setName(String name) {
+        Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "Rule name must match ["
+                + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
