@@ -18,14 +18,29 @@
 package org.algorithmx.rules.build;
 
 import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.ObjectFactory;
 
-public final class RuleBuilder {
+public class RuleBuilder {
+
+    private static ObjectFactory objectFactory = ObjectFactory.create();
 
     public static ClassBasedRuleBuilder withClass(Class<?> ruleClass) {
-        return ClassBasedRuleBuilder.withClass(ruleClass);
+        return new ClassBasedRuleBuilder(ruleClass, getObjectFactory());
+    }
+
+    public static ClassBasedRuleBuilder withClassAndFactory(Class<?> ruleClass, ObjectFactory objectFactory) {
+        return new ClassBasedRuleBuilder(ruleClass, objectFactory);
     }
 
     public static LambdaBasedRuleBuilder withCondition(Condition condition) {
-        return LambdaBasedRuleBuilder.withCondition(condition);
+        return new LambdaBasedRuleBuilder(condition);
+    }
+
+    public static ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
+
+    public static void setObjectFactory(ObjectFactory objectFactory) {
+        RuleBuilder.objectFactory = objectFactory;
     }
 }

@@ -33,14 +33,10 @@ public class LambdaBasedRuleBuilder {
     private List<Action> thenActions = new ArrayList<>();
     private Action otherwiseAction;
 
-    private LambdaBasedRuleBuilder(Condition condition) {
+    public LambdaBasedRuleBuilder(Condition condition) {
         super();
         Assert.notNull(condition, "condition cannot be null.");
         this.condition = condition;
-    }
-
-    public static LambdaBasedRuleBuilder withCondition(Condition condition) {
-        return new LambdaBasedRuleBuilder(condition);
     }
 
     /**
@@ -49,7 +45,7 @@ public class LambdaBasedRuleBuilder {
      * @param name name of the Rule.
      * @return LambdaBasedRuleBuilder for fluency.
      */
-    public LambdaBasedRuleBuilder name(String name) {
+        public LambdaBasedRuleBuilder name(String name) {
         this.name = name;
         return this;
     }

@@ -44,6 +44,15 @@ public interface Rule extends Predicate<Object[]> {
     String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
 
     /**
+     * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
+     * if the result is false then the Otherwise condition will be executed (if one exists).
+     *
+     * @param ctx used to derive the parameters required for this Rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    void run(RuleContext ctx) throws UnrulyException;
+
+    /**
      * Executes thr Rule Condition given all the arguments it needs.
      *
      * @param params Rule Condition parameters in necessary order.

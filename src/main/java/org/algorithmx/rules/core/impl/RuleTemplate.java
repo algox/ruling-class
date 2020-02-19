@@ -21,6 +21,7 @@ import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.ActionConsumer;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.util.ActionUtils;
@@ -41,6 +42,63 @@ public abstract class RuleTemplate implements Rule, Identifiable {
 
     protected RuleTemplate() {
         super();
+    }
+
+    public void run(RuleContext ctx) throws UnrulyException {
+
+        // Check to make sure we are still running
+        if (!ctx.getState().isRunning()) {
+            throw new UnrulyException("Cannot run Rule [" + getName() + "] Invalid RuleContext state [" + ctx.getState() + "]");
+        }
+
+        // Check to see if we need to stop the execution
+        if (ctx.getStopWhen() != null && ctx.getStopWhen().isPass(ctx)) {
+            ctx.stop();
+            return;
+        }
+
+        boolean result;
+
+        try {
+            // Execute the Rule
+            result = getCondition().isPass(ctx);
+        } catch (UnrulyException e) {
+            throw e;
+        } catch (Exception e) {
+            UnrulyException ex = new UnrulyException("Error trying to execute rule condition [" + getName() + "]", e);
+            throw ex;
+        }
+
+        // The Condition passed
+        if (result) {
+            // Execute any associated Actions.
+            for (Action action : getActions()) {
+                runAction(ctx, action);
+            }
+        } else if (getOtherwiseAction() != null) {
+            // Condition failed
+            runAction(ctx, getOtherwiseAction());
+        }
+    }
+
+    /**
+     * Executes the Action associated with the Condition.
+     *
+     * @param ctx Rule Context.
+     * @param action desired action to execute.
+     */
+    protected void runAction(RuleContext ctx, Action action) {
+
+        try {
+            // Execute the Action
+            action.execute(ctx);
+        } catch (UnrulyException e) {
+            throw e;
+        } catch (Exception e) {
+            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
+                    + action.getActionDefinition().getActionName() + "]", e);
+            throw ex;
+        }
     }
 
     @Override

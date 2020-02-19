@@ -79,6 +79,15 @@ public class RulingClass extends RuleTemplate {
         }
     }
 
+    /**
+     * Rule defined with all the given properties.
+     *
+     * @param ruleDefinition meta information.
+     * @param target target Rule class.
+     * @param condition given condition.
+     * @param thenActions all the Then actions.
+     * @param otherwiseAction the Otherwise action (optional);
+     */
     public RulingClass(RuleDefinition ruleDefinition, Object target, Condition condition, List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");

@@ -17,27 +17,32 @@
  */
 package org.algorithmx.rules.build;
 
+import org.algorithmx.rules.core.Action;
+import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.ObjectFactory;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.impl.RulingClass;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.ActionUtils;
+import org.algorithmx.rules.util.ConditionUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ClassBasedRuleBuilder {
 
     private final Class<?> ruleClass;
     private final RuleDefinition definition;
-    private ObjectFactory objectFactory = ObjectFactory.create();
+    private ObjectFactory objectFactory;
 
-    private ClassBasedRuleBuilder(Class<?> ruleClass) {
+    public ClassBasedRuleBuilder(Class<?> ruleClass, ObjectFactory objectFactory) {
         super();
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         this.ruleClass = ruleClass;
+        this.objectFactory = objectFactory;
         this.definition = RuleDefinition.load(ruleClass);
-    }
-
-    public static ClassBasedRuleBuilder withClass(Class<?> ruleClass) {
-        return new ClassBasedRuleBuilder(ruleClass);
     }
 
     public Class<?> getRuleClass() {
@@ -65,6 +70,16 @@ public class ClassBasedRuleBuilder {
     }
 
     public Rule build() {
-        return new RulingClass(definition, objectFactory.create(definition.getRuleClass()));
+        Object target = objectFactory.create(definition.getRuleClass());
+        Condition condition = ConditionUtils.create(definition.getConditionDefinition(), target);
+        List<Action> thenActions = new ArrayList<>(definition.getThenActionDefinitions().length);
+        Action elseAction = definition.getElseActionDefinition() != null
+                ? ActionUtils.create(definition.getElseActionDefinition(), target)
+                : null;
+
+        Arrays.stream(definition.getThenActionDefinitions())
+                .forEach(actionDefinition -> thenActions.add(ActionUtils.create(actionDefinition, target)));
+
+        return new RulingClass(definition, target, condition, thenActions, elseAction);
     }
 }
