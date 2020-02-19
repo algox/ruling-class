@@ -132,15 +132,10 @@ public abstract class RuleTemplate implements Rule, Identifiable {
             Arrays.stream(thenActions).forEach(action -> then(ActionUtils.create(action, this.getTarget())));
         }
 
-        ActionDefinition[] elseActions = ActionDefinition.loadElseActions(actionClass);
+        ActionDefinition elseAction = ActionDefinition.loadElseActions(actionClass);
 
-        if (elseActions != null && elseActions.length > 1) {
-            StringBuilder names = new StringBuilder();
-            Arrays.stream(elseActions).forEach(action -> names.append(action.getActionName() + " "));
-            throw new UnrulyException("Multiple otherwise conditions found on Rule [" + getName()
-                    + "]. A Rule can only have one otherwise action. Found [" + names + "]");
-        } else if (elseActions != null && elseActions.length == 1) {
-            otherwise(ActionUtils.create(elseActions[0], this.getTarget()));
+        if (elseAction != null) {
+            otherwise(ActionUtils.create(elseAction, this.getTarget()));
         }
     }
 }

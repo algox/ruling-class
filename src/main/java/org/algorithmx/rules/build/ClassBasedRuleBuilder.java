@@ -65,6 +65,6 @@ public class ClassBasedRuleBuilder {
     }
 
     public Rule build() {
-        return new RulingClass(definition, objectFactory.create(definition.getRulingClass()));
+        return new RulingClass(definition, objectFactory.create(definition.getRuleClass()));
     }
 }

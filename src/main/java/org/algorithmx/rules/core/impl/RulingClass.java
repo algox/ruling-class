@@ -50,7 +50,7 @@ public class RulingClass extends RuleTemplate {
         this.ruleDefinition = ruleDefinition;
         this.target = target;
         this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
-        loadActions(ruleDefinition.getRulingClass());
+        loadActions(ruleDefinition.getRuleClass());
     }
 
     /**
@@ -67,6 +67,24 @@ public class RulingClass extends RuleTemplate {
         this.ruleDefinition = ruleDefinition;
         this.target = target;
         this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
+
+        // Then actions (optional)
+        if (thenActions != null) {
+            thenActions.stream().forEach(action -> then(action));
+        }
+
+        // Otherwise action (Optional)
+        if (otherwiseAction != null) {
+            otherwise(otherwiseAction);
+        }
+    }
+
+    public RulingClass(RuleDefinition ruleDefinition, Object target, Condition condition, List<Action> thenActions, Action otherwiseAction) {
+        super();
+        Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
+        this.ruleDefinition = ruleDefinition;
+        this.target = target;
+        this.condition = condition;
 
         // Then actions (optional)
         if (thenActions != null) {

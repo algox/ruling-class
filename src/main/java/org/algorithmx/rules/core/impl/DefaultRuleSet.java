@@ -90,7 +90,7 @@ public class DefaultRuleSet implements RuleSet {
         Rule result = null;
 
         for (Rule rule : rules) {
-            if (ruleClass.equals(rule.getRuleDefinition().getRulingClass())) {
+            if (ruleClass.equals(rule.getRuleDefinition().getRuleClass())) {
                 result = rule;
                 break;
             }
@@ -109,7 +109,7 @@ public class DefaultRuleSet implements RuleSet {
         if (name != null) {
             if (ruleIndex.containsKey(name)) {
                 throw new UnrulyException("Rule with name [" + name + "] already exists in RuleSet [" + getName()
-                        + "]. Existing Rule [" + ruleIndex.get(name).getRuleDefinition().getRulingClass().getName() + "]");
+                        + "]. Existing Rule [" + ruleIndex.get(name).getRuleDefinition().getRuleClass().getName() + "]");
             }
 
             ruleIndex.put(name, rule);

@@ -20,6 +20,7 @@ package org.algorithmx.rules.model;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Then;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 
@@ -27,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 /**
  * Indicates the annotated (@Action) method is an Action and is eligible to be execute based on the result
@@ -57,25 +59,41 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     }
 
     /**
-     * Loads all the ActionConsumer actions in the given class. A method is considered an Action if takes arbitrary number
+     * Loads all the @Then actions in the given class. A method is considered an Action if takes arbitrary number
      * of arguments and returns nothing (ie: void) and the method is annotated with @ActionConsumer.
      *
      * @param c desired class
      * @return all the associated actions
      */
     public static ActionDefinition[] loadThenActions(Class<?> c) {
-        return load(c, Then.class);
+        ActionDefinition[] result = load(c, Then.class);
+
+        if (result != null) {
+            // Sort the Action so that we have a predictable order to the execution of the Actions.
+            Arrays.sort(result);
+        }
+
+        return result;
     }
 
     /**
-     * Loads all the ActionConsumer actions in the given class. A method is considered an Action if takes arbitrary number
+     * Loads the @Otherwise action in the given class. A method is considered an Action if takes arbitrary number
      * of arguments and returns nothing (ie: void) and the method is annotated with @Otherwise.
      *
      * @param c desired class
-     * @return all the associated actions
+     * @return else action.
      */
-    public static ActionDefinition[] loadElseActions(Class<?> c) {
-        return load(c, Otherwise.class);
+    public static ActionDefinition loadElseActions(Class<?> c) {
+        ActionDefinition[] elseActions = load(c, Otherwise.class);
+
+        if (elseActions != null && elseActions.length > 1) {
+            StringBuilder names = new StringBuilder();
+            Arrays.stream(elseActions).forEach(action -> names.append(action.getActionName() + " "));
+            throw new UnrulyException("Multiple otherwise conditions found on Rule [" + c.getName()
+                    + "]. A Rule can only have one otherwise action. Found [" + names + "]");
+        }
+
+        return elseActions != null && elseActions.length == 1 ? elseActions[0] : null;
     }
 
     /**

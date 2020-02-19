@@ -25,6 +25,7 @@ import org.algorithmx.rules.util.RuleUtils;
 
 import java.lang.invoke.SerializedLambda;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Indicates the class with this annotation is Rule and it will follow the "rules" of a being a Rule.
@@ -38,23 +39,49 @@ import java.util.Objects;
  */
 public final class RuleDefinition {
 
+    private static final Pattern NAME_PATTERN   = Pattern.compile(org.algorithmx.rules.core.Rule.NAME_REGEX);
+
     // Rule class
-    private final Class<?> rulingClass;
-    // when method
-    //private final MethodDefinition conditionDefinition;
+    private final Class<?> ruleClass;
+    // Given method details
     private final ConditionDefinition conditionDefinition;
+    // Associated Then actions
+    private ActionDefinition[] thenActionDefinitions;
+    // Else action
+    private ActionDefinition elseActionDefinition;
 
     // Name of the Rule
     private String name;
     // Description of the Rule
     private String description;
 
-    public RuleDefinition(Class<?> rulingClass, String name, String description, ConditionDefinition conditionDefinition) {
+    /**
+     * Creates a RuleDefinition taking in all the required parameters.
+     *
+     * @param ruleClass Rule implementation class.
+     * @param name Rule name.
+     * @param description Rule description.
+     * @param conditionDefinition Given condition meta information.
+     * @param thenActionDefinitions Then Action(s) meta information.
+     * @param elseActionDefinition Otherwise Action meta information.
+     */
+    public RuleDefinition(Class<?> ruleClass, String name, String description,
+                          ConditionDefinition conditionDefinition,
+                          ActionDefinition[] thenActionDefinitions,
+                          ActionDefinition elseActionDefinition) {
         super();
-        Assert.notNull(rulingClass, "Rule class cannot be null.");
-        this.rulingClass = rulingClass;
+        Assert.notNull(ruleClass, "Rule class cannot be null.");
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN + "]");
+        Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
+        // TODO : Put back after fix
+        //Assert.notNull(thenActionDefinitions, "thenActionDefinitions cannot be null.");
+        //Assert.isTrue(thenActionDefinitions.length > 0, "there must be at least one Then action associated to the Rule.");
+        this.ruleClass = ruleClass;
         this.description = description;
         this.conditionDefinition = conditionDefinition;
+        this.thenActionDefinitions = thenActionDefinitions;
+        this.elseActionDefinition = elseActionDefinition;
         setName(name);
     }
 
@@ -75,7 +102,7 @@ public final class RuleDefinition {
         Description descriptionAnnotation = c.getAnnotation(Description.class);
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
-                : null, ConditionDefinition.load(c));
+                : null, ConditionDefinition.load(c), ActionDefinition.loadThenActions(c), ActionDefinition.loadElseActions(c));
     }
 
     /**
@@ -87,10 +114,11 @@ public final class RuleDefinition {
      * @param ruleDescription description of the rule.
      * @return RuleDefinition of the supplied Lambda.
      */
+    @Deprecated
     public static RuleDefinition load(SerializedLambda lambda, String ruleName, String ruleDescription) {
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         return new RuleDefinition(implementationClass, ruleName, ruleDescription,
-                ConditionDefinition.load(lambda, null));
+                ConditionDefinition.load(lambda, null), null, null);
     }
 
     /**
@@ -98,8 +126,8 @@ public final class RuleDefinition {
      *
      * @return Rule class.
      */
-    public Class<?> getRulingClass() {
-        return rulingClass;
+    public Class<?> getRuleClass() {
+        return ruleClass;
     }
 
     /**
@@ -141,6 +169,24 @@ public final class RuleDefinition {
     }
 
     /**
+     * Then Action details.
+     *
+     * @return meta information about the associated actions.
+     */
+    public ActionDefinition[] getThenActionDefinitions() {
+        return thenActionDefinitions;
+    }
+
+    /**
+     * Otherwise Action details.
+     *
+     * @return meta information about the otherwise action.
+     */
+    public ActionDefinition getElseActionDefinition() {
+        return elseActionDefinition;
+    }
+
+    /**
      * Determines if the conditionDefinition is a statically implemented method call (such as a lambda).
      *
      * @return true if statically implemented; false otherwise.
@@ -154,18 +200,18 @@ public final class RuleDefinition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RuleDefinition that = (RuleDefinition) o;
-        return rulingClass.equals(that.rulingClass);
+        return ruleClass.equals(that.ruleClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rulingClass);
+        return Objects.hash(ruleClass);
     }
 
     @Override
     public String toString() {
         return "RuleDefinition{" +
-                "rulingClass=" + rulingClass +
+                "ruleClass=" + ruleClass +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", conditionDefinition=" + conditionDefinition +

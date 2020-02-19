@@ -40,6 +40,9 @@ import java.util.function.Predicate;
  */
 public interface Rule extends Predicate<Object[]> {
 
+    // Rule Name Pattern.
+    String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
+
     /**
      * Executes thr Rule Condition given all the arguments it needs.
      *
