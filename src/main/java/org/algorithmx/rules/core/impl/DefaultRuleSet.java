@@ -124,7 +124,7 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public RuleSet add(Class<?> ruleClass) {
-        add(RuleBuilder.withClass(ruleClass).build());
+        add(RuleBuilder.with(ruleClass).build());
         return this;
     }
 

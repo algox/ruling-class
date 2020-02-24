@@ -118,7 +118,7 @@ public class LoadTest {
     @Test
     public void loadTest7() {
         Rule rule = RuleBuilder
-                .withCondition(ConditionBuilder.with2Args((Integer i, String text) -> i > 100 && text != null).build())
+                .with(ConditionBuilder.with2Args((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction())
@@ -141,12 +141,12 @@ public class LoadTest {
     @Test
     public void loadTest8() {
         Rule rule1 = RuleBuilder
-                .withCondition(ConditionBuilder.with3Args((Integer a, Date date, String x) -> a != null).build())
+                .with(ConditionBuilder.with3Args((Integer a, Date date, String x) -> a != null).build())
                 .name("rule1")
                 .build();
 
         Rule rule2 = RuleBuilder
-                .withCondition(ConditionBuilder.with4Args((Integer a, Date date, String x, String y) -> a != null).build())
+                .with(ConditionBuilder.with4Args((Integer a, Date date, String x, String y) -> a != null).build())
                 .then(ActionBuilder.with2Args((Integer y, String z) -> {}).build())
                 .then(ActionBuilder.with3Args((Integer y, String z, Date date) -> {}).build())
                 .name("rule2")

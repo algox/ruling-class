@@ -54,7 +54,7 @@ public class BindingBuilder {
      * @param name Binding name.
      * @return new Binding Builder.
      */
-    public static BindingBuilder name(String name) {
+    public static BindingBuilder with(String name) {
         return new BindingBuilder(name);
     }
 
@@ -167,7 +167,7 @@ public class BindingBuilder {
      * @param <T> desired Type.
      * @return new Binding.
      */
-    public <T> Binding<T> create() {
+    public <T> Binding<T> build() {
         return new DefaultBinding(name, typeRef.getType(), value, mutable);
     }
 }

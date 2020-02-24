@@ -38,14 +38,13 @@ public class RuleActionTest1 {
         bindings.bind("z", Integer.class, 200);
 
         Rule ruleWithAction = RuleBuilder
-                .withCondition(ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())
+                .with(ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())
                 .then(ActionBuilder.with1Arg((Integer z) -> System.err.println("YASS! [" + z + "]")).build())
                 .then(ActionBuilder.with1Arg((String x) -> System.err.println("MAN! [" + x + "]")).build())
                 .build();
 
         Rule rule2 = RuleBuilder
-                .withCondition(
-                        ConditionBuilder.with3Args((Integer a, String b, Integer c) -> a > 10).build())
+                .with(ConditionBuilder.with3Args((Integer a, String b, Integer c) -> a > 10).build())
                 .name("testrule")
                 .description("description")
                 .build();

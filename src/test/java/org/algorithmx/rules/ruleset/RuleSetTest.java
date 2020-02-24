@@ -18,29 +18,17 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.RuleEngine;
-import org.algorithmx.rules.core.RuleFactory;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
 public class RuleSetTest {
 
-    private RuleFactory ruleFactory;
-    private RuleEngine ruleEngine;
-
     public RuleSetTest() {
         super();
     }
 
-    @Before
-    public void init() {
-        this.ruleFactory = RuleFactory.defaultFactory();
-        this.ruleEngine = RuleEngine.defaultRuleEngine();
-    }
-
-    //@Test
+    @Test
     public void test1() {
         Bindings bindings = Bindings.defaultBindings()
                 .bind("y", String.class, "")
@@ -48,7 +36,6 @@ public class RuleSetTest {
                 .bind("b", String.class, "hello")
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
-        RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
         /*Rule rule6 = ruleFactory.rule()
                 .given(cond0(() -> true))

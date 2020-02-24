@@ -35,22 +35,22 @@ public abstract class RuleBuilder {
     private String name;
     private String description;
     private Condition condition;
-    private final List<Action> thenActions = new ArrayList<>();
     private Action otherwiseAction;
     private Object target;
+    private final List<Action> thenActions = new ArrayList<>();
     private ObjectFactory objectFactory = ObjectFactory.create();
 
-    public static ClassBasedRuleBuilder withClass(Class<?> ruleClass) {
+    public static ClassBasedRuleBuilder with(Class<?> ruleClass) {
         return new ClassBasedRuleBuilder(ruleClass);
     }
 
-    public static ClassBasedRuleBuilder withClassAndFactory(Class<?> ruleClass, ObjectFactory objectFactory) {
+    public static ClassBasedRuleBuilder with(Class<?> ruleClass, ObjectFactory objectFactory) {
         ClassBasedRuleBuilder result = new ClassBasedRuleBuilder(ruleClass);
         result.objectFactory(objectFactory);
         return result;
     }
 
-    public static LambdaBasedRuleBuilder withCondition(Condition condition) {
+    public static LambdaBasedRuleBuilder with(Condition condition) {
         return new LambdaBasedRuleBuilder(condition);
     }
 

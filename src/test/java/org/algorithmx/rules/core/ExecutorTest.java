@@ -76,7 +76,7 @@ public class ExecutorTest {
 
         ConditionBuilder builder = ConditionBuilder.with3Args((Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null);
 
-        Rule rule = RuleBuilder.withCondition(
+        Rule rule = RuleBuilder.with(
                 builder.build())
                 .name("Rule3")
                 .description("Test Rule 3")
@@ -98,7 +98,7 @@ public class ExecutorTest {
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
-        Rule rule = RuleBuilder.withCondition(
+        Rule rule = RuleBuilder.with(
                 ConditionBuilder.with2Args((Integer x, String y) -> x > 10 && y != null).build())
                 .name("Rule2")
                 .description("Test Rule 2")
@@ -165,7 +165,7 @@ public class ExecutorTest {
         // TODO : Fix generic mapping with lambdas
         List<Integer> values = new ArrayList<>();
 
-        Rule rule = RuleBuilder.withCondition(
+        Rule rule = RuleBuilder.with(
                 ConditionBuilder.with3Args((String x, Integer y, List<String> a) -> y > 10).build())
                 .name("rule1")
                 .build();
@@ -176,7 +176,7 @@ public class ExecutorTest {
 
     @Test
     public void test7() {
-        Rule rule = RuleBuilder.withCondition(
+        Rule rule = RuleBuilder.with(
                 ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())
                 .name("rule1")
                 .build();

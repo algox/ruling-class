@@ -18,10 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.build.BindingBuilder;
-import org.algorithmx.rules.core.RuleEngine;
-import org.algorithmx.rules.core.RuleFactory;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -37,17 +34,8 @@ import java.util.Set;
  */
 public class BindTest {
 
-    private RuleFactory ruleFactory;
-    private RuleEngine ruleEngine;
-
     public BindTest() {
         super();
-    }
-
-    @Before
-    public void init() {
-        this.ruleFactory = RuleFactory.defaultFactory();
-        this.ruleEngine = RuleEngine.defaultRuleEngine();
     }
 
     @Test
@@ -193,7 +181,7 @@ public class BindTest {
 
     @Test
     public void testBindingBuilder() {
-        Binding binding = BindingBuilder.name("a").type(Integer.class).value(200).create();
+        Binding binding = BindingBuilder.with("a").type(Integer.class).value(200).build();
         Assert.assertTrue(binding.getName().equals("a"));
         Assert.assertTrue(binding.get().equals(200));
     }

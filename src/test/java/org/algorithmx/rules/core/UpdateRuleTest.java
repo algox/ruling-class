@@ -15,7 +15,6 @@ public class UpdateRuleTest {
                 .bind("x", int.class, 11)
                 .bind("y", int.class, 10);
 
-        RuleFactory ruleFactory = RuleFactory.defaultFactory();
         // TODO : Fix (Binding<Integer> y
         /*Rule rule = ruleFactory.rule(cond1((Integer x) -> x > 10))
                 .then(act1((Binding<Integer> y) -> y.setValue(100)));
