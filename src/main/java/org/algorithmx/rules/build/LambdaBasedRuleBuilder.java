@@ -17,63 +17,17 @@
  */
 package org.algorithmx.rules.build;
 
-import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.spring.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class LambdaBasedRuleBuilder {
-
-    private String name;
-    private String description;
-    private Condition condition;
-    private List<Action> thenActions = new ArrayList<>();
-    private Action otherwiseAction;
+public class LambdaBasedRuleBuilder extends RuleBuilder {
 
     public LambdaBasedRuleBuilder(Condition condition) {
         super();
-        Assert.notNull(condition, "condition cannot be null.");
-        this.condition = condition;
+        given(condition);
     }
 
-    /**
-     * Name of the Rule.
-     *
-     * @param name name of the Rule.
-     * @return LambdaBasedRuleBuilder for fluency.
-     */
-        public LambdaBasedRuleBuilder name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Rule description.
-     *
-     * @param description Rule description.
-     * @return LambdaBasedRuleBuilder for fluency.
-     */
-    public LambdaBasedRuleBuilder description(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public LambdaBasedRuleBuilder then(Action action) {
-        Assert.notNull(action, "action cannot be null.");
-        this.thenActions.add(action);
-        return this;
-    }
-
-    public LambdaBasedRuleBuilder otherwise(Action action) {
-        Assert.notNull(action, "action cannot be null.");
-        this.otherwiseAction = action;
-        return this;
-    }
-
-    public Rule build() {
-        return null;
+    @Override
+    public Class<?> getRuleClass() {
+        return getCondition().getConditionDefinition().getConditionClass();
     }
 }

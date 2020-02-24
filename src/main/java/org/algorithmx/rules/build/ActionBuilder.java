@@ -41,6 +41,10 @@ public final class ActionBuilder {
         return new ActionBuilder(action);
     }
 
+    public static Action emptyAction() {
+        return ActionBuilder.withNoArgs(() -> {}).build();
+    }
+
     /**
      * Creates a new action builder with one argument.
      *
@@ -48,7 +52,7 @@ public final class ActionBuilder {
      * @param <A> generic type of the first parameter.
      * @return new ActionBuilder with one arguments.
      */
-    public static <A> ActionBuilder withArg(ActionConsumer.ActionConsumer1<A> action) {
+    public static <A> ActionBuilder with1Arg(ActionConsumer.ActionConsumer1<A> action) {
         return new ActionBuilder(action);
     }
 

@@ -66,6 +66,14 @@ public final class ConditionBuilder {
         return new ConditionBuilder(condition);
     }
 
+    public static Condition alwaysTrue() {
+        return ConditionBuilder.withNoArgs(() -> true).build();
+    }
+
+    public static Condition alwaysFalse() {
+        return ConditionBuilder.withNoArgs(() -> false).build();
+    }
+
     /**
      * Creates a new condition builder with one argument.
      *
@@ -73,7 +81,7 @@ public final class ConditionBuilder {
      * @param <A> generic type of the first parameter.
      * @return new ConditionBuilder with one arguments.
      */
-    public static <A> ConditionBuilder withArg(ConditionConsumer.ConditionConsumer1<A> condition) {
+    public static <A> ConditionBuilder with1Arg(ConditionConsumer.ConditionConsumer1<A> condition) {
         return new ConditionBuilder(condition);
     }
 

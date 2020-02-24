@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.build.ConditionBuilder;
+import org.algorithmx.rules.build.RuleBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -33,9 +34,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.algorithmx.rules.core.Conditions.cond2;
-import static org.algorithmx.rules.core.Conditions.cond3;
 
 /**
  * Tests for running the Rules.
@@ -77,8 +75,14 @@ public class ExecutorTest {
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
 
         ConditionBuilder builder = ConditionBuilder.with3Args((Integer x, String y, BigDecimal z) -> x < 10 && y != null && z != null);
-        SerializedLambda lambda1 = LambdaUtils.getSerializedLambda(builder.getConditionConsumer());
-        RuleDefinition definition2 = RuleDefinition.load(lambda1, "Rule3", " Test Rule 3");
+
+        Rule rule = RuleBuilder.withCondition(
+                builder.build())
+                .name("Rule3")
+                .description("Test Rule 3")
+                .build();
+
+        RuleDefinition definition2 = rule.getRuleDefinition();
         boolean result = executor.execute(builder.build(), definition2.getConditionDefinition().getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition2.getConditionDefinition().getMethodDefinition(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
@@ -94,10 +98,16 @@ public class ExecutorTest {
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
-        ConditionConsumer.ConditionConsumer2<Integer, String> rule2 = (Integer x, String y) -> x > 10 && y != null;
-        SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
-        RuleDefinition definition = RuleDefinition.load(lambda, "Rule2", " Test Rule 2");
-        boolean result = executor.execute(rule2, definition.getConditionDefinition().getMethodDefinition(),
+        Rule rule = RuleBuilder.withCondition(
+                ConditionBuilder.with2Args((Integer x, String y) -> x > 10 && y != null).build())
+                .name("Rule2")
+                .description("Test Rule 2")
+                .build();
+
+
+        RuleDefinition definition = rule.getRuleDefinition();
+
+        boolean result = executor.execute(rule, definition.getConditionDefinition().getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition.getConditionDefinition().getMethodDefinition(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
         Assert.assertTrue(result);
@@ -152,25 +162,23 @@ public class ExecutorTest {
 
     @Test
     public void test6() {
-        RuleFactory ruleFactory = RuleFactory.defaultFactory();
         // TODO : Fix generic mapping with lambdas
         List<Integer> values = new ArrayList<>();
-        Rule rule = ruleFactory
-                .rule()
+
+        Rule rule = RuleBuilder.withCondition(
+                ConditionBuilder.with3Args((String x, Integer y, List<String> a) -> y > 10).build())
                 .name("rule1")
-                .given(cond3((String x, Integer y, List<String> a) -> y > 10))
                 .build();
+
         boolean result = rule.isPass("hello world", 20, values);
         Assert.assertTrue(result);
     }
 
     @Test
     public void test7() {
-        RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule rule = ruleFactory
-                .rule()
+        Rule rule = RuleBuilder.withCondition(
+                ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())
                 .name("rule1")
-                .given(cond2((String x, Integer y) -> y > 10))
                 .build();
         boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);

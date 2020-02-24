@@ -18,14 +18,11 @@
 package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.Actions;
-import org.algorithmx.rules.core.ConditionConsumer;
+import org.algorithmx.rules.build.ActionBuilder;
+import org.algorithmx.rules.build.ConditionBuilder;
+import org.algorithmx.rules.build.RuleBuilder;
 import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.RuleFactory;
-import org.algorithmx.rules.util.RuleUtils;
 import org.junit.Test;
-
-import static org.algorithmx.rules.core.Conditions.cond2;
 
 public class RuleActionTest1 {
 
@@ -40,13 +37,17 @@ public class RuleActionTest1 {
         bindings.bind("y", Integer.class, 17);
         bindings.bind("z", Integer.class, 200);
 
-        RuleFactory ruleFactory = RuleFactory.defaultFactory();
-        Rule ruleWithAction = ruleFactory.rule()
-                .given(cond2((String x, Integer y) -> y > 10))
-                .then(Actions.act1((Integer z) -> System.err.println("YASS! [" + z + "]")))
-                .then(Actions.act1((String x) -> System.err.println("MAN! [" + x + "]")))
+        Rule ruleWithAction = RuleBuilder
+                .withCondition(ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())
+                .then(ActionBuilder.with1Arg((Integer z) -> System.err.println("YASS! [" + z + "]")).build())
+                .then(ActionBuilder.with1Arg((String x) -> System.err.println("MAN! [" + x + "]")).build())
                 .build();
 
-        RuleUtils.load((ConditionConsumer.ConditionConsumer3<Integer, String, Integer>) (a, b, c) -> a > 10, "test", "");
+        Rule rule2 = RuleBuilder
+                .withCondition(
+                        ConditionBuilder.with3Args((Integer a, String b, Integer c) -> a > 10).build())
+                .name("testrule")
+                .description("description")
+                .build();
     }
 }

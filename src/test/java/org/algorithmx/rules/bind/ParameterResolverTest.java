@@ -17,7 +17,8 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.core.Conditions;
+import org.algorithmx.rules.build.ConditionBuilder;
+import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.model.ParameterDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
@@ -67,8 +68,10 @@ public class ParameterResolverTest {
 
     @Test
     public void testBindableParameter4() {
-        SerializedLambda lambda = LambdaUtils.getSerializedLambda(Conditions.cond3((Integer a, Binding<List<String>> b,
-                Optional<Integer> x) -> a > 10));
+        ConditionConsumer conditionConsumer = ConditionBuilder.with3Args(((Integer a,
+                                                                           Binding<List<String>> b,
+                                                                           Optional<Integer> x) -> a > 10)).getConditionConsumer();
+        SerializedLambda lambda = LambdaUtils.getSerializedLambda(conditionConsumer);
         Class c = LambdaUtils.getImplementationClass(lambda);
         Method m = LambdaUtils.getImplementationMethod(lambda, c);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);

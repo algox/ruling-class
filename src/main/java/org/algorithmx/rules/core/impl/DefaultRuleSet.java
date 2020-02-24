@@ -17,11 +17,11 @@
  */
 package org.algorithmx.rules.core.impl;
 
+import org.algorithmx.rules.build.RuleBuilder;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.RuleFactory;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
@@ -42,7 +42,6 @@ public class DefaultRuleSet implements RuleSet {
 
     private final String name;
     private final String description;
-    private final RuleFactory ruleFactory;
 
     private Condition preCondition = null;
     private Condition stopCondition = null;
@@ -52,16 +51,14 @@ public class DefaultRuleSet implements RuleSet {
     private final LinkedList<Rule> rules = new LinkedList<>();
     private final Map<String, Rule> ruleIndex = new HashMap<>();
 
-    public DefaultRuleSet(String name, String description, RuleFactory ruleFactory) {
+    public DefaultRuleSet(String name, String description) {
         super();
         Assert.notNull(name, "name cannot be null.");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
         Assert.isTrue(RuleUtils.isValidRuleName(name), "RuleSet name must match [" + RuleUtils.RULE_NAME_REGEX
                 + "] Given [" + name + "]");
-        Assert.notNull(ruleFactory, "ruleFactory cannot be null.");
         this.name = name;
         this.description = description;
-        this.ruleFactory = ruleFactory;
     }
 
     @Override
@@ -126,8 +123,8 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleSet add(Class<?> rulingClass) {
-        add(ruleFactory.rule(rulingClass));
+    public RuleSet add(Class<?> ruleClass) {
+        add(RuleBuilder.withClass(ruleClass).build());
         return this;
     }
 

@@ -20,10 +20,8 @@ package org.algorithmx.rules.model;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.util.RuleUtils;
 
-import java.lang.invoke.SerializedLambda;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -74,9 +72,6 @@ public final class RuleDefinition {
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
         Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN + "]");
         Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
-        // TODO : Put back after fix
-        //Assert.notNull(thenActionDefinitions, "thenActionDefinitions cannot be null.");
-        //Assert.isTrue(thenActionDefinitions.length > 0, "there must be at least one Then action associated to the Rule.");
         this.ruleClass = ruleClass;
         this.description = description;
         this.conditionDefinition = conditionDefinition;
@@ -103,22 +98,6 @@ public final class RuleDefinition {
         return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
                 : null, ConditionDefinition.load(c), ActionDefinition.loadThenActions(c), ActionDefinition.loadElseActions(c));
-    }
-
-    /**
-     * Loads a Rule Definition from a Lambda. The Lambda must must define a single "when" method which
-     * returns a boolean. The when method can take a arbitrary number of arguments.
-     *
-     * @param lambda Rule Lambda expression.
-     * @param ruleName name of the rule.
-     * @param ruleDescription description of the rule.
-     * @return RuleDefinition of the supplied Lambda.
-     */
-    @Deprecated
-    public static RuleDefinition load(SerializedLambda lambda, String ruleName, String ruleDescription) {
-        Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
-        return new RuleDefinition(implementationClass, ruleName, ruleDescription,
-                ConditionDefinition.load(lambda, null), null, null);
     }
 
     /**

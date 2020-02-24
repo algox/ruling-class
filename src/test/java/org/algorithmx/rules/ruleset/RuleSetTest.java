@@ -18,23 +18,12 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.RuleContextBuilder;
 import org.algorithmx.rules.core.RuleEngine;
 import org.algorithmx.rules.core.RuleFactory;
-import org.algorithmx.rules.core.RuleSet;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-
-import static org.algorithmx.rules.core.Actions.act0;
-import static org.algorithmx.rules.core.Actions.act1;
-import static org.algorithmx.rules.core.Conditions.cond0;
-import static org.algorithmx.rules.core.Conditions.cond1;
-import static org.algorithmx.rules.core.Conditions.cond2;
-import static org.algorithmx.rules.core.Conditions.cond3;
 
 public class RuleSetTest {
 
@@ -61,7 +50,7 @@ public class RuleSetTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
         RuleFactory ruleFactory = RuleFactory.defaultFactory();
 
-        Rule rule6 = ruleFactory.rule()
+        /*Rule rule6 = ruleFactory.rule()
                 .given(cond0(() -> true))
                 .then(act0(() -> System.err.println("XXX End")))
                 .build();
@@ -86,7 +75,7 @@ public class RuleSetTest {
         Rule rule1 = rules.getRule("test");
         Rule rule3 = rules.getRule("testrule3");
 
-        Assert.assertTrue(rule3.isPass("", "hello", 20));
+        Assert.assertTrue(rule3.isPass("", "hello", 20));*/
     }
 
     @Test
@@ -95,7 +84,7 @@ public class RuleSetTest {
                 .bind("key1", String.class, "value")
                 .bind("key2", String.class, "value");
 
-        RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
+        /*RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", ruleFactory
                         .rule()
                         .name("test")
@@ -104,6 +93,6 @@ public class RuleSetTest {
                         .build());
 
         ruleEngine.run(RuleContextBuilder.create()
-                .bindWith(bindings).build(), rules);
+                .bindWith(bindings).build(), rules);*/
     }
 }

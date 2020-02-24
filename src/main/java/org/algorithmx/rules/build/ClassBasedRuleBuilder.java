@@ -17,69 +17,42 @@
  */
 package org.algorithmx.rules.build;
 
-import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.ObjectFactory;
-import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.impl.RulingClass;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ActionUtils;
 import org.algorithmx.rules.util.ConditionUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-public class ClassBasedRuleBuilder {
+public class ClassBasedRuleBuilder extends RuleBuilder {
 
     private final Class<?> ruleClass;
-    private final RuleDefinition definition;
-    private ObjectFactory objectFactory;
 
-    public ClassBasedRuleBuilder(Class<?> ruleClass, ObjectFactory objectFactory) {
+    public ClassBasedRuleBuilder(Class<?> ruleClass) {
         super();
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         this.ruleClass = ruleClass;
-        this.objectFactory = objectFactory;
-        this.definition = RuleDefinition.load(ruleClass);
+        load(RuleDefinition.load(ruleClass));
     }
 
+    private void load(RuleDefinition definition) {
+        name(definition.getName());
+        description(definition.getDescription());
+        target(getObjectFactory().create(definition.getRuleClass()));
+        given(ConditionUtils.create(definition.getConditionDefinition(), getTarget()));
+
+        if (definition.getThenActionDefinitions() != null) {
+            Arrays.stream(definition.getThenActionDefinitions())
+                    .forEach(actionDefinition -> then(ActionUtils.create(actionDefinition, getTarget())));
+        }
+
+        otherwise(definition.getElseActionDefinition() != null
+                ? ActionUtils.create(definition.getElseActionDefinition(), getTarget())
+                : null);
+    }
+
+    @Override
     public Class<?> getRuleClass() {
         return ruleClass;
-    }
-
-    public RuleDefinition getDefinition() {
-        return definition;
-    }
-
-    public ClassBasedRuleBuilder name(String name) {
-        definition.setName(name);
-        return this;
-    }
-
-    public ClassBasedRuleBuilder description(String description) {
-        definition.setDescription(description);
-        return this;
-    }
-
-    public ClassBasedRuleBuilder objectFactory(ObjectFactory objectFactory) {
-        Assert.notNull(objectFactory, "objectFactory cannot be null.");
-        this.objectFactory = objectFactory;
-        return this;
-    }
-
-    public Rule build() {
-        Object target = objectFactory.create(definition.getRuleClass());
-        Condition condition = ConditionUtils.create(definition.getConditionDefinition(), target);
-        List<Action> thenActions = new ArrayList<>(definition.getThenActionDefinitions().length);
-        Action elseAction = definition.getElseActionDefinition() != null
-                ? ActionUtils.create(definition.getElseActionDefinition(), target)
-                : null;
-
-        Arrays.stream(definition.getThenActionDefinitions())
-                .forEach(actionDefinition -> thenActions.add(ActionUtils.create(actionDefinition, target)));
-
-        return new RulingClass(definition, target, condition, thenActions, elseAction);
     }
 }

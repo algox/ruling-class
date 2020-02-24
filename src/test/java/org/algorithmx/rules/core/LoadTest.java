@@ -18,19 +18,17 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.build.ActionBuilder;
+import org.algorithmx.rules.build.ConditionBuilder;
+import org.algorithmx.rules.build.RuleBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
-import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
-
-import static org.algorithmx.rules.core.Conditions.*;
-import static org.algorithmx.rules.core.Actions.*;
 /**
  * Tests for loading definitions.
  *
@@ -119,9 +117,13 @@ public class LoadTest {
 
     @Test
     public void loadTest7() {
-        ConditionConsumer.ConditionConsumer2<Integer, String> rule2 = (Integer i, String text) -> i > 100 && text != null;
-        SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule2);
-        RuleDefinition def = RuleDefinition.load(lambda, "TestRule2", "Some rule for testing");
+        Rule rule = RuleBuilder
+                .withCondition(ConditionBuilder.with2Args((Integer i, String text) -> i > 100 && text != null).build())
+                .name("TestRule2")
+                .description("Some rule for testing")
+                .then(ActionBuilder.emptyAction())
+                .build();
+        RuleDefinition def = rule.getRuleDefinition();
 
         Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions().length == 2);
 
@@ -138,18 +140,16 @@ public class LoadTest {
 
     @Test
     public void loadTest8() {
-        RuleFactory factory = RuleFactory.defaultFactory();
-        Rule rule1 = factory
-                .rule()
+        Rule rule1 = RuleBuilder
+                .withCondition(ConditionBuilder.with3Args((Integer a, Date date, String x) -> a != null).build())
                 .name("rule1")
-                .given(cond3((Integer a, Date date, String x) -> a != null))
                 .build();
-        Rule rule2 = factory
-                .rule()
+
+        Rule rule2 = RuleBuilder
+                .withCondition(ConditionBuilder.with4Args((Integer a, Date date, String x, String y) -> a != null).build())
+                .then(ActionBuilder.with2Args((Integer y, String z) -> {}).build())
+                .then(ActionBuilder.with3Args((Integer y, String z, Date date) -> {}).build())
                 .name("rule2")
-                .given(cond4((Integer a, Date date, String x, String y) -> a != null))
-                .then(act2((Integer y, String z) -> {}))
-                .then(act3((Integer y, String z, Date date) -> {}))
                 .build();
     }
 }

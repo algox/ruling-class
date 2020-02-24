@@ -17,9 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.regex.Pattern;
@@ -57,18 +55,10 @@ public final class RuleUtils {
         return false;
     }
 
-    /**
-     * Loads a new RuleDefinition from the given Condition, Rule Name and Description.
-     *
-     * @param condition when condition.
-     * @param name Rule Name.
-     * @param description Rule Description.
-     * @return new Rule Definition.
-     */
-    public static RuleDefinition load(ConditionConsumer condition, String name, String description) {
+    /*public static RuleDefinition load(ConditionConsumer condition, String name, String description) {
         Assert.notNull(condition, "condition cannot be null.");
         return RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
-    }
+    }*/
 
     /**
      * Determines whether the given name is "valid" Rule Name. It needs to follow the following regex ^[a-zA-Z][a-zA-Z0-9]*?$

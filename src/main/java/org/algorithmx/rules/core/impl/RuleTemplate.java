@@ -44,6 +44,7 @@ public abstract class RuleTemplate implements Rule, Identifiable {
         super();
     }
 
+    @Override
     public void run(RuleContext ctx) throws UnrulyException {
 
         // Check to make sure we are still running

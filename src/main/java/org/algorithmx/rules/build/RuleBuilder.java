@@ -17,30 +17,142 @@
  */
 package org.algorithmx.rules.build;
 
+import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.ObjectFactory;
+import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.impl.RulingClass;
+import org.algorithmx.rules.model.ActionDefinition;
+import org.algorithmx.rules.model.RuleDefinition;
+import org.algorithmx.rules.spring.util.Assert;
 
-public class RuleBuilder {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    private static ObjectFactory objectFactory = ObjectFactory.create();
+public abstract class RuleBuilder {
+
+    private String name;
+    private String description;
+    private Condition condition;
+    private final List<Action> thenActions = new ArrayList<>();
+    private Action otherwiseAction;
+    private Object target;
+    private ObjectFactory objectFactory = ObjectFactory.create();
 
     public static ClassBasedRuleBuilder withClass(Class<?> ruleClass) {
-        return new ClassBasedRuleBuilder(ruleClass, getObjectFactory());
+        return new ClassBasedRuleBuilder(ruleClass);
     }
 
     public static ClassBasedRuleBuilder withClassAndFactory(Class<?> ruleClass, ObjectFactory objectFactory) {
-        return new ClassBasedRuleBuilder(ruleClass, objectFactory);
+        ClassBasedRuleBuilder result = new ClassBasedRuleBuilder(ruleClass);
+        result.objectFactory(objectFactory);
+        return result;
     }
 
     public static LambdaBasedRuleBuilder withCondition(Condition condition) {
         return new LambdaBasedRuleBuilder(condition);
     }
 
-    public static ObjectFactory getObjectFactory() {
+    protected RuleBuilder() {
+        super();
+    }
+
+    /**
+     * Name of the Rule.
+     *
+     * @param name name of the Rule.
+     * @return LambdaBasedRuleBuilder for fluency.
+     */
+    public RuleBuilder name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * Rule description.
+     *
+     * @param description Rule description.
+     * @return LambdaBasedRuleBuilder for fluency.
+     */
+    public RuleBuilder description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public RuleBuilder given(Condition condition) {
+        Assert.notNull(condition, "condition cannot be null.");
+        this.condition = condition;
+        return this;
+    }
+
+    public RuleBuilder then(Action action) {
+        Assert.notNull(action, "action cannot be null.");
+        this.thenActions.add(action);
+        return this;
+    }
+
+    public RuleBuilder otherwise(Action action) {
+        this.otherwiseAction = action;
+        return this;
+    }
+
+    public RuleBuilder clearActions() {
+        this.thenActions.clear();
+        return this;
+    }
+
+    protected RuleBuilder target(Object target) {
+        this.target = target;
+        return this;
+    }
+
+    public RuleBuilder objectFactory(ObjectFactory objectFactory) {
+        Assert.notNull(objectFactory, "objectFactory cannot be null.");
+        this.objectFactory = objectFactory;
+        return this;
+    }
+
+    public abstract Class<?> getRuleClass();
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public List<Action> getThenActions() {
+        return Collections.unmodifiableList(thenActions);
+    }
+
+    public Action getOtherwiseAction() {
+        return otherwiseAction;
+    }
+
+    public Object getTarget() {
+        return target;
+    }
+
+    public ObjectFactory getObjectFactory() {
         return objectFactory;
     }
 
-    public static void setObjectFactory(ObjectFactory objectFactory) {
-        RuleBuilder.objectFactory = objectFactory;
+    public Rule build() {
+        ActionDefinition[] actionDefinitions = new ActionDefinition[getThenActions().size()];
+
+        for (int i = 0; i < actionDefinitions.length; i++) {
+            actionDefinitions[i] = getThenActions().get(i).getActionDefinition();
+        }
+
+        RuleDefinition ruleDefinition = new RuleDefinition(getRuleClass(), getName(), getDescription(),
+                getCondition().getConditionDefinition(), actionDefinitions,
+                getOtherwiseAction() != null ? getOtherwiseAction().getActionDefinition() : null);
+        return new RulingClass(ruleDefinition, getTarget(), getCondition(), getThenActions(), getOtherwiseAction());
     }
 }

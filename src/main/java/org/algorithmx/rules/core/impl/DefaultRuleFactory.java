@@ -18,9 +18,7 @@
 package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.ObjectFactory;
-import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleFactory;
-import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**
@@ -37,12 +35,5 @@ public final class DefaultRuleFactory implements RuleFactory {
         super();
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         this.objectFactory = objectFactory;
-    }
-
-    @Override
-    public Rule rule(RuleDefinition ruleDefinition) {
-        return new RulingClass(ruleDefinition, ruleDefinition.isStatic()
-                        ? null
-                        : objectFactory.create(ruleDefinition.getRuleClass()));
     }
 }

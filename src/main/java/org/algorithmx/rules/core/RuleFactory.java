@@ -20,7 +20,6 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.core.impl.DefaultObjectFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleFactory;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
-import org.algorithmx.rules.model.RuleDefinition;
 
 /**
  * Factory to produce Rules.
@@ -46,7 +45,7 @@ public interface RuleFactory {
      * @return a new RuleSet.
      */
     default RuleSet rules(String name) {
-        return new DefaultRuleSet(name, null, this);
+        return new DefaultRuleSet(name, null);
     }
 
     /**
@@ -57,33 +56,6 @@ public interface RuleFactory {
      * @return a new RuleSet.
      */
     default RuleSet rules(String name, String description) {
-        return new DefaultRuleSet(name, description, this);
-    }
-
-    /**
-     * Creates a Rule from RuleDefinition.
-     *
-     * @param ruleDefinition rule meta information.
-     * @return a new Rule Instance.
-     */
-    Rule rule(RuleDefinition ruleDefinition);
-
-    /**
-     * Creates a Rule from the given implementation class. The Actions will be ordered by the number of arguments they have.
-     *
-     * @param ruleClass Rule Implementation class.
-     * @return a new Rule Instance.
-     */
-    default Rule rule(Class<?> ruleClass) {
-        return rule(RuleDefinition.load(ruleClass));
-    }
-
-    /**
-     * Creates a new RuleBuilder
-     *
-     * @return a new RuleBuilder Instance.
-     */
-    default RuleBuilder rule() {
-        return new RuleBuilder();
+        return new DefaultRuleSet(name, description);
     }
 }
