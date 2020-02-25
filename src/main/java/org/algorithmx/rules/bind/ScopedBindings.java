@@ -17,6 +17,9 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.error.BindingAlreadyExistsException;
+import org.algorithmx.rules.error.InvalidBindingException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -205,8 +208,8 @@ public interface ScopedBindings extends Bindings {
      * @param mutable determines whether the value is mutable.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     @Override
@@ -222,7 +225,7 @@ public interface ScopedBindings extends Bindings {
      * @param binding existing Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      */
     @Override
     default <T> Bindings bind(Binding<T> binding) {
@@ -238,7 +241,7 @@ public interface ScopedBindings extends Bindings {
      * @param bindings existing Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     @Override
     default <T> Bindings bind(Collection<Binding<T>> bindings) {

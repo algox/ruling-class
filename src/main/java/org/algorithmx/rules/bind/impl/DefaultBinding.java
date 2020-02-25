@@ -18,7 +18,7 @@
 package org.algorithmx.rules.bind.impl;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.InvalidBindingException;
+import org.algorithmx.rules.error.InvalidBindingException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.algorithmx.rules.spring.util.TypeUtils;

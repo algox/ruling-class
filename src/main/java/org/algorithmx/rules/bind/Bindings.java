@@ -19,6 +19,9 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.DefaultBindings;
 import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
+import org.algorithmx.rules.error.BindingAlreadyExistsException;
+import org.algorithmx.rules.error.InvalidBindingException;
+import org.algorithmx.rules.error.NoSuchBindingException;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ReflectionUtils;
@@ -85,8 +88,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param initialValue initial value of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     default <T> Bindings bind(String name, T initialValue) {
@@ -101,8 +104,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param type type of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     default <T> Bindings bind(String name, Class<T> type) {
@@ -116,8 +119,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param type type reference of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     default <T> Bindings bind(String name, TypeReference<T> type) {
@@ -132,8 +135,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param initialValue initial value of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     default <T> Bindings bind(String name, Class<T> type, T initialValue) {
@@ -148,8 +151,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param initialValue initial value of the Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     default <T> Bindings bind(String name, TypeReference<T> type, T initialValue) {
@@ -165,8 +168,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param mutable determines whether the value can be changed.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws org.algorithmx.rules.bind.InvalidBindingException thrown if we cannot set initial value.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
     <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
@@ -178,7 +181,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param binding existing Binding.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      */
     <T> Bindings bind(Binding<T> binding) throws BindingAlreadyExistsException;
 
@@ -190,7 +193,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param bindings existing Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     default <T> Bindings bind(Binding<T>...bindings) {
         return bind(Arrays.asList(bindings));
@@ -204,7 +207,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param bindings existing Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     <T> Bindings bind(Collection<Binding<T>> bindings);
 
@@ -213,7 +216,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @param bean parent bean.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     default Bindings bindProperties(Object bean) {
         return bindProperties(bean, (String name) -> name);
@@ -225,7 +228,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param bean parent bean.
      * @param nameGenerator generator that will determine the Binding name for each property.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     default Bindings bindProperties(Object bean, Function<String, String> nameGenerator) {
         Assert.notNull(bean, "bean cannot be null.");
@@ -258,7 +261,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @param bean parent bean.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     default Bindings bindFields(Object bean) {
         return bindFields(bean, (String name) -> name);
@@ -270,7 +273,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param bean parent bean.
      * @param nameGenerator generator that will determine the Binding name for each field.
      * @return this Bindings (fluent interface).
-     * @throws org.algorithmx.rules.bind.BindingAlreadyExistsException thrown if a Binding already exists.
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     default Bindings bindFields(Object bean, Function<String, String> nameGenerator) {
         Assert.notNull(bean, "bean cannot be null.");

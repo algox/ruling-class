@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.error.InvalidBindingException;
 
 import java.lang.reflect.Type;
 
