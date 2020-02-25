@@ -110,15 +110,13 @@ public class RuleContextBuilder {
      * @return new Rule Context.
      */
     public RuleContext build() {
-        RuleContext result  = new RuleContext();
         ScopedBindings rootBindings = Bindings.defaultBindings();
+        RuleContext result  = new RuleContext(rootBindings, matchingStrategy, parameterResolver);
 
         rootBindings.bind("ruleContext", RuleContext.class, result);
         rootBindings.bind("bindings", Bindings.class, bindings);
         rootBindings.newScope(bindings);
 
-        result.setBindings(rootBindings);
-        result.setMatchingStrategy(matchingStrategy);
         return result;
     }
 }

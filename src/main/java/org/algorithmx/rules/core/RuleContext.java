@@ -20,7 +20,6 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
-import org.algorithmx.rules.build.RuleContextBuilder;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**
@@ -32,17 +31,19 @@ import org.algorithmx.rules.spring.util.Assert;
  */
 public class RuleContext {
 
-    private Bindings bindings;
-    private BindingMatchingStrategy matchingStrategy;
-    private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
+    private final Bindings bindings;
+    private final BindingMatchingStrategy matchingStrategy;
+    private final ParameterResolver parameterResolver;
     private RuleExecutionState state = RuleExecutionState.RUNNING;
 
-    /**
-     * Default Ctor.
-     * @see RuleContextBuilder
-     */
-    public RuleContext() {
+    public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy, ParameterResolver parameterResolver) {
         super();
+        Assert.notNull(bindings, "bindings cannot be null.");
+        Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
+        Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
+        this.bindings = bindings;
+        this.matchingStrategy = matchingStrategy;
+        this.parameterResolver = parameterResolver;
     }
 
     /**
@@ -55,16 +56,6 @@ public class RuleContext {
     }
 
     /**
-     * Sets the Bindings.
-     *
-     * @param bindings Bindings. Cannot be null.
-     */
-    public void setBindings(Bindings bindings) {
-        Assert.notNull(bindings, "bindings cannot be null.");
-        this.bindings = bindings;
-    }
-
-    /**
      * Returns the matching strategy to be used.
      *
      * @return matching strategy (cannot be null).
@@ -74,32 +65,12 @@ public class RuleContext {
     }
 
     /**
-     * Sets the matching strategy.
-     *
-     * @param matchingStrategy matching strategy.
-     */
-    public void setMatchingStrategy(BindingMatchingStrategy matchingStrategy) {
-        Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
-        this.matchingStrategy = matchingStrategy;
-    }
-
-    /**
      * Returns the parameter resolver being used.
      *
      * @return parameter resolver. Cannot be null.
      */
     public ParameterResolver getParameterResolver() {
         return parameterResolver;
-    }
-
-    /**
-     * Sets the Parameter resolver to use.
-     *
-     * @param parameterResolver parameter resolver to use.
-     */
-    public void setParameterResolver(ParameterResolver parameterResolver) {
-        Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
-        this.parameterResolver = parameterResolver;
     }
 
     /**
