@@ -38,11 +38,12 @@ public final class ConditionBuilder {
     private final ConditionConsumer conditionConsumer;
     private final ConditionDefinition definition;
 
-    private ConditionBuilder(ConditionConsumer conditionConsumer) {
+    private ConditionBuilder(ConditionConsumer conditionConsumer, ConditionDefinition definition) {
         super();
         Assert.notNull(conditionConsumer, "conditionConsumer cannot be null");
+        Assert.notNull(definition, "definition cannot be null");
         this.conditionConsumer = conditionConsumer;
-        this.definition = ConditionUtils.load(conditionConsumer, null);
+        this.definition = definition;
     }
 
     /**
@@ -50,10 +51,11 @@ public final class ConditionBuilder {
      * definition or if you want to cast to an existing one.
      *
      * @param consumer desired condition.
+     * @param definition condition definition.
      * @return new ConditionBuilder based on the given consumer.
      */
-    public static ConditionBuilder with(ConditionConsumer consumer) {
-        return new ConditionBuilder(consumer);
+    public static ConditionBuilder with(ConditionConsumer consumer, ConditionDefinition definition) {
+        return new ConditionBuilder(consumer, definition);
     }
 
     /**
@@ -63,7 +65,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with no arguments.
      */
     public static ConditionBuilder withNoArgs(ConditionConsumer.ConditionConsumer0 condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     public static Condition alwaysTrue() {
@@ -82,7 +84,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with one arguments.
      */
     public static <A> ConditionBuilder with1Arg(ConditionConsumer.ConditionConsumer1<A> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -94,7 +96,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with two arguments.
      */
     public static <A, B> ConditionBuilder with2Args(ConditionConsumer.ConditionConsumer2<A, B> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -107,7 +109,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with three arguments.
      */
     public static <A, B, C> ConditionBuilder with3Args(ConditionConsumer.ConditionConsumer3<A, B, C> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -121,7 +123,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with four arguments.
      */
     public static <A, B, C, D> ConditionBuilder with4Args(ConditionConsumer.ConditionConsumer4<A, B, C, D> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -136,7 +138,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with five arguments.
      */
     public static <A, B, C, D, E> ConditionBuilder with5Args(ConditionConsumer.ConditionConsumer5<A, B, C, D, E> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -152,7 +154,7 @@ public final class ConditionBuilder {
      * @return new ConditionBuilder with six arguments.
      */
     public static <A, B, C, D, E, F> ConditionBuilder with6Args(ConditionConsumer.ConditionConsumer6<A, B, C, D, E, F> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -170,7 +172,7 @@ public final class ConditionBuilder {
      */
     public static <A, B, C, D, E, F, G> ConditionBuilder with7Args(
             ConditionConsumer.ConditionConsumer7<A, B, C, D, E, F, G> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -189,7 +191,7 @@ public final class ConditionBuilder {
      */
     public static <A, B, C, D, E, F, G, H> ConditionBuilder with8Args(
             ConditionConsumer.ConditionConsumer8<A, B, C, D, E, F, G, H> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -209,7 +211,7 @@ public final class ConditionBuilder {
      */
     public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with9Args(
             ConditionConsumer.ConditionConsumer9<A, B, C, D, E, F, G, H, I> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**
@@ -230,7 +232,7 @@ public final class ConditionBuilder {
      */
     public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with10Args(
             ConditionConsumer.ConditionConsumer10<A, B, C, D, E, F, G, H, I, J> condition) {
-        return new ConditionBuilder(condition);
+        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
     }
 
     /**

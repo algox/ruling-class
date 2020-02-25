@@ -23,6 +23,8 @@ import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
+import java.util.Arrays;
+
 /**
  * Default Condition implementation.
  *
@@ -50,7 +52,16 @@ public class DefaultCondition implements Condition {
 
     @Override
     public boolean isPass(Object... args) throws UnrulyException {
-        return methodExecutor.execute(target, conditionDefinition.getMethodDefinition(), args);
+        try {
+            return methodExecutor.execute(target, conditionDefinition.getMethodDefinition(), args);
+        } catch (UnrulyException e) {
+            throw e;
+        } catch (Exception e) {
+            UnrulyException ex = new UnrulyException("Error trying to execute rule condition method ["
+                    + getConditionDefinition().getMethodDefinition().getMethod()
+                    + "] Args [" + Arrays.toString(args) + "]", e);
+            throw ex;
+        }
     }
 
     @Override

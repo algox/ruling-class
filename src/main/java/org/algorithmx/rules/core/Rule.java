@@ -36,7 +36,6 @@ import java.util.function.Predicate;
  *
  * @author Max Arulananthan
  * @since 1.0
- * @see RuleEngine
  */
 public interface Rule extends Predicate<Object[]> {
 

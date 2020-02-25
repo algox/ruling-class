@@ -17,21 +17,40 @@
  */
 package org.algorithmx.rules.build;
 
+import org.algorithmx.rules.core.Action;
+import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
+import org.algorithmx.rules.spring.util.Assert;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.regex.Pattern;
 
 public class RuleSetBuilder {
 
-    private String name;
+    private static final Pattern NAME_PATTERN = Pattern.compile(Rule.NAME_REGEX);
+
+    private final String name;
     private String description;
+    private RuleSet.ORDER order = RuleSet.ORDER.IN_ORDER;
+    private final LinkedList<Rule> rules = new LinkedList<>();
+
+    private Condition preCondition;
+    private Action preAction;
+    private Action postAction;
+    private Condition stopCondition;
 
     private RuleSetBuilder(String name) {
-        super();
-        this.name = name;
+        this(name, null);
     }
 
     private RuleSetBuilder(String name, String description) {
         super();
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "RuleSet name must match [" + NAME_PATTERN + "]");
         this.name = name;
         this.description = description;
     }
@@ -49,8 +68,79 @@ public class RuleSetBuilder {
         return this;
     }
 
+    public RuleSetBuilder order(RuleSet.ORDER order) {
+        this.order = order;
+        return this;
+    }
+
+    public RuleSetBuilder rule(Class<?> ruleClass) {
+        rule(RuleBuilder.with(ruleClass).build());
+        return this;
+    }
+
+    public RuleSetBuilder rule(Rule rule) {
+        Assert.notNull(rule, "Rule cannot be null.");
+        this.rules.add(rule);
+        return this;
+    }
+
+    public RuleSetBuilder rules(Rule...rules) {
+        rules(Arrays.asList(rules));
+        return this;
+    }
+
+    public RuleSetBuilder rules(Collection<Rule> rules) {
+        Assert.notNull(rules, "Rules cannot be null.");
+        this.rules.addAll(rules);
+        return this;
+    }
+
+    /**
+     * PreCondition(Optional) Condition to be met before the execution of the RuleSet.
+     *
+     * @param condition pre check before execution of the RuleSet.
+     */
+    RuleSetBuilder preCondition(Condition condition) {
+        this.preCondition = preCondition;
+        return this;
+    }
+
+    /**
+     * PostAction(Optional) to be performed before the execution of the RuleSet.
+     *
+     * @param action pre action before the execution of the RuleSet.
+     * @return this for fluency.
+     */
+    public RuleSetBuilder preAction(Action action) {
+        this.preAction = action;
+        return this;
+    }
+
+    /**
+     * PreAction(Optional) to be performed after the execution of the RuleSet.
+     *
+     * @param action post action after the execution of the RuleSet.
+     * @return this for fluency.
+     */
+    public RuleSetBuilder postAction(Action action) {
+        this.postAction = action;
+        return this;
+    }
+
+    /**
+     * Condition that determines when execution should stop.
+     *
+     * @param condition stopping condition.
+     * @return this for fluency.
+     */
+    public RuleSetBuilder stopWhen(Condition condition) {
+        this.stopCondition = condition;
+        return this;
+    }
+
     public RuleSet build() {
-        return new DefaultRuleSet(name, description);
+        return new DefaultRuleSet(getName(), getDescription(), getOrder(), rules.toArray(new Rule[rules.size()]),
+                getPreCondition(), getPreAction(), getPostAction(), getStopCondition());
     }
 
     public String getName() {
@@ -59,5 +149,25 @@ public class RuleSetBuilder {
 
     public String getDescription() {
         return description;
+    }
+
+    public RuleSet.ORDER getOrder() {
+        return order;
+    }
+
+    public Condition getPreCondition() {
+        return preCondition;
+    }
+
+    public Action getPreAction() {
+        return preAction;
+    }
+
+    public Action getPostAction() {
+        return postAction;
+    }
+
+    public Condition getStopCondition() {
+        return stopCondition;
     }
 }

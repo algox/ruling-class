@@ -20,7 +20,6 @@ package org.algorithmx.rules.condition;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.build.ConditionBuilder;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.ConditionConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -175,7 +174,7 @@ public class ConditionTest {
     @Test
     public void testConditionConsumer() {
         Condition condition = ConditionBuilder
-                .with((ConditionConsumer.ConditionConsumer1<Integer>) (Integer a) -> a > 10)
+                .with1Arg((Integer a) -> a > 10)
                 .build();
         Assert.assertTrue(condition.isPass(13));
     }

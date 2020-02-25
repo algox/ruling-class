@@ -17,20 +17,16 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.build.RuleBuilder;
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.core.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.util.RuleUtils;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * Default implementation of the RuleSet.
@@ -42,23 +38,59 @@ public class DefaultRuleSet implements RuleSet {
 
     private final String name;
     private final String description;
+    private final RuleSet.ORDER order;
+    private final Rule[] rules;
 
-    private Condition preCondition = null;
-    private Condition stopCondition = null;
-    private Action preAction = null;
-    private Action postAction = null;
+    private final Condition preCondition;
+    private final Action preAction;
+    private final Action postAction;
+    private final Condition stopCondition;
 
-    private final LinkedList<Rule> rules = new LinkedList<>();
-    private final Map<String, Rule> ruleIndex = new HashMap<>();
-
-    public DefaultRuleSet(String name, String description) {
+    public DefaultRuleSet(String name, String description, ORDER order, Rule[] rules,
+                          Condition preCondition, Action preAction, Action postAction,
+                          Condition stopCondition) {
         super();
-        Assert.notNull(name, "name cannot be null.");
-        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(RuleUtils.isValidRuleName(name), "RuleSet name must match [" + RuleUtils.RULE_NAME_REGEX
-                + "] Given [" + name + "]");
+        Assert.notNull(name, "name cannot be null");
+        Assert.notNull(description, "description cannot be null");
+        Assert.isTrue(rules != null && rules.length > 0, "RuleSet must have at least one Rule.");
         this.name = name;
         this.description = description;
+        this.order = order;
+        this.rules = rules;
+        this.preCondition = preCondition;
+        this.preAction = preAction;
+        this.postAction = postAction;
+        this.stopCondition = stopCondition;
+    }
+
+    @Override
+    public void run(RuleContext ctx) throws UnrulyException {
+        // Check to make sure we are still running
+        if (!ctx.getState().isRunning()) {
+            return;
+        }
+
+        // Run the PreCondition if there is one.
+        if (getPreCondition() != null && !getPreCondition().isPass(ctx)) {
+            return;
+        }
+
+        // Run the PreAction if there is one.
+        if (getPreAction() != null) {
+            getPreAction().execute(ctx);
+        }
+
+        for (Rule rule : getRules()) {
+            rule.run(ctx);
+            // Check to see if we need to stop?
+            if (getStopCondition() != null && getStopCondition().isPass(ctx)) break;
+        }
+
+        // Run the PostAction if there is one.
+        if (getPostAction() != null) {
+            getPostAction().execute(ctx);
+        }
+
     }
 
     @Override
@@ -72,126 +104,8 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Iterator<Rule> iterator() {
-        return rules.iterator();
-    }
-
-    @Override
-    public Rule getRule(String ruleName) {
-        Assert.notNull(ruleName, "ruleName cannot be null.");
-        return ruleIndex.get(ruleName);
-    }
-
-    public Rule getRule(Class<?> ruleClass) {
-        Assert.notNull(ruleClass, "ruleName cannot be null.");
-        Rule result = null;
-
-        for (Rule rule : rules) {
-            if (ruleClass.equals(rule.getRuleDefinition().getRuleClass())) {
-                result = rule;
-                break;
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    public RuleSet add(String name, Rule rule) {
-
-        Assert.notNull(rule, "rule cannot be null.");
-        Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "RuleSet name must match ["
-                + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
-
-        if (name != null) {
-            if (ruleIndex.containsKey(name)) {
-                throw new UnrulyException("Rule with name [" + name + "] already exists in RuleSet [" + getName()
-                        + "]. Existing Rule [" + ruleIndex.get(name).getRuleDefinition().getRuleClass().getName() + "]");
-            }
-
-            ruleIndex.put(name, rule);
-        }
-
-        rules.add(rule);
-
-        return this;
-    }
-
-    @Override
-    public RuleSet add(Rule rule) {
-        return add(rule.isIdentifiable() ? ((Identifiable) rule).getName() : null, rule);
-    }
-
-    @Override
-    public RuleSet add(Class<?> ruleClass) {
-        add(RuleBuilder.with(ruleClass).build());
-        return this;
-    }
-
-    @Override
-    public int size() {
-        return rules.size();
-    }
-
-    @Override
-    public Rule[] getRules() {
-        return rules.toArray(new Rule[rules.size()]);
-    }
-
-    @Override
-    public RuleSet remove(String... ruleNames) {
-        Assert.notNull(ruleNames, "ruleNames cannot be null.");
-
-        for (String ruleName : ruleNames) {
-            Rule rule = getRule(ruleName);
-
-            if (rule == null) {
-                throw new UnrulyException("Rule [" + ruleName + "] not found in RuleSet [" + name + "]");
-            }
-
-            rules.remove(rule);
-            ruleIndex.remove(ruleName);
-        }
-
-        return this;
-    }
-
-    @Override
-    public RuleSet remove(Class<?>... ruleClasses) {
-        Assert.notNull(ruleClasses, "ruleClasses cannot be null.");
-
-        for (Class<?> ruleClass : ruleClasses) {
-            Rule rule = getRule(ruleClass);
-
-            if (rule == null) {
-                throw new UnrulyException("Rule Class [" + ruleClass + "] not found in RuleSet [" + name + "]");
-            }
-
-            rules.remove(rule);
-            ruleIndex.remove(rule.getRuleDefinition().getName());
-        }
-
-        return this;
-    }
-
-    @Override
-    public void preCondition(Condition condition) {
-        this.preCondition = condition;
-    }
-
-    @Override
-    public void preAction(Action action) {
-        this.preAction = action;
-    }
-
-    @Override
-    public void postAction(Action action) {
-        this.postAction = action;
-    }
-
-    @Override
-    public void stopWhen(Condition condition) {
-        this.stopCondition = condition;
+    public ORDER getOrder() {
+        return order;
     }
 
     @Override
@@ -215,11 +129,17 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public String toString() {
-        return "DefaultRuleSet{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", rules='" + rules + '\'' +
-                '}';
+    public int size() {
+        return rules.length;
+    }
+
+    @Override
+    public Rule[] getRules() {
+        return rules;
+    }
+
+    @Override
+    public Iterator<Rule> iterator() {
+        return Arrays.stream(rules).iterator();
     }
 }

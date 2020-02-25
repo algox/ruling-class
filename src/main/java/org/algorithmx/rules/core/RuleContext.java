@@ -33,11 +33,9 @@ import org.algorithmx.rules.spring.util.Assert;
 public class RuleContext {
 
     private Bindings bindings;
-    private Condition stopWhen;
     private BindingMatchingStrategy matchingStrategy;
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
-
-    private RuleExecutionState state = null;
+    private RuleExecutionState state = RuleExecutionState.RUNNING;
 
     /**
      * Default Ctor.
@@ -64,24 +62,6 @@ public class RuleContext {
     public void setBindings(Bindings bindings) {
         Assert.notNull(bindings, "bindings cannot be null.");
         this.bindings = bindings;
-    }
-
-    /**
-     * Condition that determines when execution should stop.
-     *
-     * @return stopping condition.
-     */
-    public Condition getStopWhen() {
-        return stopWhen;
-    }
-
-    /**
-     * Set the Execution Stopping Condition.
-     *
-     * @param stopWhen stopping condition.
-     */
-    public void setStopWhen(Condition stopWhen) {
-        this.stopWhen = stopWhen;
     }
 
     /**

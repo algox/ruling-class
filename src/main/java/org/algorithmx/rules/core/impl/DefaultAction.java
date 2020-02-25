@@ -19,8 +19,11 @@ package org.algorithmx.rules.core.impl;
 
 import org.algorithmx.rules.core.Action;
 import org.algorithmx.rules.core.BindableMethodExecutor;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
+
+import java.util.Arrays;
 
 /**
  * Default Action implementation.
@@ -49,7 +52,18 @@ public class DefaultAction implements Action {
 
     @Override
     public void execute(Object... args) {
-        methodExecutor.execute(target, actionDefinition.getMethodDefinition(), args);
+        try {
+            // Execute the Action Method
+            methodExecutor.execute(target, actionDefinition.getMethodDefinition(), args);
+        } catch (UnrulyException e) {
+            throw e;
+        } catch (Exception e) {
+            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
+                    + getActionDefinition().getActionName()
+                    + "] Method [" + getActionDefinition().getMethodDefinition().getMethod()
+                    + "] Args [" + Arrays.toString(args) + "]", e);
+            throw ex;
+        }
     }
 
     @Override

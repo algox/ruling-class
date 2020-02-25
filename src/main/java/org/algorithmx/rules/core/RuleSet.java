@@ -17,6 +17,8 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.error.UnrulyException;
+
 /**
  * RuleSet is a logical grouping of Rules.
  *
@@ -24,6 +26,10 @@ package org.algorithmx.rules.core;
  * @since 1.0
  */
 public interface RuleSet extends Identifiable, Iterable<Rule> {
+
+    enum ORDER {IN_ORDER, NO_ORDER}
+
+    void run(RuleContext ctx) throws UnrulyException;
 
     /**
      * Ruleset name.
@@ -39,12 +45,7 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      */
     String getDescription();
 
-    /**
-     * PreCondition(Optional) Condition to be met before the execution of the Rules.
-     *
-     * @param condition pre check before execution of the Rules.
-     */
-    void preCondition(Condition condition);
+    ORDER getOrder();
 
     /**
      * Returns the Condition (if one exists) to be met before the execution of the Rules.
@@ -54,25 +55,11 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     Condition getPreCondition();
 
     /**
-     * PreAction(Optional) to be performed after the execution of the Rules.
-     *
-     * @param action pre action before the execution of the Rules.
-     */
-    void preAction(Action action);
-
-    /**
      * Returns the action performed after the execution of the Rules.
      *
      * @return pre action before the execution of the Rules.
      */
     Action getPreAction();
-
-    /**
-     * PostAction(Optional) to be performed after the execution of the Rules.
-     *
-     * @param action post action after the execution of the Rules.
-     */
-    void postAction(Action action);
 
     /**
      * Returns the action to be performed after the execution of the Rules.
@@ -82,34 +69,11 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     Action getPostAction();
 
     /**
-     * Condition that determines when execution should stop.
-     *
-     * @param condition stopping condition.
-     */
-    void stopWhen(Condition condition);
-
-    /**
      * Returns the Condition that determines when execution should stop.
      *
      * @return stopping condition.
      */
     Condition getStopCondition();
-
-    /**
-     * Retrieves a Rule with the given name in this RuleSet.
-     *
-     * @param ruleName desired rule name.
-     * @return Rule if found; null otherwise.
-     */
-    Rule getRule(String ruleName);
-
-    /**
-     * Retrieves a Rule with the given implementation class in this RuleSet.
-     *
-     * @param ruleClass implementation class.
-     * @return Rule if found; null otherwise.
-     */
-    Rule getRule(Class<?> ruleClass);
 
     /**
      * Size of this RuleSet (ie. number of Rules in this RuleSet)
@@ -124,48 +88,5 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      * @return rules.
      */
     Rule[] getRules();
-
-    /**
-     * Adds the given Rule to this RuleSet.
-     *
-     * @param rule Rule to be added.
-     * @return this RuleSet (for fluency).
-     */
-    RuleSet add(Rule rule);
-
-    /**
-     * Adds a new Rule to this RuleSet.
-     *
-     * @param ruleClass Rule class to be added.
-     * @return this RuleSet (for fluency).
-     */
-    RuleSet add(Class<?> ruleClass);
-
-    /**
-     * Adds the given Rule to this RuleSet with the desired name.
-     *
-     * @param name desired name.
-     * @param rule Rule to be added.
-     * @return this RuleSet (for fluency).
-     */
-    RuleSet add(String name, Rule rule);
-
-    /**
-     * Removes the listed Rules from this RuleSet.
-     *
-     * @param ruleNames Rules to exclude.
-     * @return this RuleSet (minus the excluded Rules) for fluency.
-     * @throws org.algorithmx.rules.error.UnrulyException if any of the excluded Rules do not exist in this RuleSet.
-     */
-    RuleSet remove(String...ruleNames);
-
-    /**
-     * Removes the listed Rules from this RuleSet.
-     *
-     * @param ruleClasses Rules to exclude.
-     * @return this RuleSet (minus the excluded Rules) for fluency.
-     * @throws org.algorithmx.rules.error.UnrulyException if any of the excluded Rules do not exist in this RuleSet.
-     */
-    RuleSet remove(Class<?>...ruleClasses);
 }
 

@@ -39,47 +39,6 @@ public class RulingClass extends RuleTemplate {
     private final Condition condition;
 
     /**
-     * Rule wrapped around a external target object (ie: Rule defined in an external class).
-     *
-     * @param ruleDefinition rule meta information.
-     * @param target object where the Rule is actually defined.
-     */
-    public RulingClass(RuleDefinition ruleDefinition, Object target) {
-        super();
-        Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
-        this.ruleDefinition = ruleDefinition;
-        this.target = target;
-        this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
-        loadActions(ruleDefinition.getRuleClass());
-    }
-
-    /**
-     * Rule that fully externally defined.
-     *
-     * @param ruleDefinition meta information.
-     * @param target target Rule class.
-     * @param thenActions all the Then actions (optional).
-     * @param otherwiseAction the Otherwise action (optional);
-     */
-    public RulingClass(RuleDefinition ruleDefinition, Object target, List<Action> thenActions, Action otherwiseAction) {
-        super();
-        Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
-        this.ruleDefinition = ruleDefinition;
-        this.target = target;
-        this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
-
-        // Then actions (optional)
-        if (thenActions != null) {
-            thenActions.stream().forEach(action -> then(action));
-        }
-
-        // Otherwise action (Optional)
-        if (otherwiseAction != null) {
-            otherwise(otherwiseAction);
-        }
-    }
-
-    /**
      * Rule defined with all the given properties.
      *
      * @param ruleDefinition meta information.
@@ -88,7 +47,8 @@ public class RulingClass extends RuleTemplate {
      * @param thenActions all the Then actions.
      * @param otherwiseAction the Otherwise action (optional);
      */
-    public RulingClass(RuleDefinition ruleDefinition, Object target, Condition condition, List<Action> thenActions, Action otherwiseAction) {
+    public RulingClass(RuleDefinition ruleDefinition, Object target, Condition condition,
+                       List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         this.ruleDefinition = ruleDefinition;

@@ -17,15 +17,17 @@
  */
 package org.algorithmx.rules.build;
 
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.ScopedBindings;
-import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.spring.util.Assert;
+
+import java.util.Map;
 
 /**
  * Builder class to properly build a RuleContext with the bells and whistles.
@@ -35,17 +37,54 @@ import org.algorithmx.rules.spring.util.Assert;
  */
 public class RuleContextBuilder {
 
+    private final Bindings bindings;
     private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.getDefault();
-    private Bindings bindings = Bindings.defaultBindings();
-    private Condition stopWhen = null;
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
 
-    private RuleContextBuilder() {
+    private RuleContextBuilder(Bindings bindings) {
         super();
+        this.bindings = bindings;
     }
 
     public static RuleContextBuilder create() {
-        return new RuleContextBuilder();
+        return new RuleContextBuilder(Bindings.defaultBindings());
+    }
+
+    /**
+     * Sets the Bindings to use.
+     *
+     * @param bindings Bindings to use.
+     * @return this for fluency.
+     */
+    public static RuleContextBuilder with(Bindings bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
+        return new RuleContextBuilder(bindings);
+    }
+
+    /**
+     * Sets the Bindings to use.
+     *
+     * @param bindings Bindings to use.
+     * @return this for fluency.
+     */
+    public static RuleContextBuilder with(BindingDeclaration...bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
+        return new RuleContextBuilder(Bindings.defaultBindings().bind(bindings));
+    }
+
+    public static RuleContextBuilder with(Map<String, Object> values) {
+        Bindings bindings = Bindings.defaultBindings();
+
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            bindings.bind(entry.getKey(), entry.getValue());
+        }
+
+        return new RuleContextBuilder(bindings);
+    }
+
+    public <T> RuleContextBuilder bind(Binding<T> binding) {
+        bindings.bind(binding);
+        return this;
     }
 
     /**
@@ -60,39 +99,8 @@ public class RuleContextBuilder {
         return this;
     }
 
-    /**
-     * Sets the Bindings to use.
-     *
-     * @param bindings Bindings to use.
-     * @return this for fluency.
-     */
-    public RuleContextBuilder bindWith(Bindings bindings) {
-        Assert.notNull(bindings, "bindings cannot be null.");
-        this.bindings = bindings;
-        return this;
-    }
-
-    /**
-     * Sets the Bindings to use.
-     *
-     * @param bindings Bindings to use.
-     * @return this for fluency.
-     */
-    public RuleContextBuilder bindWith(BindingDeclaration...bindings) {
-        Assert.notNull(bindings, "bindings cannot be null.");
-        this.bindings = Bindings.defaultBindings().bind(bindings);
-        return this;
-    }
-
-    /**
-     * Sets the Stop Condition.
-     *
-     * @param condition execution stop condition.
-     * @return this for fluency.
-     */
-    public RuleContextBuilder stopWhen(Condition condition) {
-        Assert.notNull(condition, "condition cannot be null.");
-        this.stopWhen = stopWhen;
+    public RuleContextBuilder paramResolver(ParameterResolver parameterResolver ) {
+        this.parameterResolver = parameterResolver;
         return this;
     }
 
@@ -111,7 +119,6 @@ public class RuleContextBuilder {
 
         result.setBindings(rootBindings);
         result.setMatchingStrategy(matchingStrategy);
-        result.setStopWhen(stopWhen);
         return result;
     }
 }
