@@ -39,6 +39,7 @@ import java.util.function.Predicate;
 public final class MethodDefinition {
 
     private final Method method;
+    // TODO : Static method handle
     private final MethodHandle methodHandle;
     private final ParameterDefinition[] parameterDefinitions;
     private final Map<String, ParameterDefinition> paramNameMap = new HashMap<>();
