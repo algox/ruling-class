@@ -15,10 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core;
+package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 
 /**

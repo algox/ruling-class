@@ -18,8 +18,8 @@
 package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.build.RuleBuilder;
-import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
+import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.junit.Test;

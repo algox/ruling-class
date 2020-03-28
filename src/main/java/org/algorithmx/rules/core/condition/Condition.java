@@ -18,7 +18,7 @@
 package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.bind.ParameterResolver;
-import org.algorithmx.rules.core.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;
 

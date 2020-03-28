@@ -18,6 +18,8 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
 
 /**
@@ -26,7 +28,7 @@ import org.algorithmx.rules.error.UnrulyException;
  * @author Max Arulananthan
  * @since 1.0
  */
-@FunctionalInterface
+@FunctionalInterface @Deprecated
 public interface RuleFlow<T> {
 
     T run();

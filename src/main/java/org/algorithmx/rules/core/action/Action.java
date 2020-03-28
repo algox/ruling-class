@@ -18,7 +18,7 @@
 package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.bind.ParameterResolver;
-import org.algorithmx.rules.core.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 
@@ -28,7 +28,7 @@ import org.algorithmx.rules.model.ActionDefinition;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Action {
+public interface Action extends Comparable<Action> {
 
     /**
      * Derives all the arguments and executes this Action.
@@ -64,4 +64,9 @@ public interface Action {
      * @return target instance.
      */
     Object getTarget();
+
+    @Override
+    default int compareTo(Action o) {
+        return getActionDefinition().getOrder().compareTo(o.getActionDefinition().getOrder());
+    }
 }

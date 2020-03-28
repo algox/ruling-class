@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.build;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
@@ -32,22 +32,24 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         super();
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         this.ruleClass = ruleClass;
-        load(RuleDefinition.load(ruleClass));
+        load(ruleClass);
     }
 
-    private void load(RuleDefinition definition) {
+    private void load(Class<?> ruleClass) {
+        RuleDefinition definition = RuleDefinition.load(ruleClass);
         name(definition.getName());
         description(definition.getDescription());
-        target(getObjectFactory().create(definition.getRuleClass()));
-        given(ConditionUtils.create(definition.getConditionDefinition(), getTarget()));
+        Object target = getObjectFactory().create(definition.getRuleClass());
+        target(target);
+        given(ConditionUtils.create(definition.getConditionDefinition(), target));
 
         if (definition.getThenActionDefinitions() != null) {
             Arrays.stream(definition.getThenActionDefinitions())
-                    .forEach(actionDefinition -> then(ActionUtils.create(actionDefinition, getTarget())));
+                    .forEach(actionDefinition -> then(ActionUtils.create(actionDefinition, target)));
         }
 
         otherwise(definition.getElseActionDefinition() != null
-                ? ActionUtils.create(definition.getElseActionDefinition(), getTarget())
+                ? ActionUtils.create(definition.getElseActionDefinition(), target)
                 : null);
     }
 

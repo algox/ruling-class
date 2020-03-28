@@ -18,6 +18,7 @@
 package org.algorithmx.rules.model;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Order;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.error.UnrulyException;
@@ -46,16 +47,19 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     private final Class<?> actionClass;
     // then method
     private final MethodDefinition action;
+    // Order of the Action
+    private int order;
     // Description of the Action
     private String description;
 
-    private ActionDefinition(Class<?> actionClass, String description, MethodDefinition action) {
+    private ActionDefinition(Class<?> actionClass, int order, MethodDefinition action, String description) {
         super();
         Assert.notNull(actionClass, "action class cannot be null");
         Assert.notNull(action, "action cannot be null");
         this.actionClass = actionClass;
-        this.description = description;
+        this.order = order;
         this.action = action;
+        this.description = description;
     }
 
     /**
@@ -115,8 +119,9 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
         for (int i = 0; i < result.length; i++) {
             Description descriptionAnnotation = actions[i].getMethod().getAnnotation(Description.class);
-            result[i] = new ActionDefinition(c, descriptionAnnotation != null ? descriptionAnnotation.value() : null,
-                    actions[i]);
+            Order orderAnnotation = actions[i].getMethod().getAnnotation(Order.class);
+            result[i] = new ActionDefinition(c,  orderAnnotation != null ? orderAnnotation.value() : 0, actions[i],
+                    descriptionAnnotation != null ? descriptionAnnotation.value() : null);
         }
 
         return result;
@@ -139,13 +144,12 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
                 "Action Lambda not defined correctly. Please define method public void then(...)");
 
         MethodDefinition[] actions = MethodDefinition.load(implementationClass, implementationMethod);
-        return new ActionDefinition(implementationClass, description, actions[0]);
+        return new ActionDefinition(implementationClass, 0, actions[0], description);
     }
 
     @Override
     public int compareTo(ActionDefinition other) {
-        Integer parameterCount = action.getMethod().getParameterCount();
-        return parameterCount.compareTo(other.action.getMethod().getParameterCount());
+        return getOrder().compareTo(other.getOrder());
     }
 
     public Class<?> getActionClass() {
@@ -154,6 +158,14 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     public String getActionName() {
         return action.getMethod().getName();
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public String getDescription() {

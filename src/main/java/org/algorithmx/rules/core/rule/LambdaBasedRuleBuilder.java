@@ -15,23 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.core.rule;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.algorithmx.rules.core.condition.Condition;
 
+public class LambdaBasedRuleBuilder extends RuleBuilder {
 
-/**
- * Annotation to mark the Then method of a Rule.
- *
- * @author Max Arulananthan
- * @since 1.0
- */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Then {
+    public LambdaBasedRuleBuilder(Condition condition) {
+        super();
+        given(condition);
+    }
+
+    @Override
+    public Class<?> getRuleClass() {
+        return getCondition().getConditionDefinition().getConditionClass();
+    }
 }

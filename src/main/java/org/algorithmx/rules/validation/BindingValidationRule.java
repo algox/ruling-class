@@ -21,7 +21,7 @@ import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
-import org.algorithmx.rules.core.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
 

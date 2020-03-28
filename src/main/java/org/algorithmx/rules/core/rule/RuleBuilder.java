@@ -15,13 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.build;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.ObjectFactory;
-import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.impl.RulingClass;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
@@ -88,6 +86,7 @@ public abstract class RuleBuilder {
 
     public RuleBuilder then(Action action) {
         Assert.notNull(action, "action cannot be null.");
+        action.getActionDefinition().setOrder(thenActions.size());
         this.thenActions.add(action);
         return this;
     }
@@ -144,6 +143,9 @@ public abstract class RuleBuilder {
     }
 
     public Rule build() {
+        // Sort Then Action per Order
+        Collections.sort(thenActions);
+
         ActionDefinition[] actionDefinitions = new ActionDefinition[getThenActions().size()];
 
         for (int i = 0; i < actionDefinitions.length; i++) {

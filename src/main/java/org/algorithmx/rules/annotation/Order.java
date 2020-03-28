@@ -15,19 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.build;
+package org.algorithmx.rules.annotation;
 
-import org.algorithmx.rules.core.condition.Condition;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class LambdaBasedRuleBuilder extends RuleBuilder {
-
-    public LambdaBasedRuleBuilder(Condition condition) {
-        super();
-        given(condition);
-    }
-
-    @Override
-    public Class<?> getRuleClass() {
-        return getCondition().getConditionDefinition().getConditionClass();
-    }
+/**
+ * Defines the sort order for an annotated component.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = {ElementType.TYPE, ElementType.METHOD})
+@Documented
+public @interface Order {
+    int value();
 }

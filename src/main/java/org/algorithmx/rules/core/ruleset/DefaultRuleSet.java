@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.impl;
+package org.algorithmx.rules.core.ruleset;
 
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.Rule;
-import org.algorithmx.rules.core.RuleContext;
-import org.algorithmx.rules.core.RuleSet;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 

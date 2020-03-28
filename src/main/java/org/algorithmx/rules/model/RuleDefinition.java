@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  */
 public final class RuleDefinition {
 
-    private static final Pattern NAME_PATTERN   = Pattern.compile(org.algorithmx.rules.core.Rule.NAME_REGEX);
+    private static final Pattern NAME_PATTERN   = Pattern.compile(org.algorithmx.rules.core.rule.Rule.NAME_REGEX);
 
     // Rule class
     private final Class<?> ruleClass;

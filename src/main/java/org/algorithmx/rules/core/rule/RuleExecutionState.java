@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core;
+package org.algorithmx.rules.core.rule;
 
 /**
  * Available Values of the Rule Execution State.

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.build;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingDeclaration;
@@ -25,7 +25,6 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Map;
