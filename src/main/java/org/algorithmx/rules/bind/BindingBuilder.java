@@ -15,10 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.build;
+package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.impl.DefaultBinding;
 import org.algorithmx.rules.spring.util.Assert;
 

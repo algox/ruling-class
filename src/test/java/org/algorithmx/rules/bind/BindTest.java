@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.build.BindingBuilder;
 import org.algorithmx.rules.error.BindingAlreadyExistsException;
 import org.junit.Assert;
 import org.junit.Test;
