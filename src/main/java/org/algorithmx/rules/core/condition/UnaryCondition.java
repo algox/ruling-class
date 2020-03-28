@@ -19,20 +19,35 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.error.UnrulyException;
 
+/**
+ * Functional Condition taking in a single parameter.
+ *
+ * @param <A> generic type of the parameter.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface UnaryCondition<A> extends FunctionalCondition {
 
+    /**
+     * Condition logic taking in a single arg.
+     *
+     * @param arg arg value.
+     *
+     * @return true if the condition is met; false otherwise.
+     */
+    boolean when(A arg);
+
     @Override
-    default boolean isPass(Object...params) throws UnrulyException {
+    default boolean isPass(Object...args) throws UnrulyException {
         int expected = 1;
 
-        if (params == null || params.length != expected) {
-            throw new UnrulyException("Invalid number of params. Expected " + expected + " provided ["
-                    + (params == null ? 0 : params.length) + "]");
+        if (args == null || args.length != expected) {
+            throw new UnrulyException("Invalid number of args. Expected " + expected + " provided ["
+                    + (args == null ? 0 : args.length) + "]");
         }
 
-        return when((A) params[0]);
+        return when((A) args[0]);
     }
-
-    boolean when(A arg0);
 }

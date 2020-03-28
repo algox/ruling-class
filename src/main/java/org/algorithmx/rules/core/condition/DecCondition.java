@@ -19,8 +19,43 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.error.UnrulyException;
 
+/**
+ * Functional Condition taking in two parameters.
+ *
+ * @param <A> generic type of the 1st parameter.
+ * @param <B> generic type of the 2nd parameter.
+ * @param <B> generic type of the 3rd parameter.
+ * @param <B> generic type of the 4th parameter.
+ * @param <B> generic type of the 5th parameter.
+ * @param <B> generic type of the 6th parameter.
+ * @param <B> generic type of the 7th parameter.
+ * @param <B> generic type of the 8th parameter.
+ * @param <B> generic type of the 9th parameter.
+ * @param <B> generic type of the 10th parameter.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface DecCondition<A, B, C, D, E, F, G, H, I, J> extends FunctionalCondition {
+
+    /**
+     * Condition logic taking in ten args.
+     *
+     * @param arg0 1st arg.
+     * @param arg1 2nd arg.
+     * @param arg2 2nd arg.
+     * @param arg3 2nd arg.
+     * @param arg4 2nd arg.
+     * @param arg5 2nd arg.
+     * @param arg6 2nd arg.
+     * @param arg7 2nd arg.
+     * @param arg8 2nd arg.
+     * @param arg9 2nd arg.
+     *
+     * @return true if the condition is met; false otherwise.
+     */
+    boolean when(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7, I arg8, J arg9);
 
     @Override
     default boolean isPass(Object... params) throws UnrulyException {
@@ -34,6 +69,4 @@ public interface DecCondition<A, B, C, D, E, F, G, H, I, J> extends FunctionalCo
         return when((A) params[0], (B) params[1], (C) params[2], (D) params[3], (E) params[4], (F) params[5],
                 (G) params[6], (H) params[7], (I) params[8], (J) params[9]);
     }
-
-    boolean when(A arg0, B arg1, C arg2, D arg3, E arg4, F args5, G args6, H args7, I args8, J args9);
 }

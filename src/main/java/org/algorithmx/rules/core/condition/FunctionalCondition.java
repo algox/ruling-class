@@ -22,23 +22,19 @@ import org.algorithmx.rules.util.ConditionUtils;
 
 import java.io.Serializable;
 
+/**
+ * Marker interface to denote the Condition is defined using a Function (Lambda).
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public interface FunctionalCondition extends Condition, Serializable {
 
-    /**
-     * Meta information about the Condition.
-     *
-     * @return Condition meta information.
-     */
     @Override
     default ConditionDefinition getConditionDefinition() {
         return ConditionUtils.load(this, "");
     }
 
-    /**
-     * The actual target instance the Condition is associated to (usually a Rule).
-     *
-     * @return target instance.
-     */
     @Override
     default Object getTarget() {
         return null;

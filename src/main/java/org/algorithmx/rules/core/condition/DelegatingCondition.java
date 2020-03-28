@@ -21,6 +21,14 @@ import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
+/**
+ * As the name suggests this Condition delegates most of the functionality to its target Condition. This class gives
+ * the creator the ability to override the ConditionDefinition. This is useful for Functional Conditions where you
+ * cannot override the definition.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class DelegatingCondition implements Condition {
 
     private final Condition targetCondition;

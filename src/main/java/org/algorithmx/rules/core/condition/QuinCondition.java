@@ -19,20 +19,43 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.error.UnrulyException;
 
+/**
+ * Functional Condition taking in five parameters.
+ *
+ * @param <A> generic type of the 1st parameter.
+ * @param <B> generic type of the 2nd parameter.
+ * @param <C> generic type of the 3rd parameter.
+ * @param <D> generic type of the 4th parameter.
+ * @param <E> generic type of the 5th parameter.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface QuinCondition<A, B, C, D, E> extends FunctionalCondition {
 
+    /**
+     * Condition logic taking in five args.
+     *
+     * @param arg0 1st arg.
+     * @param arg1 2nd arg.
+     * @param arg2 3rd arg.
+     * @param arg3 4th arg.
+     * @param arg4 5th arg.
+     *
+     * @return true if the condition is met; false otherwise.
+     */
+    boolean when(A arg0, B arg1, C arg2, D arg3, E arg4);
+
     @Override
-    default boolean isPass(Object...params) throws UnrulyException {
+    default boolean isPass(Object...args) throws UnrulyException {
         int expected = 5;
 
-        if (params == null || params.length != expected) {
-            throw new UnrulyException("Invalid number of params. Expected " + expected + "] provided ["
-                    + (params == null ? 0 : params.length) + "]");
+        if (args == null || args.length != expected) {
+            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
+                    + (args == null ? 0 : args.length) + "]");
         }
         
-        return when((A) params[0], (B) params[1], (C) params[2], (D) params[3], (E) params[4]);
+        return when((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4]);
     }
-
-    boolean when(A arg0, B arg1, C arg2, D arg3, E arg4);
 }

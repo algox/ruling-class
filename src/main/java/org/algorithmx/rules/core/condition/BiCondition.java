@@ -19,20 +19,37 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.error.UnrulyException;
 
+/**
+ * Functional Condition taking in two parameters.
+ *
+ * @param <A> generic type of the 1st parameter.
+ * @param <B> generic type of the 2nd parameter.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface BiCondition<A, B> extends FunctionalCondition {
 
+    /**
+     * Condition logic taking in two args.
+     *
+     * @param arg0 1st arg.
+     * @param arg1 2nd arg.
+     *
+     * @return true if the condition is met; false otherwise.
+     */
+    boolean when(A arg0, B arg1);
+
     @Override
-    default boolean isPass(Object...params) throws UnrulyException {
+    default boolean isPass(Object...args) throws UnrulyException {
         int expected = 2;
 
-        if (params == null || params.length != expected) {
-            throw new UnrulyException("Invalid number of params. Expected " + expected + "] provided ["
-                    + (params == null ? 0 : params.length) + "]");
+        if (args == null || args.length != expected) {
+            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
+                    + (args == null ? 0 : args.length) + "]");
         }
         
-        return when((A) params[0], (B) params[1]);
+        return when((A) args[0], (B) args[1]);
     }
-
-    boolean when(A arg0, B arg1);
 }

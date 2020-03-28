@@ -19,8 +19,21 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.error.UnrulyException;
 
+/**
+ * Functional Condition without any parameter.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface NoArgCondition extends FunctionalCondition {
+
+    /**
+     * Condition logic without any parameter.
+     *
+     * @return true if the condition is met; false otherwise.
+     */
+    boolean when();
 
     @Override
     default boolean isPass(Object...params) throws UnrulyException {
@@ -31,6 +44,4 @@ public interface NoArgCondition extends FunctionalCondition {
 
         return when();
     }
-
-    boolean when();
 }
