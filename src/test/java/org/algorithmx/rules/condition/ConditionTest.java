@@ -18,8 +18,8 @@
 package org.algorithmx.rules.condition;
 
 import org.algorithmx.rules.bind.TypeReference;
-import org.algorithmx.rules.build.ConditionBuilder;
-import org.algorithmx.rules.core.Condition;
+import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 

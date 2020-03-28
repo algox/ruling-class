@@ -1,7 +1,7 @@
 /**
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright (c) 2019, algorithmx.org (dev@algorithmx.org)
+ * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.ScopedBindings;
+import org.algorithmx.rules.core.BindableMethodExecutor;
 import org.algorithmx.rules.core.RuleContext;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -40,14 +41,11 @@ public class RuleContextBuilder {
     private final Bindings bindings;
     private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.getDefault();
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
+    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
 
     private RuleContextBuilder(Bindings bindings) {
         super();
         this.bindings = bindings;
-    }
-
-    public static RuleContextBuilder create() {
-        return new RuleContextBuilder(Bindings.defaultBindings());
     }
 
     /**
@@ -104,6 +102,11 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder executeUsing(BindableMethodExecutor methodExecutor) {
+        this.methodExecutor = methodExecutor;
+        return this;
+    }
+
     /**
      * Builds a Rule Context with desired parameters.
      *
@@ -111,7 +114,7 @@ public class RuleContextBuilder {
      */
     public RuleContext build() {
         ScopedBindings rootBindings = Bindings.defaultBindings();
-        RuleContext result  = new RuleContext(rootBindings, matchingStrategy, parameterResolver);
+        RuleContext result  = new RuleContext(rootBindings, matchingStrategy, parameterResolver, methodExecutor);
 
         rootBindings.bind("ruleContext", RuleContext.class, result);
         rootBindings.bind("bindings", Bindings.class, bindings);

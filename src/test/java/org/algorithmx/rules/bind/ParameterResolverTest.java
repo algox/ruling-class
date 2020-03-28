@@ -1,7 +1,7 @@
 /**
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright (c) 2019, algorithmx.org (dev@algorithmx.org)
+ * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.build.ConditionBuilder;
-import org.algorithmx.rules.core.ConditionConsumer;
+import org.algorithmx.rules.core.condition.TriCondition;
 import org.algorithmx.rules.model.ParameterDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
@@ -68,10 +67,8 @@ public class ParameterResolverTest {
 
     @Test
     public void testBindableParameter4() {
-        ConditionConsumer conditionConsumer = ConditionBuilder.with3Args(((Integer a,
-                                                                           Binding<List<String>> b,
-                                                                           Optional<Integer> x) -> a > 10)).getConditionConsumer();
-        SerializedLambda lambda = LambdaUtils.getSerializedLambda(conditionConsumer);
+        TriCondition<Integer, Binding<List<String>>, Optional<Integer>> condition = ((a, b, x) -> a > 10);
+        SerializedLambda lambda = LambdaUtils.getSerializedLambda(condition);
         Class c = LambdaUtils.getImplementationClass(lambda);
         Method m = LambdaUtils.getImplementationMethod(lambda, c);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);

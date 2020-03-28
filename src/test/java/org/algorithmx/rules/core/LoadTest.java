@@ -19,8 +19,8 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.build.ActionBuilder;
-import org.algorithmx.rules.build.ConditionBuilder;
 import org.algorithmx.rules.build.RuleBuilder;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.junit.Assert;

@@ -1,7 +1,7 @@
 /**
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright (c) 2019, algorithmx.org (dev@algorithmx.org)
+ * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.impl;
+package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.core.BindableMethodExecutor;
-import org.algorithmx.rules.core.Condition;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
@@ -51,7 +50,7 @@ public class DefaultCondition implements Condition {
     }
 
     @Override
-    public boolean isPass(Object... args) throws UnrulyException {
+    public boolean isPass(Object...args) throws UnrulyException {
         try {
             return methodExecutor.execute(target, conditionDefinition.getMethodDefinition(), args);
         } catch (UnrulyException e) {

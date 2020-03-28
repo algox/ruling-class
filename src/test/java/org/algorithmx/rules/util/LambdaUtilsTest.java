@@ -17,7 +17,8 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.ConditionConsumer;
+import org.algorithmx.rules.core.condition.TriCondition;
+import org.algorithmx.rules.core.condition.UnaryCondition;
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
 import org.junit.Assert;
@@ -40,9 +41,9 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test1() {
-        ConditionConsumer.ConditionConsumer1<Integer> rule1 = (Integer x) -> x > 10;
+        UnaryCondition<Integer> rule1 = (Integer x) -> x > 10;
 
-        ConditionConsumer.ConditionConsumer1<Integer> rule2 = new ConditionConsumer.ConditionConsumer1<Integer>() {
+        UnaryCondition<Integer> rule2 = new UnaryCondition<Integer>() {
             static final long serialVersionUID = 0L;
 
             @Override
@@ -65,7 +66,7 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test2() {
-        ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
+        TriCondition<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule3);
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
@@ -82,8 +83,10 @@ public final class LambdaUtilsTest {
     @Test
     public void test3() throws NoSuchMethodException {
 
-        ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal> rule3 = new ConditionConsumer.ConditionConsumer3<Integer, String, BigDecimal>() {
+        TriCondition<Integer, String, BigDecimal> rule3 = new TriCondition<Integer, String, BigDecimal>() {
+
             static final long serialVersionUID = 0L;
+
             @Override
             public boolean when(Integer xxx, String value, BigDecimal salary) {
                 return false;

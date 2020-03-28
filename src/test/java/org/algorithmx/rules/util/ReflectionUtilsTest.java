@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.ConditionConsumer;
+import org.algorithmx.rules.core.condition.TriCondition;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public class ReflectionUtilsTest {
 
     @Test
     public void parameterNamesTest2() throws NoSuchMethodException {
-        ConditionConsumer.ConditionConsumer3<Integer, String, List<Float>> lambda = (Integer a, String b, List<Float> c) -> a > 100;
+        TriCondition<Integer, String, List<Float>> lambda = (Integer a, String b, List<Float> c) -> a > 100;
         SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(lambda);
         Assert.assertTrue(serializedLambda != null);
         Class<?> c = LambdaUtils.getImplementationClass(serializedLambda);

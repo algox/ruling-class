@@ -1,7 +1,7 @@
 /**
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright (c) 2019, algorithmx.org (dev@algorithmx.org)
+ * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.build.ActionBuilder;
-import org.algorithmx.rules.build.ConditionBuilder;
 import org.algorithmx.rules.build.RuleBuilder;
 import org.algorithmx.rules.core.Rule;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.junit.Test;
 
 public class RuleActionTest1 {

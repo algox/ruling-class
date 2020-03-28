@@ -17,11 +17,11 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.ConditionConsumer;
-import org.algorithmx.rules.core.impl.DefaultCondition;
+import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.condition.DefaultCondition;
 import org.algorithmx.rules.model.ConditionDefinition;
 
+import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 
 /**
@@ -39,12 +39,12 @@ public final class ConditionUtils {
     /**
      * Loads a new ConditionDefinition from the given Condition Lambda and Description.
      *
-     * @param consumer then Condition lambda.
+     * @param lambda then Condition lambda.
      * @param description Condition Description.
      * @return new Condition Definition.
      */
-    public static ConditionDefinition load(ConditionConsumer consumer, String description) {
-        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(consumer);
+    public static ConditionDefinition load(Serializable lambda, String description) {
+        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(lambda);
         return ConditionDefinition.load(serializedLambda, description);
     }
 
@@ -57,18 +57,5 @@ public final class ConditionUtils {
      */
     public static Condition create(ConditionDefinition conditionDefinition, Object target) {
         return new DefaultCondition(conditionDefinition, target);
-    }
-
-    /**
-     * Creates a new Condition from the given ConditionConsumer lambda and the target object.
-     *
-     * @param lambda ConditionConsumer lambda.
-     * @param description Condition description.
-     * @param target target object.
-     * @return Condition Object.
-     */
-    public static Condition create(ConditionConsumer lambda, String description, Object target) {
-        ConditionDefinition conditionDefinition = load(lambda, description);
-        return create(conditionDefinition, target);
     }
 }

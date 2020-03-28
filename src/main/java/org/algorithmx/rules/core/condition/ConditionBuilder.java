@@ -15,15 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.build;
+package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.core.Condition;
-import org.algorithmx.rules.core.ConditionConsumer;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
-import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.util.ConditionUtils;
 
 import java.lang.reflect.Type;
 
@@ -35,27 +31,24 @@ import java.lang.reflect.Type;
  */
 public final class ConditionBuilder {
 
-    private final ConditionConsumer conditionConsumer;
+    private final FunctionalCondition condition;
     private final ConditionDefinition definition;
 
-    private ConditionBuilder(ConditionConsumer conditionConsumer, ConditionDefinition definition) {
+    private ConditionBuilder(FunctionalCondition condition) {
         super();
-        Assert.notNull(conditionConsumer, "conditionConsumer cannot be null");
-        Assert.notNull(definition, "definition cannot be null");
-        this.conditionConsumer = conditionConsumer;
-        this.definition = definition;
+        this.condition = condition;
+        this.definition = condition.getConditionDefinition();
     }
 
     /**
      * Creates a new condition builder given a ConditionConsumer. This is useful when using your own ConditionConsumer
      * definition or if you want to cast to an existing one.
      *
-     * @param consumer desired condition.
-     * @param definition condition definition.
+     * @param condition desired condition.
      * @return new ConditionBuilder based on the given consumer.
      */
-    public static ConditionBuilder with(ConditionConsumer consumer, ConditionDefinition definition) {
-        return new ConditionBuilder(consumer, definition);
+    public static ConditionBuilder with(FunctionalCondition condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -64,8 +57,8 @@ public final class ConditionBuilder {
      * @param condition desired condition.
      * @return new ConditionBuilder with no arguments.
      */
-    public static ConditionBuilder withNoArgs(ConditionConsumer.ConditionConsumer0 condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static ConditionBuilder withNoArgs(NoArgCondition condition) {
+        return new ConditionBuilder(condition);
     }
 
     public static Condition alwaysTrue() {
@@ -83,8 +76,8 @@ public final class ConditionBuilder {
      * @param <A> generic type of the first parameter.
      * @return new ConditionBuilder with one arguments.
      */
-    public static <A> ConditionBuilder with1Arg(ConditionConsumer.ConditionConsumer1<A> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A> ConditionBuilder with1Arg(UnaryCondition<A> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -95,8 +88,8 @@ public final class ConditionBuilder {
      * @param <B> generic type of the second parameter.
      * @return new ConditionBuilder with two arguments.
      */
-    public static <A, B> ConditionBuilder with2Args(ConditionConsumer.ConditionConsumer2<A, B> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B> ConditionBuilder with2Args(BiCondition<A, B> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -108,8 +101,8 @@ public final class ConditionBuilder {
      * @param <C> generic type of the third parameter.
      * @return new ConditionBuilder with three arguments.
      */
-    public static <A, B, C> ConditionBuilder with3Args(ConditionConsumer.ConditionConsumer3<A, B, C> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C> ConditionBuilder with3Args(TriCondition<A, B, C> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -122,8 +115,8 @@ public final class ConditionBuilder {
      * @param <D> generic type of the fourth parameter.
      * @return new ConditionBuilder with four arguments.
      */
-    public static <A, B, C, D> ConditionBuilder with4Args(ConditionConsumer.ConditionConsumer4<A, B, C, D> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D> ConditionBuilder with4Args(QuadCondition<A, B, C, D> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -137,8 +130,8 @@ public final class ConditionBuilder {
      * @param <E> generic type of the fifth parameter.
      * @return new ConditionBuilder with five arguments.
      */
-    public static <A, B, C, D, E> ConditionBuilder with5Args(ConditionConsumer.ConditionConsumer5<A, B, C, D, E> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D, E> ConditionBuilder with5Args(QuinCondition<A, B, C, D, E> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -153,8 +146,8 @@ public final class ConditionBuilder {
      * @param <F> generic type of the sixth parameter.
      * @return new ConditionBuilder with six arguments.
      */
-    public static <A, B, C, D, E, F> ConditionBuilder with6Args(ConditionConsumer.ConditionConsumer6<A, B, C, D, E, F> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D, E, F> ConditionBuilder with6Args(SexCondition<A, B, C, D, E, F> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -170,9 +163,8 @@ public final class ConditionBuilder {
      * @param <G> generic type of the seventh parameter.
      * @return new ConditionBuilder with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> ConditionBuilder with7Args(
-            ConditionConsumer.ConditionConsumer7<A, B, C, D, E, F, G> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D, E, F, G> ConditionBuilder with7Args(SeptCondition<A, B, C, D, E, F, G> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -189,9 +181,8 @@ public final class ConditionBuilder {
      * @param <H> generic type of the eighth parameter.
      * @return new ConditionBuilder with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> ConditionBuilder with8Args(
-            ConditionConsumer.ConditionConsumer8<A, B, C, D, E, F, G, H> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D, E, F, G, H> ConditionBuilder with8Args(OctCondition<A, B, C, D, E, F, G, H> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -209,9 +200,8 @@ public final class ConditionBuilder {
      * @param <I> generic type of the ninth parameter.
      * @return new Condition with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with9Args(
-            ConditionConsumer.ConditionConsumer9<A, B, C, D, E, F, G, H, I> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with9Args(NovCondition<A, B, C, D, E, F, G, H, I> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -230,9 +220,8 @@ public final class ConditionBuilder {
      * @param <J> generic type of the ninth parameter.
      * @return new ConditionBuilder with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with10Args(
-            ConditionConsumer.ConditionConsumer10<A, B, C, D, E, F, G, H, I, J> condition) {
-        return new ConditionBuilder(condition, ConditionUtils.load(condition, null));
+    public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with10Args(DecCondition<A, B, C, D, E, F, G, H, I, J> condition) {
+        return new ConditionBuilder(condition);
     }
 
     /**
@@ -294,11 +283,7 @@ public final class ConditionBuilder {
      * @return a new Condition.
      */
     public Condition build() {
-        return ConditionUtils.create(definition, null);
-    }
-
-    public ConditionConsumer getConditionConsumer() {
-        return conditionConsumer;
+        return new DelegatingCondition(condition, definition);
     }
 
     public ConditionDefinition getDefinition() {

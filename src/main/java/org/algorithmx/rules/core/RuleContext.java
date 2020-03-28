@@ -1,7 +1,7 @@
 /**
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright (c) 2019, algorithmx.org (dev@algorithmx.org)
+ * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,16 +34,26 @@ public class RuleContext {
     private final Bindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
     private final ParameterResolver parameterResolver;
+    private final BindableMethodExecutor methodExecutor;
+
     private RuleExecutionState state = RuleExecutionState.RUNNING;
 
-    public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy, ParameterResolver parameterResolver) {
+    public RuleContext(Bindings bindings) {
+        this(bindings, BindingMatchingStrategy.getDefault(), ParameterResolver.defaultParameterResolver(),
+                BindableMethodExecutor.defaultBindableMethodExecutor());
+    }
+
+    public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy,
+                       ParameterResolver parameterResolver, BindableMethodExecutor methodExecutor) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
         Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
+        Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
         this.bindings = bindings;
         this.matchingStrategy = matchingStrategy;
         this.parameterResolver = parameterResolver;
+        this.methodExecutor = methodExecutor;
     }
 
     /**
@@ -71,6 +81,10 @@ public class RuleContext {
      */
     public ParameterResolver getParameterResolver() {
         return parameterResolver;
+    }
+
+    public BindableMethodExecutor getMethodExecutor() {
+        return methodExecutor;
     }
 
     /**

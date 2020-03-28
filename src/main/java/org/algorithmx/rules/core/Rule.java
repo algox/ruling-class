@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 
