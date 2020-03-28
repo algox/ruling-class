@@ -24,7 +24,7 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.ScopedBindings;
-import org.algorithmx.rules.core.BindableMethodExecutor;
+import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Map;

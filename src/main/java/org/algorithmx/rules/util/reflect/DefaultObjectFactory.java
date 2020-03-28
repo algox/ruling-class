@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.impl;
+package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.error.UnrulyException;
-import org.algorithmx.rules.core.ObjectFactory;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ReflectionUtils;
 

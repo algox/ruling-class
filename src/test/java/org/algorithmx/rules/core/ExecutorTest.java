@@ -28,6 +28,7 @@ import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
+import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.junit.Assert;
 import org.junit.Test;
 

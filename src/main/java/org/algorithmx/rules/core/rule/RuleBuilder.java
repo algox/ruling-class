@@ -19,7 +19,7 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.ObjectFactory;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
