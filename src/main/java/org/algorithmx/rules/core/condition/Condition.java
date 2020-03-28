@@ -60,7 +60,7 @@ public interface Condition {
     ConditionDefinition getConditionDefinition();
 
     /**
-     * The actual target instance the Condition is associated to (usually a Rule).
+     * The actual target instance the Condition is associated to (Rule instance or null for Functional Rules).
      *
      * @return target instance.
      */
