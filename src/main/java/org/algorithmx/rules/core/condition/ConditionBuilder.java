@@ -61,12 +61,12 @@ public final class ConditionBuilder {
         return new ConditionBuilder(condition);
     }
 
-    public static Condition alwaysTrue() {
-        return ConditionBuilder.withNoArgs(() -> true).build();
+    public static ConditionBuilder alwaysTrue() {
+        return ConditionBuilder.withNoArgs(() -> true);
     }
 
-    public static Condition alwaysFalse() {
-        return ConditionBuilder.withNoArgs(() -> false).build();
+    public static ConditionBuilder alwaysFalse() {
+        return ConditionBuilder.withNoArgs(() -> false);
     }
 
     /**

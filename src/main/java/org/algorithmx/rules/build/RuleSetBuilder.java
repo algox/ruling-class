@@ -17,10 +17,10 @@
  */
 package org.algorithmx.rules.build;
 
-import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleSet;
+import org.algorithmx.rules.core.action.Action;
+import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.impl.DefaultRuleSet;
 import org.algorithmx.rules.spring.util.Assert;
 

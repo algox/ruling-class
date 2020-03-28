@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.Action;
+import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;

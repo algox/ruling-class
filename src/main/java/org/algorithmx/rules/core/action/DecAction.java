@@ -15,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.condition;
+package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.error.UnrulyException;
 
 /**
- * Functional Condition taking in two parameters.
+ * Functional Action taking in two parameters.
  *
  * @param <A> generic type of the 1st parameter.
  * @param <B> generic type of the 2nd parameter.
@@ -37,10 +37,10 @@ import org.algorithmx.rules.error.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface DecCondition<A, B, C, D, E, F, G, H, I, J> extends FunctionalCondition {
+public interface DecAction<A, B, C, D, E, F, G, H, I, J> extends FunctionalAction {
 
     /**
-     * Condition logic taking in ten args.
+     * Action logic taking in ten args.
      *
      * @param arg0 1st arg.
      * @param arg1 2nd arg.
@@ -52,13 +52,11 @@ public interface DecCondition<A, B, C, D, E, F, G, H, I, J> extends FunctionalCo
      * @param arg7 2nd arg.
      * @param arg8 2nd arg.
      * @param arg9 2nd arg.
-     *
-     * @return true if the condition is met; false otherwise.
      */
-    boolean isPass(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7, I arg8, J arg9);
+    void execute(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7, I arg8, J arg9);
 
     @Override
-    default boolean isPass(Object... params) throws UnrulyException {
+    default void execute(Object...params) throws UnrulyException {
         int expected = 10;
 
         if (params == null || params.length != expected) {
@@ -66,7 +64,7 @@ public interface DecCondition<A, B, C, D, E, F, G, H, I, J> extends FunctionalCo
                     + (params == null ? 0 : params.length) + "]");
         }
         
-        return isPass((A) params[0], (B) params[1], (C) params[2], (D) params[3], (E) params[4], (F) params[5],
+        execute((A) params[0], (B) params[1], (C) params[2], (D) params[3], (E) params[4], (F) params[5],
                 (G) params[6], (H) params[7], (I) params[8], (J) params[9]);
     }
 }

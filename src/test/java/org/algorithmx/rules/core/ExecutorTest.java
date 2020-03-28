@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.build.RuleBuilder;
+import org.algorithmx.rules.core.action.TriAction;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
@@ -150,7 +151,7 @@ public class ExecutorTest {
 
         bindings.bind("binds", TypeReference.with(Bindings.class), bindings, false);
 
-        ActionConsumer.ActionConsumer3<?, ?, ?> action = (Integer id, List<String> values, Bindings binds) -> binds.set("result", 10);
+        TriAction<?, ?, ?> action = (Integer id, List<String> values, Bindings binds) -> binds.set("result", 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
         ActionDefinition definition = ActionDefinition.load(lambda,"ActionConsumer!");
         executor.execute(action, definition.getMethodDefinition(),

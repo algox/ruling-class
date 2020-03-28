@@ -47,7 +47,7 @@ public interface SexCondition<A, B, C, D, E, F> extends FunctionalCondition {
      *
      * @return true if the condition is met; false otherwise.
      */
-    boolean when(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5);
+    boolean isPass(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5);
 
     @Override
     default boolean isPass(Object...args) throws UnrulyException {
@@ -58,6 +58,6 @@ public interface SexCondition<A, B, C, D, E, F> extends FunctionalCondition {
                     + (args == null ? 0 : args.length) + "]");
         }
         
-        return when((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5]);
+        return isPass((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5]);
     }
 }

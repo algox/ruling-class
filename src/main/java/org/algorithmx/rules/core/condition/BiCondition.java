@@ -39,7 +39,7 @@ public interface BiCondition<A, B> extends FunctionalCondition {
      *
      * @return true if the condition is met; false otherwise.
      */
-    boolean when(A arg0, B arg1);
+    boolean isPass(A arg0, B arg1);
 
     @Override
     default boolean isPass(Object...args) throws UnrulyException {
@@ -50,6 +50,6 @@ public interface BiCondition<A, B> extends FunctionalCondition {
                     + (args == null ? 0 : args.length) + "]");
         }
         
-        return when((A) args[0], (B) args[1]);
+        return isPass((A) args[0], (B) args[1]);
     }
 }

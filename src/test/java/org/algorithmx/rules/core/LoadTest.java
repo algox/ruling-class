@@ -18,8 +18,8 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.TypeReference;
-import org.algorithmx.rules.build.ActionBuilder;
 import org.algorithmx.rules.build.RuleBuilder;
+import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
@@ -121,7 +121,7 @@ public class LoadTest {
                 .with(ConditionBuilder.with2Args((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
-                .then(ActionBuilder.emptyAction())
+                .then(ActionBuilder.emptyAction().build())
                 .build();
         RuleDefinition def = rule.getRuleDefinition();
 

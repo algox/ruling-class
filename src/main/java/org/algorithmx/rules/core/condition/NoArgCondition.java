@@ -33,7 +33,7 @@ public interface NoArgCondition extends FunctionalCondition {
      *
      * @return true if the condition is met; false otherwise.
      */
-    boolean when();
+    boolean isPass();
 
     @Override
     default boolean isPass(Object...params) throws UnrulyException {
@@ -42,6 +42,6 @@ public interface NoArgCondition extends FunctionalCondition {
             throw new UnrulyException("Invalid number of params. Expected 0 provided [" + params.length + "]");
         }
 
-        return when();
+        return isPass();
     }
 }

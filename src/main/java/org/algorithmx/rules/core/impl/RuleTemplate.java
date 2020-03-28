@@ -17,11 +17,10 @@
  */
 package org.algorithmx.rules.core.impl;
 
-import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.ActionConsumer;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Rule;
 import org.algorithmx.rules.core.RuleContext;
+import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.util.ActionUtils;
@@ -88,28 +87,6 @@ public abstract class RuleTemplate implements Rule, Identifiable {
     }
 
     /**
-     * Associates a new Action to the Rule. The ActionConsumer Lambda is converted into an Action.
-     *
-     * @param action desired action.
-     * @return this so other Actions can be associated fluently.
-     */
-    protected Rule then(ActionConsumer action) {
-        return then(action, null);
-    }
-
-    /**
-     * Associates a new Action to the Rule. The ActionConsumer Lambda is converted into an Action.
-     *
-     * @param action desired action.
-     * @param description description of the Action.
-     * @return this so other Actions can be associated fluently.
-     */
-    protected Rule then(ActionConsumer action, String description) {
-        actions.add(ActionUtils.create(action, description, getTarget()));
-        return this;
-    }
-
-    /**
      * Associates a OtherwiseAction to the Rule (if one isn't present already).
      *
      * @param action desired action.
@@ -120,25 +97,6 @@ public abstract class RuleTemplate implements Rule, Identifiable {
             throw new UnrulyException("This Rule already has an otherwise action associated to it.");
         }
         this.otherwiseAction = action;
-    }
-
-    /**
-     * Associates a new Action to the Rule (if one isn't present already). The ActionConsumer Lambda is converted into an Action.
-     *
-     * @param action desired action.
-     */
-    protected void otherwise(ActionConsumer action) {
-        otherwise(ActionUtils.create(action, null, getTarget()));
-    }
-
-    /**
-     * Associates a new Action to the Rule (if one isn't present already). The ActionConsumer Lambda is converted into an Action.
-     *
-     * @param action desired action.
-     * @param description description of the Action.
-     */
-    protected void otherwise(ActionConsumer action, String description) {
-        otherwise(ActionUtils.create(action, description, getTarget()));
     }
 
     /**

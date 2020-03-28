@@ -43,7 +43,7 @@ public interface QuadCondition<A, B, C, D> extends FunctionalCondition {
      *
      * @return true if the condition is met; false otherwise.
      */
-    boolean when(A arg0, B arg1, C arg2, D arg3);
+    boolean isPass(A arg0, B arg1, C arg2, D arg3);
 
     @Override
     default boolean isPass(Object...args) throws UnrulyException {
@@ -54,6 +54,6 @@ public interface QuadCondition<A, B, C, D> extends FunctionalCondition {
                     + (args == null ? 0 : args.length) + "]");
         }
         
-        return when((A) args[0], (B) args[1], (C) args[2], (D) args[3]);
+        return isPass((A) args[0], (B) args[1], (C) args[2], (D) args[3]);
     }
 }

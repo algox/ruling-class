@@ -47,7 +47,7 @@ public final class LambdaUtilsTest {
             static final long serialVersionUID = 0L;
 
             @Override
-            public boolean when(Integer value) {
+            public boolean isPass(Integer value) {
                 return false;
             }
         };
@@ -88,12 +88,12 @@ public final class LambdaUtilsTest {
             static final long serialVersionUID = 0L;
 
             @Override
-            public boolean when(Integer xxx, String value, BigDecimal salary) {
+            public boolean isPass(Integer xxx, String value, BigDecimal salary) {
                 return false;
             }
         };
 
-        Method implementationMethod = rule3.getClass().getDeclaredMethod("when", Integer.class, String.class, BigDecimal.class);
+        Method implementationMethod = rule3.getClass().getDeclaredMethod("isPass", Integer.class, String.class, BigDecimal.class);
         ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
         String[] names = discoverer.getParameterNames(implementationMethod);
 

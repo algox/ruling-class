@@ -15,43 +15,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.condition;
+package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.error.UnrulyException;
 
 /**
- * Functional Condition taking in three parameters.
+ * Functional Action taking in four parameters.
  *
  * @param <A> generic type of the 1st parameter.
  * @param <B> generic type of the 2nd parameter.
  * @param <C> generic type of the 3rd parameter.
+ * @param <D> generic type of the 4th parameter.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @FunctionalInterface
-public interface TriCondition<A, B, C> extends FunctionalCondition {
+public interface QuadAction<A, B, C, D> extends FunctionalAction {
 
     /**
-     * Condition logic taking in three args.
+     * Action logic taking in four args.
      *
      * @param arg0 1st arg.
      * @param arg1 2nd arg.
      * @param arg2 3rd arg.
-     *
-     * @return true if the condition is met; false otherwise.
+     * @param arg3 4th arg.
      */
-    boolean isPass(A arg0, B arg1, C arg2);
+    void execute(A arg0, B arg1, C arg2, D arg3);
 
     @Override
-    default boolean isPass(Object...args) throws UnrulyException {
-        int expected = 3;
+    default void execute(Object... args) throws UnrulyException {
+        int expected = 4;
 
         if (args == null || args.length != expected) {
             throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
                     + (args == null ? 0 : args.length) + "]");
         }
         
-        return isPass((A) args[0], (B) args[1], (C) args[2]);
+        execute((A) args[0], (B) args[1], (C) args[2], (D) args[3]);
     }
 }

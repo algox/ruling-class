@@ -17,11 +17,11 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.Action;
-import org.algorithmx.rules.core.ActionConsumer;
-import org.algorithmx.rules.core.impl.DefaultAction;
+import org.algorithmx.rules.core.action.Action;
+import org.algorithmx.rules.core.action.DefaultAction;
 import org.algorithmx.rules.model.ActionDefinition;
 
+import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 
 /**
@@ -39,12 +39,12 @@ public final class ActionUtils {
     /**
      * Loads a new ActionDefinition from the given Action Lambda and Description.
      *
-     * @param consumer then action lambda.
+     * @param action then action lambda.
      * @param description Action Description.
      * @return new Action Definition.
      */
-    public static ActionDefinition load(ActionConsumer consumer, String description) {
-        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(consumer);
+    public static ActionDefinition load(Serializable action, String description) {
+        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(action);
         return ActionDefinition.load(serializedLambda, description);
     }
 
@@ -57,18 +57,5 @@ public final class ActionUtils {
      */
     public static Action create(ActionDefinition actionDefinition, Object target) {
         return new DefaultAction(actionDefinition, target);
-    }
-
-    /**
-     * Creates a new Action from the given ActionConsumer lambda and the target object.
-     *
-     * @param lambda ActionConsumer lambda.
-     * @param description action description.
-     * @param target target object.
-     * @return Action Object.
-     */
-    public static Action create(ActionConsumer lambda, String description, Object target) {
-        ActionDefinition actionDefinition = load(lambda, description);
-        return create(actionDefinition, target);
     }
 }

@@ -51,7 +51,7 @@ public interface OctCondition<A, B, C, D, E, F, G, H> extends FunctionalConditio
      *
      * @return true if the condition is met; false otherwise.
      */
-    boolean when(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7);
+    boolean isPass(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7);
 
     @Override
     default boolean isPass(Object...args) throws UnrulyException {
@@ -62,6 +62,6 @@ public interface OctCondition<A, B, C, D, E, F, G, H> extends FunctionalConditio
                     + (args == null ? 0 : args.length) + "]");
         }
         
-        return when((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5], (G) args[6], (H) args[7]);
+        return isPass((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5], (G) args[6], (H) args[7]);
     }
 }
