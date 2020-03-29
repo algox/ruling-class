@@ -21,7 +21,6 @@ import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -65,9 +64,12 @@ public class DefaultRuleSet implements RuleSet {
 
     @Override
     public void run(RuleContext ctx) throws UnrulyException {
+
         // Check to make sure we are still running
         if (!ctx.getState().isRunning()) {
-            return;
+            throw new UnrulyException("Error trying to run RuleSet [" + getName()
+                    + "]. Invalid execution state [" + ctx.getState() + "]. RuleContext is not a running state. " +
+                    "Try running withe a new RuleContext.");
         }
 
         // Run the PreCondition if there is one.

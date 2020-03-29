@@ -83,7 +83,7 @@ public interface ParameterResolver {
         for (int i = 0; i < result.length; i++) {
             result[i] = matches[i] != null
                     ? (matches[i].definition.isSpecialParameter()
-                        ? matches[i].definition.getSpecialParameter().getValue( matches[i].binding)
+                        ? matches[i].definition.getSpecialParameter().getValue(matches[i].binding)
                         : matches[i].binding.getValue())
                     : null;
         }
