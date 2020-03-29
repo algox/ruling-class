@@ -57,32 +57,45 @@ public interface Rule extends Predicate<Object[]> {
     /**
      * Executes thr Rule Condition given all the arguments it needs.
      *
-     * @param params Rule Condition parameters in necessary order.
+     * @param ctx used to derive the parameters required for this Rule.
      * @return true if the Rule Condition is true; false otherwise.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    boolean isPass(Object...params) throws UnrulyException;
-
-    /**
-     * Executes thr Rule Condition given all the arguments it needs.
-     *
-     * @param params Rule Condition parameters in necessary order.
-     * @return true if the Rule Condition is false; false otherwise.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default boolean isFail(Object...params) throws UnrulyException {
-        return !isPass(params);
+    default boolean isPass(RuleContext ctx) throws UnrulyException {
+        return getCondition().isPass(ctx);
     }
 
     /**
      * Executes thr Rule Condition given all the arguments it needs.
      *
-     * @param params Rule Condition parameters in necessary order.
+     * @param args Rule Condition args in necessary order.
      * @return true if the Rule Condition is true; false otherwise.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default boolean test(Object...params) throws UnrulyException {
-        return isPass(params);
+    default boolean isPass(Object...args) throws UnrulyException {
+        return getCondition().isPass(args);
+    }
+
+    /**
+     * Executes thr Rule Condition given all the arguments it needs.
+     *
+     * @param args Rule Condition args in necessary order.
+     * @return true if the Rule Condition is false; false otherwise.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default boolean isFail(Object...args) throws UnrulyException {
+        return !isPass(args);
+    }
+
+    /**
+     * Executes thr Rule Condition given all the arguments it needs.
+     *
+     * @param args Rule Condition args in necessary order.
+     * @return true if the Rule Condition is true; false otherwise.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default boolean test(Object...args) throws UnrulyException {
+        return isPass(args);
     }
 
     /**

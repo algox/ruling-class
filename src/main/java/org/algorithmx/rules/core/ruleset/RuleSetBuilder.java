@@ -22,6 +22,7 @@ import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.validation.ValidationRule;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,6 +75,11 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder rule(Class<?> ruleClass) {
         rule(RuleBuilder.with(ruleClass).build());
+        return this;
+    }
+
+    public RuleSetBuilder rule(ValidationRule rule) {
+        rule(RuleBuilder.with(rule).build());
         return this;
     }
 

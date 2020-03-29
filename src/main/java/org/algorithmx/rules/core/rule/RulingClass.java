@@ -17,13 +17,14 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.util.ConditionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,11 +33,13 @@ import java.util.List;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RulingClass extends RuleTemplate {
+public class RulingClass implements Rule, Identifiable {
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
     private final Condition condition;
+    private final List<Action> actions;
+    private final Action otherwiseAction;
 
     /**
      * Rule defined with all the given properties.
@@ -51,40 +54,47 @@ public class RulingClass extends RuleTemplate {
                        List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
+        Assert.notNull(condition, "condition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
         this.condition = condition;
 
         // Then actions (optional)
         if (thenActions != null) {
-            thenActions.stream().forEach(action -> then(action));
+            Collections.sort(thenActions);
+            this.actions = Collections.unmodifiableList(thenActions);
+        } else {
+            this.actions = Collections.emptyList();
         }
 
         // Otherwise action (Optional)
-        if (otherwiseAction != null) {
-            otherwise(otherwiseAction);
-        }
+        this.otherwiseAction = otherwiseAction;
     }
 
-    /**
-     * Ctor used to subclasses than are actually implementing the rule.
-     */
-    protected RulingClass() {
-        super();
-        this.ruleDefinition = RuleDefinition.load(getClass());
-        this.target = this;
-        this.condition = ConditionUtils.create(ruleDefinition.getConditionDefinition(), target);
-        loadActions(getClass());
+    @Override
+    public void run(RuleContext ctx) throws UnrulyException {
+        // Check to make sure we are still running
+        if (!ctx.getState().isRunning()) {
+            return;
+        }
+
+        boolean result = getCondition().isPass(ctx);
+
+        // The Condition passed
+        if (result) {
+            // Execute any associated Actions.
+            for (Action action : getActions()) {
+                action.execute(ctx);
+            }
+        } else if (getOtherwiseAction() != null) {
+            // Condition failed
+            getOtherwiseAction().execute(ctx);
+        }
     }
 
     @Override
     public Condition getCondition() {
         return condition;
-    }
-
-    @Override
-    public boolean isPass(Object...args) throws UnrulyException {
-        return condition.isPass(args);
     }
 
     @Override
@@ -105,6 +115,16 @@ public class RulingClass extends RuleTemplate {
     @Override
     public Object getTarget() {
         return target;
+    }
+
+    @Override
+    public Action[] getActions() {
+        return actions.toArray(new Action[actions.size()]);
+    }
+
+    @Override
+    public Action getOtherwiseAction() {
+        return otherwiseAction;
     }
 
     @Override

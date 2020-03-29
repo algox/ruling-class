@@ -27,7 +27,6 @@ import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,9 +39,6 @@ import java.util.function.Supplier;
  */
 public class BindingValidationRule<T> extends ValidationRule {
 
-    private static final AtomicInteger COUNT = new AtomicInteger();
-
-    private String ruleName;
     private final String bindingName;
     private final Supplier<Binding<T>> supplier;
     private final Function<T, Boolean> condition;
@@ -131,11 +127,6 @@ public class BindingValidationRule<T> extends ValidationRule {
         return result;
     }
 
-    @Override
-    public String getName() {
-        return ruleName != null ? ruleName : super.getName() + "_" + COUNT.addAndGet(1);
-    }
-
     /**
      * Retrieves the Binding Name this Validation Rule is for.
      *
@@ -145,9 +136,5 @@ public class BindingValidationRule<T> extends ValidationRule {
         if (bindingName != null) return bindingName;
         Binding binding = supplier.get();
         return binding != null ? binding.getName() : "";
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
     }
 }

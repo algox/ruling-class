@@ -84,7 +84,7 @@ public class ValidationTest {
         Assert.assertTrue(errors.size() == 0);
     }
 
-    @Test
+    //@Test
     public void testNullRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
         Bindings bindings = Bindings.defaultBindings()

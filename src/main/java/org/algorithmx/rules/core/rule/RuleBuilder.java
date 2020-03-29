@@ -42,6 +42,10 @@ public abstract class RuleBuilder {
         return new ClassBasedRuleBuilder(ruleClass);
     }
 
+    public static ObjectBasedRuleBuilder with(Object ruleTarget) {
+        return new ObjectBasedRuleBuilder(ruleTarget);
+    }
+
     public static ClassBasedRuleBuilder with(Class<?> ruleClass, ObjectFactory objectFactory) {
         ClassBasedRuleBuilder result = new ClassBasedRuleBuilder(ruleClass);
         result.objectFactory(objectFactory);
@@ -127,7 +131,7 @@ public abstract class RuleBuilder {
     }
 
     public List<Action> getThenActions() {
-        return Collections.unmodifiableList(thenActions);
+        return thenActions;
     }
 
     public Action getOtherwiseAction() {
@@ -155,6 +159,12 @@ public abstract class RuleBuilder {
         RuleDefinition ruleDefinition = new RuleDefinition(getRuleClass(), getName(), getDescription(),
                 getCondition().getConditionDefinition(), actionDefinitions,
                 getOtherwiseAction() != null ? getOtherwiseAction().getActionDefinition() : null);
+
+        // Call back to set the RuleDefinition
+        if (getTarget() instanceof RuleDefinitionAware) {
+            ((RuleDefinitionAware) getTarget()).setRuleDefinition(ruleDefinition);
+        }
+
         return new RulingClass(ruleDefinition, getTarget(), getCondition(), getThenActions(), getOtherwiseAction());
     }
 }

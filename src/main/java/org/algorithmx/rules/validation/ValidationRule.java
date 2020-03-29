@@ -23,7 +23,9 @@ import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleDefinitionAware;
 import org.algorithmx.rules.core.rule.RulingClass;
+import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.FormattedText;
@@ -40,11 +42,13 @@ import java.util.Map;
  * @author Max Arulananthan
  * @since 1.0
  */
-public abstract class ValidationRule extends RulingClass {
+public abstract class ValidationRule implements RuleDefinitionAware {
 
+    private final String errorCode;
     private Severity severity;
     private String errorMessage;
-    private final String errorCode;
+
+    private RuleDefinition ruleDefinition;
 
     /**
      * Ctor taking in the error code.
@@ -113,7 +117,8 @@ public abstract class ValidationRule extends RulingClass {
      */
     protected Map<String, Binding> resolveParameters(RuleContext ctx) {
         ParameterResolver.ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
-                getRuleDefinition().getConditionDefinition().getMethodDefinition(), ctx.getBindings(), ctx.getMatchingStrategy());
+                getRuleDefinition().getConditionDefinition().getMethodDefinition(), ctx.getBindings(),
+                ctx.getMatchingStrategy());
 
         Map<String, Binding> result = new LinkedHashMap<>();
 
@@ -138,7 +143,8 @@ public abstract class ValidationRule extends RulingClass {
      */
     protected ValidationError createValidationError(String errorCode, Severity severity, String errorMessage,
                                                     Map<String, Binding> matches) {
-        ValidationError result = new ValidationError(getName(), errorCode, severity, formatErrorMessage(errorMessage, matches));
+        ValidationError result = new ValidationError(getRuleDefinition().getName(), errorCode, severity,
+                formatErrorMessage(errorMessage, matches));
         addParameters(result, matches);
         return result;
     }
@@ -181,6 +187,15 @@ public abstract class ValidationRule extends RulingClass {
                 error.param(match.getKey(), match.getValue() != null ? match.getValue().getTextValue() : null);
             }
         }
+    }
+
+    @Override
+    public void setRuleDefinition(RuleDefinition ruleDefinition) {
+        this.ruleDefinition = ruleDefinition;
+    }
+
+    public RuleDefinition getRuleDefinition() {
+        return ruleDefinition;
     }
 
     public String getErrorCode() {
