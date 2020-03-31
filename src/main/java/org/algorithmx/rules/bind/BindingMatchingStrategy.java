@@ -20,7 +20,7 @@ package org.algorithmx.rules.bind;
 import java.util.Set;
 
 /**
- * Strategy class that matches Bindings to a desired criteria.
+ * Strategy class that matches Bindings to a desired criteria (such as name, type).
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -32,7 +32,7 @@ public interface BindingMatchingStrategy {
      *
      * @return default strategy.
      */
-    static BindingMatchingStrategy getDefault() {
+    static BindingMatchingStrategy defaultBindingMatchingStrategy() {
         return BindingMatchingStrategyType.getDefault().getStrategy();
     }
 

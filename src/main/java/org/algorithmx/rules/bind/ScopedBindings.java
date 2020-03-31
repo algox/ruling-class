@@ -17,9 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.error.BindingAlreadyExistsException;
-import org.algorithmx.rules.error.InvalidBindingException;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Bindings with Scopes. Allows the user to create/remove scopes around the Bindings. Each Binding is tied to a
+ * Bindings with Scopes. Allows the user to defaultObjectFactory/remove scopes around the Bindings. Each Binding is tied to a
  * Scope and Binding is removed once the Scope is removed. Binding is treated much like a Local variable on a method stack.
  *
  * @author Max Arulananthan
@@ -216,6 +213,27 @@ public interface ScopedBindings extends Bindings {
     default <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
             throws BindingAlreadyExistsException, InvalidBindingException {
         getCurrentScope().bind(name, type, initialValue, mutable);
+        return this;
+    }
+
+    /**
+     * Declares a new Binding given a name, type and an initial value in the current working scope.
+     *
+     * @param name name of the Binding.
+     * @param type type reference of the Binding.
+     * @param initialValue initial value of the Binding.
+     * @param mutable determines whether the value is mutable.
+     * @param primary determines whether the Binding is a primary candidate.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
+     * @see Binding
+     */
+    @Override
+    default <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
+            throws BindingAlreadyExistsException, InvalidBindingException {
+        getCurrentScope().bind(name, type, initialValue, mutable, primary);
         return this;
     }
 

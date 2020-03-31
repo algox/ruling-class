@@ -15,29 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.bind.convert.string;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.algorithmx.rules.bind.convert.ConversionException;
+import org.algorithmx.rules.bind.convert.ConverterTemplate;
+
+import java.math.BigDecimal;
 
 /**
- * The annotated parameter could be null under some circumstances.
- * <p>
- * This is used to denote a Rule parameter is Optional.
- * <p>
+ * Converts a String value to a BigDecimal.
  *
- * @author Max Arulananthan
+ * @author Max Arulananthan.
  * @since 1.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value={ElementType.PARAMETER})
-public @interface Nullable {
+public class StringToBigDecimalConverter extends ConverterTemplate<String, BigDecimal> {
 
-    String NOT_APPLICABLE = "N/A";
+    public StringToBigDecimalConverter() {
+        super();
+    }
 
-    String defaultValue() default NOT_APPLICABLE;
+    @Override
+    public BigDecimal convert(String value) {
+        if (value == null) return null;
+
+        try {
+            return new BigDecimal(value);
+        } catch (NumberFormatException e) {
+            throw new ConversionException(e, value, getSourceType(), getTargetType());
+        }
+    }
 }

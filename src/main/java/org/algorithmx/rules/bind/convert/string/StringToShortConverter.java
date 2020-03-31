@@ -15,22 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.error;
+package org.algorithmx.rules.bind.convert.string;
 
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.bind.convert.ConversionException;
+import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 /**
- * Exception thrown when Bindings is asked for a bean instance for which it cannot find a definition.
+ * Converts a String value to a Short.
  *
- * @author Max Arulananthan
+ * @author Max Arulananthan.
  * @since 1.0
- *
  */
-public class NoSuchBindingException extends UnrulyException {
+public class StringToShortConverter extends ConverterTemplate<String, Short> {
 
-    static final long serialVersionUID = 0L;
+    public StringToShortConverter() {
+        super();
+    }
 
-    public NoSuchBindingException(String name) {
-        super("Binding with name [" + name + "] does not exist");
+    @Override
+    public Short convert(String value) {
+        if (value == null) return null;
+
+        try {
+            return new Short(value);
+        } catch (NumberFormatException e) {
+            throw new ConversionException(e, value, getSourceType(), getTargetType());
+        }
     }
 }

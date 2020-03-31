@@ -17,12 +17,11 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.bind.impl.DefaultParameterResolver;
-import org.algorithmx.rules.error.BindingException;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
-import org.algorithmx.rules.model.ParameterDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**
  * Resolves a method's parameters from the given Bindings and a MatchingStrategy.
@@ -48,11 +47,14 @@ public interface ParameterResolver {
      * @param definition method meta information.
      * @param bindings available bindings.
      * @param matchingStrategy matching strategy to use to resolve the bindings.
+     * @param objectFactory factory that to be used to create custom BindingStrategies.
+     * @param registry converter registry.
      * @return arrays of matches.
      * @throws UnrulyException if the Binding Strategy failed.
      */
     ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings bindings,
-                                        BindingMatchingStrategy matchingStrategy) throws BindingException;
+                                       BindingMatchingStrategy matchingStrategy, ObjectFactory objectFactory,
+                                       ConverterRegistry registry) throws BindingException;
 
     /**
      * Resolves the method parameters into an array of values. We use the matching strategy to resolves each parameter.
@@ -60,58 +62,28 @@ public interface ParameterResolver {
      * @param definition method meta information.
      * @param bindings available bindings.
      * @param matchingStrategy matching strategy to use to resolve the bindings.
+     * @param objectFactory factory that to be used to create custom BindingStrategies.
+     * @param registry converter registry.
      * @return arrays of method parameter values.
      * @throws UnrulyException if the Binding Strategy failed.
      */
     default Object[] resolveAsBindingValues(MethodDefinition definition, Bindings bindings,
-                                            BindingMatchingStrategy matchingStrategy) throws BindingException {
-        ParameterMatch[] matches = resolveAsBindings(definition, bindings, matchingStrategy);
-        return resolveAsBindingValues(matches);
+                                            BindingMatchingStrategy matchingStrategy, ObjectFactory objectFactory,
+                                            ConverterRegistry registry) throws BindingException {
+        ParameterMatch[] matches = resolveAsBindings(definition, bindings, matchingStrategy, objectFactory, registry);
+        return resolveAsBindingValues(matches, definition, bindings, matchingStrategy, registry);
     }
 
     /**
      * Resolves the parameter matches to values.
      *
      * @param matches parameter matches.
+     * @param definition method meta information.
+     * @param bindings available bindings.
+     * @param matchingStrategy matching strategy to use to resolve the bindings.
+     * @param registry converter registry.
      * @return resulting values.
      */
-    default Object[] resolveAsBindingValues(ParameterMatch[] matches) throws BindingException {
-        if (matches == null) return null;
-
-        Object[] result = new Object[matches.length];
-
-        for (int i = 0; i < result.length; i++) {
-            result[i] = matches[i] != null
-                    ? (matches[i].definition.isSpecialParameter()
-                        ? matches[i].definition.getSpecialParameter().getValue(matches[i].binding)
-                        : matches[i].binding.getValue())
-                    : null;
-        }
-
-        return result;
-    }
-
-    /**
-     * Stores the parameter with its corresponding matched binding.
-     */
-    class ParameterMatch {
-        private final ParameterDefinition definition;
-        private final Binding<Object> binding;
-
-        public ParameterMatch(ParameterDefinition definition, Binding<Object> binding) {
-            super();
-            Assert.notNull(definition, "definition cannot be null.");
-            Assert.notNull(binding, "binding cannot be null.");
-            this.definition = definition;
-            this.binding = binding;
-        }
-
-        public ParameterDefinition getDefinition() {
-            return definition;
-        }
-
-        public Binding<Object> getBinding() {
-            return binding;
-        }
-    }
+    Object[] resolveAsBindingValues(ParameterMatch[] matches, MethodDefinition definition, Bindings bindings,
+                                    BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) throws BindingException;
 }

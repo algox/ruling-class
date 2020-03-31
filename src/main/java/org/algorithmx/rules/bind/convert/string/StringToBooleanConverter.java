@@ -15,25 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.error;
+package org.algorithmx.rules.bind.convert.string;
+
+import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 /**
- * Thrown when you attempt to declare an already existing Binding.
+ * Converts a String value to a Boolean. ("Y", "YES", "1", "TRUE") irrelevant of case is considered as True.
  *
- * @author Max Arulananthan
+ * @author Max Arulananthan.
  * @since 1.0
- *
  */
-public class BindingAlreadyExistsException extends UnrulyException {
+public class StringToBooleanConverter extends ConverterTemplate<String, Boolean> {
 
-	static final long serialVersionUID = 0L;
+    public StringToBooleanConverter() {
+        super();
+    }
 
-	/**
-	 * Ctor with the binding name.
-	 * 
-	 * @param name name of the binding.
-	 */
-	public BindingAlreadyExistsException(String name) {
-		super(String.format("Binding with name [%s] already exists.", name));
-	}
+    @Override
+    public Boolean convert(String value) {
+        return "Y".equalsIgnoreCase(value) || "YES".equalsIgnoreCase(value)
+                || "1".equals(value)  || "TRUE".equalsIgnoreCase(value);
+    }
 }

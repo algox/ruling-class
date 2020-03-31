@@ -24,17 +24,18 @@ import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Strategy class that matches Bindings by the given Type.
+ * BindingMatchingStrategy that matches Bindings by the given Name.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public class MatchByTypeBindingMatchingStrategy implements BindingMatchingStrategy {
+public class MatchByNameMatchingStrategy implements BindingMatchingStrategy {
 
-    public MatchByTypeBindingMatchingStrategy() {
+    public MatchByNameMatchingStrategy() {
         super();
     }
 
@@ -42,9 +43,14 @@ public class MatchByTypeBindingMatchingStrategy implements BindingMatchingStrate
     @SuppressWarnings("unchecked")
     public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
-        Assert.notNull(type, "type cannot be bull");
+        Assert.notNull(name, "name cannot be bull");
 
-        Set<Binding<T>> result = bindings.getBindings(type);
+        Set<Binding<T>> result = new HashSet<>();
+        // Look for the Binding by name
+        Binding<T> binding = bindings.getBinding(name);
+        // Add the Binding (if we found one)
+        if (binding != null) result.add(binding);
+
         return Collections.unmodifiableSet(result);
     }
 }

@@ -20,11 +20,17 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ParameterMatch;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
-import org.algorithmx.rules.error.BindingException;
+import org.algorithmx.rules.bind.convert.Converter;
+import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
+import org.algorithmx.rules.bind.BindingException;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.util.Set;
 
@@ -42,42 +48,98 @@ public class DefaultParameterResolver implements ParameterResolver {
 
     @Override
     public ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings ctx,
-                                               BindingMatchingStrategy matchingStrategy) throws BindingException {
+                                              BindingMatchingStrategy matchingStrategy,
+                                              ObjectFactory objectFactory,
+                                              ConverterRegistry registry) throws BindingException {
         ParameterMatch[] result = new ParameterMatch[definition.getParameterDefinitions().length];
         int index = 0;
 
         for (ParameterDefinition parameterDefinition : definition.getParameterDefinitions()) {
+            BindingMatchingStrategy matcher = matchingStrategy;
+
+            result[index] = null;
+
             // See if the parameter is overriding the matching strategy to be used.
-            BindingMatchingStrategy matcher = parameterDefinition.getCustomMatchingStrategyType() != null
-                    ? parameterDefinition.getCustomMatchingStrategyType().getStrategy()
-                    : matchingStrategy;
+            if (parameterDefinition.isBindable()) {
+                matcher = objectFactory.create(parameterDefinition.getBindUsing());
+            }
+
             // Find all the matching bindings
+            // TODO : Handle Binding/Optional
             Set<Binding<Object>> bindings = matcher.match(ctx, parameterDefinition.getName(),
                     TypeReference.with(parameterDefinition.getType()));
             int matches = bindings.size();
 
-            // Looks like we are missing a required parameter
-            if (bindings.size() == 0 && parameterDefinition.isRequired()) {
-                throw new BindingException(parameterDefinition, definition.getMethod(), bindings, matchingStrategy, ctx);
-            } else if (matches == 0 && !parameterDefinition.isRequired()) {
-                // Default to null
-                result[index] = null;
+            if (matches == 0) {
+                result[index] = new ParameterMatch(parameterDefinition, null);
             } else if (matches == 1) {
                 Binding<Object> binding = bindings.stream().findFirst().get();
-
-                if (parameterDefinition.isRequired() && binding.getValue() == null) {
-                    throw new BindingException(parameterDefinition, definition.getMethod(), bindings, matchingStrategy, ctx);
-                }
-
-                // We found a match!
                 result[index] = new ParameterMatch(parameterDefinition, binding);
             } else {
-                // Too many matches found; cannot proceed.
-                throw new BindingException("Found too many [" + matches + "]", parameterDefinition,
-                        definition.getMethod(), bindings, matchingStrategy, ctx);
+                // Mor ethan one match found; let's see if there is a primary candidate
+                Binding<Object> primaryBinding = null;
+
+                for (Binding<Object> binding : bindings) {
+                    if (binding.isPrimary()) {
+                        primaryBinding = binding;
+                        break;
+                    }
+                }
+
+                if (primaryBinding != null) {
+                    result[index] = new ParameterMatch(parameterDefinition, primaryBinding);
+                } else {
+                    // Too many matches found; cannot proceed.
+                    throw new BindingException("Multiple Bindings match your search criteria. Perhaps specify a primary Binding? ",
+                            parameterDefinition, definition.getMethod(), bindings, matchingStrategy, ctx);
+                }
             }
 
             index++;
+        }
+
+        return result;
+    }
+
+    @Override
+    public Object[] resolveAsBindingValues(ParameterMatch[] matches, MethodDefinition definition,
+                                           Bindings bindings, BindingMatchingStrategy matchingStrategy,
+                                           ConverterRegistry registry) throws BindingException {
+        if (matches == null) return null;
+
+        Object[] result = new Object[matches.length];
+
+        for (int i = 0; i < result.length; i++) {
+
+            if (matches[i] == null) {
+                throw new UnrulyException("Invalid state. You cannot have a null match");
+            }
+
+            Object value = null;
+
+            // There was no match; let's see if there is default value
+            if (matches[i].getBinding() == null) {
+                if (matches[i].getDefinition().getDefaultValue() != null) {
+                    Converter<String, ?> converter = registry.find(String.class, matches[i].getDefinition().getType());
+
+                    if (converter == null) {
+                        throw new UnrulyException("Cannot find a converter that will convert default value ["
+                                + matches[i].getDefinition().getDefaultValue() + "] to type ["
+                                + matches[i].getDefinition().getType() + "]");
+                    }
+
+                    value = converter.convert(matches[i].getDefinition().getDefaultValue());
+                } else if (!matches[i].getDefinition().isRequired()) {
+                     value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
+                } else {
+                    throw new BindingException("No such Binding found", matches[i].getDefinition(),
+                            definition.getMethod(), null, matchingStrategy, bindings);
+                }
+            } else {
+                value = matches[i].getBinding().getValue();
+            }
+
+            result[i] = value;
         }
 
         return result;

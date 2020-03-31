@@ -24,7 +24,7 @@ import org.algorithmx.rules.model.ParameterDefinition;
 import java.lang.reflect.Type;
 
 /**
- * Builder class used to create Conditions.
+ * Builder class used to defaultObjectFactory Conditions.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -41,7 +41,7 @@ public final class ConditionBuilder {
     }
 
     /**
-     * Creates a new condition builder given a ConditionConsumer. This is useful when using your own ConditionConsumer
+     * Creates a new condition builder given a ConditionConsumer. This is useful when using your own Condition
      * definition or if you want to cast to an existing one.
      *
      * @param condition desired condition.

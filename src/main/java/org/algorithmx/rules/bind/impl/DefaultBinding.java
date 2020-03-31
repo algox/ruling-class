@@ -18,7 +18,7 @@
 package org.algorithmx.rules.bind.impl;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.error.InvalidBindingException;
+import org.algorithmx.rules.bind.InvalidBindingException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.algorithmx.rules.spring.util.TypeUtils;
@@ -44,6 +44,8 @@ public class DefaultBinding<T> implements Binding<T> {
     private final String name;
     private final Type type;
     private final AtomicReference<T> value = new AtomicReference<>();
+    private final boolean primary;
+    // Cannot be final as change it to mutable = false after we set the value in the ctor
     private boolean mutable = true;
 
     /**
@@ -53,8 +55,9 @@ public class DefaultBinding<T> implements Binding<T> {
      * @param type Type of the Binding.
      * @param value initial value of the Binding.
      * @param mutable determines whether this Binding is editable or not.
+     * @param primary determines whether this Binding is a Primary candidate or not.
      */
-    public DefaultBinding(String name, Type type, T value, boolean mutable) {
+    public DefaultBinding(String name, Type type, T value, boolean mutable, boolean primary) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.notNull(type, "type cannot be null");
@@ -65,6 +68,7 @@ public class DefaultBinding<T> implements Binding<T> {
         this.type = type;
         setValue(value);
         this.mutable = mutable;
+        this.primary = primary;
     }
 
     @Override
@@ -85,6 +89,11 @@ public class DefaultBinding<T> implements Binding<T> {
     @Override
     public boolean isMutable() {
         return mutable;
+    }
+
+    @Override
+    public boolean isPrimary() {
+        return primary;
     }
 
     @Override

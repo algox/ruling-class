@@ -20,11 +20,10 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingMatchingStrategyType;
-import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.ParameterMatch;
+import org.algorithmx.rules.bind.impl.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleDefinitionAware;
-import org.algorithmx.rules.core.rule.RulingClass;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
@@ -102,8 +101,8 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @param errors container of errors (must be defined).
      */
     @Otherwise
-    public void otherwise(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) RuleContext ctx,
-                          @Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) ValidationErrorContainer errors) {
+    public void otherwise(@Bind(using = MatchByTypeMatchingStrategy.class) RuleContext ctx,
+                          @Bind(using = MatchByTypeMatchingStrategy.class) ValidationErrorContainer errors) {
         Map<String, Binding> matches = resolveParameters(ctx);
         ValidationError error = createValidationError(getErrorCode(), getSeverity(), getErrorMessage(), matches);
         if (error != null) errors.add(error);
@@ -116,14 +115,14 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @return parameters used by the @Given condition.
      */
     protected Map<String, Binding> resolveParameters(RuleContext ctx) {
-        ParameterResolver.ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
+        ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
                 getRuleDefinition().getConditionDefinition().getMethodDefinition(), ctx.getBindings(),
-                ctx.getMatchingStrategy());
+                ctx.getMatchingStrategy(), ctx.getObjectFactory(), ctx.getRegistry());
 
         Map<String, Binding> result = new LinkedHashMap<>();
 
         if (matches != null) {
-            for (ParameterResolver.ParameterMatch match : matches) {
+            for (ParameterMatch match : matches) {
                 if (match == null) continue;
                 result.put(match.getDefinition().getName(), match.getBinding());
             }

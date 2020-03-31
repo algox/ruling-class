@@ -15,29 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.bind;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.algorithmx.rules.error.UnrulyException;
 
 /**
- * The annotated parameter could be null under some circumstances.
- * <p>
- * This is used to denote a Rule parameter is Optional.
- * <p>
+ * Exception thrown when Bindings is asked for a bean instance for which it cannot find a definition.
  *
  * @author Max Arulananthan
  * @since 1.0
+ *
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value={ElementType.PARAMETER})
-public @interface Nullable {
+public class NoSuchBindingException extends UnrulyException {
 
-    String NOT_APPLICABLE = "N/A";
+    static final long serialVersionUID = 0L;
 
-    String defaultValue() default NOT_APPLICABLE;
+    public NoSuchBindingException(String name) {
+        super("Binding with name [" + name + "] does not exist");
+    }
 }

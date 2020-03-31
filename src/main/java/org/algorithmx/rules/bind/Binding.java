@@ -18,7 +18,6 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.core.Identifiable;
-import org.algorithmx.rules.error.InvalidBindingException;
 
 import java.lang.reflect.Type;
 
@@ -77,6 +76,15 @@ public interface Binding<T> extends Identifiable {
 	default String getTextValue() {
 		Object result = getValue();
 		return result != null ? result.toString() : null;
+	}
+
+	/**
+	 * Gives higher preference to this Binding over other matched Bindings.
+	 *
+	 * @return true if this Binding is to be treated as Primary; false otherwise.
+	 */
+	default boolean isPrimary() {
+		return false;
 	}
 
 	/**

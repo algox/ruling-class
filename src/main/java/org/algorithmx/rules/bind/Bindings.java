@@ -19,12 +19,9 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.DefaultBindings;
 import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
-import org.algorithmx.rules.error.BindingAlreadyExistsException;
-import org.algorithmx.rules.error.InvalidBindingException;
-import org.algorithmx.rules.error.NoSuchBindingException;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.util.ReflectionUtils;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -173,6 +170,23 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @see Binding
      */
     <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
+            throws BindingAlreadyExistsException, InvalidBindingException;
+
+    /**
+     * Declares a new Binding given a name, type and an initial value.
+     *
+     * @param name name of the Binding.
+     * @param type type reference of the Binding.
+     * @param initialValue initial value of the Binding.
+     * @param mutable determines whether the value can be changed.
+     * @param primary determines whether the Binding is a primary candidate.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
+     * @throws InvalidBindingException thrown if we cannot set initial value.
+     * @see Binding
+     */
+    <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
             throws BindingAlreadyExistsException, InvalidBindingException;
 
     /**

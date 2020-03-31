@@ -17,11 +17,12 @@
  */
 package org.algorithmx.rules.util.reflect;
 
+import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.error.UnrulyException;
 
 /**
- * Factory use to create Objects. Framework requires Object instances to be created (such as Rules), the ObjectFactory is
- * used to create those Objects.
+ * Factory use to defaultObjectFactory Objects. Framework requires Object instances to be created (such as Rules), the ObjectFactory is
+ * used to defaultObjectFactory those Objects.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -33,7 +34,7 @@ public interface ObjectFactory {
      *
      * @return instance of the ObjectFactory.
      */
-    static ObjectFactory create() {
+    static ObjectFactory defaultObjectFactory() {
         return new DefaultObjectFactory();
     }
 
@@ -43,7 +44,11 @@ public interface ObjectFactory {
      * @param type desired type.
      * @param <T> generic Type.
      * @return new instance of Type.
-     * @throws UnrulyException thrown in case we are unable to create the type at runtime.
+     * @throws UnrulyException thrown in case we are unable to defaultObjectFactory the type at runtime.
      */
     <T> T create(Class<T> type) throws UnrulyException;
+
+    default <T extends BindingMatchingStrategy> BindingMatchingStrategy createStrategy(Class<T> strtegyType) {
+        return null;
+    }
 }

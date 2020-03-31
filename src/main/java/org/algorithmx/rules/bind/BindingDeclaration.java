@@ -19,7 +19,7 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.util.LambdaUtils;
-import org.algorithmx.rules.util.ReflectionUtils;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 import java.util.function.Function;
 
 /**
- * Convenient Function to create Bindings in the form of name -&gt; value.
+ * Convenient Function to defaultObjectFactory Bindings in the form of name -&gt; value.
  *
  * For Example : name -&gt; String, value -&gt; Integer, salary -&gt; java.util.BigDecimal.
  *

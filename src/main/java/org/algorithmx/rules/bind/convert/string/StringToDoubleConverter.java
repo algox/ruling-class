@@ -15,29 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.bind.convert.string;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.algorithmx.rules.bind.convert.ConversionException;
+import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 /**
- * The annotated parameter could be null under some circumstances.
- * <p>
- * This is used to denote a Rule parameter is Optional.
- * <p>
+ * Converts a String value to a Double.
  *
- * @author Max Arulananthan
+ * @author Max Arulananthan.
  * @since 1.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value={ElementType.PARAMETER})
-public @interface Nullable {
+public class StringToDoubleConverter extends ConverterTemplate<String, Double> {
 
-    String NOT_APPLICABLE = "N/A";
+    public StringToDoubleConverter() {
+        super();
+    }
 
-    String defaultValue() default NOT_APPLICABLE;
+    @Override
+    public Double convert(String value) {
+        if (value == null) return null;
+
+        try {
+            return new Double(value);
+        } catch (NumberFormatException e) {
+            throw new ConversionException(e, value, getSourceType(), getTargetType());
+        }
+    }
 }

@@ -24,6 +24,12 @@ import org.algorithmx.rules.util.ConditionUtils;
 
 import java.util.Arrays;
 
+/**
+ * Builder class for all Class based Rule(s).
+ *
+ * @author Max Arulananthan.
+ * @since 1.0
+ */
 public class ClassBasedRuleBuilder extends RuleBuilder {
 
     private final Class<?> ruleClass;

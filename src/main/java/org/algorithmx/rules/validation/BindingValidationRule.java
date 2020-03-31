@@ -20,7 +20,7 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingMatchingStrategyType;
+import org.algorithmx.rules.bind.impl.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
@@ -34,6 +34,7 @@ import java.util.function.Supplier;
  * Validation rules for Binding(s).
  *
  * @param <T> Binding Type.
+ *
  * @author Max Arulananthan
  * @since 1.0
  */
@@ -88,7 +89,7 @@ public class BindingValidationRule<T> extends ValidationRule {
      * @return true if the validation condition is met; false otherwise.
      */
     @Given
-    public boolean when(@Bind(using = BindingMatchingStrategyType.MATCH_BY_TYPE) RuleContext ruleContext) {
+    public boolean when(@Bind(using = MatchByTypeMatchingStrategy.class) RuleContext ruleContext) {
         Binding<T> binding = supplier != null ? supplier.get() : ruleContext.getBindings().getBinding(bindingName);
         return when(binding);
     }

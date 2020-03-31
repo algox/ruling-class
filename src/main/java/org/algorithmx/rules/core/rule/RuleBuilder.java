@@ -28,6 +28,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Builder class for creating Rule instances.
+ *
+ * @author Max Arulananthan.
+ * @since 1.0
+ */
 public abstract class RuleBuilder {
 
     private String name;
@@ -36,7 +42,7 @@ public abstract class RuleBuilder {
     private Action otherwiseAction;
     private Object target;
     private final List<Action> thenActions = new ArrayList<>();
-    private ObjectFactory objectFactory = ObjectFactory.create();
+    private ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
 
     public static ClassBasedRuleBuilder with(Class<?> ruleClass) {
         return new ClassBasedRuleBuilder(ruleClass);

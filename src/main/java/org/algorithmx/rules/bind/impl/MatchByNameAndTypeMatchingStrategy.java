@@ -28,14 +28,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Strategy class that matches Bindings by the given name.
+ * BindingMatchingStrategy that matches Bindings in a given Rule Context by the given Name and Type.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public class MatchByNameBindingMatchingStrategy implements BindingMatchingStrategy {
+public class MatchByNameAndTypeMatchingStrategy implements BindingMatchingStrategy {
 
-    public MatchByNameBindingMatchingStrategy() {
+    public MatchByNameAndTypeMatchingStrategy() {
         super();
     }
 
@@ -44,10 +44,11 @@ public class MatchByNameBindingMatchingStrategy implements BindingMatchingStrate
     public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(name, "name cannot be bull");
+        Assert.notNull(type, "type cannot be bull");
 
         Set<Binding<T>> result = new HashSet<>();
-        // Look for the Binding by name
-        Binding<T> binding = bindings.getBinding(name);
+        // Look for the Binding by name & type
+        Binding<T> binding = bindings.getBinding(name, type);
         // Add the Binding (if we found one)
         if (binding != null) result.add(binding);
 

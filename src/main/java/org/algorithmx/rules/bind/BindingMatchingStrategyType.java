@@ -18,9 +18,9 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.CompositeBindingMatchingStrategy;
-import org.algorithmx.rules.bind.impl.MatchByNameAndTypeBindingMatchingStrategy;
-import org.algorithmx.rules.bind.impl.MatchByNameBindingMatchingStrategy;
-import org.algorithmx.rules.bind.impl.MatchByTypeBindingMatchingStrategy;
+import org.algorithmx.rules.bind.impl.MatchByNameAndTypeMatchingStrategy;
+import org.algorithmx.rules.bind.impl.MatchByNameMatchingStrategy;
+import org.algorithmx.rules.bind.impl.MatchByTypeMatchingStrategy;
 
 /**
  * Convenient way to map between a Name to the BindingMatchingStrategy.
@@ -31,26 +31,31 @@ import org.algorithmx.rules.bind.impl.MatchByTypeBindingMatchingStrategy;
 public enum BindingMatchingStrategyType {
 
     // Searches for Bindings with the given name.
-    MATCH_BY_NAME (new MatchByNameBindingMatchingStrategy()),
+    MATCH_BY_NAME (new MatchByNameMatchingStrategy()),
+
     // Searches for Bindings with the given type.
-    MATCH_BY_TYPE (new MatchByTypeBindingMatchingStrategy()),
+    MATCH_BY_TYPE (new MatchByTypeMatchingStrategy()),
+
     // Searches for Bindings with the given name & type
-    MATCH_BY_NAME_AND_TYPE (new MatchByNameAndTypeBindingMatchingStrategy()),
+    MATCH_BY_NAME_AND_TYPE (new MatchByNameAndTypeMatchingStrategy()),
+
     // Searches for Bindings with the given name & type if nothing is found then continues to search by Type
     MATCH_BY_NAME_AND_TYPE_THEN_BY_JUST_BY_TYPE (
             new CompositeBindingMatchingStrategy(true,
-                    new MatchByNameAndTypeBindingMatchingStrategy(),
-                    new MatchByTypeBindingMatchingStrategy())),
+                    new MatchByNameAndTypeMatchingStrategy(),
+                    new MatchByTypeMatchingStrategy())),
+
     // Searches for Bindings with the given name if nothing is found then continues to search by Type
     MATCH_BY_NAME_THEN_BY_TYPE (
             new CompositeBindingMatchingStrategy(true,
-                    new MatchByNameBindingMatchingStrategy(),
-                    new MatchByTypeBindingMatchingStrategy())),
+                    new MatchByNameMatchingStrategy(),
+                    new MatchByTypeMatchingStrategy())),
+
     // Searches for Bindings with the given Type if nothing is found then continues to search by Name
     MATCH_BY_TYPE_THEN_BY_NAME (
             new CompositeBindingMatchingStrategy(true,
-                    new MatchByTypeBindingMatchingStrategy(),
-                    new MatchByNameBindingMatchingStrategy()));
+                    new MatchByTypeMatchingStrategy(),
+                    new MatchByNameMatchingStrategy()));
 
     private final BindingMatchingStrategy strategy;
 
@@ -65,6 +70,15 @@ public enum BindingMatchingStrategyType {
      */
     public BindingMatchingStrategy getStrategy() {
         return strategy;
+    }
+
+    /**
+     * Returns the Class of the Strategy;
+     *
+     * @return Strategy class.
+     */
+    public Class<? extends BindingMatchingStrategy> getStrategyClass() {
+        return strategy.getClass();
     }
 
     /**

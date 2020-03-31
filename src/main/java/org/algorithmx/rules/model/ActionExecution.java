@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.model;
 
+import org.algorithmx.rules.bind.ParameterMatch;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -26,6 +27,12 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Audit data
+ *
+ * @author Max Arulananthan.
+ * @since 1.0
+ */
 public class ActionExecution implements Comparable<ActionExecution> {
 
     // Make sure we don't hold onto the actual action definition
@@ -34,14 +41,14 @@ public class ActionExecution implements Comparable<ActionExecution> {
     private final Date time = new Date();
     private WeakReference<Exception> error;
 
-    public ActionExecution(ActionDefinition actionDefinition, ParameterResolver.ParameterMatch...matches) {
+    public ActionExecution(ActionDefinition actionDefinition, ParameterMatch...matches) {
         super();
         Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
         this.actionDefinition = new WeakReference<>(actionDefinition);
         add(matches);
     }
 
-    public ActionExecution(ActionDefinition actionDefinition, Exception error, ParameterResolver.ParameterMatch...matches) {
+    public ActionExecution(ActionDefinition actionDefinition, Exception error, ParameterMatch...matches) {
         super();
         Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
         this.error = new WeakReference<>(error);
@@ -103,7 +110,7 @@ public class ActionExecution implements Comparable<ActionExecution> {
      *
      * @param matches action parameter matches.
      */
-    private void add(ParameterResolver.ParameterMatch...matches) {
+    private void add(ParameterMatch...matches) {
         if (matches == null || matches.length == 0) return;
         Arrays.stream(matches).forEach(this::add);
     }
@@ -113,7 +120,7 @@ public class ActionExecution implements Comparable<ActionExecution> {
      *
      * @param match action parameter match.
      */
-    private void add(ParameterResolver.ParameterMatch match) {
+    private void add(ParameterMatch match) {
         if (match == null) return;
         Object value = match.getBinding().getValue();
         params.put(match.getDefinition().getName(), value != null

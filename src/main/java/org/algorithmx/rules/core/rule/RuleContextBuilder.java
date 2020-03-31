@@ -24,8 +24,10 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.ScopedBindings;
-import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
+import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 import java.util.Map;
 
@@ -38,9 +40,11 @@ import java.util.Map;
 public class RuleContextBuilder {
 
     private final Bindings bindings;
-    private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.getDefault();
+    private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.defaultBindingMatchingStrategy();
     private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
     private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
+    private ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+    private ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
     private RuleContextBuilder(Bindings bindings) {
         super();
@@ -96,13 +100,27 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder paramResolver(ParameterResolver parameterResolver ) {
+    public RuleContextBuilder paramResolver(ParameterResolver parameterResolver) {
+        Assert.notNull(objectFactory, "parameterResolver cannot be null.");
         this.parameterResolver = parameterResolver;
         return this;
     }
 
-    public RuleContextBuilder executeUsing(BindableMethodExecutor methodExecutor) {
+    public RuleContextBuilder methodExecutor(BindableMethodExecutor methodExecutor) {
+        Assert.notNull(objectFactory, "methodExecutor cannot be null.");
         this.methodExecutor = methodExecutor;
+        return this;
+    }
+
+    public RuleContextBuilder objectFactory(ObjectFactory objectFactory) {
+        Assert.notNull(objectFactory, "objectFactory cannot be null.");
+        this.objectFactory = objectFactory;
+        return this;
+    }
+
+    public RuleContextBuilder converterRegitry(ConverterRegistry registry) {
+        Assert.notNull(registry, "registry cannot be null.");
+        this.registry = registry;
         return this;
     }
 
@@ -113,7 +131,8 @@ public class RuleContextBuilder {
      */
     public RuleContext build() {
         ScopedBindings rootBindings = Bindings.defaultBindings();
-        RuleContext result  = new RuleContext(rootBindings, matchingStrategy, parameterResolver, methodExecutor);
+        RuleContext result  = new RuleContext(rootBindings, matchingStrategy, parameterResolver, methodExecutor,
+                objectFactory, registry);
 
         rootBindings.bind("ruleContext", RuleContext.class, result);
         rootBindings.bind("bindings", Bindings.class, bindings);

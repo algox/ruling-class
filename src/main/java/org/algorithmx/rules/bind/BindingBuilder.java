@@ -35,6 +35,7 @@ public class BindingBuilder {
     private TypeReference typeRef = TypeReference.with(Object.class);
     private Object value = null;
     private boolean mutable = true;
+    private boolean primary = false;
 
     /**
      * Private Ctor taking the Binding name.
@@ -161,11 +162,23 @@ public class BindingBuilder {
     }
 
     /**
+     * Determines whether the Binding is a primary one or not.
+     *
+     * @param primary Primary Binding ?
+     * @return this for fluency.
+     */
+    public BindingBuilder primary(boolean primary) {
+        this.primary = primary;
+        return this;
+    }
+
+
+    /**
      * Create a Binding with the given properties.
      * @param <T> desired Type.
      * @return new Binding.
      */
     public <T> Binding<T> build() {
-        return new DefaultBinding(name, typeRef.getType(), value, mutable);
+        return new DefaultBinding(name, typeRef.getType(), value, mutable, primary);
     }
 }

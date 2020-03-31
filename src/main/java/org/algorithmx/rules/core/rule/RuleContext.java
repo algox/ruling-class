@@ -20,8 +20,10 @@ package org.algorithmx.rules.core.rule;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**
  * Responsible for state management during Rule execution. This class provides access to everything that is required
@@ -36,25 +38,33 @@ public class RuleContext {
     private final BindingMatchingStrategy matchingStrategy;
     private final ParameterResolver parameterResolver;
     private final BindableMethodExecutor methodExecutor;
+    private final ObjectFactory objectFactory;
+    private final ConverterRegistry registry;
 
     private RuleExecutionState state = RuleExecutionState.RUNNING;
 
     public RuleContext(Bindings bindings) {
-        this(bindings, BindingMatchingStrategy.getDefault(), ParameterResolver.defaultParameterResolver(),
-                BindableMethodExecutor.defaultBindableMethodExecutor());
+        this(bindings, BindingMatchingStrategy.defaultBindingMatchingStrategy(), ParameterResolver.defaultParameterResolver(),
+                BindableMethodExecutor.defaultBindableMethodExecutor(), ObjectFactory.defaultObjectFactory(),
+                ConverterRegistry.defaultConverterRegistry());
     }
 
     public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy,
-                       ParameterResolver parameterResolver, BindableMethodExecutor methodExecutor) {
+                       ParameterResolver parameterResolver, BindableMethodExecutor methodExecutor,
+                       ObjectFactory objectFactory, ConverterRegistry registry) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
         Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
         Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
+        Assert.notNull(objectFactory, "objectFactory cannot be null.");
+        Assert.notNull(registry, "registry cannot be null.");
         this.bindings = bindings;
         this.matchingStrategy = matchingStrategy;
         this.parameterResolver = parameterResolver;
         this.methodExecutor = methodExecutor;
+        this.objectFactory = objectFactory;
+        this.registry = registry;
     }
 
     /**
@@ -76,7 +86,7 @@ public class RuleContext {
     }
 
     /**
-     * Returns the parameter resolver being used.
+     * Returns the Parameter resolver being used.
      *
      * @return parameter resolver. Cannot be null.
      */
@@ -84,8 +94,31 @@ public class RuleContext {
         return parameterResolver;
     }
 
+    /**
+     * Returns the Method executor being used.
+     *
+     * @return Method Executor. Cannot be null.
+     */
     public BindableMethodExecutor getMethodExecutor() {
         return methodExecutor;
+    }
+
+    /**
+     * Returns the ObjectFactory being used.
+     *
+     * @return Object Factory. cannot be null.
+     */
+    public ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
+
+    /**
+     * Returns the ConverterRegistry being used.
+     *
+     * @return Converter Registry. Cannot be null.
+     */
+    public ConverterRegistry getRegistry() {
+        return registry;
     }
 
     /**

@@ -18,9 +18,10 @@
 package org.algorithmx.rules.bind.impl;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.error.BindingAlreadyExistsException;
+import org.algorithmx.rules.bind.BindingAlreadyExistsException;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.error.NoSuchBindingException;
+import org.algorithmx.rules.bind.InvalidBindingException;
+import org.algorithmx.rules.bind.NoSuchBindingException;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
@@ -67,7 +68,16 @@ public class DefaultBindings implements Bindings {
     @Override
     public <T> Bindings bind(String name, TypeReference type, T value, boolean mutable) throws BindingAlreadyExistsException {
         Assert.notNull(type, "type cannot be null");
-        DefaultBinding<T> result = new DefaultBinding(name, type.getType(), value, mutable);
+        DefaultBinding<T> result = new DefaultBinding(name, type.getType(), value, mutable, false);
+        bind(result);
+        return this;
+    }
+
+    @Override
+    public <T> Bindings bind(String name, TypeReference type, T value, boolean mutable, boolean primary)
+            throws BindingAlreadyExistsException, InvalidBindingException {
+        Assert.notNull(type, "type cannot be null");
+        DefaultBinding<T> result = new DefaultBinding(name, type.getType(), value, mutable, primary);
         bind(result);
         return this;
     }

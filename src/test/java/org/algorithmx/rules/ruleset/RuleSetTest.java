@@ -18,6 +18,7 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -37,7 +38,8 @@ public class RuleSetTest {
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        /*Rule rule6 = ruleFactory.rule()
+        // TODO : Fix me
+       /*Rule rule6 = ruleFactory.rule()
                 .given(cond0(() -> true))
                 .then(act0(() -> System.err.println("XXX End")))
                 .build();
@@ -71,6 +73,7 @@ public class RuleSetTest {
                 .bind("key1", String.class, "value")
                 .bind("key2", String.class, "value");
 
+        // TODO : Fix me
         /*RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
                 .add("test", ruleFactory
                         .rule()
@@ -79,7 +82,7 @@ public class RuleSetTest {
                         .then(act1((String key2) -> System.err.println(key2)))
                         .build());
 
-        ruleEngine.run(RuleContextBuilder.create()
+        ruleEngine.run(RuleContextBuilder.defaultObjectFactory()
                 .bindWith(bindings).build(), rules);*/
     }
 }

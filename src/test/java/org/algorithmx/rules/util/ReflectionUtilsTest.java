@@ -18,6 +18,7 @@
 package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.condition.TriCondition;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

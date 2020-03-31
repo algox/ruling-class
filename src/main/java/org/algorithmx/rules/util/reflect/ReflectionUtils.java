@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.util;
+package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
@@ -29,8 +29,11 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,6 +47,29 @@ import java.util.stream.Collectors;
 public final class ReflectionUtils {
 
     private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+
+    private static final Map<Type, Object> DEFAULT_VALUE_MAP = new HashMap<>();
+
+    private static boolean DEFAULT_BOOLEAN;
+    private static byte DEFAULT_BYTE;
+    private static char DEFAULT_CHAR;
+    private static double DEFAULT_DOUBLE;
+    private static float DEFAULT_FLOAT;
+    private static int DEFAULT_INTEGER;
+    private static long DEFAULT_LONG;
+    private static short DEFAULT_SHORT;
+
+    static {
+        DEFAULT_VALUE_MAP.put(boolean.class, DEFAULT_BOOLEAN);
+        DEFAULT_VALUE_MAP.put(byte.class, DEFAULT_BYTE);
+        DEFAULT_VALUE_MAP.put(char.class, DEFAULT_CHAR);
+        DEFAULT_VALUE_MAP.put(double.class, DEFAULT_DOUBLE);
+        DEFAULT_VALUE_MAP.put(float.class, DEFAULT_FLOAT);
+        DEFAULT_VALUE_MAP.put(int.class, DEFAULT_INTEGER);
+        DEFAULT_VALUE_MAP.put(long.class, DEFAULT_LONG);
+        DEFAULT_VALUE_MAP.put(short.class, DEFAULT_SHORT);
+        DEFAULT_VALUE_MAP.put(void.class, null);
+    }
 
     private ReflectionUtils() {
         super();
@@ -72,6 +98,17 @@ public final class ReflectionUtils {
                 .filter(method -> void.class.equals(method.getReturnType()) &&
                 method.getParameterCount() == 0 && method.getExceptionTypes().length == 0 &&
                 method.getAnnotation(PostConstruct.class) != null).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a default value for the given Type. For example: Primitive int default value is 0;
+     *
+     * @param type desired type;
+     * @return default value if one is found; null otherwise.
+     */
+    public static Object getDefaultValue(Type type) {
+        Object result = DEFAULT_VALUE_MAP.get(type);
+        return result != null ? result : null;
     }
 
     /**

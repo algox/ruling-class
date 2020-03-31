@@ -21,6 +21,7 @@ import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.TriAction;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
@@ -29,6 +30,7 @@ import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,6 +55,8 @@ public class ExecutorTest {
     public void test1() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
+        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
@@ -63,7 +67,7 @@ public class ExecutorTest {
         TestRule5 rule5 = new TestRule5();
         boolean result = executor.execute(rule5, definition1.getConditionDefinition().getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition1.getConditionDefinition().getMethodDefinition(), bindings,
-                        BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
+                        BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
         Assert.assertTrue(result);
     }
 
@@ -71,6 +75,8 @@ public class ExecutorTest {
     public void test2() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
+        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("x", int.class, 123)
@@ -88,7 +94,7 @@ public class ExecutorTest {
         RuleDefinition definition2 = rule.getRuleDefinition();
         boolean result = executor.execute(builder.build(), definition2.getConditionDefinition().getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition2.getConditionDefinition().getMethodDefinition(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
         Assert.assertTrue(!result);
     }
 
@@ -96,6 +102,8 @@ public class ExecutorTest {
     public void test3() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
+        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("x", int.class, 123)
@@ -112,7 +120,7 @@ public class ExecutorTest {
 
         boolean result = executor.execute(rule, definition.getConditionDefinition().getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition.getConditionDefinition().getMethodDefinition(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
         Assert.assertTrue(result);
     }
 
@@ -120,6 +128,8 @@ public class ExecutorTest {
     public void test4() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
+        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
@@ -135,7 +145,7 @@ public class ExecutorTest {
         Assert.assertTrue(definition1.length == 1);
         executor.execute(rule5, definition1[0].getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition1[0].getMethodDefinition(), bindings,
-                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
         int result = bindings.get("result");
         Assert.assertTrue(result == 2);
     }
@@ -144,6 +154,8 @@ public class ExecutorTest {
     public void test5() {
         BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
         ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
+        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
         Bindings bindings = Bindings.defaultBindings()
                 .bind("id", int.class, 123)
@@ -158,7 +170,7 @@ public class ExecutorTest {
         ActionDefinition definition = ActionDefinition.load(lambda,"ActionConsumer!");
         executor.execute(action, definition.getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition.getMethodDefinition(), bindings,
-                        BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy()));
+                        BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
         int result = bindings.get("result");
         Assert.assertTrue(result == 10);
     }

@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.action;
 
+import org.algorithmx.rules.bind.ParameterMatch;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
@@ -37,9 +38,12 @@ public interface Action extends Comparable<Action> {
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
     default void execute(RuleContext ctx) throws UnrulyException {
-        ParameterResolver.ParameterMatch[] result = ctx.getParameterResolver().resolveAsBindings(
-                getActionDefinition().getMethodDefinition(), ctx.getBindings(), ctx.getMatchingStrategy());
-        execute(ctx.getParameterResolver().resolveAsBindingValues(result));
+        ParameterMatch[] result = ctx.getParameterResolver().resolveAsBindings(
+                getActionDefinition().getMethodDefinition(), ctx.getBindings(),
+                ctx.getMatchingStrategy(), ctx.getObjectFactory(), ctx.getRegistry());
+        execute(ctx.getParameterResolver().resolveAsBindingValues(result,
+                getActionDefinition().getMethodDefinition(), ctx.getBindings(),
+                ctx.getMatchingStrategy(), ctx.getRegistry()));
     }
 
     /**

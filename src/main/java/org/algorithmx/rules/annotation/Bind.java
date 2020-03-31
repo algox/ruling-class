@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.annotation;
 
+import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 
 import java.lang.annotation.Documented;
@@ -40,7 +41,7 @@ public @interface Bind {
     /**
      * Determines the Binding strategy to use (during parameter matching).
      *
-     * @return Binding to use. Defaults to MATCH_BY_NAME_AND_TYPE;
+     * @return Binding to use. Defaults to MATCH_BY_NAME_AND_TYPE.
      */
-    BindingMatchingStrategyType using() default BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE;
+    Class<? extends BindingMatchingStrategy> using();
 }

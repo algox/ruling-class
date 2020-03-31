@@ -15,11 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.error;
+package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ParameterDefinition;
 
 import java.lang.reflect.Method;
