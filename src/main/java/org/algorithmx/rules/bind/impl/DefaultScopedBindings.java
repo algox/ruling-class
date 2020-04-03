@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * Default implementation of the ScopedBindings.
+ * Default implementation of the Scoped Bindings.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -94,7 +94,7 @@ public class DefaultScopedBindings implements ScopedBindings {
      * @return newly created Bindings.
      */
     protected Bindings createScope() {
-        return new DefaultBindings(false);
+        return new DefaultBindings();
     }
 
     @Override

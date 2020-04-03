@@ -18,12 +18,18 @@
 package org.algorithmx.rules.action;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.BindingsBuilder;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.junit.Test;
 
+/**
+ * Tests for Rule Actions.
+ *
+ * @author Max Arulananthan
+ */
 public class RuleActionTest1 {
 
     public RuleActionTest1() {
@@ -32,10 +38,10 @@ public class RuleActionTest1 {
 
     @Test
     public void test1() {
-        Bindings bindings = Bindings.defaultBindings();
-        bindings.bind("x", String.class, "value");
-        bindings.bind("y", Integer.class, 17);
-        bindings.bind("z", Integer.class, 200);
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("x", String.class, "value")
+                .bind("y", Integer.class, 17)
+                .bind("z", Integer.class, 200);
 
         Rule ruleWithAction = RuleBuilder
                 .with(ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())

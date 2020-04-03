@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Binding matching test cases.
+ * Tests for Rule Binding matching.
  *
  * @author Max Arulananthan
  */
@@ -38,8 +38,8 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch1() {
-        Bindings bindings = Bindings.defaultBindings();
-        bindings.bind("key1", String.class)
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
                 .bind("key4", new TypeReference<List<Long>>() {})
@@ -62,8 +62,8 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch2() {
-        Bindings bindings = Bindings.defaultBindings();
-        bindings.bind("key1", String.class)
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
                 .bind("key4", new TypeReference<List<Long>>() {})
@@ -97,8 +97,8 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch3() {
-        Bindings bindings = Bindings.defaultBindings();
-        bindings.bind("key1", String.class)
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
                 .bind("key4", new TypeReference<List<Long>>() {})
@@ -133,8 +133,8 @@ public class BindingMatchingStrategyTest {
 
     @Test
     public void testMatch5() {
-        Bindings bindings = Bindings.defaultBindings();
-        bindings.bind("key1", String.class)
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key1", String.class)
                 .bind("key2", Integer.class)
                 .bind("key3", BigDecimal.class)
                 .bind("key4", new TypeReference<List<Long>>() {})

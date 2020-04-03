@@ -18,18 +18,12 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.impl.DefaultBindings;
-import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
-import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 /**
  * The interface that is used to store and find Bindings.
@@ -39,29 +33,29 @@ import java.util.function.Function;
  */
 public interface Bindings extends Iterable<Binding<?>> {
 
-    // Binding name for itself.
-    String SELF_BIND_NAME = "bindings";
-
     /**
-     * Creates an instance of the ScopedBindings.
+     * Binds the given Binding into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
      *
-     * @return new instance of the ScopedBindings.
+     * @param binding existing Binding.
+     * @param <S> type of Bindings.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      */
-    static ScopedBindings defaultBindings() {
-        return new DefaultScopedBindings();
-    }
+    <S extends Bindings, T> S bind(Binding<T> binding) throws BindingAlreadyExistsException;
 
     /**
      * Creates Bindings and adds them all.
      *
      * @param declarations binding declarations.
+     * @param <S> type of Bindings.
      * @return this Bindings (fluent interface).
      */
-    default Bindings bind(BindingDeclaration... declarations)  {
+    default <S extends Bindings> S bind(BindingDeclaration...declarations)  {
         Assert.notNull(declarations, "declarations cannot be null");
         Bindings result = new DefaultBindings();
         Arrays.stream(declarations).forEach(result::bind);
-        return result;
+        return (S) result;
     }
 
     /**
@@ -70,12 +64,12 @@ public interface Bindings extends Iterable<Binding<?>> {
      * type that is declared will NOT have any generic type.
      *
      * @param declaration declaration details.
+     * @param <S> type of Bindings.
      * @return this Bindings (fluent interface).
      */
-    default Bindings bind(BindingDeclaration declaration) {
-        Object value = declaration.value();
-        Class type = value == null ? Object.class : value.getClass();
-        return bind(declaration.name(), type, declaration.value());
+    default <S extends Bindings> S bind(BindingDeclaration declaration) {
+        bind(BindingBuilder.with(declaration).build());
+        return (S) this;
     }
 
     /**
@@ -83,15 +77,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @param name name of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, T initialValue) {
-        Class<?> type = initialValue != null ? initialValue.getClass() : Object.class;
-        return bind(name, TypeReference.with(type), initialValue, true);
+    default <S extends Bindings, T> S bind(String name, T initialValue) {
+        return bind(BindingBuilder.with(name).value(initialValue).build());
     }
 
     /**
@@ -99,14 +93,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @param name name of the Binding.
      * @param type type of the Binding.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, Class<T> type) {
-        return bind(name, TypeReference.with(type), null, true);
+    default <S extends Bindings, T> S bind(String name, Class<T> type) {
+        return bind(BindingBuilder.with(name).type(type).build());
     }
 
     /**
@@ -114,14 +109,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @param name name of the Binding.
      * @param type type reference of the Binding.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, TypeReference<T> type) {
-        return bind(name, type, null, true);
+    default <S extends Bindings, T> S bind(String name, TypeReference<T> type) {
+        return bind(BindingBuilder.with(name).type(type).build());
     }
 
     /**
@@ -130,14 +126,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param name name of the Binding.
      * @param type type of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, Class<T> type, T initialValue) {
-        return bind(name, TypeReference.with(type), initialValue, true);
+    default <S extends Bindings, T> S bind(String name, Class<T> type, T initialValue) {
+        return bind(BindingBuilder.with(name).type(type).value(initialValue).build());
     }
 
     /**
@@ -146,14 +143,15 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param name name of the Binding.
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <T> Bindings bind(String name, TypeReference<T> type, T initialValue) {
-        return bind(name, type, initialValue, true);
+    default <S extends Bindings, T> S bind(String name, TypeReference<T> type, T initialValue) {
+        return bind(BindingBuilder.with(name).type(type).value(initialValue).build());
     }
 
     /**
@@ -163,14 +161,18 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
      * @param mutable determines whether the value can be changed.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
-            throws BindingAlreadyExistsException, InvalidBindingException;
+    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean mutable)
+            throws BindingAlreadyExistsException, InvalidBindingException {
+        bind(BindingBuilder.with(name).type(type).value(initialValue).mutable(mutable).build());
+        return (S) this;
+    }
 
     /**
      * Declares a new Binding given a name, type and an initial value.
@@ -180,37 +182,17 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param initialValue initial value of the Binding.
      * @param mutable determines whether the value can be changed.
      * @param primary determines whether the Binding is a primary candidate.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
-            throws BindingAlreadyExistsException, InvalidBindingException;
-
-    /**
-     * Binds the given Binding into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
-     *
-     * @param binding existing Binding.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
-     */
-    <T> Bindings bind(Binding<T> binding) throws BindingAlreadyExistsException;
-
-    /**
-     * Binds all the given Bindings into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
-     * The execution will stop if a Binding already exists.
-     *
-     *
-     * @param bindings existing Bindings.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
-     */
-    default <T> Bindings bind(Binding<T>...bindings) {
-        return bind(Arrays.asList(bindings));
+    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
+            throws BindingAlreadyExistsException, InvalidBindingException {
+        bind(BindingBuilder.with(name).type(type).value(initialValue).mutable(mutable).primary(primary).build());
+        return (S) this;
     }
 
     /**
@@ -219,11 +201,34 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      *
      * @param bindings existing Bindings.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    <T> Bindings bind(Collection<Binding<T>> bindings);
+    default <S extends Bindings, T> S bind(Binding<T>...bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
+        return (S) bind(Arrays.asList(bindings));
+    }
+
+    /**
+     * Binds all the given Bindings into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
+     * The execution will stop if a Binding already exists.
+     *
+     *
+     * @param bindings existing Bindings.
+     * @param <S> type of Bindings.
+     * @param <T> generic type of the Binding.
+     * @return this Bindings (fluent interface).
+     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
+     */
+    default <S extends Bindings, T> S bind(Collection<Binding<T>> bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
+        for (Binding binding : bindings) {
+            bind(binding);
+        }
+        return (S) this;
+    }
 
     /**
      * Binds each readable property on the given Bean.
@@ -232,9 +237,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    default Bindings bindProperties(Object bean) {
+    /*default Bindings bindProperties(Object bean) {
         return bindProperties(bean, (String name) -> name);
-    }
+    }*/
 
     /**
      * Binds each readable property on the given Bean.
@@ -244,7 +249,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    default Bindings bindProperties(Object bean, Function<String, String> nameGenerator) {
+    /*default Bindings bindProperties(Object bean, Function<String, String> nameGenerator) {
         Assert.notNull(bean, "bean cannot be null.");
         Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
 
@@ -268,7 +273,7 @@ public interface Bindings extends Iterable<Binding<?>> {
         }
 
         return this;
-    }
+    }*/
 
     /**
      * Binds each declared field on the given Bean.
@@ -277,9 +282,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    default Bindings bindFields(Object bean) {
+    /*default Bindings bindFields(Object bean) {
         return bindFields(bean, (String name) -> name);
-    }
+    }*/
 
     /**
      * Binds each declared field on the given Bean.
@@ -289,7 +294,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    default Bindings bindFields(Object bean, Function<String, String> nameGenerator) {
+    /*default Bindings bindFields(Object bean, Function<String, String> nameGenerator) {
         Assert.notNull(bean, "bean cannot be null.");
         Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
 
@@ -305,7 +310,7 @@ public interface Bindings extends Iterable<Binding<?>> {
         });
 
         return this;
-    }
+    }*/
 
 
     /**

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Basic Binding tests.
+ * Tests for Bindings/BindBuilder.
  *
  * @author Max Arulananthan
  */
@@ -39,7 +39,8 @@ public class BindTest {
 
     @Test
     public void testBind1() {
-        Bindings bindings = Bindings.defaultBindings().bind("key", String.class, "value");
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key", String.class, "value");
         Binding<String> var = bindings.getBinding("key");
         Assert.assertEquals("key", var.getName());
         Assert.assertEquals(String.class, var.getType());
@@ -48,7 +49,8 @@ public class BindTest {
 
     @Test
     public void testBind2() {
-        Bindings bindings = Bindings.defaultBindings().bind("key", Double.class);
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key", Double.class);
         Binding<Double> var = bindings.getBinding("key");
         var.setValue(33.33);
         double result = var.getValue();
@@ -61,7 +63,7 @@ public class BindTest {
         values.add(1);
         values.add(2);
         values.add(3);
-        Bindings bindings = Bindings.defaultBindings().bind("key", new TypeReference<List<Integer>>(){});
+        Bindings bindings = BindingsBuilder.withScopes().build().bind("key", new TypeReference<List<Integer>>(){});
         Binding<List<Integer>> var = bindings.getBinding("key", new TypeReference<List<Integer>>(){});
         var.setValue(values);
         Assert.assertEquals(values, var.getValue());
@@ -69,25 +71,25 @@ public class BindTest {
 
     @Test(expected = BindingAlreadyExistsException.class)
     public void testBind4() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = BindingsBuilder.withScopes().build();
         bindings.bind("key", String.class, "value");
         bindings.bind("key", new TypeReference<List<Integer>>(){});
     }
 
     @Test
     public void testBind5() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = BindingsBuilder.withScopes().build();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<Integer>>(){});
         bindings.bind("key3", TypeReference.with(BigDecimal.class));
-        Assert.assertEquals(3, bindings.size());
+        Assert.assertEquals(4, bindings.size());
         bindings.clear();
         Assert.assertEquals(0, bindings.size());
     }
 
     @Test
     public void testBind6() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = BindingsBuilder.withScopes().build();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<Integer>>(){});
         Assert.assertTrue(bindings.contains("key1"));
@@ -96,7 +98,7 @@ public class BindTest {
 
     @Test
     public void testBind7() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = BindingsBuilder.withScopes().build();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<?>>(){});
         bindings.bind("key3", BigDecimal.class);
@@ -110,7 +112,7 @@ public class BindTest {
 
     @Test
     public void testBind8() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = BindingsBuilder.withScopes().build();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<?>>(){});
         bindings.bind("key3", BigDecimal.class, new BigDecimal("10.00"));
@@ -124,7 +126,7 @@ public class BindTest {
 
     @Test
     public void testBind9() {
-        Bindings bindings = Bindings.defaultBindings();
+        Bindings bindings = BindingsBuilder.withScopes().build();
         bindings.bind("key1", String.class, "value");
         bindings.bind("key2", new TypeReference<List<?>>() {});
         bindings.bind("key3", TypeReference.with(BigDecimal.class), new BigDecimal("10.00"));
@@ -140,14 +142,14 @@ public class BindTest {
 
     @Test
     public void testBind10() {
-        Bindings bindings1 = Bindings.defaultBindings()
+        Bindings bindings1 = BindingsBuilder.withScopes().build()
                 .bind("key1", String.class, "value")
                 .bind("key2", String.class, "value");
 
         Binding<String> var1 = bindings1.getBinding("key1");
         Binding<String> var2 = bindings1.getBinding("key2");
 
-        Bindings bindings2 = Bindings.defaultBindings();
+        Bindings bindings2 = BindingsBuilder.withScopes().build();
         bindings2.bind(var1, var2);
         Assert.assertTrue(bindings2.contains("key1", String.class));
         Assert.assertTrue(bindings2.contains("key2", String.class));
@@ -155,7 +157,7 @@ public class BindTest {
 
     @Test
     public void testBind11() {
-        Bindings bindings1 = Bindings.defaultBindings().bind(key1 -> "hello", a -> 123, c -> 12.11);
+        Bindings bindings1 = BindingsBuilder.withScopes().build().bind(key1 -> "hello", a -> 123, c -> 12.11);
         Assert.assertTrue(bindings1.contains("key1", String.class));
         Assert.assertTrue(bindings1.contains("a", int.class));
         Assert.assertTrue(bindings1.contains("c", double.class));
@@ -166,13 +168,13 @@ public class BindTest {
     public void testBindWithNoType() {
         List<Integer> values = new ArrayList<>();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("a", 25)
                 .bind("b", "Hello world")
                 .bind("c", values)
                 .bind("d", Integer.class, null);
 
-        Assert.assertTrue(bindings.size() == 4);
+        Assert.assertTrue(bindings.size() == 5);
         Assert.assertTrue(bindings.contains("a", int.class));
         Assert.assertTrue(bindings.contains("b", String.class));
         Assert.assertTrue(bindings.contains("c", ArrayList.class));

@@ -17,19 +17,14 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ParameterResolver;
-import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
-
-import java.util.Map;
 
 /**
  * Builder class to properly build a RuleContext with the bells and whistles.
@@ -62,18 +57,7 @@ public class RuleContextBuilder {
         return new RuleContextBuilder(bindings);
     }
 
-    /**
-     * Sets the Bindings to use.
-     *
-     * @param bindings Bindings to use.
-     * @return this for fluency.
-     */
-    public static RuleContextBuilder with(BindingDeclaration...bindings) {
-        Assert.notNull(bindings, "bindings cannot be null.");
-        return new RuleContextBuilder(Bindings.defaultBindings().bind(bindings));
-    }
-
-    public static RuleContextBuilder with(Map<String, Object> values) {
+    /*public static RuleContextBuilder with(Map<String, Object> values) {
         Bindings bindings = Bindings.defaultBindings();
 
         for (Map.Entry<String, Object> entry : values.entrySet()) {
@@ -86,7 +70,7 @@ public class RuleContextBuilder {
     public <T> RuleContextBuilder bind(Binding<T> binding) {
         bindings.bind(binding);
         return this;
-    }
+    }*/
 
     /**
      * Sets the matching strategy to uss.
@@ -130,14 +114,9 @@ public class RuleContextBuilder {
      * @return new Rule Context.
      */
     public RuleContext build() {
-        ScopedBindings rootBindings = Bindings.defaultBindings();
-        RuleContext result  = new RuleContext(rootBindings, matchingStrategy, parameterResolver, methodExecutor,
+        RuleContext result  = new RuleContext(bindings, matchingStrategy, parameterResolver, methodExecutor,
                 objectFactory, registry);
-
-        rootBindings.bind("ruleContext", RuleContext.class, result);
-        rootBindings.bind("bindings", Bindings.class, bindings);
-        rootBindings.newScope(bindings);
-
+        bindings.bind("ruleContext", RuleContext.class, result);
         return result;
     }
 }

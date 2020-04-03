@@ -20,12 +20,10 @@ package org.algorithmx.rules.bind.impl;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingAlreadyExistsException;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.InvalidBindingException;
 import org.algorithmx.rules.bind.NoSuchBindingException;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,61 +42,27 @@ public class DefaultBindings implements Bindings {
 
     // Stores all the Bindings
     private final Map<String, Binding<?>> bindings = createBindings();
-    private final boolean selfAware;
 
     /**
      * Default Ctor. Self Reference added.
      */
     public DefaultBindings() {
-        this(true);
-    }
-
-    /**
-     * Creates Bindings.
-     *
-     * @param selfAware if true self reference binding is added.
-     */
-    public DefaultBindings(boolean selfAware) {
         super();
-        this.selfAware = selfAware;
-        // Create a self bind
-        init(selfAware);
     }
 
     @Override
-    public <T> Bindings bind(String name, TypeReference type, T value, boolean mutable) throws BindingAlreadyExistsException {
-        Assert.notNull(type, "type cannot be null");
-        DefaultBinding<T> result = new DefaultBinding(name, type.getType(), value, mutable, false);
-        bind(result);
-        return this;
-    }
-
-    @Override
-    public <T> Bindings bind(String name, TypeReference type, T value, boolean mutable, boolean primary)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        Assert.notNull(type, "type cannot be null");
-        DefaultBinding<T> result = new DefaultBinding(name, type.getType(), value, mutable, primary);
-        bind(result);
-        return this;
-    }
-
-    @Override
-    public <T> Bindings bind(Binding<T> binding) {
+    public <S extends Bindings, T> S bind(Binding<T> binding) {
         Assert.notNull(binding, "binding cannot be null");
-        // Looks like we already have a binding
-        if (bindings.containsKey(binding.getName())) throw new BindingAlreadyExistsException(binding.getName());
-        // Put the Binding
-        bindings.putIfAbsent(binding.getName(), binding);
-        return this;
-    }
 
-    @Override
-    public <T> Bindings bind(Collection<Binding<T>> existingBindings) {
-        for (Binding<T> binding : existingBindings) {
-            if (binding == null) continue;
-            bind(binding);
+        // Try and put the Binding
+        Binding existingBinding = bindings.putIfAbsent(binding.getName(), binding);
+
+        // Looks like we already have a binding
+        if (existingBinding != null) {
+            throw new BindingAlreadyExistsException(existingBinding);
         }
-        return this;
+
+        return (S) this;
     }
 
     @Override
@@ -109,7 +73,6 @@ public class DefaultBindings implements Bindings {
     @Override
     public void clear() {
         bindings.clear();
-        init(selfAware);
     }
 
     @Override
@@ -174,15 +137,6 @@ public class DefaultBindings implements Bindings {
         }
 
         return Collections.unmodifiableMap(result);
-    }
-
-    /**
-     * Initialize the Bindings with a self reference.
-     *
-     * @param selfAware if a Binding to itself must be created.
-     */
-    protected void init(boolean selfAware) {
-        if (selfAware) bind(Bindings.SELF_BIND_NAME, TypeReference.with(Bindings.class), this, false);
     }
 
     /**

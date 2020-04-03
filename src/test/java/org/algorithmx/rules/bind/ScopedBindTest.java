@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Basic Scoped Binding tests.
+ * Tests for Scoped Bindings.
  *
  * @author Max Arulananthan
  */
@@ -38,33 +38,32 @@ public class ScopedBindTest {
 
     @Test
     public void testBind1() {
-        Bindings bindings = Bindings.defaultBindings();
-        bindings.bind("key1", String.class, "value");
-        bindings.bind("key2", new TypeReference<List<?>>() {
-        });
-        bindings.bind("key3", BigDecimal.class);
-        bindings.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>() {
-        });
+        Bindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key1", String.class, "value")
+                .bind("key2", new TypeReference<List<?>>() {})
+                .bind("key3", BigDecimal.class)
+                .bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
 
         Assert.assertTrue(bindings.contains("key1", String.class));
-        Assert.assertTrue(bindings.contains("key2", new TypeReference<List<Integer>>() {
-        }));
+        Assert.assertTrue(bindings.contains("key2", new TypeReference<List<Integer>>() {}));
         Assert.assertTrue(bindings.contains("key3", BigDecimal.class));
-        Assert.assertTrue(bindings.contains("key4", new TypeReference<Map<ArrayList<?>, List<Integer>>>() {
-        }));
-        Assert.assertTrue(bindings.size() == 4);
+        Assert.assertTrue(bindings.contains("key4", new TypeReference<Map<ArrayList<?>, List<Integer>>>() {}));
+        Assert.assertTrue(bindings.size() == 5);
     }
 
     @Test
     public void testBind2() {
-        ScopedBindings bindings = Bindings.defaultBindings();
-        bindings.bind("key1", String.class, "value");
+        ScopedBindings bindings = BindingsBuilder.withScopes().build()
+                .bind("key1", String.class, "value");
+
         Assert.assertTrue(bindings.get("key1").equals("value"));
         bindings.newScope();
-        bindings.bind("key1", String.class, "value2");
-        Assert.assertTrue(bindings.size() == 2);
+        bindings.bind(BindingBuilder.with("key1").type(String.class).value("value2").build());
+        Assert.assertTrue(bindings.size() == 3);
         bindings.endScope();
         Assert.assertTrue(bindings.get("key1").equals("value"));
-        Assert.assertTrue(bindings.size() == 1);
+        Assert.assertTrue(bindings.size() == 2);
+
+
     }
 }

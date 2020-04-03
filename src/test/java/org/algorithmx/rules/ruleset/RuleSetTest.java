@@ -18,11 +18,18 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.BindingsBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
+/**
+ * Tests for RuleSets.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class RuleSetTest {
 
     public RuleSetTest() {
@@ -31,7 +38,7 @@ public class RuleSetTest {
 
     @Test
     public void test1() {
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("y", String.class, "")
                 .bind("a", String.class, "")
                 .bind("b", String.class, "hello")
@@ -69,7 +76,7 @@ public class RuleSetTest {
 
     @Test
     public void testBind12() {
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("key1", String.class, "value")
                 .bind("key2", String.class, "value");
 

@@ -20,6 +20,7 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.BindingsBuilder;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSet;
@@ -30,7 +31,7 @@ import org.junit.Test;
 import java.util.Date;
 
 /**
- * Test cases covering the various Validation Rules.
+ * Test cases for the various Validation Rules.
  *
  * @author Max Arulananthan.
  */
@@ -49,7 +50,7 @@ public class ValidationTest {
                 .rule(TestRule4.class)
                 .rule(TestRule5.class).build();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("value", Integer.class, 1)
                 .bind("errors", ValidationErrorContainer.class, new ValidationErrorContainer());
 
@@ -66,13 +67,16 @@ public class ValidationTest {
                 .rule(TestRule5.class)
                 .build();
 
-        rules.run(RuleContextBuilder.with(value -> 75, errors -> new ValidationErrorContainer()).build());
+        rules.run(RuleContextBuilder.
+                with(BindingsBuilder.withScopes().build()
+                        .bind(value -> 75)
+                        .bind(errors -> new ValidationErrorContainer())).build());
     }
 
     @Test
     public void testNotNullRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("b",1)
                 .bind("e", errors);
 
@@ -84,10 +88,10 @@ public class ValidationTest {
         Assert.assertTrue(errors.size() == 0);
     }
 
-    //@Test
+    @Test
     public void testNullRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("b", String.class, null)
                 .bind("e", errors);
 
@@ -102,7 +106,7 @@ public class ValidationTest {
     @Test
     public void testStringLengthRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("b", String.class, "  ")
                 .bind("e", errors);
 
@@ -117,7 +121,7 @@ public class ValidationTest {
     @Test
     public void testStringTextRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("b", String.class, "  a")
                 .bind("e", errors);
 
@@ -132,7 +136,7 @@ public class ValidationTest {
     @Test
     public void testStringPatternRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("b", String.class, "ababab")
                 .bind("e", errors);
 
@@ -148,7 +152,7 @@ public class ValidationTest {
     @Test
     public void testFutureDateRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("d", new Date())
                 .bind("e", errors);
 
@@ -162,7 +166,7 @@ public class ValidationTest {
     @Test
     public void tesPastDateRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("d", new Date())
                 .bind("e", errors);
 
@@ -179,7 +183,7 @@ public class ValidationTest {
     @Test
     public void testMaxRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("a", 25)
                 .bind("e", errors);
 
@@ -196,7 +200,7 @@ public class ValidationTest {
     @Test
     public void testMinRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("a", 10)
                 .bind("e", errors);
 
@@ -213,7 +217,7 @@ public class ValidationTest {
     @Test
     public void testMaxMinRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("a", 22)
                 .bind("e", errors);
 
@@ -230,7 +234,7 @@ public class ValidationTest {
     @Test
     public void testValidationRule() {
         ValidationErrorContainer errors = new ValidationErrorContainer();
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("x", 22)
                 .bind("z", "abcde")
                 .bind("e", errors);

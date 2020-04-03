@@ -88,7 +88,7 @@ public interface ScopedBindings extends Bindings {
     default <T> Binding<T> getBinding(String name) {
         Binding<T> result = null;
 
-        for (Bindings scope : getScopes()) {
+        for (Bindings scope : getScopesInReverseOrder()) {
             result = scope.getBinding(name);
             if (result != null) break;
         }
@@ -109,7 +109,7 @@ public interface ScopedBindings extends Bindings {
     default <T> Binding<T> getBinding(String name, TypeReference<T> type) {
         Binding<T> result = null;
 
-        for (Bindings scope : getScopes()) {
+        for (Bindings scope : getScopesInReverseOrder()) {
             result = scope.getBinding(name, type);
             if (result != null) break;
         }
@@ -197,58 +197,18 @@ public interface ScopedBindings extends Bindings {
     }
 
     /**
-     * Declares a new Binding given a name, type and an initial value in the current working scope.
-     *
-     * @param name name of the Binding.
-     * @param type type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param mutable determines whether the value is mutable.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    @Override
-    default <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        getCurrentScope().bind(name, type, initialValue, mutable);
-        return this;
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value in the current working scope.
-     *
-     * @param name name of the Binding.
-     * @param type type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param mutable determines whether the value is mutable.
-     * @param primary determines whether the Binding is a primary candidate.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    @Override
-    default <T> Bindings bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        getCurrentScope().bind(name, type, initialValue, mutable, primary);
-        return this;
-    }
-
-    /**
      * Binds the given Binding into the current scope. Follows the same rules as adding a new Binding with name, type, etc.
      *
      * @param binding existing Binding.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
      */
     @Override
-    default <T> Bindings bind(Binding<T> binding) {
+    default <S extends Bindings, T> S bind(Binding<T> binding) {
         getCurrentScope().bind(binding);
-        return this;
+        return (S) this;
     }
 
     /**
@@ -257,13 +217,14 @@ public interface ScopedBindings extends Bindings {
      *
      *
      * @param bindings existing Bindings.
+     * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
     @Override
-    default <T> Bindings bind(Collection<Binding<T>> bindings) {
+    default <S extends Bindings, T> S bind(Collection<Binding<T>> bindings) {
         getCurrentScope().bind(bindings);
-        return this;
+        return (S) this;
     }
 }

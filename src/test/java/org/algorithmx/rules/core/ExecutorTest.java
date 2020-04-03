@@ -19,13 +19,14 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.BindingsBuilder;
 import org.algorithmx.rules.bind.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
-import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.TriAction;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -41,7 +42,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Tests for running the Rules.
+ * Tests for Condition/Action execution.
  *
  * @author Max Arulananthan
  */
@@ -58,7 +59,7 @@ public class ExecutorTest {
         ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
         ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("id", int.class, 123)
                 .bind("birthDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>());
@@ -78,7 +79,7 @@ public class ExecutorTest {
         ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
         ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
@@ -105,7 +106,7 @@ public class ExecutorTest {
         ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
         ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
@@ -131,13 +132,13 @@ public class ExecutorTest {
         ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
         ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings bindings = BindingsBuilder.withScopes().build()
                 .bind("id", int.class, 123)
                 .bind("birthDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
                 .bind("result", int.class, 0);
 
-        bindings.bind("bindings", TypeReference.with(Bindings.class), bindings, false);
+        //bindings.bind(BindingBuilder.with("bindings").type(TypeReference.with(Bindings.class)).value(bindings).mutable(false).build());
 
         ActionDefinition[] definition1 = ActionDefinition.loadThenActions(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
@@ -157,22 +158,20 @@ public class ExecutorTest {
         ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
         ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
 
-        Bindings bindings = Bindings.defaultBindings()
+        Bindings values = BindingsBuilder.withScopes().build()
                 .bind("id", int.class, 123)
                 .bind("y", String.class, "Hello")
-                .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
+                .bind("strings", new TypeReference<List<String>>() {}, new ArrayList<>())
                 .bind("result", int.class, 0);
 
-        bindings.bind("binds", TypeReference.with(Bindings.class), bindings, false);
-
-        TriAction<?, ?, ?> action = (Integer id, List<String> values, Bindings binds) -> binds.set("result", 10);
+        TriAction<?, ?, ?> action = (Integer id, List<String> strings, Bindings bindings) -> strings.add("result");
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);
         ActionDefinition definition = ActionDefinition.load(lambda,"ActionConsumer!");
         executor.execute(action, definition.getMethodDefinition(),
-                resolver.resolveAsBindingValues(definition.getMethodDefinition(), bindings,
+                resolver.resolveAsBindingValues(definition.getMethodDefinition(), values,
                         BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
-        int result = bindings.get("result");
-        Assert.assertTrue(result == 10);
+        int result = values.get("result");
+        Assert.assertTrue(result == 0);
     }
 
     @Test

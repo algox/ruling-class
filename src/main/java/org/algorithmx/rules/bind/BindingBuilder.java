@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.bind.impl.DefaultBinding;
 import org.algorithmx.rules.spring.util.Assert;
 
+import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
 public class BindingBuilder {
 
     private final String name;
-    private TypeReference typeRef = TypeReference.with(Object.class);
+    private TypeReference typeRef = null;
     private Object value = null;
     private boolean mutable = true;
     private boolean primary = false;
@@ -48,7 +49,20 @@ public class BindingBuilder {
     }
 
     /**
-     * Created a new builder with the Binding name.
+     * Creates a new builder with the given name/value function.
+     *
+     * @param declaration function with name/value.
+     * @return new Binding Builder.
+     */
+    public static BindingBuilder with(BindingDeclaration declaration) {
+        Assert.notNull(declaration, "declaration cannot be null.");
+        BindingBuilder result = new BindingBuilder(declaration.name());
+        result.value(declaration.value());
+        return result;
+    }
+
+    /**
+     * Creates a new builder with the Binding name.
      *
      * @param name Binding name.
      * @return new Binding Builder.
@@ -88,6 +102,11 @@ public class BindingBuilder {
      */
     public BindingBuilder value(Object value) {
         this.value = value;
+        if (typeRef == null) {
+            this.typeRef = value != null ?
+                    TypeReference.with(value.getClass())
+                    : TypeReference.with(Object.class);
+        }
         return this;
     }
 
@@ -172,6 +191,9 @@ public class BindingBuilder {
         return this;
     }
 
+    private Type getDefaultType() {
+        return Object.class;
+    }
 
     /**
      * Create a Binding with the given properties.
@@ -179,6 +201,6 @@ public class BindingBuilder {
      * @return new Binding.
      */
     public <T> Binding<T> build() {
-        return new DefaultBinding(name, typeRef.getType(), value, mutable, primary);
+        return new DefaultBinding(name, typeRef != null ? typeRef.getType() : getDefaultType(), value, mutable, primary);
     }
 }

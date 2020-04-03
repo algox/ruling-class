@@ -31,11 +31,12 @@ public class BindingAlreadyExistsException extends UnrulyException {
 	static final long serialVersionUID = 0L;
 
 	/**
-	 * Ctor with the binding name.
+	 * Ctor with the existing binding.
 	 * 
-	 * @param name name of the binding.
+	 * @param existingBinding existing binding.
 	 */
-	public BindingAlreadyExistsException(String name) {
-		super(String.format("Binding with name [%s] already exists.", name));
+	public BindingAlreadyExistsException(Binding existingBinding) {
+		super(String.format("Binding with name [%s] type [%s] value [%s] already exists.",
+				existingBinding.getName(), existingBinding.getType().getTypeName(), existingBinding.getTextValue()));
 	}
 }
