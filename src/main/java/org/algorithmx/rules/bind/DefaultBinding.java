@@ -108,10 +108,6 @@ public class DefaultBinding<T> implements Binding<T> {
             throw new InvalidBindingException(name, type, value);
         }
 
-        if (value == null && (type instanceof Class) && ((Class) type).isPrimitive()) {
-            value = (T) ClassUtils.getDefaultValue((Class) type);
-        }
-
         this.value.set(value);
     }
 
