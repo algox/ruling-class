@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util.reflect;
 
-import org.algorithmx.rules.model.MethodDefinition;
+import org.algorithmx.rules.core.model.MethodDefinition;
 
 /**
  * Method executor responsible for executing methods with Bindable arguments. Here are the sequence of steps:

@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.model.RuleDefinition;
-
 /**
  * Interface to be implemented by any Rule that wishes to be aware of it's RuleDefinition.
  *

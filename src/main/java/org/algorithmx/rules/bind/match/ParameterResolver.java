@@ -21,7 +21,7 @@ import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.model.MethodDefinition;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**

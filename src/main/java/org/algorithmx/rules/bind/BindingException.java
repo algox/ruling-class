@@ -19,7 +19,7 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.model.ParameterDefinition;
+import org.algorithmx.rules.core.model.ParameterDefinition;
 
 import java.lang.reflect.Method;
 import java.util.Set;

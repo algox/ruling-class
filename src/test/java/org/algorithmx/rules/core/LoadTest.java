@@ -22,8 +22,8 @@ import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.model.ActionDefinition;
-import org.algorithmx.rules.model.RuleDefinition;
+import org.algorithmx.rules.core.action.ActionDefinition;
+import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.junit.Assert;
 import org.junit.Test;
 

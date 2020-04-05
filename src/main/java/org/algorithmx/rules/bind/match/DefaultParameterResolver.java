@@ -24,8 +24,8 @@ import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.model.MethodDefinition;
-import org.algorithmx.rules.model.ParameterDefinition;
+import org.algorithmx.rules.core.model.MethodDefinition;
+import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 

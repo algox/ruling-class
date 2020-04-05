@@ -20,7 +20,6 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.model.Severity;
 
 import java.util.Date;
 import java.util.function.Supplier;

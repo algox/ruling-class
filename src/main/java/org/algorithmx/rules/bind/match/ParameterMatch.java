@@ -18,7 +18,7 @@
 package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.model.ParameterDefinition;
+import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 /**

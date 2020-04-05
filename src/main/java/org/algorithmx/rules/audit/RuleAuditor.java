@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.audit;
-
-import org.algorithmx.rules.model.RuleExecution;
+package org.algorithmx.rules.audit;
 
 import java.util.Iterator;
 

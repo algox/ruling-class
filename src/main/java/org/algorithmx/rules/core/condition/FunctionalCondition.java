@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.model.ConditionDefinition;
 import org.algorithmx.rules.util.ConditionUtils;
 
 import java.io.Serializable;

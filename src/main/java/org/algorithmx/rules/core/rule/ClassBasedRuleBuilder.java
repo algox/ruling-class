@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.model.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.ActionUtils;
 import org.algorithmx.rules.util.ConditionUtils;

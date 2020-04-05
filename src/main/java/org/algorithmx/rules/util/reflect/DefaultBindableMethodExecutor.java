@@ -18,7 +18,7 @@
 package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.model.MethodDefinition;
+import org.algorithmx.rules.core.model.MethodDefinition;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;

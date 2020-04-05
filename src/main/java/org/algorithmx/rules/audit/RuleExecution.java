@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.model;
+package org.algorithmx.rules.audit;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
+import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.ref.WeakReference;

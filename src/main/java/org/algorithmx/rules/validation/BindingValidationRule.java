@@ -22,7 +22,6 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.LinkedHashMap;

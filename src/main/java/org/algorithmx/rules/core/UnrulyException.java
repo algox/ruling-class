@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.model.RuleExecution;
+import org.algorithmx.rules.audit.RuleExecution;
 
 import java.util.Iterator;
 

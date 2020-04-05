@@ -19,7 +19,7 @@ package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.action.DefaultAction;
-import org.algorithmx.rules.model.ActionDefinition;
+import org.algorithmx.rules.core.action.ActionDefinition;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;

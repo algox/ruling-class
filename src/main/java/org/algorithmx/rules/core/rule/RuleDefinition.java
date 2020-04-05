@@ -15,10 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.model;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
+import org.algorithmx.rules.core.action.ActionDefinition;
+import org.algorithmx.rules.core.condition.ConditionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 

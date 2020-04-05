@@ -19,7 +19,7 @@ package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.DefaultCondition;
-import org.algorithmx.rules.model.ConditionDefinition;
+import org.algorithmx.rules.core.condition.ConditionDefinition;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;

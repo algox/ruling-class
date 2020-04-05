@@ -19,7 +19,6 @@ package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.model.ActionDefinition;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;

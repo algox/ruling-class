@@ -15,46 +15,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.audit;
+package org.algorithmx.rules.audit;
 
-import org.algorithmx.rules.core.audit.RuleAuditor;
-import org.algorithmx.rules.model.RuleExecution;
+import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * NoOp implementation of the RuleAuditor.
+ * Default implementation of the RuleAuditor.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public class NoOpRuleAuditor implements RuleAuditor {
+public class DefaultRuleAuditor implements RuleAuditor {
 
-    private final List<RuleExecution> rules = new ArrayList<>();
+    private final List<RuleExecution> items = Collections.synchronizedList(new ArrayList<>());
 
-    public NoOpRuleAuditor() {
+    public DefaultRuleAuditor() {
         super();
     }
 
     @Override
-    public void audit(RuleExecution ruleExecution) {
-        // Do nothing
+    public void audit(RuleExecution execution) {
+        Assert.notNull(execution, "execution cannot be null.");
+        this.items.add(execution);
     }
 
     @Override
     public RuleExecution getFirstAuditItem() {
-        return null;
+        int size = items.size();
+        return size > 0 ? items.get(0) : null;
     }
 
     @Override
     public RuleExecution getLastAuditItem() {
-        return null;
+        int size = items.size();
+        return size > 0 ? items.get(size - 1) : null;
     }
 
     @Override
     public Iterator<RuleExecution> getAuditItems() {
-        return rules.iterator();
+        return items.iterator();
     }
 }

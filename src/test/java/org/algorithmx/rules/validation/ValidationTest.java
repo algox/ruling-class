@@ -23,7 +23,6 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
-import org.algorithmx.rules.model.Severity;
 import org.junit.Assert;
 import org.junit.Test;
 
