@@ -48,6 +48,7 @@ public class ParameterResolverTest {
         Assert.assertTrue(parameters[0].getType().equals(String.class));
         Assert.assertTrue(parameters[1].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
         Assert.assertTrue(parameters[2].getType().equals(new TypeReference<Binding<List<Integer>>>(){}.getType()));
+        Assert.assertTrue(parameters[2].isBinding());
         Assert.assertTrue(parameters[3].getType().equals(new TypeReference<Map<?, Long>>(){}.getType()));
     }
 

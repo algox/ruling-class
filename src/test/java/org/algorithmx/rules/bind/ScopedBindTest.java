@@ -38,7 +38,7 @@ public class ScopedBindTest {
 
     @Test
     public void testBind1() {
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("key1", String.class, "value")
                 .bind("key2", new TypeReference<List<?>>() {})
                 .bind("key3", BigDecimal.class)
@@ -48,21 +48,21 @@ public class ScopedBindTest {
         Assert.assertTrue(bindings.contains("key2", new TypeReference<List<Integer>>() {}));
         Assert.assertTrue(bindings.contains("key3", BigDecimal.class));
         Assert.assertTrue(bindings.contains("key4", new TypeReference<Map<ArrayList<?>, List<Integer>>>() {}));
-        Assert.assertTrue(bindings.size() == 5);
+        Assert.assertTrue(bindings.size() == 4);
     }
 
     @Test
     public void testBind2() {
-        ScopedBindings bindings = BindingsBuilder.withScopes().build()
+        ScopedBindings bindings = Bindings.create()
                 .bind("key1", String.class, "value");
 
         Assert.assertTrue(bindings.get("key1").equals("value"));
         bindings.newScope();
         bindings.bind(BindingBuilder.with("key1").type(String.class).value("value2").build());
-        Assert.assertTrue(bindings.size() == 3);
+        Assert.assertTrue(bindings.size() == 2);
         bindings.endScope();
         Assert.assertTrue(bindings.get("key1").equals("value"));
-        Assert.assertTrue(bindings.size() == 2);
+        Assert.assertTrue(bindings.size() == 1);
 
 
     }

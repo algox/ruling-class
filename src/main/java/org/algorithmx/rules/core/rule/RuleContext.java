@@ -44,9 +44,9 @@ public class RuleContext {
     private RuleExecutionState state = RuleExecutionState.RUNNING;
 
     public RuleContext(Bindings bindings) {
-        this(bindings, BindingMatchingStrategy.defaultBindingMatchingStrategy(), ParameterResolver.defaultParameterResolver(),
-                BindableMethodExecutor.defaultBindableMethodExecutor(), ObjectFactory.defaultObjectFactory(),
-                ConverterRegistry.defaultConverterRegistry());
+        this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
+                BindableMethodExecutor.create(), ObjectFactory.create(),
+                ConverterRegistry.create());
     }
 
     public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy,

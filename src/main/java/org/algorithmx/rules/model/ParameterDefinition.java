@@ -20,12 +20,15 @@ package org.algorithmx.rules.model;
 import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
@@ -66,6 +69,14 @@ public final class ParameterDefinition {
         this.required = required;
         this.defaultValue = defaultValue;
         this.bindUsing = bindUsing;
+        validate();
+    }
+
+    private void validate() {
+        if (isBinding() && getDefaultValue() != null) {
+            throw new IllegalArgumentException("Bindable parameters Binding<?> cannot have default values. " +
+                    "For example : @Nullable(defaultValue = \"10\") Binding<Integer> value" + toString());
+        }
     }
 
     /**
@@ -197,18 +208,28 @@ public final class ParameterDefinition {
      *
      * @return true if this is a Binding; false otherwise.
      */
-    /*public boolean isBinding() {
-        return specialParameter instanceof ParameterizedBindingType || specialParameter instanceof BindingType;
-    }*/
+    public boolean isBinding() {
+        if (!(type instanceof ParameterizedType)) return false;
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        return Binding.class.equals(parameterizedType.getRawType());
+    }
 
     /**
-     * Returns true if this is Optional.
+     * Get the actual type of a Binding.
      *
-     * @return true if this is a Optional; false otherwise.
+     * @return actual Type of the Binding.
+     * @throws UnrulyException if type isn't a Binding.
      */
-    /*public boolean isOptional() {
-        return specialParameter instanceof ParameterizedOptionalType || specialParameter instanceof OptionalType;
-    }*/
+    public Type getBindingType() {
+        if (!(type instanceof ParameterizedType)) throw new UnrulyException("Not a Binding Type [" + type + "]");
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+
+        if (!Binding.class.equals(parameterizedType.getRawType())) {
+            throw new UnrulyException("Not a Binding Type [" + type + "]");
+        }
+
+        return parameterizedType.getActualTypeArguments()[0];
+    }
 
     /**
      * Returns all the associated annotations for this parameter.

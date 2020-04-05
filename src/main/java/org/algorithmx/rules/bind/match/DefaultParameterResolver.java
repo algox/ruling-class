@@ -18,11 +18,11 @@
 package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
-import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
@@ -61,19 +61,21 @@ public class DefaultParameterResolver implements ParameterResolver {
                 matcher = objectFactory.create(parameterDefinition.getBindUsing());
             }
 
+            boolean isBinding = parameterDefinition.isBinding();
             // Find all the matching bindings
-            // TODO : Handle Binding/Optional
             Set<Binding<Object>> bindings = matcher.match(ctx, parameterDefinition.getName(),
-                    TypeReference.with(parameterDefinition.getType()));
+                    TypeReference.with(isBinding
+                            ? parameterDefinition.getBindingType()
+                            : parameterDefinition.getType()));
             int matches = bindings.size();
 
             if (matches == 0) {
-                result[index] = new ParameterMatch(parameterDefinition, null);
+                result[index] = new ParameterMatch(parameterDefinition, null, isBinding);
             } else if (matches == 1) {
                 Binding<Object> binding = bindings.stream().findFirst().get();
-                result[index] = new ParameterMatch(parameterDefinition, binding);
+                result[index] = new ParameterMatch(parameterDefinition, binding, isBinding);
             } else {
-                // Mor ethan one match found; let's see if there is a primary candidate
+                // More than one match found; let's see if there is a primary candidate
                 Binding<Object> primaryBinding = null;
 
                 for (Binding<Object> binding : bindings) {
@@ -84,7 +86,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                 }
 
                 if (primaryBinding != null) {
-                    result[index] = new ParameterMatch(parameterDefinition, primaryBinding);
+                    result[index] = new ParameterMatch(parameterDefinition, primaryBinding, isBinding);
                 } else {
                     // Too many matches found; cannot proceed.
                     throw new BindingException("Multiple Bindings match your search criteria. Perhaps specify a primary Binding? ",
@@ -112,7 +114,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                 throw new UnrulyException("Invalid state. You cannot have a null match");
             }
 
-            Object value = null;
+            Object value;
 
             // There was no match; let's see if there is default value
             if (matches[i].getBinding() == null) {
@@ -133,7 +135,9 @@ public class DefaultParameterResolver implements ParameterResolver {
                             definition.getMethod(), null, matchingStrategy, bindings);
                 }
             } else {
-                value = matches[i].getBinding().getValue();
+                value = matches[i].isBinding()
+                        ? matches[i].getBinding()
+                        : matches[i].getBinding().getValue();
             }
 
             result[i] = value;

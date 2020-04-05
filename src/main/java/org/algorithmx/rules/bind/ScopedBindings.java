@@ -34,6 +34,14 @@ import java.util.Set;
 public interface ScopedBindings extends Bindings {
 
     /**
+     * Creates the default implementation of these Bindings.
+     * @return new default implementation instance.
+     */
+    static ScopedBindings create() {
+        return new DefaultScopedBindings();
+    }
+
+    /**
      * Returns the current working scope.
      *
      * @return working scope.
@@ -234,7 +242,7 @@ public interface ScopedBindings extends Bindings {
      * @return immutable version of this.
      */
     @Override
-    default Bindings immutableBindings() {
+    default Bindings asImmutableBindings() {
         return new ImmutableScopedBindings(this);
     }
 }

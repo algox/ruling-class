@@ -17,12 +17,11 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.BindingsBuilder;
-import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
+import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.action.TriAction;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.rule.Rule;
@@ -54,12 +53,12 @@ public class ExecutorTest {
 
     @Test
     public void test1() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
-        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
-        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
-        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        ParameterResolver resolver = ParameterResolver.create();
+        ObjectFactory objectFactory = ObjectFactory.create();
+        ConverterRegistry registry = ConverterRegistry.create();
 
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("id", int.class, 123)
                 .bind("birthDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>());
@@ -74,12 +73,12 @@ public class ExecutorTest {
 
     @Test
     public void test2() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
-        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
-        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
-        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        ParameterResolver resolver = ParameterResolver.create();
+        ObjectFactory objectFactory = ObjectFactory.create();
+        ConverterRegistry registry = ConverterRegistry.create();
 
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("z", BigDecimal.class, new BigDecimal("10.00"));
@@ -101,12 +100,12 @@ public class ExecutorTest {
 
     @Test
     public void test3() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
-        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
-        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
-        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        ParameterResolver resolver = ParameterResolver.create();
+        ObjectFactory objectFactory = ObjectFactory.create();
+        ConverterRegistry registry = ConverterRegistry.create();
 
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("x", int.class, 123)
                 .bind("y", String.class, "Hello");
 
@@ -127,18 +126,17 @@ public class ExecutorTest {
 
     @Test
     public void test4() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
-        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
-        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
-        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        ParameterResolver resolver = ParameterResolver.create();
+        ObjectFactory objectFactory = ObjectFactory.create();
+        ConverterRegistry registry = ConverterRegistry.create();
 
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("id", int.class, 123)
                 .bind("birthDate", Date.class, new Date())
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
-                .bind("result", int.class, 0);
-
-        //bindings.bind(BindingBuilder.with("bindings").type(TypeReference.with(Bindings.class)).value(bindings).editable(false).build());
+                .bind("result", int.class, 0)
+                .bindSelf("bindings");
 
         ActionDefinition[] definition1 = ActionDefinition.loadThenActions(TestRule5.class);
         TestRule5 rule5 = new TestRule5();
@@ -153,16 +151,17 @@ public class ExecutorTest {
 
     @Test
     public void test5() {
-        BindableMethodExecutor executor = BindableMethodExecutor.defaultBindableMethodExecutor();
-        ParameterResolver resolver = ParameterResolver.defaultParameterResolver();
-        ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
-        ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
+        BindableMethodExecutor executor = BindableMethodExecutor.create();
+        ParameterResolver resolver = ParameterResolver.create();
+        ObjectFactory objectFactory = ObjectFactory.create();
+        ConverterRegistry registry = ConverterRegistry.create();
 
-        Bindings values = BindingsBuilder.withScopes().build()
+        Bindings values = Bindings.create()
                 .bind("id", int.class, 123)
                 .bind("y", String.class, "Hello")
                 .bind("strings", new TypeReference<List<String>>() {}, new ArrayList<>())
-                .bind("result", int.class, 0);
+                .bind("result", int.class, 0)
+                .bindSelf("bindings");
 
         TriAction<?, ?, ?> action = (Integer id, List<String> strings, Bindings bindings) -> strings.add("result");
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(action);

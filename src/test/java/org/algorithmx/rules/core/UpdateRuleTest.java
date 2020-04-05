@@ -18,7 +18,6 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.BindingsBuilder;
 import org.junit.Test;
 
 /**
@@ -35,7 +34,7 @@ public class UpdateRuleTest {
 
     @Test
     public void test1() {
-        Bindings binds = BindingsBuilder.withScopes().build()
+        Bindings binds = Bindings.create()
                 .bind("x", int.class, 11)
                 .bind("y", int.class, 10);
 

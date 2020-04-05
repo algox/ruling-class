@@ -37,7 +37,7 @@ public interface ParameterResolver {
      *
      * @return a new instance of the ParameterResolver.
      */
-    static ParameterResolver defaultParameterResolver() {
+    static ParameterResolver create() {
         return new DefaultParameterResolver();
     }
 

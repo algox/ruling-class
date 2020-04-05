@@ -32,7 +32,7 @@ import java.util.Arrays;
  */
 public class DefaultAction implements Action {
 
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
+    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.create();
     private final ActionDefinition actionDefinition;
     private final Object target;
 

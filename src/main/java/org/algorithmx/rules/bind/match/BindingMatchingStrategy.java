@@ -36,7 +36,7 @@ public interface BindingMatchingStrategy {
      *
      * @return default strategy.
      */
-    static BindingMatchingStrategy defaultBindingMatchingStrategy() {
+    static BindingMatchingStrategy create() {
         return BindingMatchingStrategyType.getDefault().getStrategy();
     }
 

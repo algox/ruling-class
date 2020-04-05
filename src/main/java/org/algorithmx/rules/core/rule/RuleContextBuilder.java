@@ -35,11 +35,11 @@ import org.algorithmx.rules.util.reflect.ObjectFactory;
 public class RuleContextBuilder {
 
     private final Bindings bindings;
-    private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.defaultBindingMatchingStrategy();
-    private ParameterResolver parameterResolver = ParameterResolver.defaultParameterResolver();
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
-    private ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
-    private ConverterRegistry registry = ConverterRegistry.defaultConverterRegistry();
+    private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.create();
+    private ParameterResolver parameterResolver = ParameterResolver.create();
+    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.create();
+    private ObjectFactory objectFactory = ObjectFactory.create();
+    private ConverterRegistry registry = ConverterRegistry.create();
 
     private RuleContextBuilder(Bindings bindings) {
         super();

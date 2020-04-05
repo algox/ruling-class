@@ -34,7 +34,7 @@ public interface ObjectFactory {
      *
      * @return instance of the ObjectFactory.
      */
-    static ObjectFactory defaultObjectFactory() {
+    static ObjectFactory create() {
         return new DefaultObjectFactory();
     }
 

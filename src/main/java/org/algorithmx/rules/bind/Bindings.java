@@ -37,6 +37,14 @@ import java.util.Set;
 public interface Bindings extends Iterable<Binding<?>> {
 
     /**
+     * Creates the default implementation of these Bindings.
+     * @return new default implementation instance.
+     */
+    static Bindings create() {
+        return new DefaultScopedBindings();
+    }
+
+    /**
      * Binds the given Binding into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
      *
      * @param binding existing Binding.
@@ -230,6 +238,30 @@ public interface Bindings extends Iterable<Binding<?>> {
         for (Binding binding : bindings) {
             bind(binding);
         }
+        return (S) this;
+    }
+
+    /**
+     * Binds this Binding to itself. This is useful when Rules want to use the Bindings (to create new ones etc)
+     *
+     * @param name name to use for the Binding name (eg : "Bindings")
+     * @param <S> type of Bindings.
+     * @return this Bindings (fluent interface).
+     */
+    default <S extends Bindings> S bindSelf(String name) {
+        bind(name, this);
+        return (S) this;
+    }
+
+    /**
+     * Binds this Binding to itself. This is useful when Rules want to use the Bindings (to create new ones etc)
+     *
+     * @param name name to use for the Binding name (eg : "Bindings")
+     * @param <S> type of Bindings.
+     * @return this Bindings (fluent interface).
+     */
+    default <S extends Bindings> S bindImmutableSelf(String name) {
+        bind(name, asImmutableBindings());
         return (S) this;
     }
 
@@ -434,7 +466,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      *
      * @return immutable version of this.
      */
-    default Bindings immutableBindings() {
+    default Bindings asImmutableBindings() {
         return new ImmutableBindings(this);
     }
 

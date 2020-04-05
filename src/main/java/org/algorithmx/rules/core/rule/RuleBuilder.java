@@ -42,7 +42,7 @@ public abstract class RuleBuilder {
     private Action otherwiseAction;
     private Object target;
     private final List<Action> thenActions = new ArrayList<>();
-    private ObjectFactory objectFactory = ObjectFactory.defaultObjectFactory();
+    private ObjectFactory objectFactory = ObjectFactory.create();
 
     public static ClassBasedRuleBuilder with(Class<?> ruleClass) {
         return new ClassBasedRuleBuilder(ruleClass);

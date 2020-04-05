@@ -29,7 +29,7 @@ import java.lang.reflect.Type;
  */
 public interface ConverterRegistry {
 
-    static ConverterRegistry defaultConverterRegistry() {
+    static ConverterRegistry create() {
         return new DefaultConverterRegistry(true);
     }
 

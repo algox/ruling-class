@@ -18,8 +18,6 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.BindingsBuilder;
-import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -38,7 +36,7 @@ public class RuleSetTest {
 
     @Test
     public void test1() {
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("y", String.class, "")
                 .bind("a", String.class, "")
                 .bind("b", String.class, "hello")
@@ -76,7 +74,7 @@ public class RuleSetTest {
 
     @Test
     public void testBind12() {
-        Bindings bindings = BindingsBuilder.withScopes().build()
+        Bindings bindings = Bindings.create()
                 .bind("key1", String.class, "value")
                 .bind("key2", String.class, "value");
 

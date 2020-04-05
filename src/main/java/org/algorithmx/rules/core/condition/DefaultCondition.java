@@ -32,7 +32,7 @@ import java.util.Arrays;
  */
 public class DefaultCondition implements Condition {
 
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.defaultBindableMethodExecutor();
+    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.create();
     private final ConditionDefinition conditionDefinition;
     private final Object target;
 
