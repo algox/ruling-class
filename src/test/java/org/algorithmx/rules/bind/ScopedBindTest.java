@@ -38,7 +38,7 @@ public class ScopedBindTest {
 
     @Test
     public void testBind1() {
-        Bindings bindings = Bindings.create()
+        Bindings bindings = Bindings.createWithScopes()
                 .bind("key1", String.class, "value")
                 .bind("key2", new TypeReference<List<?>>() {})
                 .bind("key3", BigDecimal.class)
@@ -53,7 +53,7 @@ public class ScopedBindTest {
 
     @Test
     public void testBind2() {
-        ScopedBindings bindings = Bindings.create()
+        ScopedBindings bindings = Bindings.createWithScopes()
                 .bind("key1", String.class, "value");
 
         Assert.assertTrue(bindings.get("key1").equals("value"));

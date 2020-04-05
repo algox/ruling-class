@@ -41,6 +41,14 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return new default implementation instance.
      */
     static Bindings create() {
+        return new DefaultBindings();
+    }
+
+    /**
+     * Creates the default implementation of ScopedBindings.
+     * @return new default scoped implementation instance.
+     */
+    static ScopedBindings createWithScopes() {
         return new DefaultScopedBindings();
     }
 

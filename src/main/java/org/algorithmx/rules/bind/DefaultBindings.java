@@ -17,11 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingAlreadyExistsException;
-import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.NoSuchBindingException;
-import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Collections;
