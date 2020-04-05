@@ -20,7 +20,7 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.impl.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.model.Severity;
 import org.algorithmx.rules.spring.util.Assert;
@@ -95,7 +95,7 @@ public class BindingValidationRule<T> extends ValidationRule {
     }
 
     protected boolean when(Binding<T> binding) {
-        return binding != null ? when(binding.get()) : false;
+        return binding != null ? when(binding.getValue()) : false;
     }
 
     /**

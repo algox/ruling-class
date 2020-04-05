@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.impl;
+package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.Assert;
@@ -28,14 +28,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * BindingMatchingStrategy that matches Bindings in a given Rule Context by the given Name and Type.
+ * BindingMatchingStrategy that matches Bindings by the given Name.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public class MatchByNameAndTypeMatchingStrategy implements BindingMatchingStrategy {
+public class MatchByNameMatchingStrategy implements BindingMatchingStrategy {
 
-    public MatchByNameAndTypeMatchingStrategy() {
+    public MatchByNameMatchingStrategy() {
         super();
     }
 
@@ -44,11 +44,10 @@ public class MatchByNameAndTypeMatchingStrategy implements BindingMatchingStrate
     public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(name, "name cannot be bull");
-        Assert.notNull(type, "type cannot be bull");
 
         Set<Binding<T>> result = new HashSet<>();
-        // Look for the Binding by name & type
-        Binding<T> binding = bindings.getBinding(name, type);
+        // Look for the Binding by name
+        Binding<T> binding = bindings.getBinding(name);
         // Add the Binding (if we found one)
         if (binding != null) result.add(binding);
 

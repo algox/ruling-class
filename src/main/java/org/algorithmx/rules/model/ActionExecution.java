@@ -17,8 +17,7 @@
  */
 package org.algorithmx.rules.model;
 
-import org.algorithmx.rules.bind.ParameterMatch;
-import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.ref.WeakReference;

@@ -15,10 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.impl;
+package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.InvalidBindingException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.spring.util.ClassUtils;
 import org.algorithmx.rules.spring.util.TypeUtils;
@@ -45,8 +43,8 @@ public class DefaultBinding<T> implements Binding<T> {
     private final Type type;
     private final AtomicReference<T> value = new AtomicReference<>();
     private final boolean primary;
-    // Cannot be final as change it to mutable = false after we set the value in the ctor
-    private boolean mutable = true;
+    // Cannot be final as change it to editable = false after we set the value in the ctor
+    private boolean editable = true;
 
     /**
      * Creates a new DefaultBinding
@@ -54,10 +52,10 @@ public class DefaultBinding<T> implements Binding<T> {
      * @param name name of the Binding.
      * @param type Type of the Binding.
      * @param value initial value of the Binding.
-     * @param mutable determines whether this Binding is editable or not.
+     * @param editable determines whether this Binding is editable or not.
      * @param primary determines whether this Binding is a Primary candidate or not.
      */
-    public DefaultBinding(String name, Type type, T value, boolean mutable, boolean primary) {
+    public DefaultBinding(String name, Type type, T value, boolean editable, boolean primary) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.notNull(type, "type cannot be null");
@@ -67,7 +65,7 @@ public class DefaultBinding<T> implements Binding<T> {
         this.name = name;
         this.type = type;
         setValue(value);
-        this.mutable = mutable;
+        this.editable = editable;
         this.primary = primary;
     }
 
@@ -87,8 +85,8 @@ public class DefaultBinding<T> implements Binding<T> {
     }
 
     @Override
-    public boolean isMutable() {
-        return mutable;
+    public boolean isEditable() {
+        return editable;
     }
 
     @Override
@@ -101,7 +99,7 @@ public class DefaultBinding<T> implements Binding<T> {
     public void setValue(T value) {
 
         // Make sure we can edit this value
-        if (!isMutable()) {
+        if (!isEditable()) {
             throw new InvalidBindingException("Attempting to change a immutable Binding [" + name + "]");
         }
 
@@ -143,11 +141,12 @@ public class DefaultBinding<T> implements Binding<T> {
 
     @Override
     public String toString() {
-        Object bindingValue = value.get();
-        return "Binding {" +
+        return "DefaultBinding{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", value=" + (bindingValue != null ? bindingValue.toString() : "null") +
+                ", value=" + value +
+                ", primary=" + primary +
+                ", editable=" + editable +
                 '}';
     }
 }

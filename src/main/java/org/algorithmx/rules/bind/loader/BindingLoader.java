@@ -15,32 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.bind.loader;
 
-import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+import org.algorithmx.rules.bind.Bindings;
 
 /**
- * Annotation to specify which type of Matching strategy to use.
+ * Loader class that can load a collection of Bindings from the given Object.
+ *
+ * For example : You may want to load all the properties/fields in an object as separate Bindings.
+ *
+ * @param <T> input type (Bean, Map, etc)
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Bind {
+@FunctionalInterface
+public interface BindingLoader<T> {
 
     /**
-     * Determines the Binding strategy to use (during parameter matching).
+     * Loads multiple Bindings from the given value.
      *
-     * @return Binding to use. Defaults to MATCH_BY_NAME_AND_TYPE.
+     * @param bindings Bindings to add to.
+     * @param value input value (Bean/Map etc)
      */
-    Class<? extends BindingMatchingStrategy> using();
+    void load(Bindings bindings, T value);
 }

@@ -20,7 +20,7 @@ package org.algorithmx.rules.model;
 import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 

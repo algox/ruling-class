@@ -15,10 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.impl;
-
-import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.ScopedBindings;
+package org.algorithmx.rules.bind;
 
 import java.util.Collections;
 import java.util.List;

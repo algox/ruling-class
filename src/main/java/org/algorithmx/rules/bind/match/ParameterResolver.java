@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind;
+package org.algorithmx.rules.bind.match;
 
+import org.algorithmx.rules.bind.BindingException;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
-import org.algorithmx.rules.bind.impl.DefaultParameterResolver;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.util.reflect.ObjectFactory;

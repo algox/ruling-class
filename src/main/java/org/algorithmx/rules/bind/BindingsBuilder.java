@@ -1,7 +1,5 @@
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.impl.DefaultBindings;
-import org.algorithmx.rules.bind.impl.DefaultScopedBindings;
 import org.algorithmx.rules.spring.util.Assert;
 
 public class BindingsBuilder<S extends Bindings> {

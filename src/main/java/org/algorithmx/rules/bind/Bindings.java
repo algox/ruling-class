@@ -17,7 +17,10 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.impl.DefaultBindings;
+import org.algorithmx.rules.bind.loader.BindingLoader;
+import org.algorithmx.rules.bind.loader.FieldBindingLoader;
+import org.algorithmx.rules.bind.loader.MapBindingLoader;
+import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
@@ -160,7 +163,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param name name of the Binding.
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
-     * @param mutable determines whether the value can be changed.
+     * @param editable determines whether the value can be changed.
      * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
@@ -168,9 +171,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean mutable)
+    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean editable)
             throws BindingAlreadyExistsException, InvalidBindingException {
-        bind(BindingBuilder.with(name).type(type).value(initialValue).mutable(mutable).build());
+        bind(BindingBuilder.with(name).type(type).value(initialValue).editable(editable).build());
         return (S) this;
     }
 
@@ -180,7 +183,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param name name of the Binding.
      * @param type type reference of the Binding.
      * @param initialValue initial value of the Binding.
-     * @param mutable determines whether the value can be changed.
+     * @param editable determines whether the value can be changed.
      * @param primary determines whether the Binding is a primary candidate.
      * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
@@ -189,9 +192,9 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @throws InvalidBindingException thrown if we cannot set initial value.
      * @see Binding
      */
-    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
+    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean editable, boolean primary)
             throws BindingAlreadyExistsException, InvalidBindingException {
-        bind(BindingBuilder.with(name).type(type).value(initialValue).mutable(mutable).primary(primary).build());
+        bind(BindingBuilder.with(name).type(type).value(initialValue).editable(editable).primary(primary).build());
         return (S) this;
     }
 
@@ -231,87 +234,61 @@ public interface Bindings extends Iterable<Binding<?>> {
     }
 
     /**
-     * Binds each readable property on the given Bean.
+     * Binding Loader an load a collection of Bindings from the given value object.
      *
-     * @param bean parent bean.
+     * @param loader BindingLoader to use (see PropertyBindingLoader, FieldBindingLoader, MapBindingLoader)
+     * @param value value object (Bean, Map, etc)
+     * @param <S> type of Bindings.
+     * @param <T> generic type of the Value object.
      * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    /*default Bindings bindProperties(Object bean) {
-        return bindProperties(bean, (String name) -> name);
-    }*/
+    default <S extends Bindings, T> S bindUsing(BindingLoader<T> loader, T value) {
+        Assert.notNull(loader, "loader cannot be null.");
+        Assert.notNull(value, "value cannot be null.");
+        loader.load(this, value);
+        return (S) this;
+    }
 
     /**
-     * Binds each readable property on the given Bean.
+     * Binds each readable property on the given Bean. This is just convenience method if you want to control which
+     * properties get added use bindUsing.
      *
      * @param bean parent bean.
-     * @param nameGenerator generator that will determine the Binding name for each property.
+     * @param <S> type of Bindings.
+     * @param <T> generic type of the Value object.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    /*default Bindings bindProperties(Object bean, Function<String, String> nameGenerator) {
-        Assert.notNull(bean, "bean cannot be null.");
-        Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
-
-        try {
-            ReflectionUtils.traverseProperties(bean.getClass(), property -> property.getReadMethod() != null,
-                    property -> {
-                        try {
-                            // Get the value via the getter
-                            Object value = property.getReadMethod().invoke(bean);
-                            // Bind the property
-                            bind(nameGenerator.apply(property.getName()), TypeReference.with(
-                                    property.getReadMethod().getGenericReturnType()), value);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            // Couldn't get the value
-                            throw new UnrulyException("Error trying to retrieve property [" + property.getName()
-                                    + "] on Bean class [" + bean.getClass() + "]", e);
-                        }
-                    });
-        } catch (IntrospectionException e) {
-            throw new UnrulyException("Error trying to Introspect [" + bean.getClass() + "]", e);
-        }
-
-        return this;
-    }*/
+    default <S extends Bindings, T> S bindProperties(T bean) {
+        return bindUsing(new PropertyBindingLoader<>(), bean);
+    }
 
     /**
-     * Binds each declared field on the given Bean.
+     * Binds each declared field on the given Bean. This is just convenience method if you want to control which
+     * fields get added use bindUsing.
      *
      * @param bean parent bean.
+     * @param <S> type of Bindings.
+     * @param <T> generic type of the Value object.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    /*default Bindings bindFields(Object bean) {
-        return bindFields(bean, (String name) -> name);
-    }*/
+    default <S extends Bindings, T> S bindFields(T bean) {
+        return bindUsing(new FieldBindingLoader<>(), bean);
+    }
 
     /**
-     * Binds each declared field on the given Bean.
+     * Binds each key on the given Map. This is just convenience method if you want to control which
+     * keys get added use bindUsing(BindingLoader loader, T value)
      *
-     * @param bean parent bean.
-     * @param nameGenerator generator that will determine the Binding name for each field.
+     * @param map key/values.
+     * @param <S> type of Bindings.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    /*default Bindings bindFields(Object bean, Function<String, String> nameGenerator) {
-        Assert.notNull(bean, "bean cannot be null.");
-        Assert.notNull(nameGenerator, "nameGenerator cannot be null.");
-
-        ReflectionUtils.traverseFields(bean.getClass(), null, field -> {
-            try {
-                Object value = field.get(bean);
-                bind(nameGenerator.apply(field.getName()), TypeReference.with(field.getGenericType()), value);
-            } catch (IllegalAccessException e) {
-                // Couldn't get the value
-                throw new UnrulyException("Error trying to retrieve field [" + field.getName()
-                        + "] on Bean class [" + bean.getClass() + "]", e);
-            }
-        });
-
-        return this;
-    }*/
-
+    default <S extends Bindings> S bindMap(Map<String, ?> map) {
+        return bindUsing(new MapBindingLoader(), map);
+    }
 
     /**
      * Retrieves the number of Bindings.
@@ -451,5 +428,14 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return unmodifiable Map of the Binding values.
      */
     Map<String, ?> asMap();
+
+    /**
+     * Returns back a immutable version of this Bindings.
+     *
+     * @return immutable version of this.
+     */
+    default Bindings immutableBindings() {
+        return new ImmutableBindings(this);
+    }
 
 }

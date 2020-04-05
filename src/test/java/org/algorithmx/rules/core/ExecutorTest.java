@@ -17,10 +17,10 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.BindingMatchingStrategyType;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.BindingsBuilder;
-import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.core.action.TriAction;
@@ -138,7 +138,7 @@ public class ExecutorTest {
                 .bind("values", new TypeReference<List<String>>() {}, new ArrayList<>())
                 .bind("result", int.class, 0);
 
-        //bindings.bind(BindingBuilder.with("bindings").type(TypeReference.with(Bindings.class)).value(bindings).mutable(false).build());
+        //bindings.bind(BindingBuilder.with("bindings").type(TypeReference.with(Bindings.class)).value(bindings).editable(false).build());
 
         ActionDefinition[] definition1 = ActionDefinition.loadThenActions(TestRule5.class);
         TestRule5 rule5 = new TestRule5();

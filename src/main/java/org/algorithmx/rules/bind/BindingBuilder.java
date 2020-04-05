@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.impl.DefaultBinding;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.lang.reflect.Type;
@@ -35,7 +34,7 @@ public class BindingBuilder {
     private final String name;
     private TypeReference typeRef = null;
     private Object value = null;
-    private boolean mutable = true;
+    private boolean editable = true;
     private boolean primary = false;
 
     /**
@@ -78,6 +77,17 @@ public class BindingBuilder {
      * @return this for fluency.
      */
     public BindingBuilder type(Class<?> type) {
+        this.typeRef = TypeReference.with(type);
+        return this;
+    }
+
+    /**
+     * Type of the Bindings.
+     *
+     * @param type type of the Binding.
+     * @return this for fluency.
+     */
+    public BindingBuilder type(Type type) {
         this.typeRef = TypeReference.with(type);
         return this;
     }
@@ -172,11 +182,11 @@ public class BindingBuilder {
     /**
      * Determines whether the Binding is editable or not.
      *
-     * @param mutable mutability of the Binding.
+     * @param editable mutability of the Binding.
      * @return this for fluency.
      */
-    public BindingBuilder mutable(boolean mutable) {
-        this.mutable = mutable;
+    public BindingBuilder editable(boolean editable) {
+        this.editable = editable;
         return this;
     }
 
@@ -201,6 +211,6 @@ public class BindingBuilder {
      * @return new Binding.
      */
     public <T> Binding<T> build() {
-        return new DefaultBinding(name, typeRef != null ? typeRef.getType() : getDefaultType(), value, mutable, primary);
+        return new DefaultBinding(name, typeRef != null ? typeRef.getType() : getDefaultType(), value, editable, primary);
     }
 }

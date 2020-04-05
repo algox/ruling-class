@@ -53,12 +53,8 @@ public interface Binding<T> extends Identifiable {
      *
      * @return true if modifiable; false otherwise.
      */
-    default boolean isMutable() {
+    default boolean isEditable() {
     	return true;
-	}
-
-	default T get() {
-		return getValue();
 	}
 
 	/**

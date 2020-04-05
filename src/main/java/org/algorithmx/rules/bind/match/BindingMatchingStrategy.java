@@ -15,7 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind;
+package org.algorithmx.rules.bind.match;
+
+import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.TypeReference;
 
 import java.util.Set;
 

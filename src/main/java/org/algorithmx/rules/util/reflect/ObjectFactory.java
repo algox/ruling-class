@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util.reflect;
 
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.error.UnrulyException;
 
 /**

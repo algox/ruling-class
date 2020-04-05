@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.bind.ParameterMatch;
+import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ConditionDefinition;

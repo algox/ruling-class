@@ -17,10 +17,10 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
-import org.algorithmx.rules.bind.BindingMatchingStrategyType;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.ParameterResolver;
+import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.BindableMethodExecutor;

@@ -227,4 +227,14 @@ public interface ScopedBindings extends Bindings {
         getCurrentScope().bind(bindings);
         return (S) this;
     }
+
+    /**
+     * Returns back a immutable version of this Bindings.
+     *
+     * @return immutable version of this.
+     */
+    @Override
+    default Bindings immutableBindings() {
+        return new ImmutableScopedBindings(this);
+    }
 }

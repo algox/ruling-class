@@ -184,7 +184,7 @@ public class BindTest {
     public void testBindingBuilder() {
         Binding binding = BindingBuilder.with("a").type(Integer.class).value(200).build();
         Assert.assertTrue(binding.getName().equals("a"));
-        Assert.assertTrue(binding.get().equals(200));
+        Assert.assertTrue(binding.getValue().equals(200));
     }
 }
 

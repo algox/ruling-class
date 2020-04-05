@@ -17,9 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.BindingMatchingStrategy;
-import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.error.UnrulyException;
 import org.algorithmx.rules.model.ParameterDefinition;
 

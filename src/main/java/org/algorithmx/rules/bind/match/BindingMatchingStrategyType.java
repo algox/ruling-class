@@ -15,12 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind;
-
-import org.algorithmx.rules.bind.impl.CompositeBindingMatchingStrategy;
-import org.algorithmx.rules.bind.impl.MatchByNameAndTypeMatchingStrategy;
-import org.algorithmx.rules.bind.impl.MatchByNameMatchingStrategy;
-import org.algorithmx.rules.bind.impl.MatchByTypeMatchingStrategy;
+package org.algorithmx.rules.bind.match;
 
 /**
  * Convenient way to map between a Name to the BindingMatchingStrategy.

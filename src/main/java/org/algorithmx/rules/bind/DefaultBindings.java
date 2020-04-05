@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.impl;
+package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingAlreadyExistsException;
@@ -153,7 +153,7 @@ public class DefaultBindings implements Bindings {
         StringBuilder result = new StringBuilder("Bindings {" + System.lineSeparator());
 
         for (Binding<?> binding : bindings.values()) {
-            if (binding.get() instanceof Bindings) continue;
+            if (binding.getValue() instanceof Bindings) continue;
             result.append(binding.toString() + System.lineSeparator());
         }
 
