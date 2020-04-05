@@ -21,7 +21,7 @@ import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Order;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Then;
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 

@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 
 /**
  * Functional Action taking in five parameters.

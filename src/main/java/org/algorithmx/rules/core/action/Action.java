@@ -19,7 +19,7 @@ package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.ActionDefinition;
 
 /**

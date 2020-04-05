@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 
 /**
  * Functional Condition taking in nine parameters.

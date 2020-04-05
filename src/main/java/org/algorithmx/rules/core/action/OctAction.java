@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 
 /**
  * Action Condition taking in eight parameters.

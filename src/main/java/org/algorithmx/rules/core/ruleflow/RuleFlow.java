@@ -15,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core;
+package org.algorithmx.rules.core.ruleflow;
 
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.ruleset.RuleSet;
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 
 /**
  * Rule Flow : Work in progress

@@ -18,7 +18,7 @@
 package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 
 /**
  * Factory use to defaultObjectFactory Objects. Framework requires Object instances to be created (such as Rules), the ObjectFactory is

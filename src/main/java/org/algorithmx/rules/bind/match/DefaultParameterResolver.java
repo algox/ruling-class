@@ -18,15 +18,12 @@
 package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.match.ParameterMatch;
-import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.bind.BindingException;
-import org.algorithmx.rules.error.UnrulyException;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.model.MethodDefinition;
 import org.algorithmx.rules.model.ParameterDefinition;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
