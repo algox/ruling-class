@@ -17,13 +17,19 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.condition.TriCondition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.util.LambdaUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Binding Parameter tests.
@@ -48,7 +54,6 @@ public class ParameterResolverTest {
         Assert.assertTrue(parameters[3].getType().equals(new TypeReference<Map<?, Long>>(){}.getType()));
     }
 
-    /*
     // TODO : Fix me
     @Test
     public void testBindableParameter1() throws NoSuchMethodException {
@@ -62,7 +67,7 @@ public class ParameterResolverTest {
     public void testBindableParameter2() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod2", Binding.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
-        Assert.assertTrue(parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
+        Assert.assertTrue(parameters[0].isBinding() && parameters[0].getBindingType().equals(Integer.class));
     }
 
     @Test
@@ -71,7 +76,7 @@ public class ParameterResolverTest {
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
         Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(String.class));
         Assert.assertTrue(!parameters[1].isBinding() && parameters[1].getType().equals(Integer.class));
-        Assert.assertTrue(parameters[2].isBinding() && parameters[2].getType().equals(
+        Assert.assertTrue(parameters[2].isBinding() && parameters[2].getBindingType().equals(
                 new TypeReference<List<Integer>>() {}.getType()));
     }
 
@@ -83,9 +88,18 @@ public class ParameterResolverTest {
         Method m = LambdaUtils.getImplementationMethod(lambda, c);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
         Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
-        Assert.assertTrue(parameters[1].isBinding() && parameters[1].getType().equals(Object.class));
-        Assert.assertTrue(parameters[2].isOptional() && parameters[2].getType().equals(Object.class));
-    }*/
+        Assert.assertTrue(parameters[1].isBinding() && parameters[1].getBindingType().equals(Object.class));
+    }
+
+    @Test
+    public void testBindableParameter5() {
+        Condition condition = ConditionBuilder.with3Args((Integer a, Binding<List<String>> b, Integer x) -> a > 10)
+                .parameterType(1, new TypeReference<Binding<List<Integer>>>() {}.getType())
+                .build();
+        ParameterDefinition[] parameters = condition.getConditionDefinition().getMethodDefinition().getParameterDefinitions();
+        Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
+        Assert.assertTrue(parameters[1].isBinding() && parameters[1].getBindingType().equals(new TypeReference<List<Integer>>() {}.getType()));
+    }
 
     private static class TestClass {
 

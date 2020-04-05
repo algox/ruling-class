@@ -53,6 +53,7 @@ public final class ParameterDefinition {
     private final String defaultValue;
     private final Class<? extends BindingMatchingStrategy> bindUsing;
     private final Annotation[] annotations;
+    private Type bindingType;
 
     private ParameterDefinition(int index, String name, Type type, String description, boolean required,
                                 String defaultValue, Class<? extends BindingMatchingStrategy> bindUsing,
@@ -69,6 +70,7 @@ public final class ParameterDefinition {
         this.required = required;
         this.defaultValue = defaultValue;
         this.bindUsing = bindUsing;
+        setBindingType(type);
         validate();
     }
 
@@ -153,7 +155,9 @@ public final class ParameterDefinition {
      * @param type desired type.
      */
     public void setType(Type type) {
+        Assert.notNull(type, "type cannot be null.");
         this.type = type;
+        setBindingType(type);
     }
 
     /**
@@ -209,9 +213,7 @@ public final class ParameterDefinition {
      * @return true if this is a Binding; false otherwise.
      */
     public boolean isBinding() {
-        if (!(type instanceof ParameterizedType)) return false;
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-        return Binding.class.equals(parameterizedType.getRawType());
+        return bindingType != null;
     }
 
     /**
@@ -221,6 +223,23 @@ public final class ParameterDefinition {
      * @throws UnrulyException if type isn't a Binding.
      */
     public Type getBindingType() {
+        return bindingType;
+    }
+
+    private void setBindingType(Type type) {
+        this.bindingType = deriveIsBinding(type) ? deriveBindingType(type) : null;
+    }
+
+    private boolean deriveIsBinding(Type type) {
+        if (Binding.class.equals(type)) return true;
+        if (!(type instanceof ParameterizedType)) return false;
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        return Binding.class.equals(parameterizedType.getRawType());
+    }
+
+
+    private Type deriveBindingType(Type type) {
+        if (Binding.class.equals(type)) return Object.class;
         if (!(type instanceof ParameterizedType)) throw new UnrulyException("Not a Binding Type [" + type + "]");
         ParameterizedType parameterizedType = (ParameterizedType) type;
 
