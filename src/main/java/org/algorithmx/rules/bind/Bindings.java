@@ -24,7 +24,6 @@ import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
 import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,45 +49,6 @@ public interface Bindings extends Iterable<Binding<?>> {
      */
     static ScopedBindings createWithScopes() {
         return new DefaultScopedBindings();
-    }
-
-    /**
-     * Binds the given Binding into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
-     *
-     * @param binding existing Binding.
-     * @param <S> type of Bindings.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
-     */
-    <S extends Bindings, T> S bind(Binding<T> binding) throws BindingAlreadyExistsException;
-
-    /**
-     * Creates a new Binding using a BindingDeclaration. The type of the Binding will be the type of the value.
-     * In case the value is null then the type is Object.class. Note that generics are not available and hence the
-     * type that is declared will NOT have any generic type.
-     *
-     * @param declaration declaration details.
-     * @param <S> type of Bindings.
-     * @return this Bindings (fluent interface).
-     */
-    default <S extends Bindings> S bind(BindingDeclaration declaration) {
-        bind(BindingBuilder.with(declaration).build());
-        return (S) this;
-    }
-
-    /**
-     * Creates Bindings and adds them all.
-     *
-     * @param declarations binding declarations.
-     * @param <S> type of Bindings.
-     * @return this Bindings (fluent interface).
-     */
-    default <S extends Bindings> S bind(BindingDeclaration...declarations)  {
-        Assert.notNull(declarations, "declarations cannot be null");
-        Bindings result = new DefaultBindings();
-        Arrays.stream(declarations).forEach(result::bind);
-        return (S) result;
     }
 
     /**
@@ -174,80 +134,43 @@ public interface Bindings extends Iterable<Binding<?>> {
     }
 
     /**
-     * Declares a new Binding given a name, type and an initial value.
+     * Creates a new Binding using a BindingDeclaration. The type of the Binding will be the type of the value.
+     * In case the value is null then the type is Object.class. Note that generics are not available and hence the
+     * type that is declared will NOT have any generic type.
      *
-     * @param name name of the Binding.
-     * @param type type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param editable determines whether the value can be changed.
+     * @param declaration declaration details.
+     * @param <S> type of Bindings.
+     * @return this Bindings (fluent interface).
+     */
+    default <S extends Bindings> S bind(BindingDeclaration declaration) {
+        bind(BindingBuilder.with(declaration).build());
+        return (S) this;
+    }
+
+    /**
+     * Creates Bindings and adds them all.
+     *
+     * @param declarations binding declarations.
+     * @param <S> type of Bindings.
+     * @return this Bindings (fluent interface).
+     */
+    default <S extends Bindings> S bind(BindingDeclaration...declarations)  {
+        Assert.notNull(declarations, "declarations cannot be null");
+        Bindings result = new DefaultBindings();
+        Arrays.stream(declarations).forEach(result::bind);
+        return (S) result;
+    }
+
+    /**
+     * Binds the given Binding into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
+     *
+     * @param binding existing Binding.
      * @param <S> type of Bindings.
      * @param <T> generic type of the Binding.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
      */
-    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean editable)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        bind(BindingBuilder.with(name).type(type).value(initialValue).editable(editable).build());
-        return (S) this;
-    }
-
-    /**
-     * Declares a new Binding given a name, type and an initial value.
-     *
-     * @param name name of the Binding.
-     * @param type type reference of the Binding.
-     * @param initialValue initial value of the Binding.
-     * @param editable determines whether the value can be changed.
-     * @param primary determines whether the Binding is a primary candidate.
-     * @param <S> type of Bindings.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if the Binding already exists.
-     * @throws InvalidBindingException thrown if we cannot set initial value.
-     * @see Binding
-     */
-    default <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean editable, boolean primary)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        bind(BindingBuilder.with(name).type(type).value(initialValue).editable(editable).primary(primary).build());
-        return (S) this;
-    }
-
-    /**
-     * Binds all the given Bindings into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
-     * The execution will stop if a Binding already exists.
-     *
-     *
-     * @param bindings existing Bindings.
-     * @param <S> type of Bindings.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
-     */
-    default <S extends Bindings, T> S bind(Binding<T>...bindings) {
-        Assert.notNull(bindings, "bindings cannot be null.");
-        return (S) bind(Arrays.asList(bindings));
-    }
-
-    /**
-     * Binds all the given Bindings into this set of Bindings. Follows the same rules as adding a new Binding with name, type, etc.
-     * The execution will stop if a Binding already exists.
-     *
-     *
-     * @param bindings existing Bindings.
-     * @param <S> type of Bindings.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
-     */
-    default <S extends Bindings, T> S bind(Collection<Binding<T>> bindings) {
-        Assert.notNull(bindings, "bindings cannot be null.");
-        for (Binding binding : bindings) {
-            bind(binding);
-        }
-        return (S) this;
-    }
+    <S extends Bindings, T> S bind(Binding<T> binding) throws BindingAlreadyExistsException;
 
     /**
      * Binds this Binding to itself. This is useful when Rules want to use the Bindings (to create new ones etc)

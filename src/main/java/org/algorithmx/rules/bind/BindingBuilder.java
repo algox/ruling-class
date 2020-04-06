@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
@@ -223,7 +224,13 @@ public class BindingBuilder {
      * @return new Binding.
      */
     public <T> Binding<T> build() {
-        return new DefaultBinding(name, typeRef != null ? typeRef.getType() : getDefaultType(), value, editable,
-                primary, description);
+        Type bindingType = typeRef != null ? typeRef.getType() : getDefaultType();
+        Object bindingValue = value;
+
+        if (bindingValue == null) {
+            bindingValue = ReflectionUtils.getDefaultValue(bindingType);
+        }
+
+        return new DefaultBinding(name, bindingType, bindingValue, editable, primary, description);
     }
 }

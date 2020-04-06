@@ -41,7 +41,7 @@ public class DefaultBindings implements Bindings {
     /**
      * Default Ctor. Self Reference added.
      */
-    public DefaultBindings() {
+    DefaultBindings() {
         super();
     }
 

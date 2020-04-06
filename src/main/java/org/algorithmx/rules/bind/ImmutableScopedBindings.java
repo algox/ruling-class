@@ -25,7 +25,7 @@ package org.algorithmx.rules.bind;
  */
 public class ImmutableScopedBindings extends ImmutableBindings implements ScopedBindings {
 
-    public ImmutableScopedBindings(ScopedBindings bindings) {
+    ImmutableScopedBindings(ScopedBindings bindings) {
         super(bindings);
     }
 

@@ -107,8 +107,7 @@ public final class ReflectionUtils {
      * @return default value if one is found; null otherwise.
      */
     public static Object getDefaultValue(Type type) {
-        Object result = DEFAULT_VALUE_MAP.get(type);
-        return result != null ? result : null;
+        return DEFAULT_VALUE_MAP.get(type);
     }
 
     /**

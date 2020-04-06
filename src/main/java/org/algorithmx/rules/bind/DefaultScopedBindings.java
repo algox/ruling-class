@@ -31,7 +31,7 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     private final Stack<Bindings> scopes = new Stack<>();
 
-    public DefaultScopedBindings() {
+    DefaultScopedBindings() {
         super();
         init();
     }

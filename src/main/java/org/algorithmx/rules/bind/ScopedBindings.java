@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -216,23 +215,6 @@ public interface ScopedBindings extends Bindings {
     @Override
     default <S extends Bindings, T> S bind(Binding<T> binding) {
         getCurrentScope().bind(binding);
-        return (S) this;
-    }
-
-    /**
-     * Binds all the given Bindings into current scope. Follows the same rules as adding a new Binding with name, type, etc.
-     * The execution will stop if a Binding already exists.
-     *
-     *
-     * @param bindings existing Bindings.
-     * @param <S> type of Bindings.
-     * @param <T> generic type of the Binding.
-     * @return this Bindings (fluent interface).
-     * @throws BindingAlreadyExistsException thrown if a Binding already exists.
-     */
-    @Override
-    default <S extends Bindings, T> S bind(Collection<Binding<T>> bindings) {
-        getCurrentScope().bind(bindings);
         return (S) this;
     }
 

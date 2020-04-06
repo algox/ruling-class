@@ -150,21 +150,6 @@ public class BindTest {
 
     @Test
     public void testBind10() {
-        Bindings bindings1 = Bindings.create()
-                .bind("key1", String.class, "value")
-                .bind("key2", String.class, "value");
-
-        Binding<String> var1 = bindings1.getBinding("key1");
-        Binding<String> var2 = bindings1.getBinding("key2");
-
-        Bindings bindings2 = Bindings.create();
-        bindings2.bind(var1, var2);
-        Assert.assertTrue(bindings2.contains("key1", String.class));
-        Assert.assertTrue(bindings2.contains("key2", String.class));
-    }
-
-    @Test
-    public void testBind11() {
         Bindings bindings1 = Bindings.create().bind(key1 -> "hello", a -> 123, c -> 12.11);
         Assert.assertTrue(bindings1.contains("key1", String.class));
         Assert.assertTrue(bindings1.contains("a", int.class));

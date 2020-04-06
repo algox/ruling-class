@@ -172,4 +172,11 @@ public class BindingBuilderTest {
         Binding binding2 = BindingBuilder.with("key1").value(() -> "Hello world!").primary(false).build();
         Assert.assertTrue(!binding2.isPrimary());
     }
+
+    @Test
+    public void bindPrimitiveTest() {
+        Binding binding = BindingBuilder.with("key1").type(float.class).build();
+        Assert.assertTrue(binding.getType().equals(float.class));
+        Assert.assertTrue(binding.getValue().equals(0.0f));
+    }
 }

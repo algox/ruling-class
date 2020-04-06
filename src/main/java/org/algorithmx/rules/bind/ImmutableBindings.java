@@ -20,7 +20,6 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.bind.loader.BindingLoader;
 import org.algorithmx.rules.spring.util.Assert;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +34,7 @@ public class ImmutableBindings implements Bindings {
 
     private final Bindings target;
 
-    public ImmutableBindings(Bindings target) {
+    ImmutableBindings(Bindings target) {
         super();
         Assert.notNull(target, "target cannot be null.");
         this.target = target;
@@ -147,28 +146,6 @@ public class ImmutableBindings implements Bindings {
 
     @Override
     public <S extends Bindings, T> S bind(String name, TypeReference<T> type, T initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean mutable)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Bindings, T> S bind(String name, TypeReference type, T initialValue, boolean mutable, boolean primary)
-            throws BindingAlreadyExistsException, InvalidBindingException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Bindings, T> S bind(Binding<T>... bindings) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Bindings, T> S bind(Collection<Binding<T>> bindings) {
         throw new UnsupportedOperationException();
     }
 

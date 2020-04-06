@@ -132,14 +132,18 @@ public class DefaultBinding<T> implements Binding<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Binding<?> that = (Binding<?>) o;
-        return name.equals(that.getName()) &&
-                type.equals(that.getType());
+        DefaultBinding<?> that = (DefaultBinding<?>) o;
+        return primary == that.primary &&
+                editable == that.editable &&
+                name.equals(that.name) &&
+                type.equals(that.type) &&
+                Objects.equals(value, that.value) &&
+                Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type);
+        return Objects.hash(name, type, value, primary, editable, description);
     }
 
     @Override
