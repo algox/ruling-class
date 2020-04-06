@@ -64,20 +64,6 @@ public interface Bindings extends Iterable<Binding<?>> {
     <S extends Bindings, T> S bind(Binding<T> binding) throws BindingAlreadyExistsException;
 
     /**
-     * Creates Bindings and adds them all.
-     *
-     * @param declarations binding declarations.
-     * @param <S> type of Bindings.
-     * @return this Bindings (fluent interface).
-     */
-    default <S extends Bindings> S bind(BindingDeclaration...declarations)  {
-        Assert.notNull(declarations, "declarations cannot be null");
-        Bindings result = new DefaultBindings();
-        Arrays.stream(declarations).forEach(result::bind);
-        return (S) result;
-    }
-
-    /**
      * Creates a new Binding using a BindingDeclaration. The type of the Binding will be the type of the value.
      * In case the value is null then the type is Object.class. Note that generics are not available and hence the
      * type that is declared will NOT have any generic type.
@@ -89,6 +75,20 @@ public interface Bindings extends Iterable<Binding<?>> {
     default <S extends Bindings> S bind(BindingDeclaration declaration) {
         bind(BindingBuilder.with(declaration).build());
         return (S) this;
+    }
+
+    /**
+     * Creates Bindings and adds them all.
+     *
+     * @param declarations binding declarations.
+     * @param <S> type of Bindings.
+     * @return this Bindings (fluent interface).
+     */
+    default <S extends Bindings> S bind(BindingDeclaration...declarations)  {
+        Assert.notNull(declarations, "declarations cannot be null");
+        Bindings result = new DefaultBindings();
+        Arrays.stream(declarations).forEach(result::bind);
+        return (S) result;
     }
 
     /**

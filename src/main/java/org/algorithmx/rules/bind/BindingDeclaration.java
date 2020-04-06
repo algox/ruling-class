@@ -60,7 +60,7 @@ public interface BindingDeclaration extends Function<String, Object>, Serializab
         // Get the parameter names. In this ase there will be a single parameter.
         String[] parameterNames = ReflectionUtils.getParameterNames(implementationMethod);
         // Extract the name
-        return parameterNames[0];
+        return parameterNames[parameterNames.length - 1];
     }
 
     /**

@@ -110,4 +110,11 @@ public interface Binding<T> extends Identifiable {
 	 * @return true if this Binding can be assigned to the desired type.
 	 */
 	boolean isAssignable(Type type);
+
+	/**
+	 * Description of this Binding.
+	 *
+	 * @return text describing this Binding.
+	 */
+	String getDescription();
 }

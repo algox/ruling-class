@@ -45,6 +45,7 @@ public class DefaultBinding<T> implements Binding<T> {
     private final boolean primary;
     // Cannot be final as change it to editable = false after we set the value in the ctor
     private boolean editable = true;
+    private String description = null;
 
     /**
      * Creates a new DefaultBinding
@@ -55,7 +56,7 @@ public class DefaultBinding<T> implements Binding<T> {
      * @param editable determines whether this Binding is editable or not.
      * @param primary determines whether this Binding is a Primary candidate or not.
      */
-    public DefaultBinding(String name, Type type, T value, boolean editable, boolean primary) {
+    DefaultBinding(String name, Type type, T value, boolean editable, boolean primary, String description) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.notNull(type, "type cannot be null");
@@ -67,6 +68,7 @@ public class DefaultBinding<T> implements Binding<T> {
         setValue(value);
         this.editable = editable;
         this.primary = primary;
+        this.description = description;
     }
 
     @Override
@@ -122,12 +124,17 @@ public class DefaultBinding<T> implements Binding<T> {
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DefaultBinding<?> that = (DefaultBinding<?>) o;
-        return name.equals(that.name) &&
-                type.equals(that.type);
+        Binding<?> that = (Binding<?>) o;
+        return name.equals(that.getName()) &&
+                type.equals(that.getType());
     }
 
     @Override
@@ -143,6 +150,7 @@ public class DefaultBinding<T> implements Binding<T> {
                 ", value=" + value +
                 ", primary=" + primary +
                 ", editable=" + editable +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

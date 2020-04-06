@@ -36,6 +36,7 @@ public class BindingBuilder {
     private Object value = null;
     private boolean editable = true;
     private boolean primary = false;
+    private String description = null;
 
     /**
      * Private Ctor taking the Binding name.
@@ -129,8 +130,7 @@ public class BindingBuilder {
      */
     public <T> BindingBuilder value(Supplier<T> supplier) {
         Assert.notNull(supplier, "supplier cannot be null");
-        this.value = supplier.get();
-        return this;
+        return value(supplier.get());
     }
 
     /**
@@ -158,9 +158,9 @@ public class BindingBuilder {
         Assert.notNull(supplier, "supplier cannot be null");
 
         try {
-            this.value = supplier.get();
+            value(supplier.get());
         } catch (NullPointerException e) {
-            this.value = defaultValue;
+            value(defaultValue);
         }
         
         return this;
@@ -175,7 +175,7 @@ public class BindingBuilder {
      */
     public <T> BindingBuilder value(Optional<T> optionalValue) {
         Assert.notNull(optionalValue, "optionalValue cannot be null");
-        this.value = optionalValue.isPresent() ? optionalValue.get() : null;
+        if (optionalValue.isPresent()) value(optionalValue.get());
         return this;
     }
 
@@ -201,6 +201,18 @@ public class BindingBuilder {
         return this;
     }
 
+    /**
+     * Description of this Binding.
+     *
+     * @param description  Binding description
+     * @return this for fluency.
+     */
+    public BindingBuilder description(String description) {
+        this.description = description;
+        return this;
+    }
+
+
     private Type getDefaultType() {
         return Object.class;
     }
@@ -211,6 +223,7 @@ public class BindingBuilder {
      * @return new Binding.
      */
     public <T> Binding<T> build() {
-        return new DefaultBinding(name, typeRef != null ? typeRef.getType() : getDefaultType(), value, editable, primary);
+        return new DefaultBinding(name, typeRef != null ? typeRef.getType() : getDefaultType(), value, editable,
+                primary, description);
     }
 }

@@ -38,6 +38,14 @@ public class BindTest {
     }
 
     @Test
+    public void testCreateBindings() {
+        Bindings bindings = Bindings.create();
+        Assert.assertTrue(bindings instanceof DefaultBindings);
+        Bindings scopedBindings = Bindings.createWithScopes();
+        Assert.assertTrue(scopedBindings instanceof DefaultScopedBindings);
+    }
+
+    @Test
     public void testBind1() {
         Bindings bindings = Bindings.create()
                 .bind("key", String.class, "value");
