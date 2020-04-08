@@ -22,6 +22,7 @@ import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.condition.TriCondition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
+import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 

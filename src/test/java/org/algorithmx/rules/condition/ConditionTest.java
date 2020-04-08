@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.condition;
 
-import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.junit.Assert;

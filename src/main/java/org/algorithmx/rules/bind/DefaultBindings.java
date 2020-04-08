@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Collections;
 import java.util.HashMap;

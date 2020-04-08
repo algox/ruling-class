@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.bind.TypeReference;
 import org.algorithmx.rules.spring.util.TypeUtils;
 import org.junit.Assert;
 import org.junit.Test;

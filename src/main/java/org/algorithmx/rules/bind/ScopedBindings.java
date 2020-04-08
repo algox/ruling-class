@@ -17,6 +17,8 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.util.TypeReference;
+
 import java.util.Map;
 import java.util.Set;
 

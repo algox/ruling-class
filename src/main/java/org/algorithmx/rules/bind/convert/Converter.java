@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind.convert;
 
-import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.util.TypeReference;
 
 import java.lang.reflect.Type;
 

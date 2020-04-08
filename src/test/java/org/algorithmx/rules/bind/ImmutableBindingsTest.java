@@ -1,6 +1,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
+import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 

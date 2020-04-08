@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.loader.FieldBindingLoader;
 import org.algorithmx.rules.bind.loader.MapBindingLoader;
 import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Arrays;
 import java.util.Map;

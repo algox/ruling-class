@@ -19,7 +19,7 @@ package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Set;
 

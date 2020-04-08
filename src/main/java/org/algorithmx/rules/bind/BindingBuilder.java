@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Type;

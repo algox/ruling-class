@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.bind.TypeReference;
+import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;

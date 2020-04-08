@@ -19,6 +19,7 @@ package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.loader.BindingLoader;
 import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Iterator;
 import java.util.Map;
