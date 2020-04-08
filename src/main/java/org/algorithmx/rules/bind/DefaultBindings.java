@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,11 +67,6 @@ public class DefaultBindings implements Bindings {
     }
 
     @Override
-    public void clear() {
-        bindings.clear();
-    }
-
-    @Override
     public Iterator<Binding<?>> iterator() {
         return bindings.values().iterator();
     }
@@ -83,7 +79,7 @@ public class DefaultBindings implements Bindings {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T get(String name) {
+    public <T> T getValue(String name) {
         Binding<T> result = getBinding(name);
         // Could not find Binding
         if (result == null) throw new NoSuchBindingException(name);
@@ -91,7 +87,7 @@ public class DefaultBindings implements Bindings {
     }
 
     @Override
-    public <T> void set(String name, T value) {
+    public <T> void setValue(String name, T value) {
         Binding<T> result = getBinding(name);
         // Could not find Binding
         if (result == null) throw new NoSuchBindingException(name);
@@ -101,12 +97,10 @@ public class DefaultBindings implements Bindings {
     @Override
     public <T> Binding<T> getBinding(String name, TypeReference<T> typeRef) {
         Binding<T> result = getBinding(name);
-
-        return result == null
-                ? null
-                : result.isAssignable(typeRef.getType())
-                    ? result
-                    : null;
+        // Make sure it also matches the Type
+        return result != null && result.isAssignable(typeRef.getType())
+                ? result
+                : null;
     }
 
     @Override
@@ -127,11 +121,11 @@ public class DefaultBindings implements Bindings {
     public Map<String, ?> asMap() {
         Map<String, Object> result = new HashMap<>();
 
-        for (Map.Entry<String, Binding<?>> entry : bindings.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().getValue());
+        for (Binding<?> binding : this) {
+            result.put(binding.getName(), binding.getValue());
         }
 
-        return Collections.unmodifiableMap(result);
+        return result;
     }
 
     /**
@@ -144,15 +138,34 @@ public class DefaultBindings implements Bindings {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!Bindings.class.isAssignableFrom(o.getClass())) return false;
+        Bindings other = (Bindings) o;
+        return asMap().equals(other.asMap());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bindings);
+    }
+
+    @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Bindings {" + System.lineSeparator());
+        StringBuilder result = new StringBuilder("Bindings [" + System.lineSeparator());
+        char TAB = '\t';
 
         for (Binding<?> binding : bindings.values()) {
-            if (binding.getValue() instanceof Bindings) continue;
-            result.append(binding.toString() + System.lineSeparator());
+
+            if (binding.getValue() instanceof Bindings) {
+                continue;
+            }
+
+            result.append(TAB + binding.toString() + System.lineSeparator());
         }
 
-        result.append("}");
+        result.append("]");
         return result.toString();
     }
 }

@@ -180,7 +180,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      */
     default <S extends Bindings> S bindSelf(String name) {
-        bind(name, this);
+        bind(BindingBuilder.with(name).value(this).primary(false).editable(false).build());
         return (S) this;
     }
 
@@ -192,7 +192,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      */
     default <S extends Bindings> S bindImmutableSelf(String name) {
-        bind(name, asImmutableBindings());
+        bind(BindingBuilder.with(name).value(asImmutableBindings()).primary(false).editable(false).build());
         return (S) this;
     }
 
@@ -261,49 +261,6 @@ public interface Bindings extends Iterable<Binding<?>> {
     int size();
 
     /**
-     * Clears all the Bindings.
-     */
-    void clear();
-
-    /**
-     * Determines if a Binding with given name exists.
-     *
-     * @param name name of the Binding.
-     * @return true if Binding exists; false otherwise.
-     */
-    default boolean contains(String name) {
-        return getBinding(name) != null;
-    }
-
-    /**
-     * Determines if the Binding with given name and types exists.
-     *
-     * @param name name of the Binding.
-     * @param type class type of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return true if Binding exists; false otherwise.
-     */
-    default <T> boolean contains(String name, Class<T> type) {
-        return contains(name, TypeReference.with(type));
-    }
-
-    /**
-     * Determines if the Binding with given name and types exists.
-     *
-     * @param name name of the Binding.
-     * @param type generic type of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return true if Binding exists; false otherwise.
-     */
-    default <T> boolean contains(String name, TypeReference<T> type) {
-        Binding<?> result = getBinding(name);
-        return result != null
-                ? result.isTypeAcceptable(type.getType())
-                ? true : false
-                : false;
-    }
-
-    /**
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.
@@ -311,37 +268,6 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return Binding if found; null otherwise.
      */
     <T> Binding<T> getBinding(String name);
-
-    /**
-     * Retrieves the value of the Binding with the given name.
-     *
-     * @param name name of the Binding.
-     * @param <T> desired Type.
-     * @param <T> generic type of the Binding.
-     * @return value if Binding is found.
-     * @throws NoSuchBindingException if Binding is not found.
-     */
-    default <T> T get(String name) {
-        Binding<T> result = getBinding(name);
-        // Could not find Binding
-        if (result == null) throw new NoSuchBindingException(name);
-        return result.getValue();
-    }
-
-    /**
-     * Sets the value of Binding with the given name.
-     *
-     * @param name name of the Binding.
-     * @param value desired new value.
-     * @param <T> generic type of the Binding.
-     * @throws NoSuchBindingException if Binding is not found.
-     */
-    default <T> void set(String name, T value) {
-        Binding<T> result = getBinding(name);
-        // Could not find Binding
-        if (result == null) throw new NoSuchBindingException(name);
-        result.setValue(value);
-    }
 
     /**
      * Retrieves the Binding identified by the given name.
@@ -366,6 +292,43 @@ public interface Bindings extends Iterable<Binding<?>> {
     <T> Binding<T> getBinding(String name, TypeReference<T> type);
 
     /**
+     * Determines if a Binding with given name exists.
+     *
+     * @param name name of the Binding.
+     * @return true if Binding exists; false otherwise.
+     */
+    default boolean contains(String name) {
+        return getBinding(name) != null;
+    }
+
+    /**
+     * Determines if the Binding with given name and types exists.
+     *
+     * @param name name of the Binding.
+     * @param type class type of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return true if Binding exists; false otherwise.
+     */
+    default <T> boolean contains(String name, Class<T> type) {
+        return getBinding(name, type) != null;
+    }
+
+    /**
+     * Determines if the Binding with given name and types exists.
+     *
+     * @param name name of the Binding.
+     * @param type generic type of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return true if Binding exists; false otherwise.
+     */
+    default <T> boolean contains(String name, TypeReference<T> type) {
+        Binding<?> result = getBinding(name);
+        return result != null
+                ? result.getType().equals(type.getType()) ? true : false
+                : false;
+    }
+
+    /**
      * Retrieves all the Bindings of the given type.
      *
      * @param type desired type.
@@ -384,6 +347,37 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return all matching Bindings.
      */
     <T> Set<Binding<T>> getBindings(TypeReference<T> type);
+
+    /**
+     * Retrieves the value of the Binding with the given name.
+     *
+     * @param name name of the Binding.
+     * @param <T> desired Type.
+     * @param <T> generic type of the Binding.
+     * @return value if Binding is found.
+     * @throws NoSuchBindingException if Binding is not found.
+     */
+    default <T> T getValue(String name) {
+        Binding<T> result = getBinding(name);
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(name);
+        return result.getValue();
+    }
+
+    /**
+     * Sets the value of Binding with the given name.
+     *
+     * @param name name of the Binding.
+     * @param value desired new value.
+     * @param <T> generic type of the Binding.
+     * @throws NoSuchBindingException if Binding is not found.
+     */
+    default <T> void setValue(String name, T value) {
+        Binding<T> result = getBinding(name);
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(name);
+        result.setValue(value);
+    }
 
     /**
      * Retrieves the Binding values as an Unmodifiable Map.

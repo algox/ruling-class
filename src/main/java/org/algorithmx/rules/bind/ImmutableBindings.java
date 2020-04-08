@@ -22,6 +22,7 @@ import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -66,13 +67,13 @@ public class ImmutableBindings implements Bindings {
     }
 
     @Override
-    public <T> T get(String name) {
-        return getTarget().get(name);
+    public <T> T getValue(String name) {
+        return getTarget().getValue(name);
     }
 
     @Override
-    public <T> void set(String name, T value) {
-        getTarget().set(name, value);
+    public <T> void setValue(String name, T value) {
+        getTarget().setValue(name, value);
     }
 
     @Override
@@ -170,7 +171,20 @@ public class ImmutableBindings implements Bindings {
     }
 
     @Override
-    public void clear() {
-        throw new UnsupportedOperationException();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!Bindings.class.isAssignableFrom(o.getClass())) return false;
+        return target.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(target);
+    }
+
+    @Override
+    public String toString() {
+        return target.toString();
     }
 }

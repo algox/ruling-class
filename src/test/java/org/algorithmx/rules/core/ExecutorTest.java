@@ -145,7 +145,7 @@ public class ExecutorTest {
         executor.execute(rule5, definition1[0].getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition1[0].getMethodDefinition(), bindings,
                 BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
-        int result = bindings.get("result");
+        int result = bindings.getValue("result");
         Assert.assertTrue(result == 2);
     }
 
@@ -169,13 +169,12 @@ public class ExecutorTest {
         executor.execute(action, definition.getMethodDefinition(),
                 resolver.resolveAsBindingValues(definition.getMethodDefinition(), values,
                         BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE.getStrategy(), objectFactory, registry));
-        int result = values.get("result");
+        int result = values.getValue("result");
         Assert.assertTrue(result == 0);
     }
 
     @Test
     public void test6() {
-        // TODO : Fix generic mapping with lambdas
         List<Integer> values = new ArrayList<>();
 
         Rule rule = RuleBuilder.with(

@@ -40,27 +40,17 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     }
 
     @Override
-    public Iterable<Bindings> getScopes() {
-        return getTarget().getScopes();
-    }
-
-    @Override
-    public Iterable<Bindings> getScopesInReverseOrder() {
-        return getTarget().getScopesInReverseOrder();
-    }
-
-    @Override
-    public Bindings newScope() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Bindings newScope(Bindings bindings) {
+    public Bindings startScope() {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Bindings endScope() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        return getTarget().toString();
     }
 }

@@ -17,9 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,33 +45,11 @@ public interface ScopedBindings extends Bindings {
     Bindings getCurrentScope();
 
     /**
-     * Returns all the available Scopes (in order which they were added).
-     *
-     * @return all available Scopes.
-     */
-    Iterable<Bindings> getScopes();
-
-    /**
-     * Returns all the available Scopes (in the opposite order which they were added).
-     *
-     * @return all available Scopes (in reverse order).
-     */
-    Iterable<Bindings> getScopesInReverseOrder();
-
-    /**
      * Creates new scope and pushes it to the top of Stack.
      *
      * @return the newly created Bindings.
      */
-    Bindings newScope();
-
-    /**
-     * Pushed the given scope to the top of Stack.
-     *
-     * @param bindings existing bindings.
-     * @return the newly scoped Bindings.
-     */
-    Bindings newScope(Bindings bindings);
+    Bindings startScope();
 
     /**
      * Pops the working Bindings off the Stack.
@@ -82,126 +57,6 @@ public interface ScopedBindings extends Bindings {
      * @return the removed Bindings.
      */
     Bindings endScope();
-
-    /**
-     * Retrieves the Binding identified by the given name. The search starts with working scope and goes back the Stack
-     * until the initial scope. The search stops once a match is found.
-     *
-     * @param name name of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return Binding if found; null otherwise.
-     */
-    @Override
-    default <T> Binding<T> getBinding(String name) {
-        Binding<T> result = null;
-
-        for (Bindings scope : getScopesInReverseOrder()) {
-            result = scope.getBinding(name);
-            if (result != null) break;
-        }
-
-        return result;
-    }
-
-    /**
-     * Retrieves the Binding identified by the given name and type. The search starts with working scope and goes back the Stack
-     * until the initial scope. The search stops once a match is found.
-     *
-     * @param name name of the Binding.
-     * @param type type of the Binding.
-     * @param <T> generic type of the Binding.
-     * @return Binding if found; null otherwise.
-     */
-    @Override
-    default <T> Binding<T> getBinding(String name, TypeReference<T> type) {
-        Binding<T> result = null;
-
-        for (Bindings scope : getScopesInReverseOrder()) {
-            result = scope.getBinding(name, type);
-            if (result != null) break;
-        }
-
-        return result;
-    }
-
-    /**
-     * Retrieves all the Bindings of the given type. The search starts with working scope and goes back the Stack
-     * until the initial scope. The search stops once a match is found.
-     *
-     * @param type desired type.
-     * @param <T> generic type of the Binding.
-     * @return all matching Bindings.
-     */
-    @Override
-    default <T> Set<Binding<T>> getBindings(TypeReference<T> type) {
-        Set<Binding<T>> result = new HashSet<>();
-
-        for (Bindings scope : getScopesInReverseOrder()) {
-            result.addAll(scope.getBindings(type));
-        }
-
-        return result;
-    }
-
-    /**
-     * Retrieves the Binding values as an Unmodifiable Map. The retrieval starts with working scope and goes back the Stack
-     * until the initial scope.
-     *
-     * @return unmodifiable Map of the Binding values.
-     */
-    @Override
-    default Map<String, ?> asMap() {
-        Map<String, Object> result = new HashMap<>();
-
-        for (Iterator<Binding<?>> it = iterator(); it.hasNext();) {
-            Binding<?> binding = it.next();
-            result.put(binding.getName(), binding.getValue());
-        }
-
-        return result;
-    }
-
-    /**
-     * Retrieves the number of Bindings in all the scopes. All Bindings are accounted for (does not account for unique names).
-     *
-     * @return total number of Bindings (in all Scopes).
-     */
-    @Override
-    default int size() {
-        int result = 0;
-
-        for (Bindings scope : getScopes()) {
-            result += scope.size();
-        }
-
-        return result;
-    }
-
-    /**
-     * Retrieves the number of unique (by name) Bindings in all the scopes.
-     *
-     * @return unique Bindings count.
-     */
-    default int uniqueSize() {
-        return asMap().size();
-    }
-
-    /**
-     * Iterator of all the Bindings starting withe working scope and going up the Stack.
-     *
-     * @return all bindings (reverse order).
-     */
-    default Iterator<Binding<?>> iterator() {
-        Set<Binding<?>> result = new HashSet<>();
-
-        for (Bindings scope : getScopesInReverseOrder()) {
-            for (Iterator<Binding<?>> it = scope.iterator(); it.hasNext();) {
-                result.add(it.next());
-            }
-        }
-
-        return result.iterator();
-    }
 
     /**
      * Binds the given Binding into the current scope. Follows the same rules as adding a new Binding with name, type, etc.
@@ -216,6 +71,66 @@ public interface ScopedBindings extends Bindings {
     default <S extends Bindings, T> S bind(Binding<T> binding) {
         getCurrentScope().bind(binding);
         return (S) this;
+    }
+
+    /**
+     * Retrieves the Binding identified by the given name. The search starts with working scope and goes back the Stack
+     * until the initial scope. The search stops once a match is found.
+     *
+     * @param name name of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return Binding if found; null otherwise.
+     */
+    @Override
+    <T> Binding<T> getBinding(String name);
+
+    /**
+     * Retrieves the Binding identified by the given name and type. The search starts with working scope and goes back the Stack
+     * until the initial scope. The search stops once a match is found.
+     *
+     * @param name name of the Binding.
+     * @param type type of the Binding.
+     * @param <T> generic type of the Binding.
+     * @return Binding if found; null otherwise.
+     */
+    @Override
+    <T> Binding<T> getBinding(String name, TypeReference<T> type);
+
+    /**
+     * Retrieves all the Bindings of the given type. The search starts with working scope and goes back the Stack
+     * until the initial scope. The search stops once a match is found.
+     *
+     * @param type desired type.
+     * @param <T> generic type of the Binding.
+     * @return all matching Bindings.
+     */
+    @Override
+    <T> Set<Binding<T>> getBindings(TypeReference<T> type);
+
+    /**
+     * Retrieves the Binding values as an Unmodifiable Map. The retrieval starts with working scope and goes back the Stack
+     * until the initial scope.
+     *
+     * @return unmodifiable Map of the Binding values.
+     */
+    @Override
+    Map<String, ?> asMap();
+
+    /**
+     * Retrieves the number of Bindings in all the scopes. All Bindings are accounted for (does not account for unique names).
+     *
+     * @return total number of Bindings (in all Scopes).
+     */
+    @Override
+    int size();
+
+    /**
+     * Retrieves the number of unique (by name) Bindings in all the scopes.
+     *
+     * @return unique Bindings count.
+     */
+    default int uniqueSize() {
+        return asMap().size();
     }
 
     /**

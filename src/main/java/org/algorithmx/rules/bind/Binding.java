@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.spring.util.TypeUtils;
 
 import java.lang.reflect.Type;
 
@@ -96,12 +97,14 @@ public interface Binding<T> extends Identifiable {
 	void setValue(T value) throws InvalidBindingException;
 
 	/**
-	 * Determines whether the given type is acceptable.
+	 * Determines whether the given type is acceptable (ie: can we set this value here).
 	 * 
 	 * @param type input type.
 	 * @return true if the given type matches the SimpleBinding type.
 	 */
-	boolean isTypeAcceptable(Type type);
+	default boolean isTypeAcceptable(Type type) {
+		return TypeUtils.isAssignable(getType(), type);
+	}
 
 	/**
 	 * Determines whether the binding can be assigned to the given Type.
@@ -109,7 +112,9 @@ public interface Binding<T> extends Identifiable {
 	 * @param type desired type.
 	 * @return true if this Binding can be assigned to the desired type.
 	 */
-	boolean isAssignable(Type type);
+	default boolean isAssignable(Type type) {
+		return TypeUtils.isAssignable(type, getType());
+	}
 
 	/**
 	 * Description of this Binding.

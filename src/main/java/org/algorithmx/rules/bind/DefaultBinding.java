@@ -18,8 +18,6 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.spring.util.ClassUtils;
-import org.algorithmx.rules.spring.util.TypeUtils;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -114,16 +112,6 @@ public class DefaultBinding<T> implements Binding<T> {
     }
 
     @Override
-    public boolean isTypeAcceptable(Type type) {
-        return TypeUtils.isAssignable(this.type, type);
-    }
-
-    @Override
-    public boolean isAssignable(Type type) {
-        return TypeUtils.isAssignable(type, this.type);
-    }
-
-    @Override
     public String getDescription() {
         return description;
     }
@@ -148,13 +136,11 @@ public class DefaultBinding<T> implements Binding<T> {
 
     @Override
     public String toString() {
-        return "DefaultBinding{" +
-                "name='" + name + '\'' +
-                ", type=" + type +
-                ", value=" + value +
-                ", primary=" + primary +
-                ", editable=" + editable +
-                ", description='" + description + '\'' +
-                '}';
+        return "Name = " + name +
+                ", Type = " + type.getTypeName() +
+                ", Value = " + value +
+                ", Primary = " + primary +
+                ", Editable = " + editable +
+                ", Description = " + description;
     }
 }

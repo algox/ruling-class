@@ -17,9 +17,16 @@
  */
 package org.algorithmx.rules.bind;
 
-import java.util.Collections;
-import java.util.List;
+import org.algorithmx.rules.core.UnrulyException;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Default implementation of the Scoped Bindings.
@@ -30,6 +37,7 @@ import java.util.Stack;
 public class DefaultScopedBindings implements ScopedBindings {
 
     private final Stack<Bindings> scopes = new Stack<>();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     DefaultScopedBindings() {
         super();
@@ -37,44 +45,131 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public Bindings getCurrentScope() {
-        return scopes.peek();
-    }
-
-    @Override
-    public Iterable<Bindings> getScopes() {
-        return scopes;
-    }
-
-    @Override
-    public Iterable<Bindings> getScopesInReverseOrder() {
-        List<Bindings> result = scopes.subList(0, scopes.size());
-        Collections.reverse(result);
-        return result;
-    }
-
-    @Override
-    public Bindings newScope() {
+    public Bindings startScope() {
         Bindings result = createScope();
-        scopes.push(result);
-        return result;
-    }
 
-    @Override
-    public Bindings newScope(Bindings scope) {
-        scopes.push(scope);
-        return scope;
+        try {
+            lock.writeLock().lock();
+            scopes.push(result);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        return result;
     }
 
     @Override
     public Bindings endScope() {
-        return scopes.pop();
+        try {
+            lock.writeLock().lock();
+
+            // Check to make sure we are not removing the root scope
+            if (scopes.size() == 1) {
+                throw new UnrulyException("Cannot remove root scope.");
+            }
+
+            return scopes.pop();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     @Override
-    public void clear() {
-        scopes.clear();
-        init();
+    public <T> Binding<T> getBinding(String name) {
+        Bindings[] scopes = getScopes();
+
+        if (scopes.length == 0) return null;
+
+        Binding<T> result = null;
+        // Must start at end and come up
+        for (int i = scopes.length - 1; i >=0; i--) {
+            result = scopes[i].getBinding(name);
+            if (result != null) break;
+        }
+
+        return result;
+    }
+
+    @Override
+    public <T> Binding<T> getBinding(String name, TypeReference<T> type) {
+        Bindings[] scopes = getScopes();
+
+        if (scopes.length == 0) return null;
+
+        Binding<T> result = null;
+        // Must start at end and come up
+        for (int i = scopes.length - 1; i >=0; i--) {
+            result = scopes[i].getBinding(name, type);
+            if (result != null) break;
+        }
+
+        return result;
+    }
+
+    @Override
+    public <T> Set<Binding<T>> getBindings(TypeReference<T> type) {
+        Set<Binding<T>> result = new HashSet<>();
+        Bindings[] scopes = getScopes();
+
+        // Must start at root and keep adding
+        for (Bindings scope : scopes) {
+            result.addAll(scope.getBindings(type));
+        }
+
+        return result;
+    }
+
+    @Override
+    public Bindings getCurrentScope() {
+        try {
+            lock.readLock().lock();
+            return scopes.peek();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public int size() {
+        Bindings[] scopes = getScopes();
+        int result = 0;
+
+        for (Bindings scope : scopes) {
+            result += scope.size();
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, ?> asMap() {
+        Bindings[] scopes = getScopes();
+        Map<String, Object> result = new HashMap<>();
+
+        for (Bindings scope : scopes) {
+            result.putAll(scope.asMap());
+        }
+
+        return result;
+    }
+
+    /**
+     * Iterator of all the Bindings starting with working scope and going up the Stack.
+     *
+     * @return all bindings (reverse order).
+     */
+    public Iterator<Binding<?>> iterator() {
+        Bindings[] scopes = getScopes();
+        Set<Binding<?>> result = new HashSet<>();
+
+        // Must start at root and keep adding
+        for (Bindings scope : scopes) {
+            for (Iterator<Binding<?>> it = scope.iterator(); it.hasNext();) {
+                result.add(it.next());
+            }
+        }
+
+        return result.iterator();
     }
 
     /**
@@ -82,6 +177,7 @@ public class DefaultScopedBindings implements ScopedBindings {
      *
      */
     protected void init() {
+        // Add the root scope
         scopes.push(createScope());
     }
 
@@ -91,18 +187,26 @@ public class DefaultScopedBindings implements ScopedBindings {
      * @return newly created Bindings.
      */
     protected Bindings createScope() {
-        return new DefaultBindings();
+        return Bindings.create();
+    }
+
+    private Bindings[] getScopes() {
+        try {
+            lock.readLock().lock();
+            return scopes.toArray(new Bindings[scopes.size()]);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Scoped Bindings {" + System.lineSeparator());
+        StringBuilder result = new StringBuilder();
+        int scopeIndex = 0;
 
         for (Bindings scope : scopes) {
-            result.append("start scope" + System.lineSeparator());
+            result.append("Scope " + (scopeIndex++) + " ");
             result.append(scope);
-            result.append(System.lineSeparator());
-            result.append("end scope" + System.lineSeparator());
             result.append(System.lineSeparator());
         }
 

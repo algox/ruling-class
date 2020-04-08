@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Tests for Bindings/BindBuilder.
+ * More Tests for Bindings/BindBuilder.
  *
  * @author Max Arulananthan
  */
@@ -35,14 +35,6 @@ public class BindTest {
 
     public BindTest() {
         super();
-    }
-
-    @Test
-    public void testCreateBindings() {
-        Bindings bindings = Bindings.create();
-        Assert.assertTrue(bindings instanceof DefaultBindings);
-        Bindings scopedBindings = Bindings.createWithScopes();
-        Assert.assertTrue(scopedBindings instanceof DefaultScopedBindings);
     }
 
     @Test
@@ -91,8 +83,6 @@ public class BindTest {
         bindings.bind("key2", new TypeReference<List<Integer>>(){});
         bindings.bind("key3", TypeReference.with(BigDecimal.class));
         Assert.assertEquals(3, bindings.size());
-        bindings.clear();
-        Assert.assertEquals(0, bindings.size());
     }
 
     @Test
@@ -113,9 +103,9 @@ public class BindTest {
         bindings.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>(){});
 
         Assert.assertTrue(bindings.contains("key1", String.class));
-        Assert.assertTrue(bindings.contains("key2", new TypeReference<List<Integer>>(){}));
+        Assert.assertTrue(bindings.contains("key2", new TypeReference<List<?>>(){}));
         Assert.assertTrue(bindings.contains("key3", BigDecimal.class));
-        Assert.assertTrue(bindings.contains("key4", new TypeReference<Map<ArrayList<?>, List<Integer>>>(){}));
+        Assert.assertTrue(bindings.contains("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>(){}));
     }
 
     @Test
@@ -154,7 +144,6 @@ public class BindTest {
         Assert.assertTrue(bindings1.contains("key1", String.class));
         Assert.assertTrue(bindings1.contains("a", int.class));
         Assert.assertTrue(bindings1.contains("c", double.class));
-
     }
 
     @Test

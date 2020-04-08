@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
@@ -26,7 +27,7 @@ import org.algorithmx.rules.bind.Bindings;
 import java.util.Date;
 import java.util.List;
 
-@Rule(name = "TestRule")
+@Rule(name = "TestRule") @Description("Test Rule")
 public class TestRule5 {
 
     public TestRule5() {
@@ -40,9 +41,9 @@ public class TestRule5 {
 
     @Then
     public void then(Bindings bindings) {
-        int x = bindings.get("result");
+        int x = bindings.getValue("result");
         x += 2;
-        bindings.set("result", x);
+        bindings.setValue("result", x);
     }
 
     @Otherwise
