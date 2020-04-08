@@ -95,8 +95,6 @@ public class DefaultScopedBindings implements ScopedBindings {
     public <T> Binding<T> getBinding(String name, TypeReference<T> type) {
         Bindings[] scopes = getScopes();
 
-        if (scopes.length == 0) return null;
-
         Binding<T> result = null;
         // Must start at end and come up
         for (int i = scopes.length - 1; i >=0; i--) {
@@ -109,6 +107,21 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     @Override
     public <T> Set<Binding<T>> getBindings(TypeReference<T> type) {
+        Set<Binding<T>> result = new HashSet<>();
+        Bindings[] scopes = getScopes();
+
+        // Must start at end and come up
+        for (int i = scopes.length - 1; i >=0; i--) {
+            result.addAll(scopes[i].getBindings(type));
+            // Found something in this scope stop.
+            if (result.size() > 0) break;
+        }
+
+        return result;
+    }
+
+    @Override
+    public <T> Set<Binding<T>> getAllBindings(TypeReference<T> type) {
         Set<Binding<T>> result = new HashSet<>();
         Bindings[] scopes = getScopes();
 

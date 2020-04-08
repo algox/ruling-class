@@ -24,10 +24,12 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Tests for Scoped Bindings.
@@ -378,7 +380,38 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest27() {
-        ScopedBindings bindings = Bindings.createWithScopes();
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("x", int.class);
+        Assert.assertTrue(bindings.getValue("x").equals(0));
+        bindings.startScope().bind("x", 24);
+        Assert.assertTrue(bindings.getValue("x").equals(24));
+        bindings.endScope();
+        Assert.assertTrue(bindings.getValue("x").equals(0));
+    }
 
+    @Test
+    public void bindTest28() {
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("x", int.class);
+        bindings.startScope().bind("x", "Hello World!");
+        Binding<String> match1 = bindings.getBinding("x", String.class);
+        Assert.assertTrue(match1.getName().equals("x") && String.class.equals(match1.getType()));
+        bindings.endScope();
+        Binding<Integer> match2 = bindings.getBinding("x", int.class);
+        Assert.assertTrue(match2.getName().equals("x") && int.class.equals(match2.getType()));
+    }
+
+    @Test
+    public void bindTest29() {
+        ScopedBindings bindings = Bindings.createWithScopes()
+            .bind("a", new ArrayList<>());
+        bindings.startScope()
+                .bind("b", new HashSet<>());
+        bindings.startScope()
+                .bind("c", new Vector<>());
+        Set<Binding<List>> matches1 = bindings.getBindings(List.class);
+        Assert.assertTrue(matches1.size() == 1);
+        Set<Binding<List<?>>> matches2 = bindings.getBindings(new TypeReference<List<?>>() {});
+        Assert.assertTrue(matches2.size() == 1);
     }
 }

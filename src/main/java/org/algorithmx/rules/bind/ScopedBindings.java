@@ -100,7 +100,7 @@ public interface ScopedBindings extends Bindings {
 
     /**
      * Retrieves all the Bindings of the given type. The search starts with working scope and goes back the Stack
-     * until the initial scope. The search stops once a match is found.
+     * until a match is found.
      *
      * @param type desired type.
      * @param <T> generic type of the Binding.
@@ -108,6 +108,17 @@ public interface ScopedBindings extends Bindings {
      */
     @Override
     <T> Set<Binding<T>> getBindings(TypeReference<T> type);
+
+    /**
+     * Retrieves all the Bindings of the given type. The search starts with working scope and goes back the Stack
+     * until the initial scope.
+     *
+     * @param type desired type.
+     * @param <T> generic type of the Binding.
+     * @return all matching Bindings.
+     */
+
+    <T> Set<Binding<T>> getAllBindings(TypeReference<T> type);
 
     /**
      * Retrieves the Binding values as an Unmodifiable Map. The retrieval starts with working scope and goes back the Stack
@@ -120,6 +131,7 @@ public interface ScopedBindings extends Bindings {
 
     /**
      * Retrieves the number of Bindings in all the scopes. All Bindings are accounted for (does not account for unique names).
+     * Use uniqueSize() for unique count.
      *
      * @return total number of Bindings (in all Scopes).
      */

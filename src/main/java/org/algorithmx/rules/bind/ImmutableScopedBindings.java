@@ -17,6 +17,10 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.util.TypeReference;
+
+import java.util.Set;
+
 /**
  * Immutable version of the ScopedBindings. All functions that create Bindings/Scopes will be disabled.
  *
@@ -47,6 +51,11 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     @Override
     public Bindings endScope() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> Set<Binding<T>> getAllBindings(TypeReference<T> type) {
+        return getTarget().getAllBindings(type);
     }
 
     @Override
