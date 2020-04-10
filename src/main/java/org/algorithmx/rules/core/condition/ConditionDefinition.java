@@ -20,7 +20,7 @@ package org.algorithmx.rules.core.condition;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 
 import java.lang.invoke.SerializedLambda;

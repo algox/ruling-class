@@ -19,8 +19,8 @@ package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.condition.TriCondition;
 import org.algorithmx.rules.core.condition.UnaryCondition;
-import org.algorithmx.rules.spring.core.DefaultParameterNameDiscoverer;
-import org.algorithmx.rules.spring.core.ParameterNameDiscoverer;
+import org.algorithmx.rules.lib.spring.core.DefaultParameterNameDiscoverer;
+import org.algorithmx.rules.lib.spring.core.ParameterNameDiscoverer;
 import org.junit.Assert;
 import org.junit.Test;
 

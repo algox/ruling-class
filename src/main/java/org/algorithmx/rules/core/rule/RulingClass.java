@@ -21,7 +21,7 @@ import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Collections;
 import java.util.List;

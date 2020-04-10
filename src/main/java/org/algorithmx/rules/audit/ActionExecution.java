@@ -19,7 +19,7 @@ package org.algorithmx.rules.audit;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.action.ActionDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;

@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.spring.util.TypeUtils;
+import org.algorithmx.rules.lib.spring.util.TypeUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

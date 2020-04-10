@@ -23,7 +23,7 @@ import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;

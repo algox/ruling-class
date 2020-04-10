@@ -22,7 +22,7 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Binding Exception containing all the parameters avail during the attempted Bind.
@@ -70,7 +70,7 @@ public class BindingException extends UnrulyException {
      * @param bindings all the bindings that are avail.
      */
     public BindingException(ParameterDefinition parameterDefinition,
-                            Method method, Set<Binding<Object>> matches,
+                            Method method, Map<String, Binding<Object>> matches,
                             BindingMatchingStrategy matchingStrategy,
                             Bindings bindings) {
         super(generateMessage(null, parameterDefinition, method, matches, matchingStrategy, bindings));
@@ -87,14 +87,14 @@ public class BindingException extends UnrulyException {
      * @param bindings all the bindings that are avail.
      */
     public BindingException(String message, ParameterDefinition parameterDefinition,
-                            Method method, Set<Binding<Object>> matches,
+                            Method method, Map<String, Binding<Object>> matches,
                             BindingMatchingStrategy matchingStrategy,
                             Bindings bindings) {
         super(generateMessage(message, parameterDefinition, method, matches, matchingStrategy, bindings));
     }
 
     private static String generateMessage(String message, ParameterDefinition parameterDefinition,
-                                          Method method, Set<Binding<Object>> matches,
+                                          Method method, Map<String, Binding<Object>> matches,
                                           BindingMatchingStrategy matchingStrategy,
                                           Bindings bindings) {
         return message != null ? (message + System.lineSeparator()) : ""

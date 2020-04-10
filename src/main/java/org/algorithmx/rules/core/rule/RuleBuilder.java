@@ -21,7 +21,7 @@ import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.core.action.ActionDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;

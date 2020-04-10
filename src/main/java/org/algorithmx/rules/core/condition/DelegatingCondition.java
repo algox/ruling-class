@@ -18,7 +18,7 @@
 package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 /**
  * As the name suggests this Condition delegates most of the functionality to its target Condition. This class gives

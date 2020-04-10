@@ -21,7 +21,7 @@ import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.validation.ValidationRule;
 
 import java.util.Arrays;

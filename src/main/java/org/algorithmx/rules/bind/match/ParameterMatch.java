@@ -19,7 +19,7 @@ package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.core.model.ParameterDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 /**
  * Stores the parameter with it's corresponding matched binding(if one is found) for a given match.

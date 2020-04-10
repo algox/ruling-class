@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 /**
  * Defines a placeholder in a Formatted Text.

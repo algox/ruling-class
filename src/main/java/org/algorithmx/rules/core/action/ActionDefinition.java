@@ -23,7 +23,7 @@ import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
 
 import java.lang.annotation.Annotation;

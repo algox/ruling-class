@@ -17,8 +17,8 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.spring.util.Assert;
-import org.algorithmx.rules.spring.util.ClassUtils;
+import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.ClassUtils;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;

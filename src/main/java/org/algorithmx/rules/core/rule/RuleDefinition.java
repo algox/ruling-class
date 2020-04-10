@@ -21,7 +21,7 @@ import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.core.action.ActionDefinition;
 import org.algorithmx.rules.core.condition.ConditionDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Objects;

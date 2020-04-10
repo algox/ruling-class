@@ -17,16 +17,14 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -106,16 +104,16 @@ public class DefaultBindings implements Bindings {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Set<Binding<T>> getBindings(TypeReference<T> typeRef) {
-        Set<Binding<T>> result = new HashSet<>();
+    public <T> Map<String, Binding<T>> getBindings(TypeReference<T> typeRef) {
+        Map<String, Binding<T>> result = new HashMap<>();
 
         for (Binding<?> binding : bindings.values()) {
             if (binding.isAssignable(typeRef.getType())) {
-                result.add((Binding<T>) binding);
+                result.put(binding.getName(), (Binding<T>) binding);
             }
         }
 
-        return Collections.unmodifiableSet(result);
+        return Collections.unmodifiableMap(result);
     }
 
     @Override

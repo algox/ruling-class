@@ -21,7 +21,7 @@ import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.util.TypeReference;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Strategy class that matches Bindings to a desired criteria (such as name, type).
@@ -45,23 +45,11 @@ public interface BindingMatchingStrategy {
      *
      * @param bindings bindings.
      * @param name desired name.
-     * @param <T> generic type of the Binding.
-     * @return Bindings that match the criteria.
-     */
-    default <T> Set<Binding<T>> match(Bindings bindings, String name) {
-        return match(bindings, name, (TypeReference<T>) null);
-    }
-
-    /**
-     * Returns a set a Bindings that match a set criteria that is determined by the implementing class.
-     *
-     * @param bindings bindings.
-     * @param name desired name.
      * @param type desired type.
      * @param <T> generic type of the Binding.
      * @return Bindings that match the criteria.
      */
-    default <T> Set<Binding<T>> match(Bindings bindings, String name, Class<T> type) {
+    default <T> Map<String, Binding<T>> match(Bindings bindings, String name, Class<T> type) {
         return match(bindings, name, TypeReference.with(type));
     }
 
@@ -74,5 +62,5 @@ public interface BindingMatchingStrategy {
      * @param <T> generic type of the Binding.
      * @return Bindings that match the criteria.
      */
-    <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type);
+    <T> Map<String, Binding<T>> match(Bindings bindings, String name, TypeReference<T> type);
 }

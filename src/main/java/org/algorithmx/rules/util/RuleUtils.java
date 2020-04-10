@@ -18,7 +18,7 @@
 package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.regex.Pattern;
 

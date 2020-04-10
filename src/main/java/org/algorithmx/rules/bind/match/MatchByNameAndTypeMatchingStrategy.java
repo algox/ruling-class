@@ -19,12 +19,12 @@ package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
-import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BindingMatchingStrategy that matches Bindings in a given Rule Context by the given Name and Type.
@@ -40,17 +40,17 @@ public class MatchByNameAndTypeMatchingStrategy implements BindingMatchingStrate
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
+    public <T> Map<String, Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Assert.notNull(bindings, "bindings cannot be bull");
         Assert.notNull(name, "name cannot be bull");
         Assert.notNull(type, "type cannot be bull");
 
-        Set<Binding<T>> result = new HashSet<>();
+        Map<String, Binding<T>> result = new HashMap<>();
         // Look for the Binding by name & type
         Binding<T> binding = bindings.getBinding(name, type);
         // Add the Binding (if we found one)
-        if (binding != null) result.add(binding);
+        if (binding != null) result.put(binding.getName(), binding);
 
-        return Collections.unmodifiableSet(result);
+        return Collections.unmodifiableMap(result);
     }
 }

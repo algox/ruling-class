@@ -20,7 +20,6 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Bindings with Scopes. Allows the user to defaultObjectFactory/remove scopes around the Bindings. Each Binding is tied to a
@@ -51,14 +50,14 @@ public interface ScopedBindings extends Bindings {
      *
      * @return the newly created Bindings.
      */
-    Bindings startScope();
+    Bindings addScope();
 
     /**
      * Pops the working Bindings off the Stack.
      *
      * @return the removed Bindings.
      */
-    Bindings endScope();
+    Bindings removeScope();
 
     /**
      * Binds the given Binding into the current scope. Follows the same rules as adding a new Binding with name, type, etc.
@@ -107,7 +106,7 @@ public interface ScopedBindings extends Bindings {
      * @return all matching Bindings.
      */
     @Override
-    <T> Set<Binding<T>> getBindings(TypeReference<T> type);
+    <T> Map<String, Binding<T>> getBindings(TypeReference<T> type);
 
     /**
      * Retrieves all the Bindings of the given type. The search starts with working scope and goes back the Stack
@@ -118,7 +117,7 @@ public interface ScopedBindings extends Bindings {
      * @return all matching Bindings.
      */
 
-    <T> Set<Binding<T>> getAllBindings(TypeReference<T> type);
+    <T> Map<String, Binding<T>> getAllBindings(TypeReference<T> type);
 
     /**
      * Retrieves the Binding values as an Unmodifiable Map. The retrieval starts with working scope and goes back the Stack
@@ -153,7 +152,7 @@ public interface ScopedBindings extends Bindings {
      * @return immutable version of this.
      */
     @Override
-    default Bindings asImmutableBindings() {
+    default ScopedBindings asImmutableBindings() {
         return new ImmutableScopedBindings(this);
     }
 }

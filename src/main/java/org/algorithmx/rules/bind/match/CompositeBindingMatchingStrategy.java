@@ -19,12 +19,12 @@ package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
-import org.algorithmx.rules.spring.util.Assert;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Composite Strategy class that aggregates the matches by running the given delegator Strategies. The exit point can
@@ -55,16 +55,16 @@ public class CompositeBindingMatchingStrategy implements BindingMatchingStrategy
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Set<Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
-        Set<Binding<T>> result = new HashSet<>();
+    public <T> Map<String, Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
+        Map<String, Binding<T>> result = new HashMap<>();
 
         for (BindingMatchingStrategy strategy : strategies) {
             // Add all the matches
-            result.addAll(strategy.match(bindings, name, type));
+            result.putAll(strategy.match(bindings, name, type));
             // Check to see if we should stop
             if (stopWhenMatched && result.size() > 0) break;
         }
 
-        return Collections.unmodifiableSet(result);
+        return Collections.unmodifiableMap(result);
     }
 }

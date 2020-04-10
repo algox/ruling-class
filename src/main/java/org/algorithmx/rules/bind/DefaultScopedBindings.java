@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.HashMap;
@@ -46,7 +45,7 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public Bindings startScope() {
+    public Bindings addScope() {
         Bindings result = createScope();
 
         try {
@@ -60,13 +59,13 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public Bindings endScope() {
+    public Bindings removeScope() {
         try {
             lock.writeLock().lock();
 
             // Check to make sure we are not removing the root scope
             if (scopes.size() == 1) {
-                throw new UnrulyException("Cannot remove root scope.");
+                throw new CannotRemoveRootScopeException();
             }
 
             return scopes.pop();
@@ -106,13 +105,13 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public <T> Set<Binding<T>> getBindings(TypeReference<T> type) {
-        Set<Binding<T>> result = new HashSet<>();
+    public <T> Map<String, Binding<T>> getBindings(TypeReference<T> type) {
+        Map<String, Binding<T>> result = new HashMap<>();
         Bindings[] scopes = getScopes();
 
         // Must start at end and come up
         for (int i = scopes.length - 1; i >=0; i--) {
-            result.addAll(scopes[i].getBindings(type));
+            result.putAll(scopes[i].getBindings(type));
             // Found something in this scope stop.
             if (result.size() > 0) break;
         }
@@ -121,13 +120,13 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public <T> Set<Binding<T>> getAllBindings(TypeReference<T> type) {
-        Set<Binding<T>> result = new HashSet<>();
+    public <T> Map<String, Binding<T>> getAllBindings(TypeReference<T> type) {
+        Map<String, Binding<T>> result = new HashMap<>();
         Bindings[] scopes = getScopes();
 
         // Must start at root and keep adding
         for (Bindings scope : scopes) {
-            result.addAll(scope.getBindings(type));
+            result.putAll(scope.getBindings(type));
         }
 
         return result;

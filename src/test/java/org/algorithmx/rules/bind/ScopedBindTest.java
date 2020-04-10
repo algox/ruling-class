@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -254,22 +255,22 @@ public class ScopedBindTest {
         }).value(new ArrayList<>()).build();
         bindings.bind(binding5);
 
-        Set<Binding<String>> matches1 = bindings.getBindings(String.class);
-        Assert.assertTrue(matches1.contains(binding1));
-        Assert.assertTrue(matches1.contains(binding2));
-        Assert.assertTrue(!matches1.contains(binding3));
+        Map<String, Binding<String>> matches1 = bindings.getBindings(String.class);
+        Assert.assertTrue(matches1.containsValue(binding1));
+        Assert.assertTrue(matches1.containsValue(binding2));
+        Assert.assertTrue(!matches1.containsValue(binding3));
 
-        Set<Binding<Map>> matches2 = bindings.getBindings(Map.class);
-        Assert.assertTrue(matches2.contains(binding3));
-        Set<Binding<Map<?, ?>>> matches3 = bindings.getBindings(new TypeReference<Map<?, ?>>() {
+        Map<String, Binding<Map>> matches2 = bindings.getBindings(Map.class);
+        Assert.assertTrue(matches2.containsValue(binding3));
+        Map<String, Binding<Map<?, ?>>> matches3 = bindings.getBindings(new TypeReference<Map<?, ?>>() {
         });
-        Assert.assertTrue(matches3.size() == 2 && matches3.contains(binding3) && matches3.contains(binding4));
-        Set<Binding<Map<List<Integer>, String>>> matches4 = bindings.getBindings(new TypeReference<Map<List<Integer>, String>>() {
+        Assert.assertTrue(matches3.size() == 2 && matches3.containsValue(binding3) && matches3.containsValue(binding4));
+        Map<String, Binding<Map<List<Integer>, String>>> matches4 = bindings.getBindings(new TypeReference<Map<List<Integer>, String>>() {
         });
-        Assert.assertTrue(matches4.size() == 1 && matches4.contains(binding3));
-        Set<Binding<List<Integer>>> matches5 = bindings.getBindings(new TypeReference<List<Integer>>() {
+        Assert.assertTrue(matches4.size() == 1 && matches4.containsValue(binding3));
+        Map<String, Binding<List<Integer>>> matches5 = bindings.getBindings(new TypeReference<List<Integer>>() {
         });
-        Assert.assertTrue(matches5.size() == 1 && matches5.contains(binding5));
+        Assert.assertTrue(matches5.size() == 1 && matches5.containsValue(binding5));
     }
 
     @Test
@@ -343,7 +344,7 @@ public class ScopedBindTest {
                 .bind("x", int.class, 250)
                 .bind("y", Integer.class, 100);
 
-        Set<Binding<Integer>> matches = bindings.getBindings(Integer.class);
+        Map<String, Binding<Integer>> matches = bindings.getBindings(Integer.class);
         Assert.assertTrue(matches.size() == 2);
     }
 
@@ -353,10 +354,10 @@ public class ScopedBindTest {
                 .bind("key1", String.class, "value");
 
         Assert.assertTrue(bindings.getValue("key1").equals("value"));
-        bindings.startScope();
+        bindings.addScope();
         bindings.bind(BindingBuilder.with("key1").type(String.class).value("value2").build());
         Assert.assertTrue(bindings.size() == 2);
-        bindings.endScope();
+        bindings.removeScope();
         Assert.assertTrue(bindings.getValue("key1").equals("value"));
         Assert.assertTrue(bindings.size() == 1);
     }
@@ -364,7 +365,7 @@ public class ScopedBindTest {
     @Test(expected = UnrulyException.class)
     public void bindTest25() {
         ScopedBindings bindings = Bindings.createWithScopes();
-        bindings.endScope();
+        bindings.removeScope();
     }
 
     @Test
@@ -372,9 +373,9 @@ public class ScopedBindTest {
         ScopedBindings bindings = Bindings.createWithScopes();
         bindings.bind("x", Integer.class);
         Assert.assertTrue(bindings.size() == 1);
-        bindings.startScope();
+        bindings.addScope();
         Assert.assertTrue(bindings.getCurrentScope().size() == 0);
-        bindings.endScope();
+        bindings.removeScope();
         Assert.assertTrue(bindings.size() == 1);
     }
 
@@ -383,9 +384,9 @@ public class ScopedBindTest {
         ScopedBindings bindings = Bindings.createWithScopes()
                 .bind("x", int.class);
         Assert.assertTrue(bindings.getValue("x").equals(0));
-        bindings.startScope().bind("x", 24);
+        bindings.addScope().bind("x", 24);
         Assert.assertTrue(bindings.getValue("x").equals(24));
-        bindings.endScope();
+        bindings.removeScope();
         Assert.assertTrue(bindings.getValue("x").equals(0));
     }
 
@@ -393,10 +394,10 @@ public class ScopedBindTest {
     public void bindTest28() {
         ScopedBindings bindings = Bindings.createWithScopes()
                 .bind("x", int.class);
-        bindings.startScope().bind("x", "Hello World!");
+        bindings.addScope().bind("x", "Hello World!");
         Binding<String> match1 = bindings.getBinding("x", String.class);
         Assert.assertTrue(match1.getName().equals("x") && String.class.equals(match1.getType()));
-        bindings.endScope();
+        bindings.removeScope();
         Binding<Integer> match2 = bindings.getBinding("x", int.class);
         Assert.assertTrue(match2.getName().equals("x") && int.class.equals(match2.getType()));
     }
@@ -404,14 +405,88 @@ public class ScopedBindTest {
     @Test
     public void bindTest29() {
         ScopedBindings bindings = Bindings.createWithScopes()
-            .bind("a", new ArrayList<>());
-        bindings.startScope()
+                .bind("a", new ArrayList<>());
+        bindings.addScope()
                 .bind("b", new HashSet<>());
-        bindings.startScope()
+        bindings.addScope()
                 .bind("c", new Vector<>());
-        Set<Binding<List>> matches1 = bindings.getBindings(List.class);
+        Map<String, Binding<List>> matches1 = bindings.getBindings(List.class);
         Assert.assertTrue(matches1.size() == 1);
-        Set<Binding<List<?>>> matches2 = bindings.getBindings(new TypeReference<List<?>>() {});
+        Map<String, Binding<List<?>>> matches2 = bindings.getBindings(new TypeReference<List<?>>() {
+        });
         Assert.assertTrue(matches2.size() == 1);
+        Map<String, Binding<List<?>>> matches3 = bindings.getAllBindings(new TypeReference<List<?>>() {
+        });
+        Assert.assertTrue(matches3.size() == 2);
+        Map<String, Binding<Collection<?>>> matches4 = bindings.getAllBindings(new TypeReference<Collection<?>>() {
+        });
+        Assert.assertTrue(matches4.size() == 3);
+        bindings.removeScope();
+        matches4 = bindings.getAllBindings(new TypeReference<Collection<?>>() {
+        });
+        Assert.assertTrue(matches4.size() == 2);
+        bindings.removeScope();
+        matches4 = bindings.getAllBindings(new TypeReference<Collection<?>>() {
+        });
+        Assert.assertTrue(matches4.size() == 1);
+    }
+
+    @Test
+    public void bindTest30() {
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("a", new ArrayList<>());
+        bindings.addScope()
+                .bind("b", new HashSet<>());
+        bindings.addScope()
+                .bind("c", new BigDecimal("100"));
+        Map<String, Binding<List>> matches1 = bindings.getBindings(List.class);
+        Assert.assertTrue(matches1.size() == 1 && matches1.containsKey("a"));
+    }
+
+    @Test
+    public void bindTest31() {
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("a", new ArrayList<>());
+        bindings.addScope()
+                .bind("b", new HashSet<>());
+        bindings.addScope()
+                .bind("c", new BigDecimal("100"));
+        Map<String, ?> map = bindings.asMap();
+
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Assert.assertTrue(bindings.getValue(entry.getKey()).equals(entry.getValue()));
+        }
+    }
+
+    @Test
+    public void bindTest32() {
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("a", new ArrayList<>());
+        bindings.addScope()
+                .bind("b", new HashSet<>());
+        bindings.addScope()
+                .bind("a", new BigDecimal("100"));
+        Assert.assertTrue(bindings.size() == 3);
+        Assert.assertTrue(bindings.uniqueSize() == 2);
+    }
+
+    @Test
+    public void bindTest33() {
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("a", new ArrayList<>());
+        bindings.addScope()
+                .bind("b", new HashSet<>());
+        bindings.addScope()
+                .bind("a", new BigDecimal("100"));
+
+        ScopedBindings immutableBindings = bindings.asImmutableBindings();
+        Assert.assertTrue(immutableBindings.size() == 3);
+        Assert.assertTrue(immutableBindings.uniqueSize() == 2);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void bindTest34() {
+        ScopedBindings bindings = Bindings.createWithScopes().asImmutableBindings();
+        bindings.bind("test", Integer.class);
     }
 }

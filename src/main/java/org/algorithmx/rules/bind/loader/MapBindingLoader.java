@@ -19,7 +19,7 @@ package org.algorithmx.rules.bind.loader;
 
 import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Arrays;
 import java.util.Map;

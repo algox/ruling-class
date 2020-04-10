@@ -39,6 +39,29 @@ public class BindTest {
     }
 
     @Test
+    public void testBindWithNoType() {
+        List<Integer> values = new ArrayList<>();
+
+        Bindings bindings = Bindings.create()
+                .bind("a", 25)
+                .bind("b", "Hello world")
+                .bind("c", values)
+                .bind("d", Integer.class, null);
+
+        Assert.assertTrue(bindings.size() == 4);
+        Assert.assertTrue(bindings.contains("a", int.class));
+        Assert.assertTrue(bindings.contains("b", String.class));
+        Assert.assertTrue(bindings.contains("c", ArrayList.class));
+    }
+
+    @Test
+    public void testBindingBuilder() {
+        Binding binding = BindingBuilder.with("a").type(Integer.class).value(200).build();
+        Assert.assertTrue(binding.getName().equals("a"));
+        Assert.assertTrue(binding.getValue().equals(200));
+    }
+
+    @Test
     public void testBind1() {
         Bindings bindings = Bindings.create()
                 .bind("key", String.class, "value");
@@ -132,9 +155,9 @@ public class BindTest {
         bindings.bind("key4", new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
         bindings.bind("key5", TypeReference.with(BigDecimal.class), new BigDecimal("20.00"));
 
-        Set<Binding<BigDecimal>> bindings1 = bindings.getBindings(BigDecimal.class);
+        Map<String, Binding<BigDecimal>> bindings1 = bindings.getBindings(BigDecimal.class);
         Assert.assertTrue(bindings1.size() == 2);
-        Set<Binding<Map<? extends List<?>, List<Integer>>>> bindings2 = bindings.getBindings(
+        Map<String, Binding<Map<? extends List<?>, List<Integer>>>> bindings2 = bindings.getBindings(
                 new TypeReference<Map<? extends List<?>, List<Integer>>>() {});
         Assert.assertTrue(bindings2.size() == 1);
     }
@@ -145,29 +168,6 @@ public class BindTest {
         Assert.assertTrue(bindings1.contains("key1", String.class));
         Assert.assertTrue(bindings1.contains("a", int.class));
         Assert.assertTrue(bindings1.contains("c", double.class));
-    }
-
-    @Test
-    public void testBindWithNoType() {
-        List<Integer> values = new ArrayList<>();
-
-        Bindings bindings = Bindings.create()
-                .bind("a", 25)
-                .bind("b", "Hello world")
-                .bind("c", values)
-                .bind("d", Integer.class, null);
-
-        Assert.assertTrue(bindings.size() == 4);
-        Assert.assertTrue(bindings.contains("a", int.class));
-        Assert.assertTrue(bindings.contains("b", String.class));
-        Assert.assertTrue(bindings.contains("c", ArrayList.class));
-    }
-
-    @Test
-    public void testBindingBuilder() {
-        Binding binding = BindingBuilder.with("a").type(Integer.class).value(200).build();
-        Assert.assertTrue(binding.getName().equals("a"));
-        Assert.assertTrue(binding.getValue().equals(200));
     }
 }
 

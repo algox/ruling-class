@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.model;
 
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

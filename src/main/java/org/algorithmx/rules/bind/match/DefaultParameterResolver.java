@@ -20,16 +20,16 @@ package org.algorithmx.rules.bind.match;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Default Parameter Resolver implementation.
@@ -63,7 +63,7 @@ public class DefaultParameterResolver implements ParameterResolver {
 
             boolean isBinding = parameterDefinition.isBinding();
             // Find all the matching bindings
-            Set<Binding<Object>> bindings = matcher.match(ctx, parameterDefinition.getName(),
+            Map<String, Binding<Object>> bindings = matcher.match(ctx, parameterDefinition.getName(),
                     TypeReference.with(isBinding
                             ? parameterDefinition.getBindingType()
                             : parameterDefinition.getType()));
@@ -72,13 +72,13 @@ public class DefaultParameterResolver implements ParameterResolver {
             if (matches == 0) {
                 result[index] = new ParameterMatch(parameterDefinition, null, isBinding);
             } else if (matches == 1) {
-                Binding<Object> binding = bindings.stream().findFirst().get();
+                Binding<Object> binding = bindings.values().stream().findFirst().get();
                 result[index] = new ParameterMatch(parameterDefinition, binding, isBinding);
             } else {
                 // More than one match found; let's see if there is a primary candidate
                 Binding<Object> primaryBinding = null;
 
-                for (Binding<Object> binding : bindings) {
+                for (Binding<Object> binding : bindings.values()) {
                     if (binding.isPrimary()) {
                         primaryBinding = binding;
                         break;

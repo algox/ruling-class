@@ -18,7 +18,7 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;

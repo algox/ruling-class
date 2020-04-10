@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind.convert;
 
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

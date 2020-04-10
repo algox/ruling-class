@@ -22,7 +22,7 @@ import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Arrays;
 import java.util.Iterator;

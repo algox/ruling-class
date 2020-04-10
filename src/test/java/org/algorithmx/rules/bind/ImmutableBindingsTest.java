@@ -271,22 +271,22 @@ public class ImmutableBindingsTest {
         }).value(new ArrayList<>()).build();
         bindings.bind(binding5);
 
-        Set<Binding<String>> matches1 = bindings.asImmutableBindings().getBindings(String.class);
-        Assert.assertTrue(matches1.contains(binding1));
-        Assert.assertTrue(matches1.contains(binding2));
-        Assert.assertTrue(!matches1.contains(binding3));
+        Map<String, Binding<String>> matches1 = bindings.asImmutableBindings().getBindings(String.class);
+        Assert.assertTrue(matches1.containsValue(binding1));
+        Assert.assertTrue(matches1.containsValue(binding2));
+        Assert.assertTrue(!matches1.containsValue(binding3));
 
-        Set<Binding<Map>> matches2 = bindings.asImmutableBindings().getBindings(Map.class);
-        Assert.assertTrue(matches2.contains(binding3));
-        Set<Binding<Map<?, ?>>> matches3 = bindings.getBindings(new TypeReference<Map<?, ?>>() {
+        Map<String, Binding<Map>> matches2 = bindings.asImmutableBindings().getBindings(Map.class);
+        Assert.assertTrue(matches2.containsValue(binding3));
+        Map<String, Binding<Map<?, ?>>> matches3 = bindings.getBindings(new TypeReference<Map<?, ?>>() {
         });
-        Assert.assertTrue(matches3.size() == 2 && matches3.contains(binding3) && matches3.contains(binding4));
-        Set<Binding<Map<List<Integer>, String>>> matches4 = bindings.asImmutableBindings().getBindings(new TypeReference<Map<List<Integer>, String>>() {
+        Assert.assertTrue(matches3.size() == 2 && matches3.containsValue(binding3) && matches3.containsValue(binding4));
+        Map<String, Binding<Map<List<Integer>, String>>> matches4 = bindings.asImmutableBindings()
+                .getBindings(new TypeReference<Map<List<Integer>, String>>() {});
+        Assert.assertTrue(matches4.size() == 1 && matches4.containsValue(binding3));
+        Map<String, Binding<List<Integer>>> matches5 = bindings.asImmutableBindings().getBindings(new TypeReference<List<Integer>>() {
         });
-        Assert.assertTrue(matches4.size() == 1 && matches4.contains(binding3));
-        Set<Binding<List<Integer>>> matches5 = bindings.asImmutableBindings().getBindings(new TypeReference<List<Integer>>() {
-        });
-        Assert.assertTrue(matches5.size() == 1 && matches5.contains(binding5));
+        Assert.assertTrue(matches5.size() == 1 && matches5.containsValue(binding5));
     }
 
     @Test
@@ -353,7 +353,7 @@ public class ImmutableBindingsTest {
                 .bind("x", int.class, 250)
                 .bind("y", Integer.class, 100);
 
-        Set<Binding<Integer>> matches = bindings.asImmutableBindings().getBindings(Integer.class);
+        Map<String, Binding<Integer>> matches = bindings.asImmutableBindings().getBindings(Integer.class);
         Assert.assertTrue(matches.size() == 2);
     }
 

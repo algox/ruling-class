@@ -18,7 +18,7 @@
 package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Method;
 import java.util.List;

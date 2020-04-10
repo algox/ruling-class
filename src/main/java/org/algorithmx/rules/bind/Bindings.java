@@ -21,12 +21,11 @@ import org.algorithmx.rules.bind.loader.BindingLoader;
 import org.algorithmx.rules.bind.loader.FieldBindingLoader;
 import org.algorithmx.rules.bind.loader.MapBindingLoader;
 import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The interface that is used to store and find Bindings.
@@ -336,7 +335,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param <T> generic type of the Binding.
      * @return all matching Bindings.
      */
-    default <T> Set<Binding<T>> getBindings(Class<T> type) {
+    default <T> Map<String, Binding<T>> getBindings(Class<T> type) {
         return getBindings(TypeReference.with(type));
     }
 
@@ -347,7 +346,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @param <T> generic type of the Binding.
      * @return all matching Bindings.
      */
-    <T> Set<Binding<T>> getBindings(TypeReference<T> type);
+    <T> Map<String, Binding<T>> getBindings(TypeReference<T> type);
 
     /**
      * Retrieves the value of the Binding with the given name.

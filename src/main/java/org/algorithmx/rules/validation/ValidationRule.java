@@ -25,7 +25,7 @@ import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleDefinitionAware;
 import org.algorithmx.rules.core.rule.RuleDefinition;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.FormattedText;
 
 import java.util.HashMap;

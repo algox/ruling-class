@@ -18,13 +18,12 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.bind.loader.BindingLoader;
-import org.algorithmx.rules.spring.util.Assert;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Immutable version of the Bindings. All functions that create Bindings will be disabled.
@@ -88,12 +87,12 @@ public class ImmutableBindings implements Bindings {
     }
 
     @Override
-    public <T> Set<Binding<T>> getBindings(Class<T> type) {
+    public <T> Map<String, Binding<T>> getBindings(Class<T> type) {
         return getTarget().getBindings(type);
     }
 
     @Override
-    public <T> Set<Binding<T>> getBindings(TypeReference<T> type) {
+    public <T> Map<String, Binding<T>> getBindings(TypeReference<T> type) {
         return getTarget().getBindings(type);
     }
 
