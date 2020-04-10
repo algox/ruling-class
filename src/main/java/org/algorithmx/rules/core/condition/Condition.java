@@ -18,8 +18,8 @@
 package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
-import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.rule.RuleContext;
 
 /**
  * Given Condition definition.
@@ -37,12 +37,8 @@ public interface Condition {
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
     default boolean isPass(RuleContext ctx) throws UnrulyException {
-        ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
-                getConditionDefinition().getMethodDefinition(), ctx.getBindings(),
-                ctx.getMatchingStrategy(), ctx.getObjectFactory(), ctx.getRegistry());
-        return isPass(ctx.getParameterResolver().resolveAsBindingValues(matches,
-                getConditionDefinition().getMethodDefinition(), ctx.getBindings(),
-                ctx.getMatchingStrategy(), ctx.getRegistry()));
+        ParameterMatch[] matches = ctx.match(getConditionDefinition().getMethodDefinition());
+        return isPass(ctx.resolve(matches, getConditionDefinition().getMethodDefinition()));
     }
 
     /**

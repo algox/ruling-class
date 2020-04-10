@@ -57,21 +57,6 @@ public class RuleContextBuilder {
         return new RuleContextBuilder(bindings);
     }
 
-    /*public static RuleContextBuilder with(Map<String, Object> values) {
-        Bindings bindings = Bindings.defaultBindings();
-
-        for (Map.Entry<String, Object> entry : values.entrySet()) {
-            bindings.bind(entry.getKey(), entry.getValue());
-        }
-
-        return new RuleContextBuilder(bindings);
-    }
-
-    public <T> RuleContextBuilder bind(Binding<T> binding) {
-        bindings.bind(binding);
-        return this;
-    }*/
-
     /**
      * Sets the matching strategy to uss.
      *

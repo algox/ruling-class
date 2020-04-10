@@ -20,11 +20,11 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.bind.Binding;
-import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.rule.RuleDefinitionAware;
 import org.algorithmx.rules.core.rule.RuleDefinition;
+import org.algorithmx.rules.core.rule.RuleDefinitionAware;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.FormattedText;
 
@@ -114,9 +114,7 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @return parameters used by the @Given condition.
      */
     protected Map<String, Binding> resolveParameters(RuleContext ctx) {
-        ParameterMatch[] matches = ctx.getParameterResolver().resolveAsBindings(
-                getRuleDefinition().getConditionDefinition().getMethodDefinition(), ctx.getBindings(),
-                ctx.getMatchingStrategy(), ctx.getObjectFactory(), ctx.getRegistry());
+        ParameterMatch[] matches = ctx.match(getRuleDefinition().getConditionDefinition().getMethodDefinition());
 
         Map<String, Binding> result = new LinkedHashMap<>();
 

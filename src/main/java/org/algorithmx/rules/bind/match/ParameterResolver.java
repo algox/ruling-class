@@ -42,41 +42,20 @@ public interface ParameterResolver {
     }
 
     /**
-     * Resolves the method parameters into an array of matches (binding + parameter defn).
-     * We use the matching strategy to resolves each parameter.
+     * Matches the method parameters to an array of Bindings. We use the matching strategy to resolves each parameter.
      *
      * @param definition method meta information.
      * @param bindings available bindings.
      * @param matchingStrategy matching strategy to use to resolve the bindings.
      * @param objectFactory factory that to be used to create custom BindingStrategies.
-     * @param registry converter registry.
      * @return arrays of matches.
      * @throws UnrulyException if the Binding Strategy failed.
      */
-    ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings bindings,
-                                       BindingMatchingStrategy matchingStrategy, ObjectFactory objectFactory,
-                                       ConverterRegistry registry) throws BindingException;
+    ParameterMatch[] match(MethodDefinition definition, Bindings bindings,
+                                       BindingMatchingStrategy matchingStrategy, ObjectFactory objectFactory) throws BindingException;
 
     /**
-     * Resolves the method parameters into an array of values. We use the matching strategy to resolves each parameter.
-     *
-     * @param definition method meta information.
-     * @param bindings available bindings.
-     * @param matchingStrategy matching strategy to use to resolve the bindings.
-     * @param objectFactory factory that to be used to create custom BindingStrategies.
-     * @param registry converter registry.
-     * @return arrays of method parameter values.
-     * @throws UnrulyException if the Binding Strategy failed.
-     */
-    default Object[] resolveAsBindingValues(MethodDefinition definition, Bindings bindings,
-                                            BindingMatchingStrategy matchingStrategy, ObjectFactory objectFactory,
-                                            ConverterRegistry registry) throws BindingException {
-        ParameterMatch[] matches = resolveAsBindings(definition, bindings, matchingStrategy, objectFactory, registry);
-        return resolveAsBindingValues(matches, definition, bindings, matchingStrategy, registry);
-    }
-
-    /**
-     * Resolves the parameter matches to values.
+     * Resolves the parameter matches to actual values.
      *
      * @param matches parameter matches.
      * @param definition method meta information.
@@ -85,6 +64,6 @@ public interface ParameterResolver {
      * @param registry converter registry.
      * @return resulting values.
      */
-    Object[] resolveAsBindingValues(ParameterMatch[] matches, MethodDefinition definition, Bindings bindings,
+    Object[] resolve(ParameterMatch[] matches, MethodDefinition definition, Bindings bindings,
                                     BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) throws BindingException;
 }

@@ -51,7 +51,7 @@ public class ExecutorTest {
         super();
     }
 
-    @Test
+    /*@Test
     public void test1() {
         BindableMethodExecutor executor = BindableMethodExecutor.create();
         ParameterResolver resolver = ParameterResolver.create();
@@ -194,5 +194,5 @@ public class ExecutorTest {
                 .build();
         boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
-    }
+    }*/
 }

@@ -18,8 +18,8 @@
 package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
-import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.rule.RuleContext;
 
 /**
  * Action that associated with a Rule Condition. A Rule Action is executed when the Rule Condition it true.
@@ -36,12 +36,8 @@ public interface Action extends Comparable<Action> {
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
     default void execute(RuleContext ctx) throws UnrulyException {
-        ParameterMatch[] result = ctx.getParameterResolver().resolveAsBindings(
-                getActionDefinition().getMethodDefinition(), ctx.getBindings(),
-                ctx.getMatchingStrategy(), ctx.getObjectFactory(), ctx.getRegistry());
-        execute(ctx.getParameterResolver().resolveAsBindingValues(result,
-                getActionDefinition().getMethodDefinition(), ctx.getBindings(),
-                ctx.getMatchingStrategy(), ctx.getRegistry()));
+        ParameterMatch[] result = ctx.match(getActionDefinition().getMethodDefinition());
+        execute(ctx.resolve(result, getActionDefinition().getMethodDefinition()));
     }
 
     /**

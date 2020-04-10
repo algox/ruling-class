@@ -48,7 +48,26 @@ public interface ObjectFactory {
      */
     <T> T create(Class<T> type) throws UnrulyException;
 
-    default <T extends BindingMatchingStrategy> BindingMatchingStrategy createStrategy(Class<T> strtegyType) {
-        return null;
+    /**
+     * Create a new instance of a Rule.
+     *
+     * @param ruleClass desired Rule class.
+     * @param <T> generic Rule Type.
+     * @return new instance of the Rule class.
+     */
+    default <T> T createRule(Class<T> ruleClass) {
+        return create(ruleClass);
+    }
+
+    /**
+     * Create a new instance of a Strategy.
+     *
+     * @param strategyClass desired Strategy class.
+     * @param <T> generic Strategy Type.
+     * @return new instance of the Strategy class.
+     */
+
+    default <T extends BindingMatchingStrategy> BindingMatchingStrategy createStrategy(Class<T> strategyClass) {
+        return create(strategyClass);
     }
 }

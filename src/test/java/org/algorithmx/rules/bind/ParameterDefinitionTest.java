@@ -33,13 +33,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Binding Parameter tests.
+ * Binding ParameterDefinition tests.
  *
  * @author Max Arulananthan
  */
-public class ParameterResolverTest {
+public class ParameterDefinitionTest {
 
-    public ParameterResolverTest() {
+    public ParameterDefinitionTest() {
         super();
     }
 
@@ -55,7 +55,6 @@ public class ParameterResolverTest {
         Assert.assertTrue(parameters[3].getType().equals(new TypeReference<Map<?, Long>>(){}.getType()));
     }
 
-    // TODO : Fix me
     @Test
     public void testBindableParameter1() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod1", int.class, Map.class);

@@ -54,7 +54,6 @@ public class CompositeBindingMatchingStrategy implements BindingMatchingStrategy
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Map<String, Binding<T>> match(Bindings bindings, String name, TypeReference<T> type) {
         Map<String, Binding<T>> result = new HashMap<>();
 

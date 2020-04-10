@@ -44,10 +44,9 @@ public class DefaultParameterResolver implements ParameterResolver {
     }
 
     @Override
-    public ParameterMatch[] resolveAsBindings(MethodDefinition definition, Bindings ctx,
+    public ParameterMatch[] match(MethodDefinition definition, Bindings ctx,
                                               BindingMatchingStrategy matchingStrategy,
-                                              ObjectFactory objectFactory,
-                                              ConverterRegistry registry) throws BindingException {
+                                              ObjectFactory objectFactory) throws BindingException {
         ParameterMatch[] result = new ParameterMatch[definition.getParameterDefinitions().length];
         int index = 0;
 
@@ -101,7 +100,7 @@ public class DefaultParameterResolver implements ParameterResolver {
     }
 
     @Override
-    public Object[] resolveAsBindingValues(ParameterMatch[] matches, MethodDefinition definition,
+    public Object[] resolve(ParameterMatch[] matches, MethodDefinition definition,
                                            Bindings bindings, BindingMatchingStrategy matchingStrategy,
                                            ConverterRegistry registry) throws BindingException {
         if (matches == null) return null;

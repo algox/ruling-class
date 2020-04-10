@@ -17,12 +17,14 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
-import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
+import org.algorithmx.rules.bind.match.ParameterMatch;
+import org.algorithmx.rules.bind.match.ParameterResolver;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**
@@ -67,7 +69,15 @@ public class RuleContext {
         this.registry = registry;
     }
 
-    /**
+    public ParameterMatch[] match(MethodDefinition definition) {
+        return getParameterResolver().match(definition, getBindings(), getMatchingStrategy(), getObjectFactory());
+    }
+
+    public Object[] resolve(ParameterMatch[] matches, MethodDefinition definition) {
+        return getParameterResolver().resolve(matches, definition, getBindings(), getMatchingStrategy(), getRegistry());
+    }
+
+                                       /**
      * Returns the Bindings.
      *
      * @return Bindings. Cannot be null.
@@ -90,7 +100,7 @@ public class RuleContext {
      *
      * @return parameter resolver. Cannot be null.
      */
-    public ParameterResolver getParameterResolver() {
+    protected ParameterResolver getParameterResolver() {
         return parameterResolver;
     }
 

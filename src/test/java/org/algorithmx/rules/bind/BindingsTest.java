@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.lib.spring.util.TypeUtils;
 import org.algorithmx.rules.util.TypeReference;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Tests for Bindings.
@@ -343,5 +346,16 @@ public class BindingsTest {
 
         Map<String, Binding<Integer>> matches = bindings.getBindings(Integer.class);
         Assert.assertTrue(matches.size() == 2);
+    }
+
+    @Test
+    public void bindTest23() {
+        Bindings bindings = Bindings.create()
+                .bind("a", String.class)
+                .bind("b", new TypeReference<Set<Integer>>() {})
+                .bind("c", new TypeReference<List<Integer>>() {})
+                .bind("d", new TypeReference<Map<?, Long>>() {});
+
+        //TypeUtils.isAssignable(new TypeReference<List<Integer>>() {}.getType(),  new TypeReference<List<Integer>>() {}.getType());
     }
 }

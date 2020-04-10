@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.model;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.invoke.MethodHandle;
@@ -66,7 +67,7 @@ public final class MethodDefinition {
      */
     public static MethodDefinition[] load(Class<?> c, Predicate<Method> predicate) {
         Method[] matches = Arrays.stream(c.getMethods())
-                .filter(predicate)
+                .filter(predicate != null ? predicate : m -> true)
                 .toArray(size -> new Method[size]);
         return load(c, matches);
     }
@@ -79,6 +80,7 @@ public final class MethodDefinition {
      * @return MethodDefinitions.
      */
     public static MethodDefinition[] load(Class<?> c, Method...methods) {
+        Assert.notNull(methods, "methods cannot be null");
         MethodDefinition[] result = new MethodDefinition[methods.length];
         MethodHandles.Lookup lookup = MethodHandles.lookup().in(c);
 
@@ -89,7 +91,7 @@ public final class MethodDefinition {
             try {
                 result[i] = new MethodDefinition(match, lookup.unreflect(match), ParameterDefinition.load(methods[i]));
             } catch (IllegalAccessException e) {
-                throw new IllegalStateException("Unable to getBinding MethodHandle for method [" + match + "]", e);
+                throw new UnrulyException("Unable to getBinding MethodHandle for method [" + match + "]", e);
             }
         }
 
