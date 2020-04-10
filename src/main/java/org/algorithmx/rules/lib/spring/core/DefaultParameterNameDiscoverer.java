@@ -47,7 +47,7 @@ public class DefaultParameterNameDiscoverer implements ParameterNameDiscoverer {
     /**
      * Default Ctor
      */
-    public DefaultParameterNameDiscoverer() {
+    DefaultParameterNameDiscoverer() {
         super();
     }
 

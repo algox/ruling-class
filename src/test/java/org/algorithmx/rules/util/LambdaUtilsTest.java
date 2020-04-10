@@ -71,7 +71,7 @@ public final class LambdaUtilsTest {
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
 
-        ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
+        ParameterNameDiscoverer discoverer = ParameterNameDiscoverer.create();
         String[] names = discoverer.getParameterNames(implementationMethod);
 
         Assert.assertTrue(names.length == 3);
@@ -94,7 +94,7 @@ public final class LambdaUtilsTest {
         };
 
         Method implementationMethod = rule3.getClass().getDeclaredMethod("isPass", Integer.class, String.class, BigDecimal.class);
-        ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
+        ParameterNameDiscoverer discoverer = ParameterNameDiscoverer.create();
         String[] names = discoverer.getParameterNames(implementationMethod);
 
         Assert.assertTrue(names.length == 3);

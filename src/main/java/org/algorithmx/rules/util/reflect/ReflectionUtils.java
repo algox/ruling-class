@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  */
 public final class ReflectionUtils {
 
-    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+    private static final ParameterNameDiscoverer parameterNameDiscoverer = ParameterNameDiscoverer.create();
 
     private static final Map<Type, Object> DEFAULT_VALUE_MAP = new HashMap<>();
 

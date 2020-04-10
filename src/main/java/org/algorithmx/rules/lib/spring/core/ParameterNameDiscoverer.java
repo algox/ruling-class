@@ -35,6 +35,13 @@ import java.lang.reflect.Method;
 public interface ParameterNameDiscoverer {
 
     /**
+     * Creates a default version of the ParameterNameDiscoverer.
+     * @return default instance of ParameterNameDiscoverer
+     */
+    static ParameterNameDiscoverer create() {
+        return new DefaultParameterNameDiscoverer();
+    }
+    /**
      * Return parameter names for a method, or {@code null} if they cannot be determined.
      * <p>Individual entries in the array may be {@code null} if parameter names are only
      * available for some parameters of the given method but not for others. However,
