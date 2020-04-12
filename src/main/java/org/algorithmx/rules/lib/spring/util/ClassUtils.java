@@ -42,7 +42,6 @@ import java.util.Set;
  * @author Rob Harrop
  * @author Sam Brannen
  * @since 1.1
- * @see TypeUtils
  */
 public class ClassUtils {
 

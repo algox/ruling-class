@@ -104,7 +104,7 @@ public class DefaultBinding<T> implements Binding<T> {
         }
 
         // Looks like they are passing us a wrong value type
-        if (value != null && !isTypeAcceptable(value.getClass())) {
+        if (value != null && !isAssignable(value.getClass())) {
             throw new InvalidBindingException(name, type, value);
         }
 

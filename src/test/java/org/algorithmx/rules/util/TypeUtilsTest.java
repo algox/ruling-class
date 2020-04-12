@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.lib.spring.util.TypeUtils;
+import org.algorithmx.rules.lib.apache.reflect.TypeUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,18 +41,18 @@ public class TypeUtilsTest {
     @Test
     public void testBasics() {
         Assert.assertTrue(TypeUtils.isAssignable(Integer.class, int.class));
-        Assert.assertTrue(TypeUtils.isAssignable(Collection.class, List.class));
+        Assert.assertTrue(TypeUtils.isAssignable(List.class, Collection.class));
     }
 
     @Test
     public void testComplex() {
         Type lhs = new TypeReference<List<?>>() {}.getType();
         Type rhs = new TypeReference<List<String>>() {}.getType();
-        Assert.assertTrue(TypeUtils.isAssignable(lhs, rhs));
+        Assert.assertTrue(TypeUtils.isAssignable(rhs, lhs));
 
         lhs = new TypeReference<Map<List<?>, ?>>() {}.getType();
         rhs = new TypeReference<Map<List<?>, String>>() {}.getType();
-        Assert.assertTrue(TypeUtils.isAssignable(lhs, rhs));
+        Assert.assertTrue(TypeUtils.isAssignable(rhs, lhs));
     }
 
     @Test

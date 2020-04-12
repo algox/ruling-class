@@ -18,7 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.core.Identifiable;
-import org.algorithmx.rules.lib.spring.util.TypeUtils;
+import org.algorithmx.rules.lib.apache.reflect.TypeUtils;
 
 import java.lang.reflect.Type;
 

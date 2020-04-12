@@ -97,7 +97,7 @@ public class DefaultBindings implements Bindings {
     public <T> Binding<T> getBinding(String name, TypeReference<T> typeRef) {
         Binding<T> result = getBinding(name);
         // Make sure it also matches the Type
-        return result != null && result.isAssignable(typeRef.getType())
+        return result != null && result.isTypeAcceptable(typeRef.getType())
                 ? result
                 : null;
     }
@@ -108,7 +108,7 @@ public class DefaultBindings implements Bindings {
         Map<String, Binding<T>> result = new HashMap<>();
 
         for (Binding<?> binding : bindings.values()) {
-            if (binding.isAssignable(typeRef.getType())) {
+            if (binding.isTypeAcceptable(typeRef.getType())) {
                 result.put(binding.getName(), (Binding<T>) binding);
             }
         }

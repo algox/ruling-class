@@ -17,13 +17,13 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.lib.spring.util.TypeUtils;
 import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -355,7 +355,9 @@ public class BindingsTest {
                 .bind("c", new TypeReference<List<Integer>>() {})
                 .bind("d", new TypeReference<Map<?, Long>>() {});
 
-        //System.err.println(TypeUtils.isAssignable(new TypeReference<List<Integer>>() {}.getType(),  new TypeReference<Set<Integer>>() {}.getType()));
-        //System.err.println(org.apache.commons.lang3.reflect.TypeUtils.isAssignable(new TypeReference<List<Integer>>() {}.getType(),  new TypeReference<Set<Integer>>() {}.getType()));
+        Map<String, Binding<List<?>>> matches = bindings.getBindings(new TypeReference<List<?>>() {});
+        Assert.assertTrue(matches.size() == 1);
+        Map<String, Binding<Collection<?>>> matches1 = bindings.getBindings(new TypeReference<Collection<?>>() {});
+        Assert.assertTrue(matches1.size() == 2);
     }
 }
