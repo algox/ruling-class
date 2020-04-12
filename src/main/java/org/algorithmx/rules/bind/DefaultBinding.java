@@ -116,6 +116,22 @@ public class DefaultBinding<T> implements Binding<T> {
         return description;
     }
 
+    /**
+     * Returns the name of the parameter type. In case of classes it returns the simple name otherwise the full type name.
+     *
+     * @return name of the parameter type.
+     */
+    public String getTypeName() {
+        if (type == null) return null;
+        if (type instanceof Class) return ((Class) type).getSimpleName();
+        return type.getTypeName();
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return getTypeName() + " " + name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -137,7 +153,7 @@ public class DefaultBinding<T> implements Binding<T> {
     @Override
     public String toString() {
         return "Name = " + name +
-                ", Type = " + type.getTypeName() +
+                ", Type = " + getTypeName() +
                 ", Value = " + value +
                 ", Primary = " + primary +
                 ", Editable = " + editable +

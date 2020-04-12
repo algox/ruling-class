@@ -17,12 +17,12 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 
-import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Binding Exception containing all the parameters avail during the attempted Bind.
@@ -33,75 +33,36 @@ import java.util.Map;
 public class BindingException extends UnrulyException {
 
     /**
-     * Binding Exception with just the message.
-     *
-     * @param message error message.
-     */
-    public BindingException(String message) {
-        super(message);
-    }
-
-    /**
-     * Binding Exception with a root cause.
-     *
-     * @param cause root cause.
-     */
-    public BindingException(Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Binding Exception with a message and a root cause.
-     *
-     * @param message error message.
-     * @param cause root cause.
-     */
-    public BindingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * Creates a BindException with the following parameters.
-     *
-     * @param parameterDefinition parameter details.
-     * @param method method details.
-     * @param matches bind candidates.
-     * @param matchingStrategy matching strategy used.
-     * @param bindings all the bindings that are avail.
-     */
-    public BindingException(ParameterDefinition parameterDefinition,
-                            Method method, Map<String, Binding<Object>> matches,
-                            BindingMatchingStrategy matchingStrategy,
-                            Bindings bindings) {
-        super(generateMessage(null, parameterDefinition, method, matches, matchingStrategy, bindings));
-    }
-
-    /**
      * Creates a BindException with the following parameters.
      *
      * @param message basic message (first line).
      * @param parameterDefinition parameter details.
-     * @param method method details.
+     * @param methodDefinition method details.
      * @param matches bind candidates.
-     * @param matchingStrategy matching strategy used.
      * @param bindings all the bindings that are avail.
      */
-    public BindingException(String message, ParameterDefinition parameterDefinition,
-                            Method method, Map<String, Binding<Object>> matches,
-                            BindingMatchingStrategy matchingStrategy,
+    public BindingException(String message, MethodDefinition methodDefinition, ParameterDefinition parameterDefinition,
+                            Map<String, Binding<Object>> matches,
                             Bindings bindings) {
-        super(generateMessage(message, parameterDefinition, method, matches, matchingStrategy, bindings));
+        super(generateMessage(message, methodDefinition, parameterDefinition, matches, bindings));
     }
 
-    private static String generateMessage(String message, ParameterDefinition parameterDefinition,
-                                          Method method, Map<String, Binding<Object>> matches,
-                                          BindingMatchingStrategy matchingStrategy,
+    private static String generateMessage(String message, MethodDefinition methodDefinition,
+                                          ParameterDefinition parameterDefinition, Map<String, Binding<Object>> matches,
                                           Bindings bindings) {
-        return message != null ? (message + System.lineSeparator()) : ""
-                + "Binding error trying to bind parameter [" + parameterDefinition.getName() + "]" + System.lineSeparator()
-                + "Method ["  + method + "]" + System.lineSeparator()
-                + "Matching strategy used [" + matchingStrategy.getClass().getSimpleName() + "]" + System.lineSeparator()
-                + "Matches found [" + matches + "]" + System.lineSeparator()
-                + "Bindings [" + bindings + "]" + System.lineSeparator();
+        return message + System.lineSeparator()
+                + "Class : "  + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator()
+                + "Method : "  + methodDefinition.getSignature() + System.lineSeparator()
+                + "Parameter : " + parameterDefinition.getName() + System.lineSeparator()
+                + "Possible Matches : {"
+                + matchesText(matches) + "}" + System.lineSeparator()
+                + bindings;
+    }
+
+    private static String matchesText(Map<String, Binding<Object>> matches) {
+        if (matches == null || matches.size() == 0) return "";
+        return matches.values().stream()
+                .map(m -> m.getSimpleDescription())
+                .collect(Collectors.joining(", "));
     }
 }

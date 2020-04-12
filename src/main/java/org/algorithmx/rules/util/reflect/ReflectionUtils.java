@@ -17,7 +17,6 @@
  */
 package org.algorithmx.rules.util.reflect;
 
-import org.algorithmx.rules.lib.spring.core.DefaultParameterNameDiscoverer;
 import org.algorithmx.rules.lib.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.lib.spring.util.Assert;
 

@@ -150,6 +150,17 @@ public final class ParameterDefinition {
     }
 
     /**
+     * Returns the name of the parameter type. In case of classes it returns the simple name otherwise the full type name.
+     *
+     * @return name of the parameter type.
+     */
+    public String getTypeName() {
+        if (type == null) return null;
+        if (type instanceof Class) return ((Class) type).getSimpleName();
+        return type.getTypeName();
+    }
+
+    /**
      * Overrides the Type of the parameter.
      *
      * @param type desired type.

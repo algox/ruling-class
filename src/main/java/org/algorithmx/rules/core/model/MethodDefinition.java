@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Defines a method is to be isPass dynamically (such as "when" and "then")
@@ -152,6 +153,20 @@ public final class MethodDefinition {
      */
     public boolean isStatic() {
         return Modifier.isStatic(method.getModifiers());
+    }
+
+    /**
+     * Returns a simplified version of the method signature.
+     *
+     * @return simplified method signature.
+     */
+    public String getSignature() {
+        StringBuilder result = new StringBuilder(method.getName() + "(");
+        result.append(Arrays.stream(parameterDefinitions)
+                .map(p -> p.getTypeName() + " " + p.getName())
+                .collect(Collectors.joining(", ")));
+        result.append(")");
+        return result.toString();
     }
 
     @Override

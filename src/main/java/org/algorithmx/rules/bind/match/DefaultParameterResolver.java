@@ -44,7 +44,7 @@ public class DefaultParameterResolver implements ParameterResolver {
     }
 
     @Override
-    public ParameterMatch[] match(MethodDefinition definition, Bindings ctx,
+    public ParameterMatch[] match(MethodDefinition definition, Bindings bindings,
                                               BindingMatchingStrategy matchingStrategy,
                                               ObjectFactory objectFactory) throws BindingException {
         ParameterMatch[] result = new ParameterMatch[definition.getParameterDefinitions().length];
@@ -62,22 +62,22 @@ public class DefaultParameterResolver implements ParameterResolver {
 
             boolean isBinding = parameterDefinition.isBinding();
             // Find all the matching bindings
-            Map<String, Binding<Object>> bindings = matcher.match(ctx, parameterDefinition.getName(),
+            Map<String, Binding<Object>> matches = matcher.match(bindings, parameterDefinition.getName(),
                     TypeReference.with(isBinding
                             ? parameterDefinition.getBindingType()
                             : parameterDefinition.getType()));
-            int matches = bindings.size();
+            int matchesCount = matches.size();
 
-            if (matches == 0) {
+            if (matchesCount == 0) {
                 result[index] = new ParameterMatch(parameterDefinition, null, isBinding);
-            } else if (matches == 1) {
-                Binding<Object> binding = bindings.values().stream().findFirst().get();
+            } else if (matchesCount == 1) {
+                Binding<Object> binding = matches.values().stream().findFirst().get();
                 result[index] = new ParameterMatch(parameterDefinition, binding, isBinding);
             } else {
                 // More than one match found; let's see if there is a primary candidate
                 Binding<Object> primaryBinding = null;
 
-                for (Binding<Object> binding : bindings.values()) {
+                for (Binding<Object> binding : matches.values()) {
                     if (binding.isPrimary()) {
                         primaryBinding = binding;
                         break;
@@ -88,8 +88,9 @@ public class DefaultParameterResolver implements ParameterResolver {
                     result[index] = new ParameterMatch(parameterDefinition, primaryBinding, isBinding);
                 } else {
                     // Too many matches found; cannot proceed.
-                    throw new BindingException("Multiple Bindings match your search criteria. Perhaps specify a primary Binding? ",
-                            parameterDefinition, definition.getMethod(), bindings, matchingStrategy, ctx);
+                    throw new BindingException("Multiple Bindings found using ("
+                            + matchingStrategy.getClass().getSimpleName() + "). Perhaps specify a primary Binding? ",
+                            definition, parameterDefinition, matches, bindings);
                 }
             }
 
@@ -121,17 +122,18 @@ public class DefaultParameterResolver implements ParameterResolver {
                     Converter<String, ?> converter = registry.find(String.class, matches[i].getDefinition().getType());
 
                     if (converter == null) {
-                        throw new UnrulyException("Cannot find a converter that will convert default value ["
+                        throw new BindingException("Cannot find a converter that will convert default value ["
                                 + matches[i].getDefinition().getDefaultValue() + "] to type ["
-                                + matches[i].getDefinition().getType() + "]");
+                                + matches[i].getDefinition().getType() + "]", definition, matches[i].getDefinition(),
+                                null, bindings);
                     }
 
                     value = converter.convert(matches[i].getDefinition().getDefaultValue());
                 } else if (!matches[i].getDefinition().isRequired()) {
                      value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
                 } else {
-                    throw new BindingException("No such Binding found", matches[i].getDefinition(),
-                            definition.getMethod(), null, matchingStrategy, bindings);
+                    throw new BindingException("No match found", definition, matches[i].getDefinition(),
+                            null, bindings);
                 }
             } else {
                 value = matches[i].isBinding()

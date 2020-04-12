@@ -1,4 +1,5 @@
 /**
+/**
  * This software is licensed under the Apache 2 license, quoted below.
  *
  * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)

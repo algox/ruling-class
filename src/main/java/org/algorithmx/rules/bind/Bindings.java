@@ -80,7 +80,8 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @see Binding
      */
     default <S extends Bindings, T> S bind(String name, Class<T> type) {
-        return bind(BindingBuilder.with(name).type(type).build());
+        bind(BindingBuilder.with(name).type(type).build());
+        return (S) this;
     }
 
     /**

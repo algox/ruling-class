@@ -18,7 +18,10 @@
 package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.BindingBuilder;
+import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
@@ -121,7 +124,7 @@ public class ParameterResolverTest {
         Assert.assertTrue(matches[2].getBinding().getName().equals("x") && matches[2].isBinding());
     }
 
-    /*@Test
+    @Test
     public void matchByTypeTest1() {
         ParameterResolver resolver = ParameterResolver.create();
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
@@ -130,7 +133,7 @@ public class ParameterResolverTest {
                 .bind("a", String.class)
                 .bind("b", new TypeReference<Set<Integer>>() {})
                 .bind("c", new TypeReference<List<Integer>>() {})
-                .bind("d", new TypeReference<Map<?, Long>>() {});
+                .bind("d", new TypeReference<Map<String, Long>>() {});
 
         Assert.assertTrue(definitions.length == 1);
         ParameterMatch[] matches = resolver.match(definitions[0], bindings,
@@ -141,7 +144,64 @@ public class ParameterResolverTest {
         Assert.assertTrue(matches[1].getBinding().getName().equals("b") && !matches[1].isBinding());
         Assert.assertTrue(matches[2].getBinding().getName().equals("c") && matches[2].isBinding());
         Assert.assertTrue(matches[3].getBinding().getName().equals("d") && !matches[3].isBinding());
-    }*/
+    }
+
+    @Test
+    public void matchByTypeTest2() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod2"));
+
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("key1", Integer.class);
+
+        bindings.addScope()
+                .bind("key2", new TypeReference<Map<String, Integer>>() {});
+
+        Assert.assertTrue(definitions.length == 1);
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy(), ObjectFactory.create());
+
+        Assert.assertTrue(matches.length == 2);
+        Assert.assertTrue(matches[0].getBinding().getName().equals("key1") && !matches[0].isBinding());
+        Assert.assertTrue(matches[1].getBinding().getName().equals("key2") && !matches[1].isBinding());
+    }
+
+    @Test(expected = BindingException.class)
+    public void matchByTypeTest3() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod3"));
+
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind("key1", String.class)
+                .bind("key2", Integer.class);
+
+        Assert.assertTrue(definitions.length == 1);
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy(), ObjectFactory.create());
+
+        Assert.assertTrue(matches.length == 1);
+        Assert.assertTrue(matches[0].getBinding().getName().equals("key1") && matches[0].isBinding());
+    }
+
+    @Test
+    public void matchByTypeTest4() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
+
+        ScopedBindings bindings = Bindings.createWithScopes()
+                .bind(BindingBuilder.with("key1").value("test").build());
+        bindings.addScope()
+                .bind("key3", new TypeReference<List<Integer>>() {});
+
+        Assert.assertTrue(definitions.length == 1);
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_TYPE.getStrategy(), ObjectFactory.create());
+
+        Assert.assertTrue(matches.length == 3);
+        Assert.assertTrue(matches[0].getBinding().getName().equals("key1") && !matches[0].isBinding());
+        Assert.assertTrue(matches[1].getBinding() == null);
+        Assert.assertTrue(matches[2].getBinding().getName().equals("key3") && matches[2].isBinding());
+    }
 
     private static class TestClass {
 
@@ -151,7 +211,7 @@ public class ParameterResolverTest {
 
         public void testMethod2(int a, Map<String, Integer> values) {}
 
-        public boolean testMethod3(Binding<Integer> x) {
+        public boolean testMethod3(Binding<?> x) {
             return true;
         }
 
