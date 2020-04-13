@@ -74,7 +74,7 @@ public class RuleContext {
     }
 
     public Object[] resolve(ParameterMatch[] matches, MethodDefinition definition) {
-        return getParameterResolver().resolve(matches, definition, getBindings(), getMatchingStrategy(), getRegistry());
+        return getParameterResolver().resolve(matches, definition, getBindings(), matchingStrategy, getRegistry());
     }
 
                                        /**

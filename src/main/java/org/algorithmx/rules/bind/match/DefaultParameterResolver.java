@@ -101,9 +101,8 @@ public class DefaultParameterResolver implements ParameterResolver {
     }
 
     @Override
-    public Object[] resolve(ParameterMatch[] matches, MethodDefinition definition,
-                                           Bindings bindings, BindingMatchingStrategy matchingStrategy,
-                                           ConverterRegistry registry) throws BindingException {
+    public Object[] resolve(ParameterMatch[] matches, MethodDefinition definition, Bindings bindings,
+                            BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) throws BindingException {
         if (matches == null) return null;
 
         Object[] result = new Object[matches.length];
@@ -132,8 +131,8 @@ public class DefaultParameterResolver implements ParameterResolver {
                 } else if (!matches[i].getDefinition().isRequired()) {
                      value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
                 } else {
-                    throw new BindingException("No match found", definition, matches[i].getDefinition(),
-                            null, bindings);
+                    throw new BindingException("No match found using (" + matchingStrategy.getClass().getSimpleName()
+                            + ")", definition, matches[i].getDefinition(), null, bindings);
                 }
             } else {
                 value = matches[i].isBinding()

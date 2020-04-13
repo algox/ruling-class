@@ -65,5 +65,5 @@ public interface ParameterResolver {
      * @return resulting values.
      */
     Object[] resolve(ParameterMatch[] matches, MethodDefinition definition, Bindings bindings,
-                                    BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) throws BindingException;
+                     BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) throws BindingException;
 }

@@ -44,13 +44,7 @@ public enum BindingMatchingStrategyType {
     MATCH_BY_NAME_THEN_BY_TYPE (
             new CompositeBindingMatchingStrategy(true,
                     new MatchByNameMatchingStrategy(),
-                    new MatchByTypeMatchingStrategy())),
-
-    // Searches for Bindings with the given Type if nothing is found then continues to search by Name
-    MATCH_BY_TYPE_THEN_BY_NAME (
-            new CompositeBindingMatchingStrategy(true,
-                    new MatchByTypeMatchingStrategy(),
-                    new MatchByNameMatchingStrategy()));
+                    new MatchByTypeMatchingStrategy()));
 
     private final BindingMatchingStrategy strategy;
 
