@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.loader;
+package org.algorithmx.rules.bind.load;
 
 import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.Bindings;
@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
  */
 public class FieldBindingLoader<T> implements BindingLoader<T> {
 
-    private Function<Field, Boolean> filter = null;
+    private Predicate<Field> filter = null;
     private Function<Field, String> nameGenerator = null;
 
     public FieldBindingLoader() {
@@ -62,7 +63,7 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
      *
      * @param filter restricting Filter.
      */
-    public void setFilter(Function<Field, Boolean> filter) {
+    public void setFilter(Predicate<Field> filter) {
         this.filter = filter;
     }
 
@@ -92,8 +93,7 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
     public void load(Bindings bindings, T bean) {
         Assert.notNull(bean, "bean cannot be null.");
 
-        ReflectionUtils.traverseFields(bean.getClass(), null, field -> {
-            if (filter != null && !filter.apply(field)) return;
+        ReflectionUtils.traverseFields(bean.getClass(), filter, field -> {
             try {
                 Object value = field.get(bean);
                 String bindingName = nameGenerator != null ? nameGenerator.apply(field) : field.getName();

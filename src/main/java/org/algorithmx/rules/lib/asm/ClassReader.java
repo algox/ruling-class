@@ -288,7 +288,7 @@ public class ClassReader {
      * Constructs a new {@link ClassReader} object.
      *
      * @param className the fully qualified name of the class to be read. The ClassFile structure is
-     *     retrieved with the current class loader's {@link ClassLoader#getSystemResourceAsStream}.
+     *     retrieved with the current class load's {@link ClassLoader#getSystemResourceAsStream}.
      * @throws IOException if an exception occurs during reading.
      */
     public ClassReader(final String className) throws IOException {

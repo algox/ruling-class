@@ -1,6 +1,6 @@
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
+import org.algorithmx.rules.bind.load.PropertyBindingLoader;
 import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,8 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
+/**
+ * Tests for ImmutableBindings.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ */
 public class ImmutableBindingsTest {
 
     public ImmutableBindingsTest() {

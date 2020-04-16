@@ -210,8 +210,8 @@ public class ClassUtils {
      * method with the same arguments, with the only difference being
      * the exceptions thrown in case of class loading failure.
      * @param className the name of the Class
-     * @param classLoader the class loader to use
-     * (may be {@code null}, which indicates the default class loader)
+     * @param classLoader the class load to use
+     * (may be {@code null}, which indicates the default class load)
      * @return a class instance for the supplied name
      * @throws IllegalArgumentException if the class name was not resolvable
      * (that is, the class could not be found or the class file could not be loaded)
@@ -245,8 +245,8 @@ public class ClassUtils {
      * Furthermore, it is also capable of resolving inner class names in Java source
      * style (e.g. "java.lang.Thread.State" instead of "java.lang.Thread$State").
      * @param name the name of the Class
-     * @param classLoader the class loader to use
-     * (may be {@code null}, which indicates the default class loader)
+     * @param classLoader the class load to use
+     * (may be {@code null}, which indicates the default class load)
      * @return a class instance for the supplied name
      * @throws ClassNotFoundException if the class was not found
      * @throws LinkageError if the class file could not be loaded
@@ -353,7 +353,7 @@ public class ClassUtils {
             // Cannot access thread context ClassLoader - falling back...
         }
         if (cl == null) {
-            // No thread context class loader -> use class loader of this class.
+            // No thread context class load -> use class load of this class.
             cl = ClassUtils.class.getClassLoader();
             if (cl == null) {
                 // getClassLoader() returning null indicates the bootstrap ClassLoader

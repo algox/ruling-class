@@ -978,7 +978,7 @@ public class ClassUtils {
      * "{@code java.util.Map.Entry[]}", "{@code java.util.Map$Entry[]}",
      * "{@code [Ljava.util.Map.Entry;}", and "{@code [Ljava.util.Map$Entry;}".
      *
-     * @param classLoader  the class loader to use to load the class
+     * @param classLoader  the class load to use to load the class
      * @param className  the class name
      * @param initialize  whether the class must be initialized
      * @return the class represented by {@code className} using the {@code classLoader}
@@ -1019,7 +1019,7 @@ public class ClassUtils {
      * "{@code java.util.Map$Entry[]}", "{@code [Ljava.util.Map.Entry;}",
      * and "{@code [Ljava.util.Map$Entry;}".
      *
-     * @param classLoader  the class loader to use to load the class
+     * @param classLoader  the class load to use to load the class
      * @param className  the class name
      * @return the class represented by {@code className} using the {@code classLoader}
      * @throws ClassNotFoundException if the class is not found
@@ -1030,13 +1030,13 @@ public class ClassUtils {
 
     /**
      * Returns the (initialized) class represented by {@code className}
-     * using the current thread's context class loader. This implementation
+     * using the current thread's context class load. This implementation
      * supports the syntaxes "{@code java.util.Map.Entry[]}",
      * "{@code java.util.Map$Entry[]}", "{@code [Ljava.util.Map.Entry;}",
      * and "{@code [Ljava.util.Map$Entry;}".
      *
      * @param className  the class name
-     * @return the class represented by {@code className} using the current thread's context class loader
+     * @return the class represented by {@code className} using the current thread's context class load
      * @throws ClassNotFoundException if the class is not found
      */
     public static Class<?> getClass(final String className) throws ClassNotFoundException {
@@ -1045,13 +1045,13 @@ public class ClassUtils {
 
     /**
      * Returns the class represented by {@code className} using the
-     * current thread's context class loader. This implementation supports the
+     * current thread's context class load. This implementation supports the
      * syntaxes "{@code java.util.Map.Entry[]}", "{@code java.util.Map$Entry[]}",
      * "{@code [Ljava.util.Map.Entry;}", and "{@code [Ljava.util.Map$Entry;}".
      *
      * @param className  the class name
      * @param initialize  whether the class must be initialized
-     * @return the class represented by {@code className} using the current thread's context class loader
+     * @return the class represented by {@code className} using the current thread's context class load
      * @throws ClassNotFoundException if the class is not found
      */
     public static Class<?> getClass(final String className, final boolean initialize) throws ClassNotFoundException {

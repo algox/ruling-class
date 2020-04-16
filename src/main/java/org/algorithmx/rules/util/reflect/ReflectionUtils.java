@@ -28,6 +28,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -164,13 +165,20 @@ public final class ReflectionUtils {
         Assert.notNull(targetClass, "targetClass cannot be null.");
         Assert.notNull(consumer, "consumer cannot be null.");
 
-        Field[] fields = targetClass.getFields();
+        Field[] fields = targetClass.getDeclaredFields();
 
         // Go through all the fields
         for (Field field : fields) {
             if (filter != null && !filter.test(field)) continue;
             field.setAccessible(true);
             consumer.accept(field);
+        }
+    }
+
+    public static void makeAccessible(Field field) {
+        if ((!Modifier.isPublic(field.getModifiers()) || !Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
+                Modifier.isFinal(field.getModifiers())) && !field.isAccessible()) {
+            field.setAccessible(true);
         }
     }
 }

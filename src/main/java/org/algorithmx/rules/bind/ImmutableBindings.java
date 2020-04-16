@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.loader.BindingLoader;
+import org.algorithmx.rules.bind.load.BindingLoader;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 

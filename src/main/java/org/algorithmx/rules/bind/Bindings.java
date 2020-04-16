@@ -17,10 +17,10 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.bind.loader.BindingLoader;
-import org.algorithmx.rules.bind.loader.FieldBindingLoader;
-import org.algorithmx.rules.bind.loader.MapBindingLoader;
-import org.algorithmx.rules.bind.loader.PropertyBindingLoader;
+import org.algorithmx.rules.bind.load.BindingLoader;
+import org.algorithmx.rules.bind.load.FieldBindingLoader;
+import org.algorithmx.rules.bind.load.MapBindingLoader;
+import org.algorithmx.rules.bind.load.PropertyBindingLoader;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 
@@ -207,7 +207,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * @return this Bindings (fluent interface).
      */
     default <S extends Bindings, T> S bindUsing(BindingLoader<T> loader, T value) {
-        Assert.notNull(loader, "loader cannot be null.");
+        Assert.notNull(loader, "load cannot be null.");
         Assert.notNull(value, "value cannot be null.");
         loader.load(this, value);
         return (S) this;
@@ -217,7 +217,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      * Binds each readable property on the given Bean. This is just convenience method if you want to control which
      * properties get added use bindUsing.
      *
-     * @param bean parent bean.
+     * @param bean bean to be loaded.
      * @param <S> type of Bindings.
      * @param <T> generic type of the Value object.
      * @return this Bindings (fluent interface).
@@ -231,19 +231,19 @@ public interface Bindings extends Iterable<Binding<?>> {
      * Binds each declared field on the given Bean. This is just convenience method if you want to control which
      * fields get added use bindUsing.
      *
-     * @param bean parent bean.
+     * @param object object to be loaded.
      * @param <S> type of Bindings.
      * @param <T> generic type of the Value object.
      * @return this Bindings (fluent interface).
      * @throws BindingAlreadyExistsException thrown if a Binding already exists.
      */
-    default <S extends Bindings, T> S bindFields(T bean) {
-        return bindUsing(new FieldBindingLoader<>(), bean);
+    default <S extends Bindings, T> S bindFields(T object) {
+        return bindUsing(new FieldBindingLoader<>(), object);
     }
 
     /**
      * Binds each key on the given Map. This is just convenience method if you want to control which
-     * keys get added use bindUsing(BindingLoader loader, T value)
+     * keys get added use bindUsing(BindingLoader load, T value)
      *
      * @param map key/values.
      * @param <S> type of Bindings.
