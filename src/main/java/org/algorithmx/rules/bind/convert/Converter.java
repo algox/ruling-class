@@ -63,7 +63,7 @@ public interface Converter<T, R> {
      * @return true if this converter can convert the desired types; false otherwise.
      */
     default boolean canConvert(Class<?> fromType, Class<?> toType) {
-        return canConvert(TypeReference.with(fromType).getType(), TypeReference.with(fromType).getType());
+        return canConvert(TypeReference.with(fromType).getType(), TypeReference.with(toType).getType());
     }
 
     /**

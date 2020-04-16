@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind.convert.string;
 
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
+import org.algorithmx.rules.lib.apache.BooleanUtils;
 
 /**
  * Converts a String value to a Boolean. ("Y", "YES", "1", "TRUE") irrelevant of case is considered as True.
@@ -33,7 +34,7 @@ public class StringToBooleanConverter extends ConverterTemplate<String, Boolean>
 
     @Override
     public Boolean convert(String value) {
-        return "Y".equalsIgnoreCase(value) || "YES".equalsIgnoreCase(value)
-                || "1".equals(value)  || "TRUE".equalsIgnoreCase(value);
+        Boolean result = BooleanUtils.toBooleanObject(value);
+        return result != null ? result : false;
     }
 }

@@ -37,7 +37,7 @@ public class StringToShortConverter extends ConverterTemplate<String, Short> {
         if (value == null) return null;
 
         try {
-            return new Short(value);
+            return Short.valueOf(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

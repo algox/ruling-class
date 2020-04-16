@@ -37,7 +37,7 @@ public class StringToFloatConverter extends ConverterTemplate<String, Float> {
         if (value == null) return null;
 
         try {
-            return new Float(value);
+            return Float.valueOf(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

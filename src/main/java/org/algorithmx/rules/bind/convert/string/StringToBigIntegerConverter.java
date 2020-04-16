@@ -19,6 +19,7 @@ package org.algorithmx.rules.bind.convert.string;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
+import org.algorithmx.rules.lib.apache.math.NumberUtils;
 
 import java.math.BigInteger;
 
@@ -39,7 +40,7 @@ public class StringToBigIntegerConverter extends ConverterTemplate<String, BigIn
         if (value == null) return null;
 
         try {
-            return new BigInteger(value);
+            return NumberUtils.createBigInteger(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

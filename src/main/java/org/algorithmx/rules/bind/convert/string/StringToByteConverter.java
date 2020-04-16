@@ -37,7 +37,7 @@ public class StringToByteConverter extends ConverterTemplate<String, Byte> {
         if (value == null) return null;
 
         try {
-            return new Byte(value);
+            return Byte.valueOf(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

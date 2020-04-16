@@ -37,7 +37,7 @@ public class StringToLongConverter extends ConverterTemplate<String, Long> {
         if (value == null) return null;
 
         try {
-            return new Long(value);
+            return Long.decode(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

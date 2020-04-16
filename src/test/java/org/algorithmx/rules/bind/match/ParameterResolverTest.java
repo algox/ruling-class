@@ -22,7 +22,7 @@ import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ScopedBindings;
-import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
+import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
@@ -42,7 +42,6 @@ import java.util.Vector;
  *
  * @author Max Arulananthan
  */
-
 public class ParameterResolverTest {
 
     public ParameterResolverTest() {
@@ -306,7 +305,6 @@ public class ParameterResolverTest {
         bindings.removeScope();
         Assert.assertTrue(values[0].equals(bindings.getValue("a")));
         Assert.assertTrue(values[1].equals(bindings.getValue("b")));
-
     }
 
     @Test
@@ -330,6 +328,13 @@ public class ParameterResolverTest {
                 && matches[0].getBinding().getType().equals(Integer.class) && !matches[0].isBinding());
         Assert.assertTrue(matches[1].getBinding().getName().equals("b") && !matches[1].isBinding());
         Assert.assertTrue(matches[2].getBinding().getName().equals("c") && matches[2].isBinding());
+
+        Object[] values = resolver.resolve(matches, definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME_THEN_BY_TYPE.getStrategy(), ConverterRegistry.create());
+        Assert.assertTrue(values[0].equals(bindings.getValue("a")));
+        bindings.removeScope();
+        Assert.assertTrue(values[1].equals(bindings.getValue("b")));
+        Assert.assertTrue(values[2].equals(bindings.getBinding("c")));
     }
 
     @Test
@@ -353,6 +358,12 @@ public class ParameterResolverTest {
                 && matches[0].getBinding().getType().equals(String.class) && !matches[0].isBinding());
         Assert.assertTrue(matches[1].getBinding().getName().equals("b") && !matches[1].isBinding());
         Assert.assertTrue(matches[2].getBinding().getName().equals("c") && matches[2].isBinding());
+        Object[] values = resolver.resolve(matches, definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME_AND_TYPE_THEN_BY_JUST_BY_TYPE.getStrategy(), ConverterRegistry.create());
+        Assert.assertTrue(values[1].equals(bindings.getValue("b")));
+        Assert.assertTrue(values[2].equals(bindings.getBinding("c")));
+        bindings.removeScope();
+        Assert.assertTrue(values[0].equals(bindings.getValue("a")));
     }
 
     private static class TestClass {

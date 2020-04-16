@@ -37,7 +37,7 @@ public class StringToDoubleConverter extends ConverterTemplate<String, Double> {
         if (value == null) return null;
 
         try {
-            return new Double(value);
+            return Double.valueOf(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

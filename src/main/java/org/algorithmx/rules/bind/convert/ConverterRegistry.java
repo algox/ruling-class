@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert;
 
-import org.algorithmx.rules.bind.convert.Converter;
+import org.algorithmx.rules.bind.convert.string.DefaultConverterRegistry;
+import org.algorithmx.rules.util.TypeReference;
 
 import java.lang.reflect.Type;
 
@@ -39,6 +40,19 @@ public interface ConverterRegistry {
      * @param converter new converter.
      */
     void register(Converter<?, ?> converter);
+
+    /**
+     * Finds a Convert for the desired source/target types.
+     *
+     * @param source source type.
+     * @param target target type.
+     * @param <S> source generic type.
+     * @param <T> target generic type.
+     * @return converter if one is found; null otherwise.
+     */
+    default <S, T> Converter<S, T> find(Class<S> source, Class<T> target) {
+        return find(TypeReference.with(source).getType(), TypeReference.with(target).getType());
+    }
 
     /**
      * Finds a Convert for the desired source/target types.

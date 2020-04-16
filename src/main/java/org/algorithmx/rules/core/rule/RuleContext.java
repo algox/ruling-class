@@ -18,7 +18,7 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
+import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.bind.match.ParameterResolver;

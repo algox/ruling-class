@@ -21,7 +21,7 @@ import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingException;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.convert.Converter;
-import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
+import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
@@ -131,7 +131,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                 } else if (!matches[i].getDefinition().isRequired()) {
                      value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
                 } else {
-                    throw new BindingException("No match found using (" + matchingStrategy.getClass().getSimpleName()
+                    throw new BindingException("No matching Binding found using (" + matchingStrategy.getClass().getSimpleName()
                             + ")", definition, matches[i].getDefinition(), null, bindings);
                 }
             } else {

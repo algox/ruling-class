@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind.convert.string;
 
 import org.algorithmx.rules.bind.convert.Converter;
+import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Type;

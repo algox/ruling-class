@@ -21,7 +21,7 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.match.ParameterResolver;
-import org.algorithmx.rules.bind.convert.string.ConverterRegistry;
+import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.util.reflect.ObjectFactory;

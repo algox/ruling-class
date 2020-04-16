@@ -37,7 +37,7 @@ public class StringToIntegerConverter extends ConverterTemplate<String, Integer>
         if (value == null) return null;
 
         try {
-            return new Integer(value);
+            return Integer.decode(value);
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
