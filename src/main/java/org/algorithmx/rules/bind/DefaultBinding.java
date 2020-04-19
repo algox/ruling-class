@@ -59,7 +59,7 @@ public class DefaultBinding<T> implements Binding<T> {
         Assert.notNull(name, "name cannot be null");
         Assert.notNull(type, "type cannot be null");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Binding name must match [" + NAME_PATTERN + "]");
+        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Binding name [" + name + "] must match [" + NAME_PATTERN + "]");
         Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
         this.name = name;
         this.type = type;

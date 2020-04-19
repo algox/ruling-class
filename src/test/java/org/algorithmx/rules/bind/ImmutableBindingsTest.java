@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,21 +66,6 @@ public class ImmutableBindingsTest {
     @Test(expected = UnsupportedOperationException.class)
     public void immutabilityTest10() {
         Bindings.create().asImmutableBindings().bindUsing(new PropertyBindingLoader<>(), new Object());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void immutabilityTest11() {
-        Bindings.create().asImmutableBindings().bindProperties(new TestClass());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void immutabilityTest12() {
-        Bindings.create().asImmutableBindings().bindFields(new TestClass());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void immutabilityTest13() {
-        Bindings.create().asImmutableBindings().bindMap(new HashMap<>());
     }
 
     @Test

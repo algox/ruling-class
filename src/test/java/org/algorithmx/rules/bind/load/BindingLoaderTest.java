@@ -22,6 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests for BindingLoader.
@@ -36,20 +38,48 @@ public class BindingLoaderTest {
     }
 
     @Test
-    public void fieldLoaderTest() {
-        Athelete jordan = new Athelete("Michael", "Jordan", 23, new BigDecimal("100000000"));
+    public void propertyLoaderTest() {
+        Athlete jordan = new Athlete("Michael", "Jordan", 23, new BigDecimal("100000000"));
         Bindings bindings = Bindings.create();
-        //bindings.bindFields(jordan);
-        //Assert.assertTrue(bindings.getValue("firstName").equals("Michael"));
-        //Assert.assertTrue(bindings.getValue("lastName").equals("Jordan"));
-        //Assert.assertTrue(bindings.getValue("age").equals(23));
-        //Assert.assertTrue(bindings.getValue("salary").equals(new BigDecimal("100000000")));
+        bindings.bindUsing(new PropertyBindingLoader<>(), jordan);
+        Assert.assertTrue(bindings.getValue("firstName").equals("Michael"));
+        Assert.assertTrue(bindings.getValue("lastName").equals("Jordan"));
+        Assert.assertTrue(bindings.getValue("age").equals(23));
+        Assert.assertTrue(bindings.getValue("salary").equals(new BigDecimal("100000000")));
+    }
+
+    @Test
+    public void fieldLoaderTest() {
+        Athlete jordan = new Athlete("Michael", "Jordan", 23, new BigDecimal("100000000"));
+        Bindings bindings = Bindings.create();
+        bindings.bindUsing(new FieldBindingLoader<>(), jordan);
+        Assert.assertTrue(bindings.getValue("firstName").equals("Michael"));
+        Assert.assertTrue(bindings.getValue("lastName").equals("Jordan"));
+        Assert.assertTrue(bindings.getValue("age").equals(23));
+        Assert.assertTrue(bindings.getValue("salary").equals(new BigDecimal("100000000")));
+    }
+
+    @Test
+    public void mapLoaderTest() {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("firstName", "Michael");
+        map.put("lastName", "Jordan");
+        map.put("age", 23);
+        map.put("salary", new BigDecimal("100000000"));
+
+        Bindings bindings = Bindings.create();
+        bindings.bindUsing(new MapBindingLoader(), map);
+
+        Assert.assertTrue(bindings.getValue("firstName").equals("Michael"));
+        Assert.assertTrue(bindings.getValue("lastName").equals("Jordan"));
+        Assert.assertTrue(bindings.getValue("age").equals(23));
+        Assert.assertTrue(bindings.getValue("salary").equals(new BigDecimal("100000000")));
     }
 
     private static class Person {
         private String firstName;
         private String lastName;
-
         private int age;
 
         public Person(String firstName, String lastName, int age) {
@@ -83,10 +113,10 @@ public class BindingLoaderTest {
         }
     }
 
-    private static class Athelete extends Person {
+    private static class Athlete extends Person {
         private BigDecimal salary;
 
-        public Athelete(String firstName, String lastName, int age, BigDecimal salary) {
+        public Athlete(String firstName, String lastName, int age, BigDecimal salary) {
             super(firstName, lastName, age);
             this.salary = salary;
         }

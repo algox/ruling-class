@@ -156,21 +156,6 @@ public class ImmutableBindings implements Bindings {
     }
 
     @Override
-    public <S extends Bindings, T> S bindProperties(T bean) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Bindings, T> S bindFields(T bean) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <S extends Bindings> S bindMap(Map<String, ?> map) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;

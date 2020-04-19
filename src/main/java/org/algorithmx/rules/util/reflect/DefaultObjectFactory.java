@@ -21,7 +21,6 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -54,17 +53,9 @@ public class DefaultObjectFactory implements ObjectFactory {
                 postConstructor = postConstructorCache.get(type);
             } else {
                 // Find the post constructor if one exists.
-                List<Method> postConstructors = ReflectionUtils.getPostConstructMethods(type);
-
-                // More than one post constructor
-                if (postConstructors.size() > 1) {
-                    throw new UnrulyException("Invalid Number of @PostConstruct defined on class [" + type
-                            + "]. Candidates [" + postConstructors + "]");
-                } else if (postConstructors.size() == 1) {
-                    // Cache the post constructor
-                    postConstructor = postConstructors.get(0);
-                    postConstructorCache.put(type, postConstructor);
-                }
+                postConstructor = ReflectionUtils.getPostConstructMethods(type);
+                // Cache the post constructor
+                postConstructorCache.put(type, postConstructor);
             }
 
             if (postConstructor != null) {

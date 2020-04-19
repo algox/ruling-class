@@ -21,10 +21,12 @@ import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -41,6 +43,8 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 public class FieldBindingLoader<T> implements BindingLoader<T> {
+
+    private static final Map<Class<?>, Field[]> FIELD_CACHE = new HashMap<>();
 
     private Predicate<Field> filter = null;
     private Function<Field, String> nameGenerator = null;
@@ -93,19 +97,50 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
     public void load(Bindings bindings, T bean) {
         Assert.notNull(bean, "bean cannot be null.");
 
-        ReflectionUtils.traverseFields(bean.getClass(), filter, field -> {
-            try {
-                Object value = field.get(bean);
-                String bindingName = nameGenerator != null ? nameGenerator.apply(field) : field.getName();
-                bindings.bind(BindingBuilder.with(bindingName)
-                        .type(field.getGenericType())
-                        .value(value).build());
-            } catch (IllegalAccessException e) {
-                // Couldn't get the value
-                throw new UnrulyException("Error trying to retrieve field [" + field.getName()
-                        + "] on Bean class [" + bean.getClass() + "]", e);
-            }
-        });
+        Class<?> type = bean.getClass();
 
+        do {
+            Field[] fields = getDeclaredFields(type);
+
+            for (Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers())) continue;
+                if (filter != null && !filter.test(field)) continue;
+                try {
+                    Object value = field.get(bean);
+                    String bindingName = nameGenerator != null ? nameGenerator.apply(field) : field.getName();
+                    bindings.bind(BindingBuilder.with(bindingName)
+                            .type(field.getGenericType())
+                            .value(value).build());
+                } catch (IllegalAccessException e) {
+                    // Couldn't get the value
+                    throw new UnrulyException("Error trying to retrieve field [" + field.getName()
+                            + "] on Bean class [" + bean.getClass() + "]", e);
+                }
+            }
+
+            type = type.getSuperclass();
+        } while (type != null && !Object.class.equals(type));
     }
+
+    private static Field[] getDeclaredFields(Class<?> type) {
+        Assert.notNull(type, "type cannot be null.");
+
+        Field[] result = FIELD_CACHE.get(type);
+        if (result != null) return result;
+
+        result = type.getDeclaredFields();
+
+        for (Field field : result) {
+            makePromiscuous(field);
+        }
+
+        FIELD_CACHE.put(type, result);
+        return result;
+    }
+
+    private static void makePromiscuous(Field field) {
+        if (Modifier.isPublic(field.getModifiers())) return;
+        field.setAccessible(true);
+    }
+
 }

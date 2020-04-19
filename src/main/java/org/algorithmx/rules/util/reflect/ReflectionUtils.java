@@ -17,25 +17,18 @@
  */
 package org.algorithmx.rules.util.reflect;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import javax.annotation.PostConstruct;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -93,11 +86,19 @@ public final class ReflectionUtils {
      * @param c desired class
      * @return PostConstruct methods (if found); null otherwise.
      */
-    public static List<Method> getPostConstructMethods(Class<?> c) {
-        return Arrays.stream(c.getDeclaredMethods())
+    public static Method getPostConstructMethods(Class<?> c) {
+        List<Method> postConstructors = Arrays.stream(c.getDeclaredMethods())
                 .filter(method -> void.class.equals(method.getReturnType()) &&
-                method.getParameterCount() == 0 && method.getExceptionTypes().length == 0 &&
-                method.getAnnotation(PostConstruct.class) != null).collect(Collectors.toList());
+                        method.getParameterCount() == 0 && method.getExceptionTypes().length == 0 &&
+                        method.getAnnotation(PostConstruct.class) != null).collect(Collectors.toList());
+
+        // More than one post constructor
+        if (postConstructors.size() > 1) {
+            throw new UnrulyException("Invalid Number of Post Constructors(@PostConstruct) defined on class [" + c
+                    + "]. Candidates [" + postConstructors + "]");
+        }
+
+        return postConstructors.size() > 0 ? postConstructors.get(0) : null;
     }
 
     /**
@@ -128,57 +129,6 @@ public final class ReflectionUtils {
         } catch (InvocationTargetException e) {
             throw new IllegalArgumentException("Error occurred trying to call @PostConstruct ["
                     + postConstructMethod + "]", e);
-        }
-    }
-
-    /**
-     * Invoke the given consumer on the filtered properties in the target class.
-     *
-     * @param targetClass the target class to analyze.
-     * @param filter to find the right candidates.
-     * @param consumer the callback to invoke for each property.
-     * @throws IntrospectionException thrown if there was issues retrieving the BeanInfo.
-     */
-    public static void traverseProperties(Class<?> targetClass, Predicate<PropertyDescriptor> filter,
-                                          Consumer<PropertyDescriptor> consumer) throws IntrospectionException {
-        Assert.notNull(targetClass, "targetClass cannot be null.");
-        Assert.notNull(consumer, "consumer cannot be null.");
-
-        BeanInfo beanInfo = Introspector.getBeanInfo(targetClass);
-
-        // Go through all the properties
-        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            if (filter != null && !filter.test(propertyDescriptor)) continue;
-            consumer.accept(propertyDescriptor);
-        }
-    }
-
-    /**
-     * Invoke the given consumer on the filtered properties in the target class.
-     *
-     * @param targetClass the target class to analyze.
-     * @param filter to find the right candidates.
-     * @param consumer the callback to invoke for each field.
-     */
-    public static void traverseFields(Class<?> targetClass, Predicate<Field> filter,
-                                          Consumer<Field> consumer) {
-        Assert.notNull(targetClass, "targetClass cannot be null.");
-        Assert.notNull(consumer, "consumer cannot be null.");
-
-        Field[] fields = targetClass.getDeclaredFields();
-
-        // Go through all the fields
-        for (Field field : fields) {
-            if (filter != null && !filter.test(field)) continue;
-            field.setAccessible(true);
-            consumer.accept(field);
-        }
-    }
-
-    public static void makeAccessible(Field field) {
-        if ((!Modifier.isPublic(field.getModifiers()) || !Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
-                Modifier.isFinal(field.getModifiers())) && !field.isAccessible()) {
-            field.setAccessible(true);
         }
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.condition.TriCondition;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 import org.junit.Assert;
@@ -64,23 +65,23 @@ public class ReflectionUtilsTest {
         Assert.assertTrue("c".equals(parameterNames[2]));
     }
 
-        @Test
+    @Test
     public void postConstructorTest1() {
-        List<Method> postConstructors = ReflectionUtils.getPostConstructMethods(SomeClass.class);
-        Assert.assertTrue(postConstructors.size() == 1);
-        ReflectionUtils.invokePostConstruct(postConstructors.iterator().next(), new SomeClass());
+        Method postConstructor = ReflectionUtils.getPostConstructMethods(SomeClass.class);
+        Assert.assertTrue(postConstructor != null);
+        ReflectionUtils.invokePostConstruct(postConstructor, new SomeClass());
     }
 
-    @Test
+    @Test(expected = UnrulyException.class)
     public void postConstructorTest2() {
-        List<Method> postConstructors = ReflectionUtils.getPostConstructMethods(OtherClass.class);
-        Assert.assertTrue(postConstructors.size() == 2);
+        // 2 PostConstructors
+        ReflectionUtils.getPostConstructMethods(OtherClass.class);
     }
 
     @Test
     public void postConstructorTest3() {
-        List<Method> postConstructors = ReflectionUtils.getPostConstructMethods(ErrorClass.class);
-        Assert.assertTrue(postConstructors.size() == 0);
+        Method postConstructor = ReflectionUtils.getPostConstructMethods(ErrorClass.class);
+        Assert.assertTrue(postConstructor == null);
     }
 
     private static class SomeClass {
