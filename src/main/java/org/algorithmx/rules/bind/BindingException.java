@@ -53,7 +53,8 @@ public class BindingException extends UnrulyException {
         return message + System.lineSeparator()
                 + "Class : "  + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator()
                 + "Method : "  + methodDefinition.getSignature() + System.lineSeparator()
-                + "Parameter : " + parameterDefinition.getName() + System.lineSeparator()
+                + "Parameter(index = " + parameterDefinition.getIndex() + ") : " + parameterDefinition.getTypeName () + " "
+                + parameterDefinition.getName() + System.lineSeparator()
                 + "Possible Matches : {"
                 + matchesText(matches) + "}" + System.lineSeparator()
                 + bindings;

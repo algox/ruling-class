@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.bind.match;
 
+import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.BindingException;
@@ -29,6 +30,7 @@ import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -366,6 +368,59 @@ public class ParameterResolverTest {
         Assert.assertTrue(values[0].equals(bindings.getValue("a")));
     }
 
+    @Test
+    public void valueResolverTest() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
+
+        Bindings bindings = Bindings.create()
+                .bind("a", String.class, "Ruling class")
+                .bind("b", new TypeReference<Set<Integer>>() {}, new HashSet<>())
+                .bind("c", new TypeReference<List<Integer>>() {}, new Vector())
+                .bind("d", new TypeReference<Map<String, Long>>() {}, new HashMap<>());
+
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ObjectFactory.create());
+        Object[] values = resolver.resolve(matches, definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ConverterRegistry.create());
+
+        Assert.assertTrue(values[0].equals(bindings.getValue("a")));
+        Assert.assertTrue(values[1].equals(bindings.getValue("b")));
+        Assert.assertTrue(values[2].equals(bindings.getBinding("c")));
+        Assert.assertTrue(values[3].equals(bindings.getValue("d")));
+    }
+
+    @Test
+    public void valueResolverDefaultValueTest() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod5"));
+
+        Bindings bindings = Bindings.create()
+                .bind("c", new BigDecimal("100.00"));
+
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ObjectFactory.create());
+        Object[] values = resolver.resolve(matches, definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ConverterRegistry.create());
+
+        Assert.assertTrue(values[0].equals(12345l));
+        Assert.assertTrue(values[1].equals(0));
+        Assert.assertTrue(values[2].equals(bindings.getValue("c")));
+    }
+
+    @Test(expected = BindingException.class)
+    public void valueResolverNoMatchTest() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod5"));
+
+        Bindings bindings = Bindings.create();
+
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ObjectFactory.create());
+        Object[] values = resolver.resolve(matches, definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ConverterRegistry.create());
+    }
+
     private static class TestClass {
 
         public boolean testMethod1(String a, Set<Integer> b, Binding<List<Integer>> c, Map<?, Long> d) {
@@ -379,6 +434,10 @@ public class ParameterResolverTest {
         }
 
         public boolean testMethod4(String a, Integer b, Binding<List<Integer>> x) {
+            return true;
+        }
+
+        public boolean testMethod5(@Nullable(defaultValue = "12345") Long a, @Nullable int b, BigDecimal c) {
             return true;
         }
 

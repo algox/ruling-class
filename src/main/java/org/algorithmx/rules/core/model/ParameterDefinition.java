@@ -76,7 +76,7 @@ public final class ParameterDefinition {
 
     private void validate() {
         if (isBinding() && getDefaultValue() != null) {
-            throw new IllegalArgumentException("Bindable parameters Binding<?> cannot have default values. " +
+            throw new UnrulyException("Bindable parameters Binding<?> cannot have default values. " +
                     "For example : @Nullable(defaultValue = \"10\") Binding<Integer> value" + toString());
         }
     }
