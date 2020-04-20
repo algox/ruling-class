@@ -227,6 +227,7 @@ public class ActionBuilderTest {
 
     @Test(expected = UnrulyException.class)
     public void testInnerClass() {
+        // TODO : Fix inner class/new instance
         Action action = ActionBuilder
                 .with(new TriAction<String, Integer, Map<String, Integer>>() {
                     @Override
