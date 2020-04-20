@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.lib.spring.util.ClassUtils;
 
@@ -63,7 +64,7 @@ public final class LambdaUtils {
      *
      * @param target Lambda object
      * @return Serialized form of the given lambda.
-     * @throws IllegalStateException if the given target object really isn't a Lambda or if we are unable to deserialize the Lambda.
+     * @throws UnrulyException if the given target object really isn't a Lambda or if we are unable to deserialize the Lambda.
      */
     public static SerializedLambda getSerializedLambda(Serializable target) {
         Assert.notNull(target, "target cannot be null.");
@@ -72,20 +73,20 @@ public final class LambdaUtils {
         try {
             // Make sure we found the method
             if (writeReplaceMethod == null) {
-                throw new IllegalStateException("Unable to find writeReplace method! Not a SerializedLambda?");
+                throw new UnrulyException("Unable to find writeReplace method! Not a SerializedLambda?");
             }
             // Make it callable
             writeReplaceMethod.setAccessible(true);
             Object result = writeReplaceMethod.invoke(target);
 
             if (!(result instanceof SerializedLambda)) {
-                throw new IllegalStateException("writeReplaceMethod did not return a SerializedLambda ["
+                throw new UnrulyException("writeReplaceMethod did not return a SerializedLambda ["
                         + result + "]. is this Lambda?");
             }
 
             return (SerializedLambda) writeReplaceMethod.invoke(target);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException("Unable to execute writeReplace method! [" + writeReplaceMethod + "]");
+            throw new UnrulyException("Unable to execute writeReplace method! [" + writeReplaceMethod + "]");
         }
     }
 
@@ -108,7 +109,7 @@ public final class LambdaUtils {
      *
      * @param lambda serialized lambda form
      * @return Lambda implementation class.
-     * @throws IllegalStateException if we are unable to load the implementing Class.
+     * @throws UnrulyException if we are unable to load the implementing Class.
      */
     public static Class<?> getImplementationClass(SerializedLambda lambda) {
         Assert.notNull(lambda, "lambda cannot be null.");
@@ -118,7 +119,7 @@ public final class LambdaUtils {
             className = lambda.getImplClass().replaceAll("/", ".");
             return ClassUtils.forName(className, null);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Unable to load the implementing Lambda class [" + className + "]");
+            throw new UnrulyException("Unable to load the implementing Lambda class [" + className + "]");
         }
     }
 
@@ -128,7 +129,7 @@ public final class LambdaUtils {
      * @param lambda serialized lambda form
      * @param implementingClass Lambda implementation class.
      * @return Lambda implementation method.
-     * @throws IllegalStateException if we are unable to locate the Lambda implementing method.
+     * @throws UnrulyException if we are unable to locate the Lambda implementing method.
      */
     public static Method getImplementationMethod(SerializedLambda lambda, Class<?> implementingClass) {
         Assert.notNull(lambda, "lambda cannot be null.");
@@ -138,7 +139,7 @@ public final class LambdaUtils {
                 .findFirst();
 
         if (!result.isPresent()) {
-            throw new IllegalStateException("Unable to find implementing Lambda method on class [" + implementingClass + "]");
+            throw new UnrulyException("Unable to find implementing Lambda method on class [" + implementingClass + "]");
         }
 
         return result.get();

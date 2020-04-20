@@ -56,7 +56,7 @@ public class DefaultParameterResolver implements ParameterResolver {
             result[index] = null;
 
             // See if the parameter is overriding the matching strategy to be used.
-            if (parameterDefinition.isBindable()) {
+            if (parameterDefinition.isBindSpecified()) {
                 matcher = objectFactory.create(parameterDefinition.getBindUsing());
             }
 

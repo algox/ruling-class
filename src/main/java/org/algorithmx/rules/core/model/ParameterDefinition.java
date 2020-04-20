@@ -205,7 +205,7 @@ public final class ParameterDefinition {
      * @return true if it is using Bind; false otherwise.
      * @see Bind
      */
-    public boolean isBindable() {
+    public boolean isBindSpecified() {
         return bindUsing != null;
     }
 

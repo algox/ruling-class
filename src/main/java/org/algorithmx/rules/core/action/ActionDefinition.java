@@ -46,8 +46,10 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
 
     // Action class
     private final Class<?> actionClass;
-    // then method
+    // Action method
     private final MethodDefinition action;
+    // Name of the action
+    private String name;
     // Order of the Action
     private int order;
     // Description of the Action
@@ -58,6 +60,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
         Assert.notNull(actionClass, "action class cannot be null");
         Assert.notNull(action, "action cannot be null");
         this.actionClass = actionClass;
+        this.name = action.getMethod().getName();
         this.order = order;
         this.action = action;
         this.description = description;
@@ -158,7 +161,11 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     }
 
     public String getActionName() {
-        return action.getMethod().getName();
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getOrder() {

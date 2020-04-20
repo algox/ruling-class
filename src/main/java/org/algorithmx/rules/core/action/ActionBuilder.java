@@ -23,6 +23,13 @@ import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Type;
 
+/**
+ * Builder class for Actions.
+ *
+ * @author Max Arulananthan
+ * @since 1.0
+ *
+ */
 public final class ActionBuilder {
 
     private final FunctionalAction action;
@@ -56,6 +63,11 @@ public final class ActionBuilder {
         return new ActionBuilder(action);
     }
 
+    /**
+     * As the name suggestion, this create an Action that does nothing.
+     *
+     * @return do nothing action.
+     */
     public static ActionBuilder emptyAction() {
         return ActionBuilder.withNoArgs(() -> {});
     }
@@ -229,7 +241,7 @@ public final class ActionBuilder {
             throw new UnrulyException("There are no args found in the Action");
         }
 
-        if (index < 0 || index > definition.getMethodDefinition().getParameterDefinitions().length) {
+        if (index < 0 || index >= definition.getMethodDefinition().getParameterDefinitions().length) {
             throw new UnrulyException("Invalid parameter index [" + index + "] it must be between [0, "
                     + definition.getMethodDefinition().getParameterDefinitions().length + "]");
         }
@@ -258,6 +270,17 @@ public final class ActionBuilder {
     }
 
     /**
+     * Provide a name for the Action.
+     *
+     * @param name name of the Action.
+     * @return ActionBuilder for fluency.
+     */
+    public ActionBuilder name(String name) {
+        this.definition.setName(name);
+        return this;
+    }
+
+    /**
      * Provide a description for the Action.
      *
      * @param description description of the Action.
@@ -275,13 +298,5 @@ public final class ActionBuilder {
      */
     public Action build() {
         return new DelegatingAction(action, definition);
-    }
-
-    public Action getAction() {
-        return action;
-    }
-
-    public ActionDefinition getDefinition() {
-        return definition;
     }
 }

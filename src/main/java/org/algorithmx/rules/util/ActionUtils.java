@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.action.DefaultAction;
 import org.algorithmx.rules.core.action.ActionDefinition;
@@ -44,6 +45,11 @@ public final class ActionUtils {
      * @return new Action Definition.
      */
     public static ActionDefinition load(Serializable action, String description) {
+
+        if (!LambdaUtils.isLambda(action)) {
+            throw new UnrulyException("Supplied non Functional interface [" + action.getClass().getName() + "]");
+        }
+
         SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(action);
         return ActionDefinition.load(serializedLambda, description);
     }
