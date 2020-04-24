@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.validation;
 
-import org.algorithmx.rules.annotation.Bind;
+import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
@@ -88,7 +88,7 @@ public class BindingValidationRule<T> extends ValidationRule {
      * @return true if the validation condition is met; false otherwise.
      */
     @Given
-    public boolean when(@Bind(using = MatchByTypeMatchingStrategy.class) RuleContext ruleContext) {
+    public boolean when(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ruleContext) {
         Binding<T> binding = supplier != null ? supplier.get() : ruleContext.getBindings().getBinding(bindingName);
         return when(binding);
     }

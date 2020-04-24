@@ -113,7 +113,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * @param <T> Annotation Type.
      * @return all the associated actions
      */
-    private static <T extends Annotation> ActionDefinition[] load(Class<?> c, Class<T> annotationClass) {
+    public static <T extends Annotation> ActionDefinition[] load(Class<?> c, Class<T> annotationClass) {
         MethodDefinition[] actions = MethodDefinition.load(c, (Method method) ->
                 void.class.equals(method.getReturnType()) && Modifier.isPublic(method.getModifiers())
                         && method.getAnnotation(annotationClass) != null);

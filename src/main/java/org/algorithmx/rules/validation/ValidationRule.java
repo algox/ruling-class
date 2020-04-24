@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.validation;
 
-import org.algorithmx.rules.annotation.Bind;
+import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
@@ -100,8 +100,8 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @param errors container of errors (must be defined).
      */
     @Otherwise
-    public void otherwise(@Bind(using = MatchByTypeMatchingStrategy.class) RuleContext ctx,
-                          @Bind(using = MatchByTypeMatchingStrategy.class) ValidationErrorContainer errors) {
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx,
+                          @Match(using = MatchByTypeMatchingStrategy.class) ValidationErrorContainer errors) {
         Map<String, Binding> matches = resolveParameters(ctx);
         ValidationError error = createValidationError(getErrorCode(), getSeverity(), getErrorMessage(), matches);
         if (error != null) errors.add(error);

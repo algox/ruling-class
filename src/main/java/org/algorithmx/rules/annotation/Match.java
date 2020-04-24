@@ -35,12 +35,12 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Bind {
+public @interface Match {
 
     /**
      * Determines the Binding strategy to use (during parameter matching).
      *
-     * @return Binding to use. Defaults to MATCH_BY_NAME_AND_TYPE.
+     * @return Binding Strategy to use. Defaults to MATCH_BY_NAME.
      */
     Class<? extends BindingMatchingStrategy> using();
 }

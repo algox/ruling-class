@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.model;
 
-import org.algorithmx.rules.annotation.Bind;
+import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
@@ -121,7 +121,7 @@ public final class ParameterDefinition {
     }
 
     private static Class<? extends BindingMatchingStrategy> getBindUsing(Method method, int index) {
-        Bind result = method.getParameters()[index].getAnnotation(Bind.class);
+        Match result = method.getParameters()[index].getAnnotation(Match.class);
         return result != null ? result.using() : null;
     }
 
@@ -225,17 +225,17 @@ public final class ParameterDefinition {
     }
 
     /**
-     * Determines whether this parameter is using custom Bind. This done by specifying @Bind on the parameter.
+     * Determines whether this parameter is using custom Match. This done by specifying @Match on the parameter.
      *
-     * @return true if it is using Bind; false otherwise.
-     * @see Bind
+     * @return true if it is using Match; false otherwise.
+     * @see Match
      */
     public boolean isBindSpecified() {
         return bindUsing != null;
     }
 
     /**
-     * Return the strategy class to use when custom Bind is specified.
+     * Return the strategy class to use when custom Match is specified.
      *
      * @return BindingMatchingStrategy class is one is specified; null otherwise.
      */
