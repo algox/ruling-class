@@ -21,6 +21,7 @@ import org.algorithmx.rules.annotation.Bind;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
@@ -50,13 +51,15 @@ public final class ParameterDefinition {
     private final String description;
     private Type type;
     private final boolean required;
-    private final String defaultValue;
+    private final String defaultValueText;
     private final Class<? extends BindingMatchingStrategy> bindUsing;
     private final Annotation[] annotations;
     private Type bindingType;
 
+    private Object defaultValue = null;
+
     private ParameterDefinition(int index, String name, Type type, String description, boolean required,
-                                String defaultValue, Class<? extends BindingMatchingStrategy> bindUsing,
+                                String defaultValueText, Class<? extends BindingMatchingStrategy> bindUsing,
                                 Annotation...annotations) {
         super();
         Assert.isTrue(index >= 0, "Parameter index must be >= 0");
@@ -68,14 +71,14 @@ public final class ParameterDefinition {
         this.index = index;
         this.annotations = annotations;
         this.required = required;
-        this.defaultValue = defaultValue;
+        this.defaultValueText = defaultValueText;
         this.bindUsing = bindUsing;
         setBindingType(type);
         validate();
     }
 
     private void validate() {
-        if (isBinding() && getDefaultValue() != null) {
+        if (isBinding() && getDefaultValueText() != null) {
             throw new UnrulyException("Bindable parameters Binding<?> cannot have default values. " +
                     "For example : @Nullable(defaultValue = \"10\") Binding<Integer> value" + toString());
         }
@@ -95,10 +98,10 @@ public final class ParameterDefinition {
 
         for (int i = 0; i < method.getGenericParameterTypes().length; i++) {
             boolean required = isRequired(method, i);
-            String defaultValue = getDefaultValue(method, i);
+            String defaultValueText = getDefaultValueText(method, i);
             Description descriptionAnnotation = method.getParameters()[i].getAnnotation(Description.class);
             result[i] = new ParameterDefinition(i, parameterNames[i], method.getGenericParameterTypes()[i],
-                    descriptionAnnotation != null ? descriptionAnnotation.value() : null, required, defaultValue,
+                    descriptionAnnotation != null ? descriptionAnnotation.value() : null, required, defaultValueText,
                     getBindUsing(method, i), method.getParameterAnnotations()[i]);
         }
 
@@ -109,7 +112,7 @@ public final class ParameterDefinition {
         return method.getParameters()[index].getAnnotation(Nullable.class) == null;
     }
 
-    private static String getDefaultValue(Method method, int index) {
+    private static String getDefaultValueText(Method method, int index) {
         Nullable nullable = method.getParameters()[index].getAnnotation(Nullable.class);
         return nullable == null ? null
                 : Nullable.NOT_APPLICABLE.equals(nullable.defaultValue())
@@ -190,12 +193,34 @@ public final class ParameterDefinition {
     }
 
     /**
-     * Default value for this parameter if one is specified.
+     * Default value text for this parameter if one is specified.
      *
-     * @return default vslue if specified; null otherwise.
+     * @return default value text if specified; null otherwise.
      * @see Nullable
      */
-    public String getDefaultValue() {
+    public String getDefaultValueText() {
+        return defaultValueText;
+    }
+
+    /**
+     * Returns the default value for this parameter definition.
+     *
+     * @param converter converter to be used.
+     * @return default value if one exists; null otherwise.
+     */
+    public Object getDefaultValue(Converter<String, ?> converter) {
+
+        if (defaultValue != null) return defaultValue;
+
+        if (getDefaultValueText() == null) return null;
+
+        if (!converter.canConvert(String.class, getType())) {
+            throw new UnrulyException("Invalid Converter supplied [" + converter
+                    + "]. It cannot convert String -> " + getType() + "]");
+        }
+
+        this.defaultValue = converter.convert(getDefaultValueText(), getType());
+
         return defaultValue;
     }
 

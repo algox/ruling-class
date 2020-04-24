@@ -120,7 +120,7 @@ public class ActionBuilderTest {
         Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 5);
         Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getName().equals("flag"));
         Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getType().equals(Boolean.class));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getDefaultValue().equals("yes"));
+        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getDefaultValueText().equals("yes"));
     }
 
     @Test

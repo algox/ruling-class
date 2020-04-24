@@ -117,17 +117,17 @@ public class DefaultParameterResolver implements ParameterResolver {
 
             // There was no match; let's see if there is default value
             if (matches[i].getBinding() == null) {
-                if (matches[i].getDefinition().getDefaultValue() != null) {
+                if (matches[i].getDefinition().getDefaultValueText() != null) {
                     Converter<String, ?> converter = registry.find(String.class, matches[i].getDefinition().getType());
 
                     if (converter == null) {
                         throw new BindingException("Cannot find a converter that will convert default value ["
-                                + matches[i].getDefinition().getDefaultValue() + "] to type ["
+                                + matches[i].getDefinition().getDefaultValueText() + "] to type ["
                                 + matches[i].getDefinition().getType() + "]", definition, matches[i].getDefinition(),
                                 null, bindings);
                     }
 
-                    value = converter.convert(matches[i].getDefinition().getDefaultValue(), matches[i].getDefinition().getType());
+                    value = matches[i].getDefinition().getDefaultValue(converter);
                 } else if (!matches[i].getDefinition().isRequired()) {
                      value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
                 } else {
