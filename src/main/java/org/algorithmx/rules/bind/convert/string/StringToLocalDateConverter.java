@@ -21,26 +21,28 @@ import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 /**
- * Converts a String value to a Double.
+ * Converts a String value to a LocalDate.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToDoubleConverter extends ConverterTemplate<String, Double> {
+public class StringToLocalDateConverter extends ConverterTemplate<String, LocalDate> {
 
-    public StringToDoubleConverter() {
+    public StringToLocalDateConverter() {
         super();
     }
 
     @Override
-    public Double convert(String value, Type toType) {
+    public LocalDate convert(String value, Type toType) throws ConversionException {
         if (value == null) return null;
 
         try {
-            return Double.valueOf(value);
-        } catch (NumberFormatException e) {
+            return LocalDate.parse(value);
+        } catch (DateTimeParseException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
     }

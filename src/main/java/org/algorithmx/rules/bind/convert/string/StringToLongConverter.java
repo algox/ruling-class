@@ -20,6 +20,8 @@ package org.algorithmx.rules.bind.convert.string;
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
+import java.lang.reflect.Type;
+
 /**
  * Converts a String value to a Long.
  *
@@ -33,7 +35,7 @@ public class StringToLongConverter extends ConverterTemplate<String, Long> {
     }
 
     @Override
-    public Long convert(String value) {
+    public Long convert(String value, Type toType) {
         if (value == null) return null;
 
         try {

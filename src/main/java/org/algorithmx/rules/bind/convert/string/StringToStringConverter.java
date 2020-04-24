@@ -19,6 +19,8 @@ package org.algorithmx.rules.bind.convert.string;
 
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
+import java.lang.reflect.Type;
+
 /**
  * Converts a String value to a String.
  *
@@ -32,7 +34,7 @@ public class StringToStringConverter extends ConverterTemplate<String, String> {
     }
 
     @Override
-    public String convert(String value) {
+    public String convert(String value, Type toType) {
         return value;
     }
 }

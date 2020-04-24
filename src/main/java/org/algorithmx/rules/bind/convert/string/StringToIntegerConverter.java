@@ -20,6 +20,8 @@ package org.algorithmx.rules.bind.convert.string;
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
+import java.lang.reflect.Type;
+
 /**
  * Converts a String value to a Integer.
  *
@@ -33,7 +35,7 @@ public class StringToIntegerConverter extends ConverterTemplate<String, Integer>
     }
 
     @Override
-    public Integer convert(String value) {
+    public Integer convert(String value, Type toType) {
         if (value == null) return null;
 
         try {

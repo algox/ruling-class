@@ -23,24 +23,24 @@ import org.algorithmx.rules.bind.convert.ConverterTemplate;
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Double.
+ * Converts a String value to a Enum.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToDoubleConverter extends ConverterTemplate<String, Double> {
+public class StringToEnumConverter extends ConverterTemplate<String, Enum> {
 
-    public StringToDoubleConverter() {
+    public StringToEnumConverter() {
         super();
     }
 
     @Override
-    public Double convert(String value, Type toType) {
+    public Enum convert(String value, Type toType) throws ConversionException {
         if (value == null) return null;
 
         try {
-            return Double.valueOf(value);
-        } catch (NumberFormatException e) {
+            return Enum.valueOf((Class) toType, value);
+        } catch (IllegalArgumentException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
     }

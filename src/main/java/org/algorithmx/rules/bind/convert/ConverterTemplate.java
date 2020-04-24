@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.bind.convert;
 
+import org.algorithmx.rules.lib.apache.reflect.TypeUtils;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
@@ -68,7 +69,7 @@ public abstract class ConverterTemplate<T, R> implements Converter<T, R> {
 
     @Override
     public final boolean canConvert(Type sourceType, Type targetType) {
-        return this.sourceType.equals(sourceType) && this.targetType.equals(targetType);
+        return this.sourceType.equals(sourceType) && TypeUtils.isAssignable(targetType, this.targetType);
     }
 
     protected Type captureType(int index) {

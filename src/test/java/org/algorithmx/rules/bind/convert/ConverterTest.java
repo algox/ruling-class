@@ -22,6 +22,12 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * Converter tests.
@@ -41,8 +47,8 @@ public class ConverterTest {
         Converter<String, BigDecimal> converter = registry.find(String.class, BigDecimal.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, BigDecimal.class));
-        Assert.assertTrue(converter.convert("100.004").equals(new BigDecimal("100.004")));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("100.004", BigDecimal.class).equals(new BigDecimal("100.004")));
+        converter.convert("xxxx", BigDecimal.class);
     }
 
     @Test(expected = ConversionException.class)
@@ -51,8 +57,8 @@ public class ConverterTest {
         Converter<String, BigInteger> converter = registry.find(String.class, BigInteger.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, BigInteger.class));
-        Assert.assertTrue(converter.convert("11223423435456546").equals(new BigInteger("11223423435456546")));
-        converter.convert("xxxxx");
+        Assert.assertTrue(converter.convert("11223423435456546", BigInteger.class).equals(new BigInteger("11223423435456546")));
+        converter.convert("xxxxx", BigInteger.class);
     }
 
     @Test
@@ -61,10 +67,10 @@ public class ConverterTest {
         Converter<String, Boolean> converter = registry.find(String.class, Boolean.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Boolean.class));
-        Assert.assertTrue(converter.convert("y").equals(true));
-        Assert.assertTrue(converter.convert("true").equals(true));
-        Assert.assertTrue(converter.convert("false").equals(false));
-        Assert.assertTrue(converter.convert("").equals(false));
+        Assert.assertTrue(converter.convert("y", Boolean.class).equals(true));
+        Assert.assertTrue(converter.convert("true", Boolean.class).equals(true));
+        Assert.assertTrue(converter.convert("false", Boolean.class).equals(false));
+        Assert.assertTrue(converter.convert("", Boolean.class).equals(false));
     }
 
     @Test(expected = ConversionException.class)
@@ -74,8 +80,8 @@ public class ConverterTest {
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Byte.class));
         byte b = 123;
-        Assert.assertTrue(converter.convert("123").equals(b));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("123", Byte.class).equals(b));
+        converter.convert("xxxx", Byte.class);
     }
 
     @Test(expected = ConversionException.class)
@@ -84,8 +90,8 @@ public class ConverterTest {
         Converter<String, Double> converter = registry.find(String.class, Double.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Double.class));
-        Assert.assertTrue(converter.convert("123.45555").equals(123.45555));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("123.45555", Double.class).equals(123.45555));
+        converter.convert("xxxx", Double.class);
     }
 
     @Test(expected = ConversionException.class)
@@ -94,8 +100,8 @@ public class ConverterTest {
         Converter<String, Float> converter = registry.find(String.class, Float.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Float.class));
-        Assert.assertTrue(converter.convert("123.455").equals(123.455f));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("123.455", Float.class).equals(123.455f));
+        converter.convert("xxxx", Float.class);
     }
 
     @Test(expected = ConversionException.class)
@@ -104,9 +110,9 @@ public class ConverterTest {
         Converter<String, Integer> converter = registry.find(String.class, Integer.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Integer.class));
-        Assert.assertTrue(converter.convert("123455").equals(123455));
-        Assert.assertTrue(converter.convert("123455.50").equals(123456));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("123455", Integer.class).equals(123455));
+        Assert.assertTrue(converter.convert("123455.50", Integer.class).equals(123456));
+        converter.convert("xxxx", Integer.class);
     }
 
     @Test(expected = ConversionException.class)
@@ -115,9 +121,9 @@ public class ConverterTest {
         Converter<String, Long> converter = registry.find(String.class, Long.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Long.class));
-        Assert.assertTrue(converter.convert("1234553892374").equals(1234553892374l));
-        Assert.assertTrue(converter.convert("1234553892374.50").equals(1234553892375l));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("1234553892374", Long.class).equals(1234553892374l));
+        Assert.assertTrue(converter.convert("1234553892374.50", Long.class).equals(1234553892375l));
+        converter.convert("xxxx", Long.class);
     }
 
     @Test(expected = ConversionException.class)
@@ -126,8 +132,8 @@ public class ConverterTest {
         Converter<String, Short> converter = registry.find(String.class, Short.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, Short.class));
-        Assert.assertTrue(converter.convert("64001").equals(64001));
-        converter.convert("xxxx");
+        Assert.assertTrue(converter.convert("64001", Short.class).equals(64001));
+        converter.convert("xxxx", Short.class);
     }
 
     @Test
@@ -136,6 +142,57 @@ public class ConverterTest {
         Converter<String, String> converter = registry.find(String.class, String.class);
         Assert.assertTrue(converter != null);
         Assert.assertTrue(converter.canConvert(String.class, String.class));
-        Assert.assertTrue(converter.convert("xxxxx").equals("xxxxx"));
+        Assert.assertTrue(converter.convert("xxxxx",String.class).equals("xxxxx"));
+    }
+
+    @Test(expected = ConversionException.class)
+    public void stringToEnumTest() {
+        ConverterRegistry registry = ConverterRegistry.create();
+        Converter<String, DAYS> converter = registry.find(String.class, DAYS.class);
+        Assert.assertTrue(converter != null);
+        Assert.assertTrue(converter.canConvert(String.class, DAYS.class));
+        Assert.assertTrue(converter.convert("TUESDAY", DAYS.class).equals(DAYS.TUESDAY));
+        converter.convert("xxxx", DAYS.class);
+    }
+
+    @Test(expected = ConversionException.class)
+    public void stringToLocalDateTest() {
+        ConverterRegistry registry = ConverterRegistry.create();
+        Converter<String, LocalDate> converter = registry.find(String.class, LocalDate.class);
+        Assert.assertTrue(converter != null);
+        Assert.assertTrue(converter.canConvert(String.class, LocalDate.class));
+        Assert.assertTrue(converter.convert(LocalDate.now().toString(), LocalDate.class).equals(LocalDate.now()));
+        converter.convert("xxxx", LocalDate.class);
+    }
+
+    @Test(expected = ConversionException.class)
+    public void stringToLocalDateTimeTest() {
+        ConverterRegistry registry = ConverterRegistry.create();
+        Converter<String, LocalDateTime> converter = registry.find(String.class, LocalDateTime.class);
+        Assert.assertTrue(converter != null);
+        Assert.assertTrue(converter.canConvert(String.class, LocalDateTime.class));
+        LocalDateTime time = LocalDateTime.now();
+        Assert.assertTrue(converter.convert(time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), LocalDateTime.class).equals(time));
+        converter.convert("xxxx", LocalDateTime.class);
+    }
+
+    @Test(expected = ConversionException.class)
+    public void stringToDateTest() throws ParseException {
+        ConverterRegistry registry = ConverterRegistry.create();
+        Converter<String, Date> converter = registry.find(String.class, Date.class);
+        Assert.assertTrue(converter != null);
+        Assert.assertTrue(converter.canConvert(String.class, Date.class));
+        LocalDateTime time = LocalDateTime.now();
+        Date date1 = converter.convert(LocalDate.now().toString(), Date.class);
+        Date date2 = converter.convert(time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), Date.class);
+        SimpleDateFormat SIMPLE = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Assert.assertTrue(SIMPLE.parse(LocalDate.now().toString()).equals(date1));
+        Assert.assertTrue(ISO8601.parse(time.toString()).equals(date2));
+        converter.convert("xxxx", Date.class);
+    }
+
+    private enum DAYS {
+        MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
     }
 }

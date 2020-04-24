@@ -21,6 +21,7 @@ import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 import org.algorithmx.rules.lib.apache.math.NumberUtils;
 
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 
 /**
@@ -36,7 +37,7 @@ public class StringToBigIntegerConverter extends ConverterTemplate<String, BigIn
     }
 
     @Override
-    public BigInteger convert(String value) {
+    public BigInteger convert(String value, Type toType) {
         if (value == null) return null;
 
         try {

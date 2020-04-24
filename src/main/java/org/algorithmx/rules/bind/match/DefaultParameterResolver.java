@@ -127,7 +127,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                                 null, bindings);
                     }
 
-                    value = converter.convert(matches[i].getDefinition().getDefaultValue());
+                    value = converter.convert(matches[i].getDefinition().getDefaultValue(), matches[i].getDefinition().getType());
                 } else if (!matches[i].getDefinition().isRequired()) {
                      value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
                 } else {

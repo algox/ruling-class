@@ -73,8 +73,19 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * @return converter if one is found; null otherwise.
      */
     public <S, T> Converter<S, T> find(Type source, Type target) {
-        Map<Type, Converter> result = converters.get(source);
-        return result.get(target);
+        Map<Type, Converter> matches = converters.get(source);
+        Converter<S, T> result = matches.get(target);
+
+        if (result == null) {
+            for (Converter converter : matches.values()) {
+                if (converter.canConvert(source, target)) {
+                    result = converter;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     private void init() {
@@ -88,5 +99,9 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         register(new StringToLongConverter());
         register(new StringToShortConverter());
         register(new StringToStringConverter());
+        register(new StringToEnumConverter());
+        register(new StringToLocalDateConverter());
+        register(new StringToLocalDateTimeConverter());
+        register(new StringToDateConverter());
     }
 }

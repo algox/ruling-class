@@ -70,8 +70,9 @@ public interface Converter<T, R> {
      * Convert the source object of type T to target type R.
      *
      * @param value source value.
+     * @param toType target type.
      * @return converted value.
      * @throws ConversionException thrown in case of an error.
      */
-    R convert(T value) throws ConversionException;
+    R convert(T value, Type toType) throws ConversionException;
 }

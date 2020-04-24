@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind.convert.string;
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
 /**
@@ -35,7 +36,7 @@ public class StringToBigDecimalConverter extends ConverterTemplate<String, BigDe
     }
 
     @Override
-    public BigDecimal convert(String value) {
+    public BigDecimal convert(String value, Type toType) {
         if (value == null) return null;
 
         try {
