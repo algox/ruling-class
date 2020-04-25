@@ -203,6 +203,9 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${version.jacoco-maven-plugin}</version>
+                <configuration>
+                    <excludes>org/algorithmx/rules/lib/**/*class</excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -213,6 +216,11 @@
                     <execution>
                         <id>default-report</id>
                         <phase>prepare-package</phase>
+                        <configuration>
+                            <excludes>
+                                <exclude>org/algorithmx/rules/lib/**/*class</exclude>
+                            </excludes>
+                        </configuration>
                         <goals>
                             <goal>report</goal>
                         </goals>
