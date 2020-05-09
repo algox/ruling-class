@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Functional Action taking in three parameters.
@@ -30,7 +32,7 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface TriAction<A, B, C> extends FunctionalAction {
+public interface TriAction<A, B, C> extends Serializable {
 
     /**
      * Action logic taking in three args.
@@ -39,17 +41,6 @@ public interface TriAction<A, B, C> extends FunctionalAction {
      * @param arg1 2nd arg.
      * @param arg2 3rd arg.
      */
-    void execute(A arg0, B arg1, C arg2);
-
-    @Override
-    default void execute(Object...args) throws UnrulyException {
-        int expected = 3;
-
-        if (args == null || args.length != expected) {
-            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
-                    + (args == null ? 0 : args.length) + "]");
-        }
-
-        execute((A) args[0], (B) args[1], (C) args[2]);
-    }
+    @Action
+    void run(A arg0, B arg1, C arg2);
 }

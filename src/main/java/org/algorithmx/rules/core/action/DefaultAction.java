@@ -17,9 +17,10 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.MethodExecutor;
 
 import java.util.Arrays;
 
@@ -31,50 +32,52 @@ import java.util.Arrays;
  */
 public class DefaultAction implements Action {
 
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.create();
-    private final ActionDefinition actionDefinition;
+    private final MethodDefinition methodDefinition;
+    private MethodExecutor methodExecutor;
     private final Object target;
 
     /**
      * Ctor taking meta information and the target object.
      *
-     * @param actionDefinition meta info.
+     * @param methodDefinition meta info.
      * @param target action target.
      */
-    public DefaultAction(ActionDefinition actionDefinition, Object target) {
+    public DefaultAction(Object target, MethodDefinition methodDefinition) {
         super();
-        Assert.notNull(actionDefinition, "actionDefinition cannot be null.");
-        this.actionDefinition = actionDefinition;
+        Assert.notNull(methodDefinition, "methodDefinition cannot be null.");
+        this.methodDefinition = methodDefinition;
         this.target = target;
+        this.methodExecutor = MethodExecutor.create(methodDefinition.getMethod());
     }
 
     @Override
-    public void execute(Object... args) {
+    public void run(Object... args) {
         try {
             // Execute the Action Method
-            methodExecutor.execute(target, actionDefinition.getMethodDefinition(), args);
+            methodExecutor.execute(target, args);
         } catch (UnrulyException e) {
+            // TODO : Add proper parameter info
             throw e;
         } catch (Exception e) {
+            // TODO : Add proper parameter info
             UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
-                    + getActionDefinition().getActionName()
-                    + "] Method [" + getActionDefinition().getMethodDefinition().getMethod()
+                    + getMethodDefinition().getName() + "] Method [" + getMethodDefinition().getMethod()
                     + "] Args [" + Arrays.toString(args) + "]", e);
             throw ex;
         }
     }
 
     @Override
-    public ActionDefinition getActionDefinition() {
-        return actionDefinition;
+    public final MethodDefinition getMethodDefinition() {
+        return methodDefinition;
     }
 
     @Override
-    public Object getTarget() {
+    public final Object getTarget() {
         return target;
     }
 
-    public void setMethodExecutor(BindableMethodExecutor methodExecutor) {
+    public void setMethodExecutor(MethodExecutor methodExecutor) {
         Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
         this.methodExecutor = methodExecutor;
     }

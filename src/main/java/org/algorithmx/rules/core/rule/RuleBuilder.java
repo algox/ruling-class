@@ -95,7 +95,7 @@ public abstract class RuleBuilder {
 
     public RuleBuilder then(Action action) {
         Assert.notNull(action, "action cannot be null.");
-        action.getActionDefinition().setOrder(thenActions.size());
+        //action.getActionDefinition().setOrder(thenActions.size());
         this.thenActions.add(action);
         return this;
     }
@@ -158,12 +158,13 @@ public abstract class RuleBuilder {
         ActionDefinition[] actionDefinitions = new ActionDefinition[getThenActions().size()];
 
         for (int i = 0; i < actionDefinitions.length; i++) {
-            actionDefinitions[i] = getThenActions().get(i).getActionDefinition();
+            //actionDefinitions[i] = getThenActions().get(i).getActionDefinition();
         }
 
-        RuleDefinition ruleDefinition = new RuleDefinition(getRuleClass(), getName(), getDescription(),
+        /*RuleDefinition ruleDefinition = new RuleDefinition(getRuleClass(), getName(), getDescription(),
                 getCondition().getConditionDefinition(), actionDefinitions,
-                getOtherwiseAction() != null ? getOtherwiseAction().getActionDefinition() : null);
+                getOtherwiseAction() != null ? getOtherwiseAction().getActionDefinition() : null);*/
+        RuleDefinition ruleDefinition = null;
 
         // Call back to set the RuleDefinition
         if (getTarget() instanceof RuleDefinitionAware) {

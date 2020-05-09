@@ -17,11 +17,10 @@
  */
 package org.algorithmx.rules.core.model;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Order;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -38,25 +37,28 @@ import java.util.stream.Collectors;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class MethodDefinition {
+public final class MethodDefinition implements Comparable<MethodDefinition> {
 
     private final Method method;
-    // TODO : Static method handle
-    private final MethodHandle methodHandle;
     private final ParameterDefinition[] parameterDefinitions;
     private final Map<String, ParameterDefinition> paramNameMap = new HashMap<>();
 
-    private MethodDefinition(Method method, MethodHandle methodHandle, ParameterDefinition...parameterDefinitions) {
+    // Name of the action
+    private String name;
+    // Order of the Action
+    private int order;
+    // Description of the Action
+    private String description;
+
+    public MethodDefinition(Method method, int order, String description, ParameterDefinition...parameterDefinitions) {
         super();
         Assert.notNull(method, "method cannot be null");
-        Assert.notNull(method, "methodHandle cannot be null");
         this.method = method;
-        this.methodHandle = methodHandle;
+        this.name = method.getName();
+        this.order = order;
+        this.description = description;
         this.parameterDefinitions = parameterDefinitions;
-
-        if (parameterDefinitions == null || parameterDefinitions.length == 0) return;
-        // Create the param name map
-        Arrays.stream(parameterDefinitions).forEach(param -> paramNameMap.put(param.getName(), param));
+        createParameterNameIndex();
     }
 
     /**
@@ -83,19 +85,22 @@ public final class MethodDefinition {
     public static MethodDefinition[] load(Class<?> c, Method...methods) {
         Assert.notNull(methods, "methods cannot be null");
         MethodDefinition[] result = new MethodDefinition[methods.length];
-        MethodHandles.Lookup lookup = MethodHandles.lookup().in(c);
 
         for (int i = 0; i < methods.length; i++) {
             Method match = methods[i];
             match.setAccessible(true);
-
-            try {
-                result[i] = new MethodDefinition(match, lookup.unreflect(match), ParameterDefinition.load(methods[i]));
-            } catch (IllegalAccessException e) {
-                throw new UnrulyException("Unable to getBinding MethodHandle for method [" + match + "]", e);
-            }
+            result[i] = new MethodDefinition(match, 0, null, ParameterDefinition.load(methods[i]));
         }
 
+        return result;
+    }
+
+    public static MethodDefinition load(Method method) {
+        Assert.notNull(method, "method cannot be null");
+        Description descriptionAnnotation = method.getAnnotation(Description.class);
+        Order orderAnnotation = method.getAnnotation(Order.class);
+        MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : 0,
+                descriptionAnnotation != null ? descriptionAnnotation.value() : null, ParameterDefinition.load(method));
         return result;
     }
 
@@ -127,6 +132,10 @@ public final class MethodDefinition {
         return getParameterDefinitions()[index];
     }
 
+    public void setParameterDefinition(int index, ParameterDefinition parameterDefinition) {
+        getParameterDefinitions()[index] = parameterDefinition;
+    }
+
     /**
      * Parameter Definition with the given name.
      *
@@ -138,12 +147,57 @@ public final class MethodDefinition {
     }
 
     /**
-     * Method Handle for optimized execution of the method at runtime.
+     * Retrieves the name of this definition.
      *
-     * @return method handle.
+     * @return name of the method or overridden value.
      */
-    public MethodHandle getMethodHandle() {
-        return methodHandle;
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Overrides the name of the method.
+     *
+     * @param name new value/
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Order of this method in a group.
+     *
+     * @return order.
+     */
+    public Integer getOrder() {
+        return order;
+    }
+
+    /**
+     * Sets the order of this method in a group.
+     *
+     * @param order value
+     */
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    /**
+     * Description of this method.
+     *
+     * @return method description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description of this method.
+     *
+     * @param description method description.
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -161,7 +215,7 @@ public final class MethodDefinition {
      * @return simplified method signature.
      */
     public String getSignature() {
-        StringBuilder result = new StringBuilder(method.getName() + "(");
+        StringBuilder result = new StringBuilder(getName() + "(");
         result.append(Arrays.stream(parameterDefinitions)
                 .map(p -> p.getTypeName() + " " + p.getName())
                 .collect(Collectors.joining(", ")));
@@ -169,12 +223,30 @@ public final class MethodDefinition {
         return result.toString();
     }
 
+    /**
+     * Creates a lookup between the parameter and it's name.
+     */
+    public void createParameterNameIndex() {
+        if (parameterDefinitions == null || parameterDefinitions.length == 0) return;
+        paramNameMap.clear();
+        // Create the param name map
+        Arrays.stream(parameterDefinitions).forEach(param -> paramNameMap.put(param.getName(), param));
+    }
+
+    @Override
+    public int compareTo(MethodDefinition other) {
+        return getOrder().compareTo(other.getOrder());
+    }
+
     @Override
     public String toString() {
         return "MethodDefinition{" +
                 "method=" + method +
-                ", methodHandle=" + methodHandle +
                 ", parameterDefinitions=" + Arrays.toString(parameterDefinitions) +
+                ", paramNameMap=" + paramNameMap +
+                ", name='" + name + '\'' +
+                ", order=" + order +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

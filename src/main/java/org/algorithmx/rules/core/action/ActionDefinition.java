@@ -42,12 +42,11 @@ import java.util.Arrays;
  * @author Max Arulananthan
  * @since 1.0
  */
+@Deprecated
 public final class ActionDefinition implements Comparable<ActionDefinition> {
 
-    // Action class
-    private final Class<?> actionClass;
     // Action method
-    private final MethodDefinition action;
+    private final MethodDefinition methodDefinition;
     // Name of the action
     private String name;
     // Order of the Action
@@ -55,14 +54,12 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     // Description of the Action
     private String description;
 
-    private ActionDefinition(Class<?> actionClass, int order, MethodDefinition action, String description) {
+    public ActionDefinition(MethodDefinition methodDefinition, int order, String description) {
         super();
-        Assert.notNull(actionClass, "action class cannot be null");
-        Assert.notNull(action, "action cannot be null");
-        this.actionClass = actionClass;
-        this.name = action.getMethod().getName();
+        Assert.notNull(methodDefinition, "action cannot be null");
+        this.name = methodDefinition.getMethod().getName();
         this.order = order;
-        this.action = action;
+        this.methodDefinition = methodDefinition;
         this.description = description;
     }
 
@@ -124,7 +121,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
         for (int i = 0; i < result.length; i++) {
             Description descriptionAnnotation = actions[i].getMethod().getAnnotation(Description.class);
             Order orderAnnotation = actions[i].getMethod().getAnnotation(Order.class);
-            result[i] = new ActionDefinition(c,  orderAnnotation != null ? orderAnnotation.value() : 0, actions[i],
+            result[i] = new ActionDefinition(actions[i], orderAnnotation != null ? orderAnnotation.value() : 0,
                     descriptionAnnotation != null ? descriptionAnnotation.value() : null);
         }
 
@@ -148,16 +145,12 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
                 "Action Lambda not defined correctly. Please define method public void then(...)");
 
         MethodDefinition[] actions = MethodDefinition.load(implementationClass, implementationMethod);
-        return new ActionDefinition(implementationClass, 0, actions[0], description);
+        return new ActionDefinition(actions[0],0,  description);
     }
 
     @Override
     public int compareTo(ActionDefinition other) {
         return getOrder().compareTo(other.getOrder());
-    }
-
-    public Class<?> getActionClass() {
-        return actionClass;
     }
 
     public String getActionName() {
@@ -185,7 +178,7 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
     }
 
     public MethodDefinition getMethodDefinition() {
-        return action;
+        return methodDefinition;
     }
 
     /**
@@ -194,16 +187,15 @@ public final class ActionDefinition implements Comparable<ActionDefinition> {
      * @return true if statically implemented; false otherwise.
      */
     public boolean isStatic() {
-        return action.isStatic();
+        return methodDefinition.isStatic();
     }
 
     @Override
     public String toString() {
         return "ActionDefinition{" +
-                "actionClass=" + actionClass +
                 "actionName=" + getActionName() +
                 ", description='" + description + '\'' +
-                ", action=" + action +
+                ", method=" + methodDefinition +
                 '}';
     }
 }

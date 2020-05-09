@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Action Condition taking in eight parameters.
@@ -35,7 +37,7 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface OctAction<A, B, C, D, E, F, G, H> extends FunctionalAction {
+public interface OctAction<A, B, C, D, E, F, G, H> extends Serializable {
 
     /**
      * Action logic taking in eight args.
@@ -49,17 +51,6 @@ public interface OctAction<A, B, C, D, E, F, G, H> extends FunctionalAction {
      * @param arg6 7th arg.
      * @param arg7 8th arg.
      */
-    void execute(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7);
-
-    @Override
-    default void execute(Object... args) throws UnrulyException {
-        int expected = 8;
-
-        if (args == null || args.length != expected) {
-            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
-                    + (args == null ? 0 : args.length) + "]");
-        }
-        
-        execute((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5], (G) args[6], (H) args[7]);
-    }
+    @Action
+    void run(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7);
 }

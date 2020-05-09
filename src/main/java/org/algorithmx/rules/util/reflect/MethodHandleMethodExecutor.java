@@ -18,43 +18,39 @@
 package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.model.MethodDefinition;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-/**
- * Default Implementation of BindableMethodExecutor.
- *
- * @author Max Arulananthan
- * @since 1.0
- * @see BindableMethodExecutor
- */
-@Deprecated
-public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
+public class MethodHandleMethodExecutor implements MethodExecutor {
 
-    /**
-     * Default Ctor.
-     */
-    public DefaultBindableMethodExecutor() {
+    private final Method method;
+    private final MethodHandle methodHandle;
+
+    public MethodHandleMethodExecutor(Method method) throws IllegalAccessException {
         super();
+        Assert.notNull(method, "method cannot be null.");
+        this.methodHandle = ReflectionUtils.getMethodHandle(method);
+        this.method = method;
     }
 
     @Override
-    public <T> T execute(Object target, MethodDefinition definition, Object...userArgs) {
-
-        if (definition.getParameterDefinitions().length != (userArgs == null ? 0 : userArgs.length)) {
-            throw new UnrulyException("Invalid number of args passed to Method call [" + definition.getMethod()
-                    + "] required [" + definition.getParameterDefinitions().length + "]");
+    public <T> T execute(Object target, Object... userArgs) {
+        if (method.getParameterCount() != (userArgs == null ? 0 : userArgs.length)) {
+            throw new UnrulyException("Invalid number of args passed to Method call [" + getMethod()
+                    + "] required [" + method.getParameterCount() + "]");
         }
 
-        boolean staticMethod = Modifier.isStatic(definition.getMethod().getModifiers());
+        boolean staticMethod = Modifier.isStatic(getMethod().getModifiers());
         int index = 0;
 
         // Do no include target if its a static method call
         Object[] args = new Object[staticMethod
-                ? definition.getParameterDefinitions().length
-                : definition.getParameterDefinitions().length + 1];
+                ? method.getParameterCount()
+                : method.getParameterCount() + 1];
 
         if (!staticMethod) args[index++] = target;
 
@@ -64,12 +60,16 @@ public class DefaultBindableMethodExecutor implements BindableMethodExecutor {
 
         try {
             // Execute the method with the derived parameters
-            //return (T) definition.getMethodHandle().invokeWithArguments(args);
-            return null;
+            return (T) methodHandle.invokeWithArguments(args);
         } catch (Throwable e) {
             // Something went wrong with the execution
-            throw new UnrulyException("Error trying to execute [" + definition.getMethod()
+            throw new UnrulyException("Error trying to execute [" + getMethod()
                     + "] with arguments [" + Arrays.toString(args) + "]", e);
         }
+    }
+
+    @Override
+    public final Method getMethod() {
+        return method;
     }
 }

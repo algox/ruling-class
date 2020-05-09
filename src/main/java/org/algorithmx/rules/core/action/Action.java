@@ -19,6 +19,7 @@ package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
@@ -36,11 +37,11 @@ public interface Action extends Comparable<Action> {
      * @param ctx Rule Context.
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
-    default void execute(RuleContext ctx) throws UnrulyException {
+    default void run(RuleContext ctx) throws UnrulyException {
         Assert.notNull(ctx, "ctx cannot be null.");
-        ParameterMatch[] result = ctx.match(getActionDefinition().getMethodDefinition());
-        Object[] values = ctx.resolve(result, getActionDefinition().getMethodDefinition());
-        execute(values);
+        ParameterMatch[] result = ctx.match(getMethodDefinition());
+        Object[] values = ctx.resolve(result, getMethodDefinition());
+        run(values);
     }
 
     /**
@@ -49,14 +50,14 @@ public interface Action extends Comparable<Action> {
      * @param params Action parameters in necessary order.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void execute(Object...params) throws UnrulyException;
+    void run(Object...params) throws UnrulyException;
 
     /**
      * Meta information about the Action.
      *
      * @return Action meta information.
      */
-    ActionDefinition getActionDefinition();
+    MethodDefinition getMethodDefinition();
 
     /**
      * The actual target instance the Action is associated to (usually a Rule).
@@ -66,7 +67,7 @@ public interface Action extends Comparable<Action> {
     Object getTarget();
 
     @Override
-    default int compareTo(Action o) {
-        return getActionDefinition().getOrder().compareTo(o.getActionDefinition().getOrder());
+    default int compareTo(Action other) {
+        return getMethodDefinition().compareTo(other.getMethodDefinition());
     }
 }

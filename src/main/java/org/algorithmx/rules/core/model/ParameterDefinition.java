@@ -17,14 +17,15 @@
  */
 package org.algorithmx.rules.core.model;
 
-import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.annotation.Nullable;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -46,9 +47,9 @@ import java.util.Arrays;
  */
 public final class ParameterDefinition {
 
-    private final int index;
-    private final String name;
-    private final String description;
+    private int index;
+    private String name;
+    private String description;
     private Type type;
     private final boolean required;
     private final String defaultValueText;
@@ -63,17 +64,14 @@ public final class ParameterDefinition {
                                 Annotation...annotations) {
         super();
         Assert.isTrue(index >= 0, "Parameter index must be >= 0");
-        Assert.notNull(name, "Parameter name cannot be null");
-        Assert.notNull(type, "Parameter type cannot be null");
-        this.name = name;
-        this.type = type;
-        this.description = description;
+        setName(name);
+        setType(type);
+        setDescription(description);
         this.index = index;
         this.annotations = annotations;
         this.required = required;
         this.defaultValueText = defaultValueText;
         this.bindUsing = bindUsing;
-        setBindingType(type);
         validate();
     }
 
@@ -134,6 +132,10 @@ public final class ParameterDefinition {
         return index;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     /**
      * Returns the name of the parameter.
      *
@@ -144,23 +146,23 @@ public final class ParameterDefinition {
     }
 
     /**
+     * Sets the name of the parameter.
+     *
+     * @param name name of the parameter.
+     */
+    public void setName(String name) {
+        Assert.isTrue(RuleUtils.isValidName(name), "Parameter name must match ["
+                + RuleUtils.NAME_REGEX + "] Given [" + name + "]");
+        this.name = name;
+    }
+
+    /**
      * Returns the Type of the parameter.
      *
      * @return type of the parameter.
      */
     public Type getType() {
         return type;
-    }
-
-    /**
-     * Returns the name of the parameter type. In case of classes it returns the simple name otherwise the full type name.
-     *
-     * @return name of the parameter type.
-     */
-    public String getTypeName() {
-        if (type == null) return null;
-        if (type instanceof Class) return ((Class) type).getSimpleName();
-        return type.getTypeName();
     }
 
     /**
@@ -175,12 +177,32 @@ public final class ParameterDefinition {
     }
 
     /**
+     * Returns the name of the parameter type. In case of classes it returns the simple name otherwise the full type name.
+     *
+     * @return name of the parameter type.
+     */
+    public String getTypeName() {
+        if (type == null) return null;
+        if (type instanceof Class) return ((Class) type).getSimpleName();
+        return type.getTypeName();
+    }
+
+    /**
      * Returns the parameter description.
      *
      * @return parameter description.
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Sets the description of this parameter.
+     *
+     * @param description description of this parameter.
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

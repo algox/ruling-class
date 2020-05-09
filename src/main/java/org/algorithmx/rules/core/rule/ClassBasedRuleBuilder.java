@@ -48,14 +48,14 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         target(target);
         given(ConditionUtils.create(definition.getConditionDefinition(), target));
 
-        if (definition.getThenActionDefinitions() != null) {
+        /*if (definition.getThenActionDefinitions() != null) {
             Arrays.stream(definition.getThenActionDefinitions())
                     .forEach(actionDefinition -> then(ActionUtils.create(actionDefinition, target)));
         }
 
         otherwise(definition.getElseActionDefinition() != null
                 ? ActionUtils.create(definition.getElseActionDefinition(), target)
-                : null);
+                : null);*/
     }
 
     @Override

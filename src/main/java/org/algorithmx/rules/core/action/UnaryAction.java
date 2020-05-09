@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Functional Action taking in a single parameter.
@@ -28,24 +30,13 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface UnaryAction<A> extends FunctionalAction {
+public interface UnaryAction<A> extends Serializable {
 
     /**
      * Action logic taking in a single arg.
      *
      * @param arg arg value.
      */
-    void execute(A arg);
-
-    @Override
-    default void execute(Object...args) throws UnrulyException {
-        int expected = 1;
-
-        if (args == null || args.length != expected) {
-            throw new UnrulyException("Invalid number of args. Expected " + expected + " provided ["
-                    + (args == null ? 0 : args.length) + "]");
-        }
-
-        execute((A) args[0]);
-    }
+    @Action
+    void run(A arg);
 }

@@ -18,17 +18,25 @@
 package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.lib.apache.ClassUtils;
 import org.algorithmx.rules.lib.spring.core.ParameterNameDiscoverer;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import javax.annotation.PostConstruct;
+import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +50,7 @@ public final class ReflectionUtils {
     private static final ParameterNameDiscoverer parameterNameDiscoverer = ParameterNameDiscoverer.create();
 
     private static final Map<Type, Object> DEFAULT_VALUE_MAP = new HashMap<>();
+    private static final Map<Class<?>, MethodHandles.Lookup> METHOD_HANDLE_CACHE = new HashMap<>();
 
     private static boolean DEFAULT_BOOLEAN;
     private static byte DEFAULT_BYTE;
@@ -77,6 +86,7 @@ public final class ReflectionUtils {
      * @return method parameter names.
      */
     public static String[] getParameterNames(Method method) {
+        Assert.notNull(method, "method cannot be null");
         return parameterNameDiscoverer.getParameterNames(method);
     }
 
@@ -87,6 +97,7 @@ public final class ReflectionUtils {
      * @return PostConstruct methods (if found); null otherwise.
      */
     public static Method getPostConstructMethods(Class<?> c) {
+        Assert.notNull(c, "c cannot be null");
         List<Method> postConstructors = Arrays.stream(c.getDeclaredMethods())
                 .filter(method -> void.class.equals(method.getReturnType()) &&
                         method.getParameterCount() == 0 && method.getExceptionTypes().length == 0 &&
@@ -130,5 +141,128 @@ public final class ReflectionUtils {
             throw new IllegalArgumentException("Error occurred trying to call @PostConstruct ["
                     + postConstructMethod + "]", e);
         }
+    }
+
+    /**
+     * Determines whether the given method is annotated with the given annotation class.
+     *
+     * @param method method to check.
+     * @param annotationClass annotation to check.
+     * @return true if the given method is annotated with the annotationClass or if any annotation exists that is
+     * annotated with annotationClass.
+     */
+    public static boolean isAnnotated(Method method, Class<? extends Annotation> annotationClass) {
+        Assert.notNull(method, "method cannot be null");
+        Assert.notNull(annotationClass, "annotationClass cannot be null");
+
+        if (method.getAnnotation(annotationClass) != null) return true;
+
+        Annotation[] declaredAnnotations =  method.getDeclaredAnnotations();
+        boolean result = false;
+
+        for (Annotation annotation : declaredAnnotations) {
+            if (annotation.annotationType().getAnnotation(annotationClass) != null) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds all the methods that are annotated with annotationClass.
+     *
+     * @param clazz class to look up.
+     * @param annotationClass annotation to look for.
+     * @return all methods that are annotated with annotationClass or any other annotation that has annotationClass on it.
+     */
+    public static Method[] getMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Assert.notNull(clazz, "clazz cannot be null");
+        Assert.notNull(annotationClass, "annotationClass cannot be null");
+
+        List<Method> result = new ArrayList<>();
+        List<Class<?>> candidateClasses = new ArrayList<>();
+
+        candidateClasses.add(clazz);
+        candidateClasses.addAll(ClassUtils.getAllInterfaces(clazz));
+
+        for (Class<?> c : candidateClasses) {
+            result.addAll(findMethods(c, m -> isAnnotated(m, annotationClass)));
+        }
+
+        return result.toArray(new Method[result.size()]);
+    }
+
+    /**
+     * Finds all the method have meet the given matcher.
+     *
+     * @param clazz working class.
+     * @param matcher function to determine whether the given method matches the desired criteria.
+     * @return all the matching methods.
+     */
+    private static List<Method> findMethods(Class<?> clazz, Function<Method, Boolean> matcher) {
+        Assert.notNull(clazz, "clazz cannot be null.");
+        Assert.notNull(clazz, "annotationClazz cannot be null.");
+
+        Class<?> targetClass = clazz;
+        List<Method> result = new ArrayList<>();
+
+        do {
+            for (Method method : targetClass.getDeclaredMethods()) {
+                if (matcher.apply(method)) {
+                    result.add(method);
+                }
+            }
+
+            targetClass = targetClass.getSuperclass();
+
+        } while (targetClass != null && !Object.class.equals(targetClass));
+
+        return result;
+    }
+
+    /**
+     * Retrives the method handles for the given class.
+     *
+     * @param c requesting class.
+     * @return method handles for the given class.
+     */
+    public static MethodHandles.Lookup getMethodLookup(Class<?> c) {
+        Assert.notNull(c, "c cannot be null.");
+
+        MethodHandles.Lookup result = METHOD_HANDLE_CACHE.get(c);
+
+        if (result == null) {
+            result = MethodHandles.lookup().in(c);
+            METHOD_HANDLE_CACHE.put(c, result);
+        }
+
+        return result;
+    }
+
+    /**
+     * Unreflects the method and returns it's MethodHandle.
+     *
+     * @param method method to unreflect.
+     * @return MethodHandle
+     * @throws IllegalAccessException unable to get the method handle due to security violation.
+     */
+    public static MethodHandle getMethodHandle(Method method) throws IllegalAccessException {
+        Assert.notNull(method, "method cannot be null.");
+        makeAccessible(method);
+        MethodHandles.Lookup lookup = getMethodLookup(method.getDeclaringClass());
+        return lookup.unreflect(method);
+    }
+
+    /**
+     * Makes the given executable accessible via reflection.
+     *
+     * @param executable method/field etc
+     */
+    public static void makeAccessible(Executable executable) {
+        Assert.notNull(executable, "executable cannot be null.");
+        //if (Modifier.isPublic(executable.getModifiers())) return;
+        executable.setAccessible(true);
     }
 }

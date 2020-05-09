@@ -18,9 +18,9 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Collections;
@@ -86,11 +86,11 @@ public class RulingClass implements Rule, Identifiable {
         if (result) {
             // Execute any associated Actions.
             for (Action action : getActions()) {
-                action.execute(ctx);
+                action.run(ctx);
             }
         } else if (getOtherwiseAction() != null) {
             // Condition failed
-            getOtherwiseAction().execute(ctx);
+            getOtherwiseAction().run(ctx);
         }
     }
 

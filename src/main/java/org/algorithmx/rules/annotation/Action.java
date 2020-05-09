@@ -15,28 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.action;
+package org.algorithmx.rules.annotation;
 
-import org.algorithmx.rules.util.ActionUtils;
-
-import java.io.Serializable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Marker interface for all Lambda based Actions.
+ * Annotation to mark an Actionable method.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface FunctionalAction extends Action, Serializable {
-
-    @Override
-    default ActionDefinition getActionDefinition() {
-        return ActionUtils.load(this, "");
-    }
-
-    @Override
-    default Object getTarget() {
-        return null;
-    }
-
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+public @interface Action {
 }

@@ -18,12 +18,14 @@
 package org.algorithmx.rules.util;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.action.Action;
-import org.algorithmx.rules.core.action.DefaultAction;
-import org.algorithmx.rules.core.action.ActionDefinition;
+import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
-import java.io.Serializable;
-import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utility class to provide convenience methods for Actions.
@@ -38,30 +40,59 @@ public final class ActionUtils {
     }
 
     /**
-     * Loads a new ActionDefinition from the given Action Lambda and Description.
      *
-     * @param action then action lambda.
-     * @param description Action Description.
-     * @return new Action Definition.
+     * @param c
+     * @return
      */
-    public static ActionDefinition load(Serializable action, String description) {
+    public static Method findActionableMethod(Class<?> c) {
+        Assert.notNull(c, "c cannot be null");
 
-        if (!LambdaUtils.isLambda(action)) {
-            throw new UnrulyException("Supplied non Functional interface [" + action.getClass().getName() + "]");
+        if (Modifier.isAbstract(c.getModifiers())) {
+            throw new UnrulyException("Actionable classes cannot be abstract [" + c + "]");
         }
 
-        SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda(action);
-        return ActionDefinition.load(serializedLambda, description);
-    }
+        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(c, org.algorithmx.rules.annotation.Action.class);
 
-    /**
-     * Creates a new Action from the given ActionDefinition and the target object.
-     *
-     * @param actionDefinition action definition.
-     * @param target target object.
-     * @return Action Object.
-     */
-    public static Action create(ActionDefinition actionDefinition, Object target) {
-        return new DefaultAction(actionDefinition, target);
+        if (candidates == null || candidates.length == 0) {
+            return null;
+        }
+
+        // Too many Actions declared
+        if (candidates.length > 1) {
+            throw new UnrulyException("Too many actionable methods found on class [" + c + "]. Candidates ["
+                    + Arrays.toString(candidates) + "]");
+        }
+
+        Method candidate = candidates[0];
+
+        // Actions do not return anything
+        if (!void.class.equals(candidate.getReturnType())) {
+            throw new UnrulyException("Actionable methods must return a void. [" + candidate + "]");
+        }
+
+        // Found a candidate and but it's not public
+        if (!Modifier.isPublic(candidate.getModifiers())) {
+            throw new UnrulyException("Actionable methods must be Public. [" + candidate + "]");
+        }
+
+        // We found the one
+        // TODO : Handle overridden methods with generics
+        if (!Modifier.isAbstract(candidate.getModifiers())) return candidate;
+
+        // Looks like we have an abstract method; let's find the implementation
+        List<Method> matches = new ArrayList<>();
+
+        for (Method method : c.getMethods()) {
+            if (candidate.equals(method)) continue;
+            if (method.isBridge()) continue;
+            if (!void.class.equals(method.getReturnType())) continue;
+            if (!candidate.getName().equals(method.getName())) continue;
+            if (method.getParameterCount() != candidate.getParameterCount()) continue;
+            if (Modifier.isAbstract(method.getModifiers())) continue;
+
+            matches.add(method);
+        }
+
+        return matches.size() == 1 ? matches.get(0) : candidate;
     }
 }

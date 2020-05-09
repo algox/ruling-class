@@ -79,7 +79,7 @@ public class DefaultRuleSet implements RuleSet {
 
         // Run the PreAction if there is one.
         if (getPreAction() != null) {
-            getPreAction().execute(ctx);
+            getPreAction().run(ctx);
         }
 
         for (Rule rule : getRules()) {
@@ -90,7 +90,7 @@ public class DefaultRuleSet implements RuleSet {
 
         // Run the PostAction if there is one.
         if (getPostAction() != null) {
-            getPostAction().execute(ctx);
+            getPostAction().run(ctx);
         }
 
     }

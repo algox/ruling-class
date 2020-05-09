@@ -18,6 +18,7 @@
 package org.algorithmx.rules.lib.spring.core;
 
 import org.algorithmx.rules.annotation.Param;
+import org.algorithmx.rules.lib.apache.StringUtils;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Constructor;
@@ -44,6 +45,8 @@ public class DefaultParameterNameDiscoverer implements ParameterNameDiscoverer {
 
     private final ParameterNameDiscoverer bytecodeParameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
+    // TODO : Add Cache
+
     /**
      * Default Ctor
      */
@@ -53,11 +56,13 @@ public class DefaultParameterNameDiscoverer implements ParameterNameDiscoverer {
 
     @Override
     public String[] getParameterNames(Method method) {
+        Assert.notNull(method, "method cannot be null.");
         return getParameterNames(method, bytecodeParameterNameDiscoverer.getParameterNames(method));
     }
 
     @Override
     public String[] getParameterNames(Constructor<?> ctor) {
+        Assert.notNull(ctor, "ctor cannot be null.");
         return getParameterNames(ctor, bytecodeParameterNameDiscoverer.getParameterNames(ctor));
     }
 
@@ -71,6 +76,7 @@ public class DefaultParameterNameDiscoverer implements ParameterNameDiscoverer {
     private String[] getParameterNames(Executable executable, String[] names) {
         Parameter[] parameters = executable.getParameters();
         String[] result = new String[parameters.length];
+        boolean namesAvail = names != null && names.length  == parameters.length;
 
         for (int i = 0; i < parameters.length; i++) {
             Param param = parameters[i].getAnnotation(Param.class);
@@ -80,10 +86,11 @@ public class DefaultParameterNameDiscoverer implements ParameterNameDiscoverer {
             } else if (parameters[i].isNamePresent()) {
                 result[i] = parameters[i].getName();
             } else {
-                Assert.isTrue(names != null && i < names.length,
-                        "Unable to retrieve method parameter information [" + executable
-                                + "]. Either recompile you code using -parameters or annotate each parameter with @Param");
-                result[i] = names[i];
+                if (namesAvail && StringUtils.isNotEmpty(names[i])) {
+                    result[i] = names[i];
+                } else {
+                    result[i] = parameters[i].getName();
+                }
             }
         }
 

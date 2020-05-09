@@ -15,30 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.action;
+package org.algorithmx.rules.util.reflect;
 
-import org.algorithmx.rules.annotation.Action;
+import java.lang.reflect.Method;
 
-import java.io.Serializable;
-
-/**
- * Functional Action taking in two parameters.
- *
- * @param <A> generic type of the 1st parameter.
- * @param <B> generic type of the 2nd parameter.
- *
- * @author Max Arulananthan
- * @since 1.0
- */
-@FunctionalInterface
-public interface BiAction<A, B> extends Serializable {
+public interface MethodExecutor {
 
     /**
-     * Action logic taking in two args.
+     * Creates the default implementation of MethodExecutor.
      *
-     * @param arg0 1st arg.
-     * @param arg1 2nd arg.
+     * @return default MethodExecutor implementation.
      */
-    @Action
-    void run(A arg0, B arg1);
+    static MethodExecutor create(Method method) {
+        return new DefaultMethodExecutor(method);
+    }
+
+    /**
+     *  Executes the BindableMethod and returns its result.
+     *
+     * @param target target object.
+     * @param userArgs method arguments.
+     * @param <T> generic type of the result.
+     * @return the result of the execution.
+     */
+    <T> T execute(Object target, Object...userArgs);
+
+    /**
+     * Method to execute.
+     *
+     * @return method to execute.
+     */
+    Method getMethod();
 }

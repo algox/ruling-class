@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Functional Action taking in seven parameters.
@@ -34,7 +36,7 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface SeptAction<A, B, C, D, E, F, G> extends FunctionalAction {
+public interface SeptAction<A, B, C, D, E, F, G> extends Serializable {
 
     /**
      * Action logic taking in seven args.
@@ -47,17 +49,6 @@ public interface SeptAction<A, B, C, D, E, F, G> extends FunctionalAction {
      * @param arg5 6th arg.
      * @param arg6 7th arg.
      */
-    void execute(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6);
-
-    @Override
-    default void execute(Object...args) throws UnrulyException {
-        int expected = 7;
-
-        if (args == null || args.length != expected) {
-            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
-                    + (args == null ? 0 : args.length) + "]");
-        }
-        
-        execute((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5], (G) args[6]);
-    }
+    @Action
+    void run(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6);
 }

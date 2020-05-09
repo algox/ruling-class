@@ -17,6 +17,8 @@
  */
 package org.algorithmx.rules.util;
 
+import org.algorithmx.rules.annotation.Action;
+import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.condition.TriCondition;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
@@ -24,9 +26,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Test cases related to ReflectionUtils.
@@ -84,6 +89,45 @@ public class ReflectionUtilsTest {
         Assert.assertTrue(postConstructor == null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void isAnnotatedTest1() {
+        ReflectionUtils.isAnnotated(null, null);
+    }
+
+    @Test
+    public void isAnnotatedTest2() throws NoSuchMethodException {
+        Method method = TestClass.class.getDeclaredMethod("execute");
+        Assert.assertTrue(!ReflectionUtils.isAnnotated(method, Action.class));
+    }
+
+    @Test
+    public void isAnnotatedTest3() throws NoSuchMethodException {
+        Method method1 = TestClass.class.getDeclaredMethod("execute", Map.class);
+        Assert.assertTrue(ReflectionUtils.isAnnotated(method1, Action.class));
+        Method method2 = TestClass.class.getDeclaredMethod("execute", List.class);
+        Assert.assertTrue(ReflectionUtils.isAnnotated(method2, Action.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getMethodsWithAnnotationTest1() {
+        ReflectionUtils.getMethodsWithAnnotation(null, null);
+    }
+
+    @Test
+    public void getMethodsWithAnnotationTest2() throws NoSuchMethodException {
+        Method method1 = TestClass.class.getDeclaredMethod("execute", Map.class);
+        Method method2 = TestClass.class.getDeclaredMethod("execute", List.class);
+        Method method3 = BaseClass2.class.getDeclaredMethod("run", String.class);
+        Method method4 = Interface2.class.getDeclaredMethod("test", Integer.class, String.class);
+        Method method5 = BaseClass2.class.getDeclaredMethod("init");
+        List<Method> methods = Arrays.asList(ReflectionUtils.getMethodsWithAnnotation(TestClass.class, Action.class));
+        Assert.assertTrue(methods.contains(method1));
+        Assert.assertTrue(methods.contains(method2));
+        Assert.assertTrue(methods.contains(method3));
+        Assert.assertTrue(methods.contains(method4));
+        Assert.assertTrue(!methods.contains(method5));
+    }
+
     private static class SomeClass {
 
         public SomeClass() {
@@ -137,5 +181,51 @@ public class ReflectionUtilsTest {
         private void init3() throws Exception {
             //
         }
+    }
+
+    private abstract static class TestClass<A, B> extends BaseClass1 {
+
+        @Action
+        public abstract <C,D> void execute(Map<C, D> map);
+
+        @Then
+        public abstract B execute(List<A> a);
+
+        private void execute() {
+
+        }
+    }
+
+    private abstract static class BaseClass1 extends BaseClass2 {
+
+        public void run() {
+
+        }
+    }
+
+    private abstract static class BaseClass2  implements Interface1 {
+
+        @PostConstruct
+        private void init() {
+            //
+        }
+
+        public void run() {
+
+        }
+
+        @Then
+        public void run(String x) {}
+    }
+
+    private interface Interface1 extends Serializable, Cloneable, Interface2 {
+
+        void test(Integer a);
+    }
+
+    private interface Interface2  {
+
+        @Then
+        void test(Integer a, String b);
     }
 }

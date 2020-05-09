@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Functional Action taking in four parameters.
@@ -31,7 +33,7 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface QuadAction<A, B, C, D> extends FunctionalAction {
+public interface QuadAction<A, B, C, D> extends Serializable {
 
     /**
      * Action logic taking in four args.
@@ -41,17 +43,6 @@ public interface QuadAction<A, B, C, D> extends FunctionalAction {
      * @param arg2 3rd arg.
      * @param arg3 4th arg.
      */
-    void execute(A arg0, B arg1, C arg2, D arg3);
-
-    @Override
-    default void execute(Object... args) throws UnrulyException {
-        int expected = 4;
-
-        if (args == null || args.length != expected) {
-            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
-                    + (args == null ? 0 : args.length) + "]");
-        }
-        
-        execute((A) args[0], (B) args[1], (C) args[2], (D) args[3]);
-    }
+    @Action
+    void run(A arg0, B arg1, C arg2, D arg3);
 }

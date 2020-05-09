@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Functional Action taking in six parameters.
@@ -33,7 +35,7 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface SexAction<A, B, C, D, E, F> extends FunctionalAction {
+public interface SexAction<A, B, C, D, E, F> extends Serializable {
 
     /**
      * Action logic taking in six args.
@@ -45,17 +47,6 @@ public interface SexAction<A, B, C, D, E, F> extends FunctionalAction {
      * @param arg4 5th arg.
      * @param arg5 6th arg.
      */
-    void execute(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5);
-
-    @Override
-    default void execute(Object...args) throws UnrulyException {
-        int expected = 6;
-
-        if (args == null || args.length != expected) {
-            throw new UnrulyException("Invalid number of args. Expected " + expected + "] provided ["
-                    + (args == null ? 0 : args.length) + "]");
-        }
-        
-        execute((A) args[0], (B) args[1], (C) args[2], (D) args[3], (E) args[4], (F) args[5]);
-    }
+    @Action
+    void run(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5);
 }

@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
  */
 public final class RuleUtils {
 
-    public static final String RULE_NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9-_]*?$";
-    private static final Pattern NAME_PATTERN           = Pattern.compile(RULE_NAME_REGEX);
+    public static final String NAME_REGEX         = "^[a-zA-Z][a-zA-Z0-9-_]*?$";
+    private static final Pattern NAME_PATTERN           = Pattern.compile(NAME_REGEX);
 
     private RuleUtils() {
         super();
@@ -55,20 +55,14 @@ public final class RuleUtils {
         return false;
     }
 
-    /*public static RuleDefinition load(ConditionConsumer condition, String name, String description) {
-        Assert.notNull(condition, "condition cannot be null.");
-        return RuleDefinition.load(LambdaUtils.getSerializedLambda(condition), name, description);
-    }*/
-
     /**
-     * Determines whether the given name is "valid" Rule Name. It needs to follow the following regex ^[a-zA-Z][a-zA-Z0-9]*?$
+     * Determines whether the given name is "valid" Name. It needs to follow the following regex ^[a-zA-Z][a-zA-Z0-9]*?$
      *
-     * @param ruleName desired Rule Name.
+     * @param name desired Rule Name.
      * @return true if the name is valid; false otherwise.
      */
-    public static boolean isValidRuleName(String ruleName) {
-        Assert.notNull(ruleName, "ruleName cannot be null.");
-        return NAME_PATTERN.matcher(ruleName).matches();
+    public static boolean isValidName(String name) {
+        return name != null && name.trim().length() > 0 && NAME_PATTERN.matcher(name).matches();
     }
 
     /**

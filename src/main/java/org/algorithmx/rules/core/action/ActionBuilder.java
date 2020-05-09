@@ -18,9 +18,15 @@
 package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.ActionUtils;
+import org.algorithmx.rules.util.LambdaUtils;
 
+import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -32,25 +38,68 @@ import java.lang.reflect.Type;
  */
 public final class ActionBuilder {
 
-    private final FunctionalAction action;
-    private final ActionDefinition definition;
+    private Object action;
+    private MethodDefinition definition;
 
-    private ActionBuilder(FunctionalAction action) {
+    private ActionBuilder(Object target, Method actionMethod) {
         super();
-        Assert.notNull(action, "action cannot be null.");
-        this.action = action;
-        this.definition = action.getActionDefinition();
+        Assert.notNull(actionMethod, "actionMethod cannot be null.");
+        this.action = target;
+        this.definition = MethodDefinition.load(actionMethod);
     }
 
-    /**
-     * Creates a new action builder given a ActionConsumer. This is useful when using your own ActionConsumer
-     * definition or if you want to cast to an existing one.
-     *
-     * @param consumer desired action.
-     * @return new ActionBuilder based on the given consumer.
-     */
-    public static ActionBuilder with(FunctionalAction consumer) {
-        return new ActionBuilder(consumer);
+    private ActionBuilder(Object action) {
+        super();
+        Assert.notNull(action, "action cannot be null.");
+        Method actionableMethod = ActionUtils.findActionableMethod(action.getClass());
+        this.action = action;
+
+        if (actionableMethod == null) {
+            throw new UnrulyException("Class [" + action.getClass() + "] does not implement any actionable methods. " +
+                    "Add @Action to a method and try again.");
+        }
+
+        if (LambdaUtils.isLambda(action)) {
+            withLambda(action, actionableMethod);
+        } else {
+          this.definition = MethodDefinition.load(actionableMethod);
+        }
+    }
+
+    private void withLambda(Object action, Method actionableMethod) {
+        MethodDefinition methodDefinition = null;
+
+        try {
+            SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda((Serializable) action);
+            Class<?> implementationClass = LambdaUtils.getImplementationClass(serializedLambda);
+            Method implementationMethod = LambdaUtils.getImplementationMethod(serializedLambda, implementationClass);
+            MethodDefinition implementationMethodDefinition = MethodDefinition.load(implementationMethod);
+
+            ParameterDefinition[] parameterDefinitions = new ParameterDefinition[actionableMethod.getParameterCount()];
+            int delta = implementationMethod.getParameterCount() - actionableMethod.getParameterCount();
+            for (int i = delta; i < implementationMethod.getParameterCount(); i++) {
+                int index = i - delta;
+                parameterDefinitions[index] = implementationMethodDefinition.getParameterDefinition(i);
+                parameterDefinitions[index].setIndex(index);
+            }
+
+            methodDefinition = new MethodDefinition(actionableMethod, implementationMethodDefinition.getOrder(),
+                    implementationMethodDefinition.getDescription(), parameterDefinitions);
+
+        } catch (Exception e) {
+            // Log
+        }
+
+        if (methodDefinition == null) {
+            methodDefinition = MethodDefinition.load(actionableMethod);
+        }
+
+        this.action = action;
+        this.definition = methodDefinition;
+    }
+
+    public static ActionBuilder with(Object action) {
+        return new ActionBuilder(action);
     }
 
     /**
@@ -237,16 +286,16 @@ public final class ActionBuilder {
      */
     public ActionBuilder parameterType(int index, Type type) {
 
-        if (definition.getMethodDefinition().getParameterDefinitions().length == 0) {
+        if (definition.getParameterDefinitions().length == 0) {
             throw new UnrulyException("There are no args found in the Action");
         }
 
-        if (index < 0 || index >= definition.getMethodDefinition().getParameterDefinitions().length) {
+        if (index < 0 || index >= definition.getParameterDefinitions().length) {
             throw new UnrulyException("Invalid parameter index [" + index + "] it must be between [0, "
-                    + definition.getMethodDefinition().getParameterDefinitions().length + "]");
+                    + definition.getParameterDefinitions().length + "]");
         }
 
-        this.definition.getMethodDefinition().getParameterDefinition(index).setType(type);
+        this.definition.getParameterDefinition(index).setType(type);
         return this;
     }
 
@@ -259,7 +308,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder parameterType(String name, Type type) {
-        ParameterDefinition definition = this.definition.getMethodDefinition().getParameterDefinition(name);
+        ParameterDefinition definition = this.definition.getParameterDefinition(name);
 
         if (definition == null) {
             throw new UnrulyException("No such parameter [" + name + "] found");
@@ -297,6 +346,6 @@ public final class ActionBuilder {
      * @return a new Action.
      */
     public Action build() {
-        return new DelegatingAction(action, definition);
+        return new DefaultAction(action, definition);
     }
 }

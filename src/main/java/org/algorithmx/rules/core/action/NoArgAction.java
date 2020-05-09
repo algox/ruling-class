@@ -17,7 +17,9 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.annotation.Action;
+
+import java.io.Serializable;
 
 /**
  * Functional Action without any parameter.
@@ -26,20 +28,11 @@ import org.algorithmx.rules.core.UnrulyException;
  * @since 1.0
  */
 @FunctionalInterface
-public interface NoArgAction extends FunctionalAction {
+public interface NoArgAction extends Serializable {
 
     /**
      * Action logic without any parameter.
      */
-    void execute();
-
-    @Override
-    default void execute(Object...params) throws UnrulyException {
-
-        if (params != null && params.length > 0) {
-            throw new UnrulyException("Invalid number of params. Expected 0 provided [" + params.length + "]");
-        }
-
-        execute();
-    }
+    @Action
+    void run();
 }

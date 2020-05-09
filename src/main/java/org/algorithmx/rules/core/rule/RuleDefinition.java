@@ -25,7 +25,6 @@ import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * Indicates the class with this annotation is Rule and it will follow the "rules" of a being a Rule.
@@ -38,8 +37,6 @@ import java.util.regex.Pattern;
  * @since 1.0
  */
 public final class RuleDefinition {
-
-    private static final Pattern NAME_PATTERN   = Pattern.compile(org.algorithmx.rules.core.rule.Rule.NAME_REGEX);
 
     // Rule class
     private final Class<?> ruleClass;
@@ -71,8 +68,6 @@ public final class RuleDefinition {
                           ActionDefinition elseActionDefinition) {
         super();
         Assert.notNull(ruleClass, "Rule class cannot be null.");
-        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Rule name must match [" + NAME_PATTERN + "]");
         Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
         this.ruleClass = ruleClass;
         this.description = description;
@@ -130,9 +125,8 @@ public final class RuleDefinition {
     }
 
     public void setName(String name) {
-        Assert.isTrue(name == null || name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(name == null || RuleUtils.isValidRuleName(name), "Rule name must match ["
-                + RuleUtils.RULE_NAME_REGEX + "] Given [" + name + "]");
+        Assert.isTrue(RuleUtils.isValidName(name), "Rule name must match ["
+                + RuleUtils.NAME_REGEX + "] Given [" + name + "]");
         this.name = name;
     }
 

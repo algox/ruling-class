@@ -25,6 +25,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +52,8 @@ public class ActionBuilderTest {
                 .name("action0")
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getActionName().equals("action0"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 0);
+        Assert.assertTrue(action.getMethodDefinition().getName().equals("action0"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 0);
     }
 
     @Test
@@ -63,10 +65,10 @@ public class ActionBuilderTest {
                 .description("Action with one arg")
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getDescription().equals("Action with one arg"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 1);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("x"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(String.class));
+        Assert.assertTrue(action.getMethodDefinition().getDescription().equals("Action with one arg"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 1);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getName().equals("x"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getType().equals(String.class));
     }
 
     @Test
@@ -77,9 +79,9 @@ public class ActionBuilderTest {
                 })
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 2);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("value"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(BigDecimal.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 2);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getName().equals("value"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getType().equals(BigDecimal.class));
     }
 
     @Test
@@ -90,9 +92,9 @@ public class ActionBuilderTest {
                 })
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 3);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[2].getName().equals("c"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[2].getType().equals(Integer.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getName().equals("c"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getType().equals(Integer.class));
     }
 
     @Test
@@ -103,10 +105,10 @@ public class ActionBuilderTest {
                 })
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 4);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[3].getName().equals("d"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[3].getType().equals(Float.class));
-        Assert.assertTrue(!action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[3].isRequired());
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 4);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[3].getName().equals("d"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[3].getType().equals(Float.class));
+        Assert.assertTrue(!action.getMethodDefinition().getParameterDefinitions()[3].isRequired());
     }
 
     @Test
@@ -117,10 +119,10 @@ public class ActionBuilderTest {
                 })
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 5);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getName().equals("flag"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getType().equals(Boolean.class));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[4].getDefaultValueText().equals("yes"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 5);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[4].getName().equals("flag"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[4].getType().equals(Boolean.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[4].getDefaultValueText().equals("yes"));
     }
 
     @Test
@@ -132,10 +134,10 @@ public class ActionBuilderTest {
                 })
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 6);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[5].getName().equals("bindingValue"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[5].getType().equals(Binding.class));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[5].isBinding());
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 6);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].getName().equals("bindingValue"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].getType().equals(Binding.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].isBinding());
     }
 
     @Test
@@ -147,10 +149,10 @@ public class ActionBuilderTest {
                 })
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 7);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[6].getName().equals("listArg"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 7);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[6].getName().equals("listArg"));
         // Lambda does not store generic info
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[6].getType().equals(List.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[6].getType().equals(List.class));
     }
 
     @Test
@@ -164,9 +166,9 @@ public class ActionBuilderTest {
                 .parameterType(7, new TypeReference<Map<String, Object>>(){}.getType())
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 8);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[7].getName().equals("mapArg"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[7]
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 8);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[7].getName().equals("mapArg"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[7]
                 .getType().equals(new TypeReference<Map<String, Object>>(){}.getType()));
     }
 
@@ -181,9 +183,9 @@ public class ActionBuilderTest {
                 .parameterType("someList", new TypeReference<List<String>>(){}.getType())
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 9);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[8].getName().equals("someList"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[8]
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 9);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[8].getName().equals("someList"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[8]
                 .getType().equals(new TypeReference<List<String>>(){}.getType()));
     }
 
@@ -198,9 +200,9 @@ public class ActionBuilderTest {
                 .parameterType("someList", new TypeReference<List<String>>(){}.getType())
                 .build();
 
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 10);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[9].getName().equals("tenthArg"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[9].getType().equals(String.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 10);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[9].getName().equals("tenthArg"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[9].getType().equals(String.class));
     }
 
     @Test(expected = UnrulyException.class)
@@ -225,20 +227,43 @@ public class ActionBuilderTest {
 
     }
 
-    @Test(expected = UnrulyException.class)
+    @Test
     public void testInnerClass() {
-        // TODO : Fix inner class/new instance
         Action action = ActionBuilder
                 .with(new TriAction<String, Integer, Map<String, Integer>>() {
                     @Override
-                    public void execute(String a, Integer b, Map<String, Integer> map) {
+                    public void run(String a, Integer b, Map<String, Integer> map) {
 
                     }
                 })
                 .build();
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions().length == 3);
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[2].getName().equals("map"));
-        Assert.assertTrue(action.getActionDefinition().getMethodDefinition().getParameterDefinitions()[2]
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getName().equals("map"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2]
                 .getType().equals(new TypeReference<Map<String, Integer>>(){}.getType()));
+        action.run("aa", 12, new HashMap<>());
+    }
+
+    public String c = "c";
+
+    @Test
+    public void testOtherArgs() {
+
+        Integer a = 12;
+        String b = "b";
+
+        Action action = ActionBuilder
+                .with3Args((String x, BigDecimal value, Integer c) -> {
+                    a.intValue();
+                    b.length();
+                    c.intValue();
+                    return;
+                })
+                .build();
+
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getName().equals("c"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getType().equals(Integer.class));
+        action.run("a", new BigDecimal("10"), 10);
     }
 }
