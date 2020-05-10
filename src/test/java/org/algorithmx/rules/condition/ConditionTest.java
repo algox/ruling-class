@@ -17,9 +17,9 @@
  */
 package org.algorithmx.rules.condition;
 
-import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class ConditionTest {
     @Test
     public void testCondition0() {
         Condition condition = ConditionBuilder
-                .withNoArgs(() -> true)
+                .with(() -> true)
                 .build();
         Assert.assertTrue(condition.isPass());
     }
@@ -52,7 +52,7 @@ public class ConditionTest {
     @Test
     public void testCondition2() {
         Condition condition = ConditionBuilder
-                .with2Args((Integer a, String x) -> a > 55)
+                .with((Integer a, String x) -> a > 55)
                 .build();
         Assert.assertTrue(condition.isPass(56, "abc"));
     }
@@ -60,7 +60,7 @@ public class ConditionTest {
     @Test
     public void testCondition3() {
         Condition condition = ConditionBuilder
-                .with3Args((Integer a, Date date, String x) -> a != null)
+                .with((Integer a, Date date, String x) -> a != null)
                 .build();
         Assert.assertTrue(condition.isPass(10, new Date(), "abc"));
     }
@@ -68,7 +68,7 @@ public class ConditionTest {
     @Test
     public void testCondition4() {
         Condition condition = ConditionBuilder
-                .with4Args((Integer a, Date date, String x, List<String> values) -> a > 35 && x.equals("x")
+                .with((Integer a, Date date, String x, List<String> values) -> a > 35 && x.equals("x")
                         && values.get(0).equals("one"))
                 .parameterType(3, new TypeReference<List<String>>(){}.getType())
                 .build();
@@ -80,7 +80,7 @@ public class ConditionTest {
     @Test
     public void testCondition5() {
         Condition condition = ConditionBuilder
-                .with5Args((Integer a, Date date, String x, List<String> values, Long longValue) -> a > 35 && x.equals("x")
+                .with((Integer a, Date date, String x, List<String> values, Long longValue) -> a > 35 && x.equals("x")
                         && values.get(0).equals("one"))
                 .parameterType("values", new TypeReference<List<String>>(){}.getType())
                 .build();
@@ -92,7 +92,7 @@ public class ConditionTest {
     @Test
     public void testCondition6() {
         Condition condition = ConditionBuilder
-                .with6Args((Integer a, Date date, String x, List<String> values, Long longValue, String b) -> a > 35 && x.equals("x"))
+                .with((Integer a, Date date, String x, List<String> values, Long longValue, String b) -> a > 35 && x.equals("x"))
                 .build();
         Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b"));
     }
@@ -100,7 +100,7 @@ public class ConditionTest {
     @Test
     public void testCondition7() {
         Condition condition = ConditionBuilder
-                .with7Args((Integer a, Date date, String x, List<String> values, Long longValue, String b, BigDecimal big)
+                .with((Integer a, Date date, String x, List<String> values, Long longValue, String b, BigDecimal big)
                         -> big.compareTo(BigDecimal.ZERO) > 0)
                 .build();
         Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b", new BigDecimal("100")));
@@ -109,7 +109,7 @@ public class ConditionTest {
     @Test
     public void testCondition8() {
         Condition condition = ConditionBuilder
-                .with8Args((Integer a, Date date, String x, List<String> values, Long longValue, String b,
+                .with((Integer a, Date date, String x, List<String> values, Long longValue, String b,
                             BigDecimal big, List<Integer> numbers) ->
                 {
                     return numbers != null && numbers.stream().count() > 5;
@@ -129,7 +129,7 @@ public class ConditionTest {
     @Test
     public void testCondition9() {
         Condition condition = ConditionBuilder
-                .with9Args((Integer a, Date date, String x, List<String> values, Long longValue, String b,
+                .with((Integer a, Date date, String x, List<String> values, Long longValue, String b,
                             BigDecimal big, List<Integer> numbers, Map<String, String> map)
                         -> map.containsKey("abcde")
                 )
@@ -145,13 +145,13 @@ public class ConditionTest {
         Map<String, String> map = new HashMap<>();
         map.put("abcde", "xxx");
 
-        Assert.assertTrue(condition.getConditionDefinition().getDescription().equals("some description"));
+        Assert.assertTrue(condition.getMethodDefinition().getDescription().equals("some description"));
     }
 
     @Test
     public void testCondition10() {
         Condition condition = ConditionBuilder
-                .with10Args((Integer a, Date date, String x, List<String> values, Long longValue, String b,
+                .with((Integer a, Date date, String x, List<String> values, Long longValue, String b,
                             BigDecimal big, List<Integer> numbers, Map<String, String> map, Integer z)
                         -> map.containsKey("abcde")
                 )
@@ -174,7 +174,7 @@ public class ConditionTest {
     @Test
     public void testConditionConsumer() {
         Condition condition = ConditionBuilder
-                .with1Arg((Integer a) -> a > 10)
+                .with((Integer a) -> a > 10)
                 .build();
         Assert.assertTrue(condition.isPass(13));
     }

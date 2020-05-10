@@ -21,19 +21,9 @@ import org.algorithmx.rules.annotation.Function;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
-import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.LambdaUtils;
-import org.algorithmx.rules.util.reflect.ObjectFactory;
-import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Builder class for Functions.
@@ -42,19 +32,18 @@ import java.util.List;
  * @since 1.0
  *
  */
-public final class FunctionBuilder {
+public class FunctionBuilder<T> extends ExecutableBuilder {
 
-    private Object function;
-    private MethodDefinition definition;
-
-    private FunctionBuilder(Object function, MethodDefinition definition) {
-        super();
-        Assert.notNull(definition, "actionMethod cannot be null.");
-        this.function = function;
-        this.definition = definition;
+    protected FunctionBuilder(Object function, MethodDefinition definition) {
+        super(function, definition);
     }
 
-    public static FunctionBuilder with(Class<?> functionClass, Class<? extends Annotation> annotation) {
+    public static FunctionBuilder with(Object function, Class<? extends Annotation> annotation) {
+        MethodInfo methodInfo = load(function, annotation);
+        return new FunctionBuilder(methodInfo.getFunction(), methodInfo.getDefinition());
+    }
+
+    /*public static FunctionBuilder with(Class<?> functionClass, Class<? extends Annotation> annotation) {
         Method functionMethod = findFunctionMethod(functionClass, annotation);
 
         if (functionMethod == null) {
@@ -62,64 +51,16 @@ public final class FunctionBuilder {
                     "Add @Function to a method and try again.");
         }
 
-        return with(ObjectFactory.create().create(functionClass), functionMethod);
-    }
+        return new FunctionBuilder(with(ObjectFactory.create().create(functionClass), functionMethod));
+    }*/
 
-    public static FunctionBuilder with(Object function, Class<? extends Annotation> annotation) {
-        Assert.notNull(function, "function cannot be null.");
-
-        Method functionMethod = findFunctionMethod(function.getClass(), annotation);
-
-        if (functionMethod == null) {
-            throw new UnrulyException("Class [" + function.getClass() + "] does not implement any function methods. " +
-                    "Add @Function to a method and try again.");
-        }
-
-        SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(function);
-
-        if (serializedLambda != null) {
-            return withLambda(function, functionMethod, serializedLambda);
-        }
-
-        return with(function, functionMethod);
-    }
-
-    public static FunctionBuilder with(Object function, Method functionMethod) {
-        MethodDefinition definition = MethodDefinition.load(functionMethod);
-        return new FunctionBuilder(function, definition);
-    }
-
-    private static FunctionBuilder withLambda(Object function, Method functionMethod, SerializedLambda serializedLambda) {
-        Assert.notNull(functionMethod, "functionMethod cannot be null.");
-        Assert.notNull(serializedLambda, "serializedLambda cannot be null.");
-        MethodDefinition methodDefinition = null;
-
-        try {
-            Class<?> implementationClass = LambdaUtils.getImplementationClass(serializedLambda);
-            Method implementationMethod = LambdaUtils.getImplementationMethod(serializedLambda, implementationClass);
-            MethodDefinition implementationMethodDefinition = MethodDefinition.load(implementationMethod);
-
-            ParameterDefinition[] parameterDefinitions = new ParameterDefinition[functionMethod.getParameterCount()];
-            int delta = implementationMethod.getParameterCount() - functionMethod.getParameterCount();
-
-            for (int i = delta; i < implementationMethod.getParameterCount(); i++) {
-                int index = i - delta;
-                parameterDefinitions[index] = implementationMethodDefinition.getParameterDefinition(i);
-                parameterDefinitions[index].setIndex(index);
-            }
-
-            methodDefinition = new MethodDefinition(functionMethod, implementationMethodDefinition.getOrder(),
-                    implementationMethodDefinition.getDescription(), parameterDefinitions);
-
-        } catch (Exception e) {
-            // Log
-        }
-
-        if (methodDefinition == null) {
-            methodDefinition = MethodDefinition.load(functionMethod);
-        }
-
-        return new FunctionBuilder(function, methodDefinition);
+    /**
+     * Builds the Action based on the set properties.
+     *
+     * @return a new Action.
+     */
+    public org.algorithmx.rules.core.function.Function<T> build() {
+        return new DefaultFunction(getFunction(), getDefinition());
     }
 
     /**
@@ -128,7 +69,7 @@ public final class FunctionBuilder {
      * @param function desired action.
      * @return new ActionBuilder with no arguments.
      */
-    public static <T> FunctionBuilder with(NoArgFunction<T> function) {
+    public static <T> FunctionBuilder<T> with(NoArgFunction<T> function) {
         return with(function, Function.class);
     }
 
@@ -295,8 +236,8 @@ public final class FunctionBuilder {
      * @param type desired type.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder parameterType(int index, Type type) {
-        this.definition.getParameterDefinition(index).setType(type);
+    public FunctionBuilder<T> parameterType(int index, Type type) {
+        getDefinition().getParameterDefinition(index).setType(type);
         return this;
     }
 
@@ -308,8 +249,8 @@ public final class FunctionBuilder {
      * @param type desired type.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder parameterType(String name, Type type) {
-        ParameterDefinition definition = this.definition.getParameterDefinition(name);
+    public FunctionBuilder<T> parameterType(String name, Type type) {
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {
             throw new UnrulyException("No such parameter [" + name + "] found");
@@ -326,9 +267,9 @@ public final class FunctionBuilder {
      * @param name new name.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder parameterName(int index, String name) {
-        this.definition.getParameterDefinition(index).setName(name);
-        this.definition.createParameterNameIndex();
+    public FunctionBuilder<T> parameterName(int index, String name) {
+        getDefinition().getParameterDefinition(index).setName(name);
+        getDefinition().createParameterNameIndex();
         return this;
     }
 
@@ -340,8 +281,8 @@ public final class FunctionBuilder {
      * @param description desired description.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder parameterDescription(int index, String description) {
-        this.definition.getParameterDefinition(index).setDescription(description);
+    public FunctionBuilder<T> parameterDescription(int index, String description) {
+        getDefinition().getParameterDefinition(index).setDescription(description);
         return this;
     }
 
@@ -353,8 +294,8 @@ public final class FunctionBuilder {
      * @param description desired description.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder parameterDescription(String name, String description) {
-        ParameterDefinition definition = this.definition.getParameterDefinition(name);
+    public FunctionBuilder<T> parameterDescription(String name, String description) {
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {
             throw new UnrulyException("No such parameter [" + name + "] found");
@@ -370,8 +311,8 @@ public final class FunctionBuilder {
      * @param name name of the Action.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder name(String name) {
-        this.definition.setName(name);
+    public FunctionBuilder<T> name(String name) {
+        getDefinition().setName(name);
         return this;
     }
 
@@ -381,61 +322,9 @@ public final class FunctionBuilder {
      * @param description description of the Action.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder description(String description) {
-        this.definition.setDescription(description);
+    public FunctionBuilder<T> description(String description) {
+        getDefinition().setDescription(description);
         return this;
     }
 
-    /**
-     * Builds the Action based on the set properties.
-     *
-     * @return a new Action.
-     */
-    public org.algorithmx.rules.core.function.Function build() {
-        return new DefaultFunction(function, definition);
-    }
-
-    private static Method findFunctionMethod(Class<?> c, Class<? extends Annotation> annotation) {
-        Method[] result = findFunctionMethods(c, annotation);
-
-        if (result == null || result.length == 0) return null;
-
-        // Too many Actions declared
-        if (result.length > 1) {
-            throw new UnrulyException("Too many actionable methods found on class [" + c + "]. Candidates ["
-                    + Arrays.toString(result) + "]");
-        }
-
-        return result[0];
-    }
-
-    /**
-     *
-     * @param c
-     * @return
-     */
-    private static Method[] findFunctionMethods(Class<?> c, Class<? extends Annotation> annotation) {
-        Assert.notNull(c, "c cannot be null");
-
-        if (Modifier.isAbstract(c.getModifiers())) {
-            throw new UnrulyException("Function classes cannot be abstract [" + c + "]");
-        }
-
-        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(c, annotation);
-
-        if (candidates == null || candidates.length == 0) {
-            return null;
-        }
-
-        List<Method> result = new ArrayList<>(candidates.length);
-
-        for (Method method : candidates) {
-            if (!void.class.equals(method.getReturnType())) continue;
-            if (!Modifier.isPublic(method.getModifiers())) continue;
-            if (method.isBridge()) continue;
-            result.add(ReflectionUtils.getImplementationMethod(c, method));
-        }
-
-        return result.toArray(new Method[result.size()]);
-    }
 }

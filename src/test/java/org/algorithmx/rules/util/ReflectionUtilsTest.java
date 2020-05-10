@@ -20,7 +20,7 @@ package org.algorithmx.rules.util;
 import org.algorithmx.rules.annotation.Action;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.condition.TriCondition;
+import org.algorithmx.rules.core.function.TriFunction;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class ReflectionUtilsTest {
 
     @Test
     public void parameterNamesTest2() throws NoSuchMethodException {
-        TriCondition<Integer, String, List<Float>> lambda = (Integer a, String b, List<Float> c) -> a > 100;
+        TriFunction<Boolean, Integer, String, List<Float>> lambda = (Integer a, String b, List<Float> c) -> a > 100;
         SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(lambda);
         Assert.assertTrue(serializedLambda != null);
         Class<?> c = LambdaUtils.getImplementationClass(serializedLambda);

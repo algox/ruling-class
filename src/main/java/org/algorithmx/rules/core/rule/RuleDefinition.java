@@ -19,8 +19,7 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.core.action.ActionDefinition;
-import org.algorithmx.rules.core.condition.ConditionDefinition;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
@@ -41,11 +40,11 @@ public final class RuleDefinition {
     // Rule class
     private final Class<?> ruleClass;
     // Given method details
-    private final ConditionDefinition conditionDefinition;
+    private final MethodDefinition conditionDefinition;
     // Associated Then actions
-    private ActionDefinition[] thenActionDefinitions;
+    private MethodDefinition[] thenActionDefinitions;
     // Else action
-    private ActionDefinition elseActionDefinition;
+    private MethodDefinition elseActionDefinition;
 
     // Name of the Rule
     private String name;
@@ -63,9 +62,9 @@ public final class RuleDefinition {
      * @param elseActionDefinition Otherwise Action meta information.
      */
     public RuleDefinition(Class<?> ruleClass, String name, String description,
-                          ConditionDefinition conditionDefinition,
-                          ActionDefinition[] thenActionDefinitions,
-                          ActionDefinition elseActionDefinition) {
+                          MethodDefinition conditionDefinition,
+                          MethodDefinition[] thenActionDefinitions,
+                          MethodDefinition elseActionDefinition) {
         super();
         Assert.notNull(ruleClass, "Rule class cannot be null.");
         Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
@@ -92,9 +91,10 @@ public final class RuleDefinition {
 
         String ruleName = Rule.NOT_APPLICABLE.equals(rule.name()) ? c.getSimpleName() : rule.name();
         Description descriptionAnnotation = c.getAnnotation(Description.class);
-        return new RuleDefinition(c, ruleName, descriptionAnnotation != null
+        /*return new RuleDefinition(c, ruleName, descriptionAnnotation != null
                 ? descriptionAnnotation.value()
-                : null, ConditionDefinition.load(c), ActionDefinition.loadThenActions(c), ActionDefinition.loadElseActions(c));
+                : null, ConditionDefinition.load(c), ActionDefinition.loadThenActions(c), ActionDefinition.loadElseActions(c));*/
+        return null;
     }
 
     /**
@@ -139,7 +139,7 @@ public final class RuleDefinition {
      *
      * @return meta information rule implementing method.
      */
-    public ConditionDefinition getConditionDefinition() {
+    public MethodDefinition getConditionDefinition() {
         return conditionDefinition;
     }
 
@@ -148,7 +148,7 @@ public final class RuleDefinition {
      *
      * @return meta information about the associated actions.
      */
-    public ActionDefinition[] getThenActionDefinitions() {
+    public MethodDefinition[] getThenActionDefinitions() {
         return thenActionDefinitions;
     }
 
@@ -157,7 +157,7 @@ public final class RuleDefinition {
      *
      * @return meta information about the otherwise action.
      */
-    public ActionDefinition getElseActionDefinition() {
+    public MethodDefinition getElseActionDefinition() {
         return elseActionDefinition;
     }
 

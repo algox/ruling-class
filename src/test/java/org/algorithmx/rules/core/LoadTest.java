@@ -17,13 +17,13 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.util.TypeReference;
-import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.action.ActionDefinition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.core.action.ActionDefinition;
+import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleDefinition;
+import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -60,30 +60,30 @@ public class LoadTest {
 
         Assert.assertTrue("TestRule".equals(def.getName()));
         Assert.assertTrue(def.getConditionDefinition() != null);
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getMethod().equals(m));
+        Assert.assertTrue(def.getConditionDefinition().getMethod().equals(m));
     }
 
     @Test
     public void loadTest3() {
         RuleDefinition def = RuleDefinition.load(TestRule1.class);
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions().length == 3);
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getIndex() == 0);
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("id"));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].isRequired());
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getIndex() == 0);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getType().equals(int.class));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].isRequired());
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("birthDate"));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].isRequired() == true);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getIndex() == 1);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getName().equals("birthDate"));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getType().equals(Date.class));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].isRequired() == true);
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getIndex() == 2);
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getName().equals("values"));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[2].getAnnotations().length == 0);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[2].getIndex() == 2);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[2].getName().equals("values"));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[2].getType().equals(new TypeReference<List<String>>(){}.getType()));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[2].getAnnotations().length == 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -119,35 +119,35 @@ public class LoadTest {
     @Test
     public void loadTest7() {
         Rule rule = RuleBuilder
-                .with(ConditionBuilder.with2Args((Integer i, String text) -> i > 100 && text != null).build())
+                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction().build())
                 .build();
         RuleDefinition def = rule.getRuleDefinition();
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions().length == 2);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions().length == 2);
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getIndex() == 0);
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getName().equals("i"));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getType().equals(Integer.class));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getIndex() == 0);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getName().equals("i"));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getType().equals(Integer.class));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getIndex() == 1);
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getName().equals("text"));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].getType().equals(String.class));
-        Assert.assertTrue(def.getConditionDefinition().getMethodDefinition().getParameterDefinitions()[1].isRequired() == true);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getIndex() == 1);
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getName().equals("text"));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getType().equals(String.class));
+        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].isRequired() == true);
     }
 
     @Test
     public void loadTest8() {
         Rule rule1 = RuleBuilder
-                .with(ConditionBuilder.with3Args((Integer a, Date date, String x) -> a != null).build())
+                .with(ConditionBuilder.with((Integer a, Date date, String x) -> a != null).build())
                 .name("rule1")
                 .build();
 
         Rule rule2 = RuleBuilder
-                .with(ConditionBuilder.with4Args((Integer a, Date date, String x, String y) -> a != null).build())
+                .with(ConditionBuilder.with((Integer a, Date date, String x, String y) -> a != null).build())
                 .then(ActionBuilder.with((Integer y, String z) -> {}).build())
                 .then(ActionBuilder.with((Integer y, String z, Date date) -> {}).build())
                 .name("rule2")

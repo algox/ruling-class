@@ -18,8 +18,22 @@
 package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.function.BiFunction;
+import org.algorithmx.rules.core.function.DecFunction;
+import org.algorithmx.rules.core.function.ExecutableBuilder;
+import org.algorithmx.rules.core.function.NoArgFunction;
+import org.algorithmx.rules.core.function.NovFunction;
+import org.algorithmx.rules.core.function.OctFunction;
+import org.algorithmx.rules.core.function.QuadFunction;
+import org.algorithmx.rules.core.function.QuinFunction;
+import org.algorithmx.rules.core.function.SeptFunction;
+import org.algorithmx.rules.core.function.SexFunction;
+import org.algorithmx.rules.core.function.TriFunction;
+import org.algorithmx.rules.core.function.UnaryFunction;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
@@ -28,131 +42,132 @@ import java.lang.reflect.Type;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class ConditionBuilder {
+public class ConditionBuilder extends ExecutableBuilder {
 
-    private final FunctionalCondition condition;
-    private final ConditionDefinition definition;
-
-    private ConditionBuilder(FunctionalCondition condition) {
-        super();
-        this.condition = condition;
-        this.definition = condition.getConditionDefinition();
+    protected ConditionBuilder(Object function, MethodDefinition definition) {
+        super(function, definition);
     }
 
+    public static ConditionBuilder with(Object function, Class<? extends Annotation> annotation) {
+        MethodInfo methodInfo = load(function, annotation);
+        return new ConditionBuilder(methodInfo.getFunction(), methodInfo.getDefinition());
+    }
+
+    /*public static FunctionBuilder with(Class<?> functionClass, Class<? extends Annotation> annotation) {
+        Method functionMethod = findFunctionMethod(functionClass, annotation);
+
+        if (functionMethod == null) {
+            throw new UnrulyException("Class [" + functionClass + "] does not implement any function methods. " +
+                    "Add @Function to a method and try again.");
+        }
+
+        return new FunctionBuilder(with(ObjectFactory.create().create(functionClass), functionMethod));
+    }*/
+
     /**
-     * Creates a new condition builder given a ConditionConsumer. This is useful when using your own Condition
-     * definition or if you want to cast to an existing one.
+     * Builds the Action based on the set properties.
      *
-     * @param condition desired condition.
-     * @return new ConditionBuilder based on the given consumer.
+     * @return a new Action.
      */
-    public static ConditionBuilder with(FunctionalCondition condition) {
-        return new ConditionBuilder(condition);
+    public Condition build() {
+        return new DefaultCondition(getFunction(), getDefinition());
     }
 
     /**
-     * Creates a new condition builder with no arguments.
+     * Creates a new action builder with no arguments.
      *
-     * @param condition desired condition.
-     * @return new ConditionBuilder with no arguments.
+     * @param function desired action.
+     * @return new ActionBuilder with no arguments.
      */
-    public static ConditionBuilder withNoArgs(NoArgCondition condition) {
-        return new ConditionBuilder(condition);
-    }
-
-    public static ConditionBuilder alwaysTrue() {
-        return ConditionBuilder.withNoArgs(() -> true);
-    }
-
-    public static ConditionBuilder alwaysFalse() {
-        return ConditionBuilder.withNoArgs(() -> false);
+    public static ConditionBuilder with(NoArgFunction<Boolean> function) {
+        return with(function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with one argument.
+     * Creates a new action builder with one argument.
      *
-     * @param condition desired condition.
+     * @param function desired action.
      * @param <A> generic type of the first parameter.
-     * @return new ConditionBuilder with one arguments.
+     * @return new ActionBuilder with one arguments.
      */
-    public static <A> ConditionBuilder with1Arg(UnaryCondition<A> condition) {
-        return new ConditionBuilder(condition);
+    public static <A> ConditionBuilder with(UnaryFunction<Boolean, A> function) {
+        return with(function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with two argument.
+     * Creates a new action builder with two argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
-     * @return new ConditionBuilder with two arguments.
+     * @return new ActionBuilder with two arguments.
      */
-    public static <A, B> ConditionBuilder with2Args(BiCondition<A, B> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B> ConditionBuilder with(BiFunction<Boolean, A, B> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with three argument.
+     * Creates a new action builder with three argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
-     * @return new ConditionBuilder with three arguments.
+     * @return new ActionBuilder with three arguments.
      */
-    public static <A, B, C> ConditionBuilder with3Args(TriCondition<A, B, C> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C> ConditionBuilder with(TriFunction<Boolean, A, B, C> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with four argument.
+     * Creates a new action builder with four argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
-     * @return new ConditionBuilder with four arguments.
+     * @return new ActionBuilder with four arguments.
      */
-    public static <A, B, C, D> ConditionBuilder with4Args(QuadCondition<A, B, C, D> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D> ConditionBuilder with(QuadFunction<Boolean, A, B, C, D> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with five argument.
+     * Creates a new action builder with five argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
-     * @return new ConditionBuilder with five arguments.
+     * @return new ActionBuilder with five arguments.
      */
-    public static <A, B, C, D, E> ConditionBuilder with5Args(QuinCondition<A, B, C, D, E> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D, E> ConditionBuilder with(QuinFunction<Boolean, A, B, C, D, E> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with six argument.
+     * Creates a new action builder with six argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
-     * @return new ConditionBuilder with six arguments.
+     * @return new ActionBuilder with six arguments.
      */
-    public static <A, B, C, D, E, F> ConditionBuilder with6Args(SexCondition<A, B, C, D, E, F> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D, E, F> ConditionBuilder with(SexFunction<Boolean, A, B, C, D, E, F> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with seven argument.
+     * Creates a new action builder with seven argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -160,16 +175,16 @@ public final class ConditionBuilder {
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
-     * @return new ConditionBuilder with seven arguments.
+     * @return new ActionBuilder with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> ConditionBuilder with7Args(SeptCondition<A, B, C, D, E, F, G> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D, E, F, G> ConditionBuilder with(SeptFunction<Boolean, A, B, C, D, E, F, G> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with eight argument.
+     * Creates a new action builder with eight argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -178,16 +193,16 @@ public final class ConditionBuilder {
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
-     * @return new ConditionBuilder with eight arguments.
+     * @return new ActionBuilder with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> ConditionBuilder with8Args(OctCondition<A, B, C, D, E, F, G, H> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D, E, F, G, H> ConditionBuilder with(OctFunction<Boolean, A, B, C, D, E, F, G, H> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition with nine argument.
+     * Creates a new action with nine argument.
      *
-     * @param condition desired condition.
+     * @param Function action action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -197,16 +212,16 @@ public final class ConditionBuilder {
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
-     * @return new Condition with nine arguments.
+     * @return new ActionBuilder with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with9Args(NovCondition<A, B, C, D, E, F, G, H, I> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with(NovFunction<Boolean, A, B, C, D, E, F, G, H, I> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Creates a new condition builder with ten argument.
+     * Creates a new action builder with ten argument.
      *
-     * @param condition desired condition.
+     * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -217,45 +232,35 @@ public final class ConditionBuilder {
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
      * @param <J> generic type of the ninth parameter.
-     * @return new ConditionBuilder with ten arguments.
+     * @return new ActionBuilder with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with10Args(DecCondition<A, B, C, D, E, F, G, H, I, J> condition) {
-        return new ConditionBuilder(condition);
+    public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with(DecFunction<Boolean, A, B, C, D, E, F, G, H, I, J> Function) {
+        return with(Function, org.algorithmx.rules.annotation.Function.class);
     }
 
     /**
-     * Change the parameter type, useful for Conditions with generic types (as Java Compiler does not store generic
+     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
      * type for lambdas).
      *
      * @param index parameter index.
      * @param type desired type.
-     * @return ConditionBuilder for fluency.
+     * @return ActionBuilder for fluency.
      */
     public ConditionBuilder parameterType(int index, Type type) {
-
-        if (definition.getMethodDefinition().getParameterDefinitions().length == 0) {
-            throw new UnrulyException("There are no args found");
-        }
-
-        if (index < 0 || index > definition.getMethodDefinition().getParameterDefinitions().length) {
-            throw new UnrulyException("Invalid parameter index [" + index + "] it must be between [0, "
-                    + definition.getMethodDefinition().getParameterDefinitions().length + "]");
-        }
-
-        this.definition.getMethodDefinition().getParameterDefinition(index).setType(type);
+        getDefinition().getParameterDefinition(index).setType(type);
         return this;
     }
 
     /**
-     * Change the parameter type, useful for Conditions with generic types (as Java Compiler does not store generic
+     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
      * type for lambdas).
      *
      * @param name parameter name.
      * @param type desired type.
-     * @return ConditionBuilder for fluency.
+     * @return ActionBuilder for fluency.
      */
     public ConditionBuilder parameterType(String name, Type type) {
-        ParameterDefinition definition = this.definition.getMethodDefinition().getParameterDefinition(name);
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {
             throw new UnrulyException("No such parameter [" + name + "] found");
@@ -266,26 +271,71 @@ public final class ConditionBuilder {
     }
 
     /**
-     * Provide a description for the Condition.
+     * Change the parameter name, useful for Actions where we are unable to retrieve the parameter name.
      *
-     * @param description description of the Condition.
-     * @return ConditionBuilder for fluency.
+     * @param index parameter index.
+     * @param name new name.
+     * @return ActionBuilder for fluency.
      */
-    public ConditionBuilder description(String description) {
-        this.definition.setDescription(description);
+    public ConditionBuilder parameterName(int index, String name) {
+        getDefinition().getParameterDefinition(index).setName(name);
+        getDefinition().createParameterNameIndex();
         return this;
     }
 
     /**
-     * Builds the Condition based on the set properties.
+     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
+     * type for lambdas).
      *
-     * @return a new Condition.
+     * @param index parameter index.
+     * @param description desired description.
+     * @return ActionBuilder for fluency.
      */
-    public Condition build() {
-        return new DelegatingCondition(condition, definition);
+    public ConditionBuilder parameterDescription(int index, String description) {
+        getDefinition().getParameterDefinition(index).setDescription(description);
+        return this;
     }
 
-    public ConditionDefinition getDefinition() {
-        return definition;
+    /**
+     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
+     * type for lambdas).
+     *
+     * @param name parameter name.
+     * @param description desired description.
+     * @return ActionBuilder for fluency.
+     */
+    public ConditionBuilder parameterDescription(String name, String description) {
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
+
+        if (definition == null) {
+            throw new UnrulyException("No such parameter [" + name + "] found");
+        }
+
+        definition.setDescription(description);
+        return this;
     }
+
+    /**
+     * Provide a name for the Action.
+     *
+     * @param name name of the Action.
+     * @return ActionBuilder for fluency.
+     */
+    public ConditionBuilder name(String name) {
+        getDefinition().setName(name);
+        return this;
+    }
+
+    /**
+     * Provide a description for the Action.
+     *
+     * @param description description of the Action.
+     * @return ActionBuilder for fluency.
+     */
+    public ConditionBuilder description(String description) {
+        getDefinition().setDescription(description);
+        return this;
+    }
+
+    // alwaysTrue, alwaysFalse
 }

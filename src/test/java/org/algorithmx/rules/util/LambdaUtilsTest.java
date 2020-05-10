@@ -17,9 +17,8 @@
  */
 package org.algorithmx.rules.util;
 
-import org.algorithmx.rules.core.condition.TriCondition;
-import org.algorithmx.rules.core.condition.UnaryCondition;
-import org.algorithmx.rules.lib.spring.core.DefaultParameterNameDiscoverer;
+import org.algorithmx.rules.core.function.TriFunction;
+import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.lib.spring.core.ParameterNameDiscoverer;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,14 +40,15 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test1() {
-        UnaryCondition<Integer> rule1 = (Integer x) -> x > 10;
+        UnaryFunction<Boolean, Integer> rule1 = (Integer x) -> x > 10;
 
-        UnaryCondition<Integer> rule2 = new UnaryCondition<Integer>() {
+        UnaryFunction<Boolean, Integer> rule2 = new UnaryFunction<Boolean, Integer>() {
             static final long serialVersionUID = 0L;
 
+
             @Override
-            public boolean isPass(Integer value) {
-                return false;
+            public Boolean apply(Integer arg) {
+                return null;
             }
         };
 
@@ -66,7 +66,7 @@ public final class LambdaUtilsTest {
 
     @Test
     public void test2() {
-        TriCondition<Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
+        TriFunction<Boolean, Integer, String, BigDecimal> rule3 = (Integer xxx, String value, BigDecimal salary) -> xxx > 10 && salary != null;
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(rule3);
         Class<?> implementationClass = LambdaUtils.getImplementationClass(lambda);
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
@@ -83,12 +83,12 @@ public final class LambdaUtilsTest {
     @Test
     public void test3() throws NoSuchMethodException {
 
-        TriCondition<Integer, String, BigDecimal> rule3 = new TriCondition<Integer, String, BigDecimal>() {
+        TriFunction<Boolean, Integer, String, BigDecimal> rule3 = new TriFunction<Boolean, Integer, String, BigDecimal>() {
 
             static final long serialVersionUID = 0L;
 
             @Override
-            public boolean isPass(Integer xxx, String value, BigDecimal salary) {
+            public Boolean apply(Integer arg0, String arg1, BigDecimal arg2) {
                 return false;
             }
         };

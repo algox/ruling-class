@@ -18,7 +18,6 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.ConditionUtils;
 
 public class ObjectBasedRuleBuilder extends RuleBuilder {
 
@@ -35,7 +34,7 @@ public class ObjectBasedRuleBuilder extends RuleBuilder {
         target(target);
 
         RuleDefinition definition = RuleDefinition.load(target.getClass());
-        given(ConditionUtils.create(definition.getConditionDefinition(), target));
+        //given(ConditionUtils.create(definition.getConditionDefinition(), target));
         name(definition.getName());
         description(definition.getDescription());
 

@@ -29,6 +29,6 @@ public class LambdaBasedRuleBuilder extends RuleBuilder {
 
     @Override
     public Class<?> getRuleClass() {
-        return getCondition().getConditionDefinition().getConditionClass();
+        return null;
     }
 }

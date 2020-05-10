@@ -17,8 +17,8 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.function.Function;
 import org.algorithmx.rules.core.rule.RuleContext;
 
 /**
@@ -27,7 +27,7 @@ import org.algorithmx.rules.core.rule.RuleContext;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Condition {
+public interface Condition extends Function<Boolean> {
 
     /**
      * Derives all the arguments and executed this Condition.
@@ -37,8 +37,7 @@ public interface Condition {
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
     default boolean isPass(RuleContext ctx) throws UnrulyException {
-        ParameterMatch[] matches = ctx.match(getConditionDefinition().getMethodDefinition());
-        return isPass(ctx.resolve(matches, getConditionDefinition().getMethodDefinition()));
+        return apply(ctx);
     }
 
     /**
@@ -48,19 +47,7 @@ public interface Condition {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      * @return true if the condition is met; false otherwise.
      */
-    boolean isPass(Object...params) throws UnrulyException;
-
-    /**
-     * Meta information about the Condition.
-     *
-     * @return Condition meta information.
-     */
-    ConditionDefinition getConditionDefinition();
-
-    /**
-     * The actual target instance the Condition is associated to (Rule instance or null for Functional Rules).
-     *
-     * @return target instance.
-     */
-    Object getTarget();
+    default boolean isPass(Object...params) throws UnrulyException {
+        return apply(params);
+    }
 }

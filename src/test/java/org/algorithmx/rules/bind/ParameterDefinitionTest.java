@@ -17,9 +17,9 @@
  */
 package org.algorithmx.rules.bind;
 
-import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
-import org.algorithmx.rules.core.condition.TriCondition;
+import org.algorithmx.rules.core.function.Function;
+import org.algorithmx.rules.core.function.TriFunction;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.util.TypeReference;
@@ -82,7 +82,7 @@ public class ParameterDefinitionTest {
 
     @Test
     public void testBindableParameter4() {
-        TriCondition<Integer, Binding<List<String>>, Optional<Integer>> condition = ((a, b, x) -> a > 10);
+        TriFunction<Boolean, Integer, Binding<List<String>>, Optional<Integer>> condition = ((a, b, x) -> a > 10);
         SerializedLambda lambda = LambdaUtils.getSerializedLambda(condition);
         Class c = LambdaUtils.getImplementationClass(lambda);
         Method m = LambdaUtils.getImplementationMethod(lambda, c);
@@ -93,10 +93,10 @@ public class ParameterDefinitionTest {
 
     @Test
     public void testBindableParameter5() {
-        Condition condition = ConditionBuilder.with3Args((Integer a, Binding<List<String>> b, Integer x) -> a > 10)
+        Function<Boolean> condition = ConditionBuilder.with((Integer a, Binding<List<String>> b, Integer x) -> a > 10)
                 .parameterType(1, new TypeReference<Binding<List<Integer>>>() {}.getType())
                 .build();
-        ParameterDefinition[] parameters = condition.getConditionDefinition().getMethodDefinition().getParameterDefinitions();
+        ParameterDefinition[] parameters = condition.getMethodDefinition().getParameterDefinitions();
         Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
         Assert.assertTrue(parameters[1].isBinding() && parameters[1].getBindingType().equals(new TypeReference<List<Integer>>() {}.getType()));
     }

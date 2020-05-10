@@ -114,7 +114,7 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @return parameters used by the @Given condition.
      */
     protected Map<String, Binding> resolveParameters(RuleContext ctx) {
-        ParameterMatch[] matches = ctx.match(getRuleDefinition().getConditionDefinition().getMethodDefinition());
+        ParameterMatch[] matches = ctx.match(getRuleDefinition().getConditionDefinition());
 
         Map<String, Binding> result = new LinkedHashMap<>();
 

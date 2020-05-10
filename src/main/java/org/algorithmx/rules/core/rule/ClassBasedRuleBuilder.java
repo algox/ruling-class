@@ -18,7 +18,6 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.ConditionUtils;
 
 /**
  * Builder class for all Class based Rule(s).
@@ -43,7 +42,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         description(definition.getDescription());
         Object target = getObjectFactory().create(definition.getRuleClass());
         target(target);
-        given(ConditionUtils.create(definition.getConditionDefinition(), target));
+        //given(ConditionUtils.create(definition.getConditionDefinition(), target));
 
         /*if (definition.getThenActionDefinitions() != null) {
             Arrays.stream(definition.getThenActionDefinitions())

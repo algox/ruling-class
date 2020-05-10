@@ -17,11 +17,8 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
-import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.lib.spring.util.Assert;
-
-import java.util.Arrays;
+import org.algorithmx.rules.core.function.DefaultFunction;
+import org.algorithmx.rules.core.model.MethodDefinition;
 
 /**
  * Default Condition implementation.
@@ -29,51 +26,9 @@ import java.util.Arrays;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class DefaultCondition implements Condition {
+public class DefaultCondition extends DefaultFunction<Boolean> implements Condition {
 
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.create();
-    private final ConditionDefinition conditionDefinition;
-    private final Object target;
-
-    /**
-     * Ctor taking meta information and the target object.
-     *
-     * @param conditionDefinition meta info.
-     * @param target action target.
-     */
-    public DefaultCondition(ConditionDefinition conditionDefinition, Object target) {
-        super();
-        Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
-        this.conditionDefinition = conditionDefinition;
-        this.target = target;
-    }
-
-    @Override
-    public boolean isPass(Object...args) throws UnrulyException {
-        try {
-            return methodExecutor.execute(target, conditionDefinition.getMethodDefinition(), args);
-        } catch (UnrulyException e) {
-            throw e;
-        } catch (Exception e) {
-            UnrulyException ex = new UnrulyException("Error trying to execute rule condition method ["
-                    + getConditionDefinition().getMethodDefinition().getMethod()
-                    + "] Args [" + Arrays.toString(args) + "]", e);
-            throw ex;
-        }
-    }
-
-    @Override
-    public ConditionDefinition getConditionDefinition() {
-        return conditionDefinition;
-    }
-
-    @Override
-    public Object getTarget() {
-        return target;
-    }
-
-    public void setMethodExecutor(BindableMethodExecutor methodExecutor) {
-        Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
-        this.methodExecutor = methodExecutor;
+    public DefaultCondition(Object target, MethodDefinition methodDefinition) {
+        super(target, methodDefinition);
     }
 }

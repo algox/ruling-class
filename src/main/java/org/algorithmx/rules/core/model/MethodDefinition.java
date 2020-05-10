@@ -21,9 +21,11 @@ import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Order;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +52,8 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
     private int order;
     // Description of the Action
     private String description;
+    // Return type of the method
+    private Type returnType;
 
     public MethodDefinition(Method method, int order, String description, ParameterDefinition...parameterDefinitions) {
         super();
@@ -58,6 +62,7 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
         this.name = method.getName();
         this.order = order;
         this.description = description;
+        this.returnType = method.getGenericReturnType();
         this.parameterDefinitions = parameterDefinitions;
         createParameterNameIndex();
     }
@@ -168,6 +173,7 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      * @param name new value/
      */
     public void setName(String name) {
+        Assert.isTrue(RuleUtils.isValidName(name), "Invalid method name [" + name + "] regex [" + RuleUtils.NAME_REGEX + "]");
         this.name = name;
     }
 
@@ -205,6 +211,25 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Return type of this method.
+     *
+     * @return method return type.
+     */
+    public Type getReturnType() {
+        return returnType;
+    }
+
+    /**
+     * Overridden method return type with the given value.
+     *
+     * @param returnType new value.
+     */
+    public void setReturnType(Type returnType) {
+        Assert.notNull(returnType, "returnType cannot be null.");
+        this.returnType = returnType;
     }
 
     /**
