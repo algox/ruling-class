@@ -18,10 +18,7 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.ActionUtils;
 import org.algorithmx.rules.util.ConditionUtils;
-
-import java.util.Arrays;
 
 /**
  * Builder class for all Class based Rule(s).

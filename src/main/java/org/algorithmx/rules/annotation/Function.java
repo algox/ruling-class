@@ -19,20 +19,20 @@ package org.algorithmx.rules.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Annotation to mark the Condition method of a Rule.
+ * Annotation to mark an Functional method.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Documented
-@Function
-public @interface Given {
+public @interface Function {
 }

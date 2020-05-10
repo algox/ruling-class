@@ -262,7 +262,29 @@ public final class ReflectionUtils {
      */
     public static void makeAccessible(Executable executable) {
         Assert.notNull(executable, "executable cannot be null.");
-        //if (Modifier.isPublic(executable.getModifiers())) return;
         executable.setAccessible(true);
+    }
+
+    public static Method getImplementationMethod(Class<?> c, Method candidate) {
+        // We found the one
+        // TODO : Handle overridden methods with generics
+        // TODO : Cache?
+        if (!Modifier.isAbstract(candidate.getModifiers())) return candidate;
+
+        // Looks like we have an abstract method; let's find the implementation
+        List<Method> matches = new ArrayList<>();
+
+        for (Method method : c.getMethods()) {
+            if (candidate.equals(method)) continue;
+            if (method.isBridge()) continue;
+            if (!void.class.equals(method.getReturnType())) continue;
+            if (!candidate.getName().equals(method.getName())) continue;
+            if (method.getParameterCount() != candidate.getParameterCount()) continue;
+            if (Modifier.isAbstract(method.getModifiers())) continue;
+
+            matches.add(method);
+        }
+
+        return matches.size() == 1 ? matches.get(0) : candidate;
     }
 }

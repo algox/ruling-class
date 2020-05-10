@@ -19,6 +19,7 @@ package org.algorithmx.rules.core.model;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Order;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Method;
@@ -129,11 +130,17 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      * @return Parameter Definition.
      */
     public ParameterDefinition getParameterDefinition(int index) {
-        return getParameterDefinitions()[index];
-    }
 
-    public void setParameterDefinition(int index, ParameterDefinition parameterDefinition) {
-        getParameterDefinitions()[index] = parameterDefinition;
+        if (getParameterDefinitions().length == 0) {
+            throw new UnrulyException("There are no args found in the Action");
+        }
+
+        if (index < 0 || index >= getParameterDefinitions().length) {
+            throw new UnrulyException("Invalid parameter index [" + index + "] it must be between [0, "
+                    + getParameterDefinitions().length + "]");
+        }
+
+        return getParameterDefinitions()[index];
     }
 
     /**

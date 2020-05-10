@@ -15,24 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.core.function;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.algorithmx.rules.annotation.Function;
 
+import java.io.Serializable;
 
 /**
- * Annotation to mark the Condition method of a Rule.
+ * Function taking in a single parameter.
+ *
+ * @param <A> generic type of the parameter.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Function
-public @interface Given {
+@FunctionalInterface
+public interface UnaryFunction<T, A> extends Serializable {
+
+    /**
+     * Action logic taking in a single arg.
+     *
+     * @param arg arg value.
+     */
+    @Function
+    T apply(A arg);
 }

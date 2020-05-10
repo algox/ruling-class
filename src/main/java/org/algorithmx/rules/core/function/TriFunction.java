@@ -15,24 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.core.function;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.algorithmx.rules.annotation.Function;
 
+import java.io.Serializable;
 
 /**
- * Annotation to mark the Condition method of a Rule.
+ * Function taking in three parameters.
+ *
+ * @param <A> generic type of the 1st parameter.
+ * @param <B> generic type of the 2nd parameter.
+ * @param <C> generic type of the 3rd parameter.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Function
-public @interface Given {
+@FunctionalInterface
+public interface TriFunction<T, A, B, C> extends Serializable {
+
+    /**
+     * Action logic taking in three args.
+     *
+     * @param arg0 1st arg.
+     * @param arg1 2nd arg.
+     * @param arg2 3rd arg.
+     */
+    @Function
+    T apply(A arg0, B arg1, C arg2);
 }

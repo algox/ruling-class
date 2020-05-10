@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.action;
+package org.algorithmx.rules.core.function;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
@@ -24,50 +24,50 @@ import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 /**
- * Represents an operation that accepts input arguments and returns no result.
+ * Represents a function that accepts argument(s) and produces a result.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Action extends Comparable<Action> {
+public interface Function<T> extends Comparable<Function> {
 
     /**
-     * Derives all the arguments and executes this Action.
+     * Derives all the arguments and executes this Function.
      *
      * @param ctx Rule Context.
-     * @throws UnrulyException thrown if there are any errors during the Condition execution.
+     * @throws UnrulyException thrown if there are any errors during the Function execution.
      */
-    default void run(RuleContext ctx) throws UnrulyException {
+    default T apply(RuleContext ctx) throws UnrulyException {
         Assert.notNull(ctx, "ctx cannot be null.");
         ParameterMatch[] result = ctx.match(getMethodDefinition());
         Object[] values = ctx.resolve(result, getMethodDefinition());
-        run(values);
+        return apply(values);
     }
 
     /**
-     * Executes thr Action given all the arguments it needs.
+     * Executes thr Function given all the arguments it needs.
      *
-     * @param params Action parameters in order.
+     * @param params parameters in order.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(Object...params) throws UnrulyException;
+    T apply(Object... params) throws UnrulyException;
 
     /**
-     * Meta information about the Action.
+     * Meta information about the Function.
      *
-     * @return Action meta information.
+     * @return Function meta information.
      */
     MethodDefinition getMethodDefinition();
 
     /**
-     * The actual target instance the Action is associated to.
+     * The actual target instance the Function is associated to.
      *
      * @return target instance.
      */
     Object getTarget();
 
     @Override
-    default int compareTo(Action other) {
+    default int compareTo(Function other) {
         return getMethodDefinition().compareTo(other.getMethodDefinition());
     }
 }
