@@ -43,8 +43,8 @@ public class RuleActionTest1 {
 
         Rule ruleWithAction = RuleBuilder
                 .with(ConditionBuilder.with2Args((String x, Integer y) -> y > 10).build())
-                .then(ActionBuilder.with1Arg((Integer z) -> System.err.println("YASS! [" + z + "]")).build())
-                .then(ActionBuilder.with1Arg((String x) -> System.err.println("MAN! [" + x + "]")).build())
+                .then(ActionBuilder.with((Integer z) -> System.err.println("YASS! [" + z + "]")).build())
+                .then(ActionBuilder.with((String x) -> System.err.println("MAN! [" + x + "]")).build())
                 .build();
 
         Rule rule2 = RuleBuilder

@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class ActionBuilderTest {
     @Test
     public void testNoArg() {
         Action action = ActionBuilder
-                .withNoArgs(() -> {
+                .with(() -> {
                     return;
                 })
                 .name("action0")
@@ -59,7 +58,7 @@ public class ActionBuilderTest {
     @Test
     public void test1Arg() {
         Action action = ActionBuilder
-                .with1Arg((String x) -> {
+                .with((String x) -> {
                     return;
                 })
                 .description("Action with one arg")
@@ -74,7 +73,7 @@ public class ActionBuilderTest {
     @Test
     public void test2Args() {
         Action action = ActionBuilder
-                .with2Args((String x, BigDecimal value) -> {
+                .with((String x, BigDecimal value) -> {
                     return;
                 })
                 .build();
@@ -87,7 +86,7 @@ public class ActionBuilderTest {
     @Test
     public void test3Args() {
         Action action = ActionBuilder
-                .with3Args((String x, BigDecimal value, Integer c) -> {
+                .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
                 .build();
@@ -100,7 +99,7 @@ public class ActionBuilderTest {
     @Test
     public void test4Args() {
         Action action = ActionBuilder
-                .with4Args((String x, BigDecimal value, Integer c, @Nullable Float d) -> {
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d) -> {
                     return;
                 })
                 .build();
@@ -114,7 +113,7 @@ public class ActionBuilderTest {
     @Test
     public void test5Args() {
         Action action = ActionBuilder
-                .with5Args((String x, BigDecimal value, Integer c, @Nullable Float d, @Nullable(defaultValue = "yes") Boolean flag) -> {
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d, @Nullable(defaultValue = "yes") Boolean flag) -> {
                     return;
                 })
                 .build();
@@ -128,7 +127,7 @@ public class ActionBuilderTest {
     @Test
     public void test6Args() {
         Action action = ActionBuilder
-                .with6Args((String x, BigDecimal value, Integer c, @Nullable Float d,
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
                             @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue) -> {
                     bindingValue.setValue("Hello world!");
                 })
@@ -143,7 +142,7 @@ public class ActionBuilderTest {
     @Test
     public void test7Args() {
         Action action = ActionBuilder
-                .with7Args((String x, BigDecimal value, Integer c, @Nullable Float d,
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
                             @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg) -> {
                     bindingValue.setValue("Hello world!");
                 })
@@ -158,7 +157,7 @@ public class ActionBuilderTest {
     @Test
     public void test8Args() {
         Action action = ActionBuilder
-                .with8Args((String x, BigDecimal value, Integer c, @Nullable Float d,
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
                             @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                             Map<String, Object> mapArg) -> {
                     mapArg.put("key", "Hello world!");
@@ -175,7 +174,7 @@ public class ActionBuilderTest {
     @Test
     public void test9Args() {
         Action action = ActionBuilder
-                .with9Args((String x, BigDecimal value, Integer c, @Nullable Float d,
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
                             @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                             Map<String, Object> mapArg, List<String> someList) -> {
                     mapArg.put("key", "Hello world!");
@@ -192,7 +191,7 @@ public class ActionBuilderTest {
     @Test
     public void test10Args() {
         Action action = ActionBuilder
-                .with10Args((String x, BigDecimal value, Integer c, @Nullable Float d,
+                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
                             @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                             Map<String, Object> mapArg, List<String> someList, String tenthArg) -> {
                     mapArg.put("key", "Hello world!");
@@ -208,7 +207,7 @@ public class ActionBuilderTest {
     @Test(expected = UnrulyException.class)
     public void testInvalidParameterIndex() {
         ActionBuilder
-                .with3Args((String x, BigDecimal value, Integer c) -> {
+                .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
                 .parameterType(3, new TypeReference<List<String>>(){}.getType())
@@ -219,7 +218,7 @@ public class ActionBuilderTest {
     @Test(expected = UnrulyException.class)
     public void testInvalidParameterNameIndex() {
         ActionBuilder
-                .with3Args((String x, BigDecimal value, Integer c) -> {
+                .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
                 .parameterType("y", new TypeReference<List<String>>(){}.getType())
@@ -253,7 +252,7 @@ public class ActionBuilderTest {
         String b = "b";
 
         Action action = ActionBuilder
-                .with3Args((String x, BigDecimal value, Integer c) -> {
+                .with((String x, BigDecimal value, Integer c) -> {
                     a.intValue();
                     b.length();
                     c.intValue();
@@ -264,6 +263,35 @@ public class ActionBuilderTest {
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 3);
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getName().equals("c"));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getType().equals(Integer.class));
-        action.run("a", new BigDecimal("10"), 10);
+    }
+
+    public static void testActionMethod1(Integer a, List<Integer> values, BigDecimal c) {}
+
+    @Test
+    public void testMethodReference1() {
+        Action action = ActionBuilder
+                .with(ActionBuilderTest::testActionMethod1).build();
+
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getName().equals("a"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getType().equals(Integer.class));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getName().equals("values"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getName().equals("c"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[2].getType().equals(BigDecimal.class));
+    }
+
+    public void testActionMethod2(List<Integer> values, BigDecimal c) {}
+
+    @Test
+    public void testMethodReference2() {
+        Action action = ActionBuilder
+                .with(this::testActionMethod2).build();
+
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 2);
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getName().equals("values"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getName().equals("c"));
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getType().equals(BigDecimal.class));
     }
 }

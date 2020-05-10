@@ -23,8 +23,9 @@ import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.ActionUtils;
 import org.algorithmx.rules.util.LambdaUtils;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 
-import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -41,42 +42,61 @@ public final class ActionBuilder {
     private Object action;
     private MethodDefinition definition;
 
-    private ActionBuilder(Object target, Method actionMethod) {
+    private ActionBuilder(Object action, MethodDefinition definition) {
         super();
-        Assert.notNull(actionMethod, "actionMethod cannot be null.");
-        this.action = target;
-        this.definition = MethodDefinition.load(actionMethod);
+        Assert.notNull(definition, "actionMethod cannot be null.");
+        this.action = action;
+        this.definition = definition;
     }
 
-    private ActionBuilder(Object action) {
-        super();
+    public static ActionBuilder with(Class<?> actionClass, Class<? extends Annotation> annotation) {
+        Method actionableMethod = ActionUtils.findActionableMethod(actionClass, annotation);
+
+        if (actionableMethod == null) {
+            throw new UnrulyException("Class [" + actionClass + "] does not implement any actionable methods. " +
+                    "Add @Action to a method and try again.");
+        }
+
+        return with(ObjectFactory.create().create(actionClass), actionableMethod);
+    }
+
+    public static ActionBuilder with(Object action, Class<? extends Annotation> annotation) {
         Assert.notNull(action, "action cannot be null.");
-        Method actionableMethod = ActionUtils.findActionableMethod(action.getClass());
-        this.action = action;
+
+        Method actionableMethod = ActionUtils.findActionableMethod(action.getClass(), annotation);
 
         if (actionableMethod == null) {
             throw new UnrulyException("Class [" + action.getClass() + "] does not implement any actionable methods. " +
                     "Add @Action to a method and try again.");
         }
 
-        if (LambdaUtils.isLambda(action)) {
-            withLambda(action, actionableMethod);
-        } else {
-          this.definition = MethodDefinition.load(actionableMethod);
+        SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(action);
+
+        if (serializedLambda != null) {
+            return withLambda(action, actionableMethod, serializedLambda);
         }
+
+        return with(action, actionableMethod);
     }
 
-    private void withLambda(Object action, Method actionableMethod) {
+    public static ActionBuilder with(Object action, Method actionableMethod) {
+        MethodDefinition definition = MethodDefinition.load(actionableMethod);
+        return new ActionBuilder(action, definition);
+    }
+
+    private static ActionBuilder withLambda(Object action, Method actionableMethod, SerializedLambda serializedLambda) {
+        Assert.notNull(actionableMethod, "actionableMethod cannot be null.");
+        Assert.notNull(serializedLambda, "serializedLambda cannot be null.");
         MethodDefinition methodDefinition = null;
 
         try {
-            SerializedLambda serializedLambda = LambdaUtils.getSerializedLambda((Serializable) action);
             Class<?> implementationClass = LambdaUtils.getImplementationClass(serializedLambda);
             Method implementationMethod = LambdaUtils.getImplementationMethod(serializedLambda, implementationClass);
             MethodDefinition implementationMethodDefinition = MethodDefinition.load(implementationMethod);
 
             ParameterDefinition[] parameterDefinitions = new ParameterDefinition[actionableMethod.getParameterCount()];
             int delta = implementationMethod.getParameterCount() - actionableMethod.getParameterCount();
+
             for (int i = delta; i < implementationMethod.getParameterCount(); i++) {
                 int index = i - delta;
                 parameterDefinitions[index] = implementationMethodDefinition.getParameterDefinition(i);
@@ -94,12 +114,7 @@ public final class ActionBuilder {
             methodDefinition = MethodDefinition.load(actionableMethod);
         }
 
-        this.action = action;
-        this.definition = methodDefinition;
-    }
-
-    public static ActionBuilder with(Object action) {
-        return new ActionBuilder(action);
+        return new ActionBuilder(action, methodDefinition);
     }
 
     /**
@@ -108,8 +123,8 @@ public final class ActionBuilder {
      * @param action desired action.
      * @return new ActionBuilder with no arguments.
      */
-    public static ActionBuilder withNoArgs(NoArgAction action) {
-        return new ActionBuilder(action);
+    public static ActionBuilder with(NoArgAction action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -118,7 +133,7 @@ public final class ActionBuilder {
      * @return do nothing action.
      */
     public static ActionBuilder emptyAction() {
-        return ActionBuilder.withNoArgs(() -> {});
+        return ActionBuilder.with(() -> {});
     }
 
     /**
@@ -128,8 +143,8 @@ public final class ActionBuilder {
      * @param <A> generic type of the first parameter.
      * @return new ActionBuilder with one arguments.
      */
-    public static <A> ActionBuilder with1Arg(UnaryAction<A> action) {
-        return new ActionBuilder(action);
+    public static <A> ActionBuilder with(UnaryAction<A> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -140,8 +155,8 @@ public final class ActionBuilder {
      * @param <B> generic type of the second parameter.
      * @return new ActionBuilder with two arguments.
      */
-    public static <A, B> ActionBuilder with2Args(BiAction<A, B> action) {
-        return new ActionBuilder(action);
+    public static <A, B> ActionBuilder with(BiAction<A, B> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -153,8 +168,8 @@ public final class ActionBuilder {
      * @param <C> generic type of the third parameter.
      * @return new ActionBuilder with three arguments.
      */
-    public static <A, B, C> ActionBuilder with3Args(TriAction<A, B, C> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C> ActionBuilder with(TriAction<A, B, C> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -167,8 +182,8 @@ public final class ActionBuilder {
      * @param <D> generic type of the fourth parameter.
      * @return new ActionBuilder with four arguments.
      */
-    public static <A, B, C, D> ActionBuilder with4Args(QuadAction<A, B, C, D> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D> ActionBuilder with(QuadAction<A, B, C, D> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -182,8 +197,8 @@ public final class ActionBuilder {
      * @param <E> generic type of the fifth parameter.
      * @return new ActionBuilder with five arguments.
      */
-    public static <A, B, C, D, E> ActionBuilder with5Args(QuinAction<A, B, C, D, E> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D, E> ActionBuilder with(QuinAction<A, B, C, D, E> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -198,8 +213,8 @@ public final class ActionBuilder {
      * @param <F> generic type of the sixth parameter.
      * @return new ActionBuilder with six arguments.
      */
-    public static <A, B, C, D, E, F> ActionBuilder with6Args(SexAction<A, B, C, D, E, F> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D, E, F> ActionBuilder with(SexAction<A, B, C, D, E, F> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -215,8 +230,8 @@ public final class ActionBuilder {
      * @param <G> generic type of the seventh parameter.
      * @return new ActionBuilder with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> ActionBuilder with7Args(SeptAction<A, B, C, D, E, F, G> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D, E, F, G> ActionBuilder with(SeptAction<A, B, C, D, E, F, G> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -233,8 +248,8 @@ public final class ActionBuilder {
      * @param <H> generic type of the eighth parameter.
      * @return new ActionBuilder with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> ActionBuilder with8Args(OctAction<A, B, C, D, E, F, G, H> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D, E, F, G, H> ActionBuilder with(OctAction<A, B, C, D, E, F, G, H> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -252,8 +267,8 @@ public final class ActionBuilder {
      * @param <I> generic type of the ninth parameter.
      * @return new ActionBuilder with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> ActionBuilder with9Args(NovAction<A, B, C, D, E, F, G, H, I> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D, E, F, G, H, I> ActionBuilder with(NovAction<A, B, C, D, E, F, G, H, I> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**
@@ -272,8 +287,8 @@ public final class ActionBuilder {
      * @param <J> generic type of the ninth parameter.
      * @return new ActionBuilder with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> ActionBuilder with10Args(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
-        return new ActionBuilder(action);
+    public static <A, B, C, D, E, F, G, H, I, J> ActionBuilder with(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
+        return with(action, org.algorithmx.rules.annotation.Action.class);
     }
 
     /**

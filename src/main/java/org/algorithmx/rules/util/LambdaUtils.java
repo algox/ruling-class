@@ -52,10 +52,27 @@ public final class LambdaUtils {
         Assert.notNull(target, "target cannot be null.");
 
         try {
-            if (!target.getClass().isSynthetic()) return false;
-            return (target instanceof Serializable) ? getSerializedLambda((Serializable) target) != null : false;
+            return getSafeSerializedLambda(target) != null;
         } catch (IllegalStateException e) {
             return false;
+        }
+    }
+
+    /**
+     * Returns the Serialized form of the Lambda.
+     *
+     * @param target Lambda object
+     * @return Serialized form of the given lambda; null in case of any error.
+     */
+    public static SerializedLambda getSafeSerializedLambda(Object target) {
+        Assert.notNull(target, "target cannot be null.");
+
+        try {
+            if (!target.getClass().isSynthetic()) return null;
+            if (!(target instanceof Serializable)) return null;
+            return (getSerializedLambda((Serializable) target));
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -87,20 +104,6 @@ public final class LambdaUtils {
             return (SerializedLambda) writeReplaceMethod.invoke(target);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new UnrulyException("Unable to execute writeReplace method! [" + writeReplaceMethod + "]");
-        }
-    }
-
-    /**
-     * Returns the Serialized form of the Lambda.
-     *
-     * @param target Lambda object
-     * @return Serialized form of the given lambda; null in case of any error.
-     */
-    public static SerializedLambda getSafeSerializedLambda(Serializable target) {
-        try {
-            return getSerializedLambda(target);
-        } catch (IllegalStateException e) {
-            return null;
         }
     }
 

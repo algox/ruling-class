@@ -148,8 +148,8 @@ public class LoadTest {
 
         Rule rule2 = RuleBuilder
                 .with(ConditionBuilder.with4Args((Integer a, Date date, String x, String y) -> a != null).build())
-                .then(ActionBuilder.with2Args((Integer y, String z) -> {}).build())
-                .then(ActionBuilder.with3Args((Integer y, String z, Date date) -> {}).build())
+                .then(ActionBuilder.with((Integer y, String z) -> {}).build())
+                .then(ActionBuilder.with((Integer y, String z, Date date) -> {}).build())
                 .name("rule2")
                 .build();
     }
