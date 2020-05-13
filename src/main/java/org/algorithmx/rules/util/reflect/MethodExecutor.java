@@ -24,6 +24,7 @@ public interface MethodExecutor {
     /**
      * Creates the default implementation of MethodExecutor.
      *
+     * @param method target method.
      * @return default MethodExecutor implementation.
      */
     static MethodExecutor create(Method method) {

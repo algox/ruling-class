@@ -40,6 +40,7 @@ public interface TriFunction<T, A, B, C> extends Serializable {
      * @param arg0 1st arg.
      * @param arg1 2nd arg.
      * @param arg2 3rd arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1, C arg2);

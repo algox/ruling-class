@@ -46,6 +46,7 @@ public interface SexFunction<T, A, B, C, D, E, F> extends Serializable {
      * @param arg3 4th arg.
      * @param arg4 5th arg.
      * @param arg5 6th arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5);

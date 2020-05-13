@@ -40,19 +40,8 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
 
     public static FunctionBuilder with(Object function, Class<? extends Annotation> annotation) {
         MethodInfo methodInfo = load(function, annotation);
-        return new FunctionBuilder(methodInfo.getFunction(), methodInfo.getDefinition());
+        return new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
-
-    /*public static FunctionBuilder with(Class<?> functionClass, Class<? extends Annotation> annotation) {
-        Method functionMethod = findFunctionMethod(functionClass, annotation);
-
-        if (functionMethod == null) {
-            throw new UnrulyException("Class [" + functionClass + "] does not implement any function methods. " +
-                    "Add @Function to a method and try again.");
-        }
-
-        return new FunctionBuilder(with(ObjectFactory.create().create(functionClass), functionMethod));
-    }*/
 
     /**
      * Builds the Action based on the set properties.
@@ -60,13 +49,14 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return a new Action.
      */
     public org.algorithmx.rules.core.function.Function<T> build() {
-        return new DefaultFunction(getFunction(), getDefinition());
+        return new DefaultFunction(getTarget(), getDefinition());
     }
 
     /**
      * Creates a new action builder with no arguments.
      *
      * @param function desired action.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with no arguments.
      */
     public static <T> FunctionBuilder<T> with(NoArgFunction<T> function) {
@@ -78,6 +68,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      *
      * @param function desired action.
      * @param <A> generic type of the first parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with one arguments.
      */
     public static <T, A> FunctionBuilder with(UnaryFunction<T, A> function) {
@@ -90,6 +81,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param Function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with two arguments.
      */
     public static <T, A, B> FunctionBuilder with(BiFunction<T, A, B> Function) {
@@ -103,6 +95,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with three arguments.
      */
     public static <T, A, B, C> FunctionBuilder with(TriFunction<T, A, B, C> Function) {
@@ -117,6 +110,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with four arguments.
      */
     public static <T, A, B, C, D> FunctionBuilder with(QuadFunction<T, A, B, C, D> Function) {
@@ -132,6 +126,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with five arguments.
      */
     public static <T, A, B, C, D, E> FunctionBuilder with(QuinFunction<T, A, B, C, D, E> Function) {
@@ -148,6 +143,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with six arguments.
      */
     public static <T, A, B, C, D, E, F> FunctionBuilder with(SexFunction<T, A, B, C, D, E, F> Function) {
@@ -165,6 +161,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with seven arguments.
      */
     public static <T, A, B, C, D, E, F, G> FunctionBuilder with(SeptFunction<T, A, B, C, D, E, F, G> Function) {
@@ -183,6 +180,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with eight arguments.
      */
     public static <T, A, B, C, D, E, F, G, H> FunctionBuilder with(OctFunction<T, A, B, C, D, E, F, G, H> Function) {
@@ -202,6 +200,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with nine arguments.
      */
     public static <T, A, B, C, D, E, F, G, H, I> FunctionBuilder with(NovFunction<T, A, B, C, D, E, F, G, H, I> Function) {
@@ -222,6 +221,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
      * @param <J> generic type of the ninth parameter.
+     * @param <T> generic return type of the function.
      * @return new ActionBuilder with ten arguments.
      */
     public static <T, A, B, C, D, E, F, G, H, I, J> FunctionBuilder with(DecFunction<T, A, B, C, D, E, F, G, H, I, J> Function) {

@@ -36,6 +36,7 @@ public interface UnaryFunction<T, A> extends Serializable {
      * Action logic taking in a single arg.
      *
      * @param arg arg value.
+     * @return result of the function.
      */
     @Function
     T apply(A arg);

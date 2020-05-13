@@ -24,7 +24,6 @@ import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**
@@ -39,7 +38,6 @@ public class RuleContext {
     private final Bindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
     private final ParameterResolver parameterResolver;
-    private final BindableMethodExecutor methodExecutor;
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
 
@@ -47,24 +45,22 @@ public class RuleContext {
 
     public RuleContext(Bindings bindings) {
         this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
-                BindableMethodExecutor.create(), ObjectFactory.create(),
+                ObjectFactory.create(),
                 ConverterRegistry.create());
     }
 
     public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy,
-                       ParameterResolver parameterResolver, BindableMethodExecutor methodExecutor,
+                       ParameterResolver parameterResolver,
                        ObjectFactory objectFactory, ConverterRegistry registry) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
         Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
-        Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         Assert.notNull(registry, "registry cannot be null.");
         this.bindings = bindings;
         this.matchingStrategy = matchingStrategy;
         this.parameterResolver = parameterResolver;
-        this.methodExecutor = methodExecutor;
         this.objectFactory = objectFactory;
         this.registry = registry;
     }
@@ -102,15 +98,6 @@ public class RuleContext {
      */
     protected ParameterResolver getParameterResolver() {
         return parameterResolver;
-    }
-
-    /**
-     * Returns the Method executor being used.
-     *
-     * @return Method Executor. Cannot be null.
-     */
-    public BindableMethodExecutor getMethodExecutor() {
-        return methodExecutor;
     }
 
     /**

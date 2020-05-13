@@ -41,7 +41,7 @@ public final class RuleExecution implements Comparable<RuleExecution> {
     // Make sure we don't hold onto the actual rule definition
     private final WeakReference<RuleDefinition> ruleDefinition;
     private final Map<String, String> params = new LinkedHashMap<>();
-    private final Set<ActionExecution> actions = new HashSet<>();
+    //private final Set<ActionExecution> actions = new HashSet<>();
     private final Date time = new Date();
 
     private Boolean pass;
@@ -77,10 +77,10 @@ public final class RuleExecution implements Comparable<RuleExecution> {
      *
      * @param action action audit to be added.
      */
-    public void add(ActionExecution action) {
+    /*public void add(ActionExecution action) {
         Assert.notNull(action, "action cannot be null.");
         this.actions.add(action);
-    }
+    }*/
 
     /**
      * Retrieves all the rule parameters.

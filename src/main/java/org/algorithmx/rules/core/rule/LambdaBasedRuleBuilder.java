@@ -23,12 +23,7 @@ public class LambdaBasedRuleBuilder extends RuleBuilder {
 
     public LambdaBasedRuleBuilder(Condition condition) {
         super();
+        ruleClass(condition.getMethodDefinition().getMethod().getDeclaringClass());
         given(condition);
-        name(getRuleClass().getSimpleName());
-    }
-
-    @Override
-    public Class<?> getRuleClass() {
-        return null;
     }
 }

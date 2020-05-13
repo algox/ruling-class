@@ -17,36 +17,52 @@ import java.util.List;
 
 public abstract class ExecutableBuilder {
 
-    private Object function;
+    private Object target;
     private MethodDefinition definition;
 
-    protected ExecutableBuilder(Object function, MethodDefinition definition) {
+    protected ExecutableBuilder(Object target, MethodDefinition definition) {
         super();
         Assert.notNull(definition, "actionMethod cannot be null.");
-        this.function = function;
+        this.target = target;
         this.definition = definition;
     }
 
-    public static MethodInfo load(Object function, Class<? extends Annotation> annotation) {
-        Assert.notNull(function, "function cannot be null.");
+    /**
+     * Loads the given target.
+     *
+     * @param target desired target object.
+     * @param annotation searching for annotation.
+     *
+     * @return matched method.
+     */
+    public static MethodInfo load(Object target, Class<? extends Annotation> annotation) {
+        Assert.notNull(target, "function cannot be null.");
 
-        Method functionMethod = findFunctionMethod(function.getClass(), annotation);
+        Method functionMethod = findFunctionMethod(target.getClass(), annotation);
 
         if (functionMethod == null) {
-            throw new UnrulyException("Class [" + function.getClass() + "] does not implement any function methods. " +
+            throw new UnrulyException("Class [" + target.getClass() + "] does not implement any function methods. " +
                     "Add @Function to a method and try again.");
         }
 
-        SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(function);
+        SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(target);
 
         if (serializedLambda != null) {
-            return withLambda(function, functionMethod, serializedLambda);
+            return withLambda(target, functionMethod, serializedLambda);
         }
 
-        return new MethodInfo(function, MethodDefinition.load(functionMethod));
+        return new MethodInfo(target, MethodDefinition.load(functionMethod));
     }
 
-    private static MethodInfo withLambda(Object function, Method functionMethod, SerializedLambda serializedLambda) {
+    /**
+     * Loads the given functional lambda.
+     *
+     * @param function target function.
+     * @param functionMethod implementation method.
+     * @param serializedLambda serialized function.
+     * @return matched method.
+     */
+    protected static MethodInfo withLambda(Object function, Method functionMethod, SerializedLambda serializedLambda) {
         Assert.notNull(functionMethod, "functionMethod cannot be null.");
         Assert.notNull(serializedLambda, "serializedLambda cannot be null.");
         MethodDefinition methodDefinition = null;
@@ -80,6 +96,13 @@ public abstract class ExecutableBuilder {
         return new MethodInfo(function, methodDefinition);
     }
 
+    /**
+     * Finds the function method in the given class.
+     *
+     * @param c target class.
+     * @param annotation target annotation.
+     * @return matching method.
+     */
     protected static Method findFunctionMethod(Class<?> c, Class<? extends Annotation> annotation) {
         Method[] result = findFunctionMethods(c, annotation);
 
@@ -95,9 +118,10 @@ public abstract class ExecutableBuilder {
     }
 
     /**
-     *
-     * @param c
-     * @return
+     * Finds all the function methods in the given class.
+     * @param c target class.
+     * @param annotation target annotation.
+     * @return matching methods.
      */
     protected static Method[] findFunctionMethods(Class<?> c, Class<? extends Annotation> annotation) {
         Assert.notNull(c, "c cannot be null");
@@ -123,8 +147,8 @@ public abstract class ExecutableBuilder {
         return result.toArray(new Method[result.size()]);
     }
 
-    public Object getFunction() {
-        return function;
+    public Object getTarget() {
+        return target;
     }
 
     public MethodDefinition getDefinition() {
@@ -132,17 +156,17 @@ public abstract class ExecutableBuilder {
     }
 
     protected static class MethodInfo {
-        private Object function;
+        private Object target;
         private MethodDefinition definition;
 
-        public MethodInfo(Object function, MethodDefinition definition) {
+        public MethodInfo(Object target, MethodDefinition definition) {
             super();
-            this.function = function;
+            this.target = target;
             this.definition = definition;
         }
 
-        public Object getFunction() {
-            return function;
+        public Object getTarget() {
+            return target;
         }
 
         public MethodDefinition getDefinition() {

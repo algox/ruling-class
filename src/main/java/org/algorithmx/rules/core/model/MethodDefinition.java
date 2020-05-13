@@ -26,8 +26,10 @@ import org.algorithmx.rules.util.RuleUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -108,6 +110,15 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
         MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : 0,
                 descriptionAnnotation != null ? descriptionAnnotation.value() : null, ParameterDefinition.load(method));
         return result;
+    }
+
+    public static MethodDefinition[] load(Method[] methods) {
+        Assert.notNull(methods, "methods cannot be null");
+        List<MethodDefinition> result = new ArrayList<>(methods.length);
+
+        Arrays.stream(methods).forEach(m -> result.add(load(m)));
+
+        return result.toArray(new MethodDefinition[methods.length]);
     }
 
     /**

@@ -44,25 +44,18 @@ import java.lang.reflect.Type;
  */
 public class ConditionBuilder extends ExecutableBuilder {
 
-    protected ConditionBuilder(Object function, MethodDefinition definition) {
-        super(function, definition);
+    protected ConditionBuilder(Object target, MethodDefinition definition) {
+        super(target, definition);
+    }
+
+    public static ConditionBuilder with(Object target, MethodDefinition definition) {
+        return new ConditionBuilder(target, definition);
     }
 
     public static ConditionBuilder with(Object function, Class<? extends Annotation> annotation) {
         MethodInfo methodInfo = load(function, annotation);
-        return new ConditionBuilder(methodInfo.getFunction(), methodInfo.getDefinition());
+        return new ConditionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
-
-    /*public static FunctionBuilder with(Class<?> functionClass, Class<? extends Annotation> annotation) {
-        Method functionMethod = findFunctionMethod(functionClass, annotation);
-
-        if (functionMethod == null) {
-            throw new UnrulyException("Class [" + functionClass + "] does not implement any function methods. " +
-                    "Add @Function to a method and try again.");
-        }
-
-        return new FunctionBuilder(with(ObjectFactory.create().create(functionClass), functionMethod));
-    }*/
 
     /**
      * Builds the Action based on the set properties.
@@ -70,7 +63,15 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return a new Action.
      */
     public Condition build() {
-        return new DefaultCondition(getFunction(), getDefinition());
+        return new DefaultCondition(getTarget(), getDefinition());
+    }
+
+    public static ConditionBuilder TRUE() {
+        return with(() -> true);
+    }
+
+    public static ConditionBuilder FALSE() {
+        return with(() -> false);
     }
 
     /**
@@ -336,6 +337,4 @@ public class ConditionBuilder extends ExecutableBuilder {
         getDefinition().setDescription(description);
         return this;
     }
-
-    // alwaysTrue, alwaysFalse
 }

@@ -44,6 +44,7 @@ public interface QuinFunction<T, A, B, C, D, E> extends Serializable {
      * @param arg2 3rd arg.
      * @param arg3 4th arg.
      * @param arg4 5th arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1, C arg2, D arg3, E arg4);

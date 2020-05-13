@@ -54,6 +54,7 @@ public interface DecFunction<T, A, B, C, D, E, F, G, H, I, J> extends Serializab
      * @param arg7 2nd arg.
      * @param arg8 2nd arg.
      * @param arg9 2nd arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7, I arg8, J arg9);

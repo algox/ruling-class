@@ -43,14 +43,18 @@ import java.util.List;
  */
 public final class ActionBuilder {
 
-    private Object action;
+    private Object target;
     private MethodDefinition definition;
 
-    private ActionBuilder(Object action, MethodDefinition definition) {
+    private ActionBuilder(Object target, MethodDefinition definition) {
         super();
         Assert.notNull(definition, "actionMethod cannot be null.");
-        this.action = action;
+        this.target = target;
         this.definition = definition;
+    }
+
+    public static ActionBuilder with(Object target, MethodDefinition definition) {
+        return new ActionBuilder(target, definition);
     }
 
     public static ActionBuilder with(Class<?> actionClass, Class<? extends Annotation> annotation) {
@@ -400,7 +404,7 @@ public final class ActionBuilder {
      * @return a new Action.
      */
     public Action build() {
-        return new DefaultAction(action, definition);
+        return new DefaultAction(target, definition);
     }
 
     private static Method findActionableMethod(Class<?> c, Class<? extends Annotation> annotation) {

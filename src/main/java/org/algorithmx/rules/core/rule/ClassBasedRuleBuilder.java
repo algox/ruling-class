@@ -17,7 +17,19 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Otherwise;
+import org.algorithmx.rules.annotation.Then;
+import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Builder class for all Class based Rule(s).
@@ -27,35 +39,103 @@ import org.algorithmx.rules.lib.spring.util.Assert;
  */
 public class ClassBasedRuleBuilder extends RuleBuilder {
 
-    private final Class<?> ruleClass;
-
-    public ClassBasedRuleBuilder(Class<?> ruleClass) {
+    private ClassBasedRuleBuilder(Class<?> ruleClass, Object target) {
         super();
-        Assert.notNull(ruleClass, "ruleClass cannot be null.");
-        this.ruleClass = ruleClass;
-        load(ruleClass);
+        load(ruleClass, target);
     }
 
-    private void load(Class<?> ruleClass) {
-        RuleDefinition definition = RuleDefinition.load(ruleClass);
-        name(definition.getName());
-        description(definition.getDescription());
-        Object target = getObjectFactory().create(definition.getRuleClass());
-        target(target);
-        //given(ConditionUtils.create(definition.getConditionDefinition(), target));
+    public static ClassBasedRuleBuilder with(Class<?> ruleClass, Object target) {
+        return new ClassBasedRuleBuilder(ruleClass, target);
+    }
 
-        /*if (definition.getThenActionDefinitions() != null) {
-            Arrays.stream(definition.getThenActionDefinitions())
-                    .forEach(actionDefinition -> then(ActionUtils.create(actionDefinition, target)));
+    /**
+     * Loads the given Rule class. The Rule class must be annotated with @Rule and must define a single "given" method
+     * which returns a boolean. The when method can take a arbitrary number of arguments.
+     *
+     * @param ruleClass desired Rule class.
+     * @param target rule implementation.
+     */
+    protected void load(Class<?> ruleClass, Object target) {
+        Assert.notNull(ruleClass, "ruleClass cannot be null.");
+        Assert.notNull(target, "target cannot be null.");
+
+        ruleClass(ruleClass);
+        target(target);
+
+        // Try and locate the Rule annotation on the class
+        org.algorithmx.rules.annotation.Rule rule = ruleClass.getAnnotation(org.algorithmx.rules.annotation.Rule.class);
+
+        if (rule == null) {
+            // Looks like the class isn't annotated with @Rule
+            throw new UnrulyException("Desired Rule class [" + ruleClass.getName() + "] is not annotated with @Rule");
         }
 
-        otherwise(definition.getElseActionDefinition() != null
-                ? ActionUtils.create(definition.getElseActionDefinition(), target)
-                : null);*/
+        String ruleName = org.algorithmx.rules.annotation.Rule.NOT_APPLICABLE.equals(rule.name()) ? ruleClass.getSimpleName() : rule.name();
+        Description descriptionAnnotation = ruleClass.getAnnotation(Description.class);
+
+        name(ruleName);
+        description(descriptionAnnotation != null ? descriptionAnnotation.value() : null);
+
+        loadCondition(ruleClass);
+        loadThenActions(ruleClass);
+        loadOtherwiseAction(ruleClass);
     }
 
-    @Override
-    public Class<?> getRuleClass() {
-        return ruleClass;
+    protected void loadCondition(Class<?> ruleClass) {
+        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Given.class);
+
+        if (candidates.length > 1) {
+            // Too many @Given methods
+            throw new UnrulyException("Rule class [" + ruleClass.getName() + "] has too many condition methods. " +
+                    "There can be at most 1 condition method (Annotated with @Given). " +
+                    "Currently there are [" + candidates.length + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
+
+        if (candidates.length == 1) {
+            if (!candidates[0].getReturnType().equals(boolean.class)) {
+                throw new UnrulyException("Rule Condition must return a boolean. Rule [" + ruleClass + "] Condition ["
+                        + candidates[0] + "] returns a [" + candidates[0].getReturnType() +"]");
+            }
+        }
+
+        given(candidates.length == 1 ? ConditionBuilder.with(getTarget(), MethodDefinition.load(candidates[0])).build()
+                : ConditionBuilder.TRUE().build());
+    }
+
+    /**
+     * Loads all the @Then actions in the given class. A method is considered an Action if takes arbitrary number
+     * of arguments and returns nothing (ie: void) and the method is annotated with @ActionConsumer.
+     *
+     * @param ruleClass desired class
+     */
+    protected void loadThenActions(Class<?> ruleClass) {
+        Method[] thenActions = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Then.class);
+
+        if (thenActions != null) {
+            for (Method thenAction : thenActions) {
+                then(ActionBuilder.with(getTarget(), MethodDefinition.load(thenAction)).build());
+            }
+        }
+    }
+
+    /**
+     * Loads the @Otherwise action in the given class. A method is considered an Action if takes arbitrary number
+     * of arguments and returns nothing (ie: void) and the method is annotated with @Otherwise.
+     *
+     * @param ruleClass desired class
+     */
+    protected void loadOtherwiseAction(Class<?> ruleClass) {
+        Method[] otherwiseActions = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Otherwise.class);
+
+        if (otherwiseActions.length > 1) {
+            // Too many @Otherwise methods
+            throw new UnrulyException("Rule class [" + ruleClass.getName() + "] has too many otherwise (@Otherwise) methods. " +
+                    "There can be at most 1 otherwise method. Currently there are [" + otherwiseActions.length + "] " +
+                    "[" + Arrays.toString(otherwiseActions) + "]");
+        }
+
+        if (otherwiseActions.length == 1) {
+            otherwise(ActionBuilder.with(getTarget(), MethodDefinition.load(otherwiseActions[0])).build());
+        }
     }
 }

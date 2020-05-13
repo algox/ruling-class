@@ -35,6 +35,7 @@ public interface Function<T> extends Comparable<Function> {
      * Derives all the arguments and executes this Function.
      *
      * @param ctx Rule Context.
+     * @return result of the function.
      * @throws UnrulyException thrown if there are any errors during the Function execution.
      */
     default T apply(RuleContext ctx) throws UnrulyException {
@@ -48,6 +49,7 @@ public interface Function<T> extends Comparable<Function> {
      * Executes thr Function given all the arguments it needs.
      *
      * @param params parameters in order.
+     * @return result of the function.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     T apply(Object... params) throws UnrulyException;

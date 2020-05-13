@@ -32,6 +32,8 @@ public interface NoArgFunction<T> extends Serializable {
 
     /**
      * Action logic without any parameter.
+     *
+     * @return result of the function.
      */
     @Function
     T apply();

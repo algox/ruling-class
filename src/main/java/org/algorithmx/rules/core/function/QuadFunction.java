@@ -42,6 +42,7 @@ public interface QuadFunction<T, A, B, C, D> extends Serializable {
      * @param arg1 2nd arg.
      * @param arg2 3rd arg.
      * @param arg3 4th arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1, C arg2, D arg3);

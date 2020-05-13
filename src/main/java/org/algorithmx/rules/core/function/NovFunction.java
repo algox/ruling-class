@@ -52,6 +52,7 @@ public interface NovFunction<T, A, B, C, D, E, F, G, H, I> extends Serializable 
      * @param arg6 7th arg.
      * @param arg7 8th arg.
      * @param arg8 9th arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1, C arg2, D arg3, E arg4, F arg5, G arg6, H arg7, I arg8);

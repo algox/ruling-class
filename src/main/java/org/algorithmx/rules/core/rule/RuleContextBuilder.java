@@ -17,13 +17,12 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.match.ParameterResolver;
-import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.reflect.BindableMethodExecutor;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**
@@ -37,7 +36,6 @@ public class RuleContextBuilder {
     private final Bindings bindings;
     private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.create();
     private ParameterResolver parameterResolver = ParameterResolver.create();
-    private BindableMethodExecutor methodExecutor = BindableMethodExecutor.create();
     private ObjectFactory objectFactory = ObjectFactory.create();
     private ConverterRegistry registry = ConverterRegistry.create();
 
@@ -75,12 +73,6 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder methodExecutor(BindableMethodExecutor methodExecutor) {
-        Assert.notNull(objectFactory, "methodExecutor cannot be null.");
-        this.methodExecutor = methodExecutor;
-        return this;
-    }
-
     public RuleContextBuilder objectFactory(ObjectFactory objectFactory) {
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         this.objectFactory = objectFactory;
@@ -99,7 +91,7 @@ public class RuleContextBuilder {
      * @return new Rule Context.
      */
     public RuleContext build() {
-        RuleContext result  = new RuleContext(bindings, matchingStrategy, parameterResolver, methodExecutor,
+        RuleContext result  = new RuleContext(bindings, matchingStrategy, parameterResolver,
                 objectFactory, registry);
         bindings.bind("ruleContext", RuleContext.class, result);
         return result;

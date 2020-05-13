@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.annotation.Description;
-import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
@@ -74,27 +72,6 @@ public final class RuleDefinition {
         this.thenActionDefinitions = thenActionDefinitions;
         this.elseActionDefinition = elseActionDefinition;
         setName(name);
-    }
-
-    /**
-     * Loads the given Rule class. The Rule class must be annotated with @Rule and must define a single "when" method
-     * which returns a boolean. The when method can take a arbitrary number of arguments.
-     *
-     * @param c desired Rule class.
-     * @return RuleDefinition of the supplied Rule class.
-     */
-    public static RuleDefinition load(Class<?> c) {
-        // Try and locate the Rule annotation on the class
-        Rule rule = c.getAnnotation(Rule.class);
-        // Looks like the class isn't annotated with @Rule
-        Assert.notNull(rule, "Desired Rule class [" + c.getName() + "] is not annotated with @Rule");
-
-        String ruleName = Rule.NOT_APPLICABLE.equals(rule.name()) ? c.getSimpleName() : rule.name();
-        Description descriptionAnnotation = c.getAnnotation(Description.class);
-        /*return new RuleDefinition(c, ruleName, descriptionAnnotation != null
-                ? descriptionAnnotation.value()
-                : null, ConditionDefinition.load(c), ActionDefinition.loadThenActions(c), ActionDefinition.loadElseActions(c));*/
-        return null;
     }
 
     /**
@@ -157,7 +134,7 @@ public final class RuleDefinition {
      *
      * @return meta information about the otherwise action.
      */
-    public MethodDefinition getElseActionDefinition() {
+    public MethodDefinition getOtherwiseActionDefinition() {
         return elseActionDefinition;
     }
 

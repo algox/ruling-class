@@ -60,7 +60,7 @@ public final class LambdaUtilsTest {
         Method implementationMethod = LambdaUtils.getImplementationMethod(lambda, implementationClass);
 
         Assert.assertTrue(implementationMethod.getName().equals(lambda.getImplMethodName()));
-        Assert.assertTrue(implementationMethod.getReturnType().equals(boolean.class));
+        Assert.assertTrue(implementationMethod.getReturnType().equals(Boolean.class));
         Assert.assertTrue(implementationMethod.getParameterTypes()[0].equals(Integer.class));
     }
 
@@ -88,12 +88,12 @@ public final class LambdaUtilsTest {
             static final long serialVersionUID = 0L;
 
             @Override
-            public Boolean apply(Integer arg0, String arg1, BigDecimal arg2) {
+            public Boolean apply(Integer xxx, String value, BigDecimal salary) {
                 return false;
             }
         };
 
-        Method implementationMethod = rule3.getClass().getDeclaredMethod("isPass", Integer.class, String.class, BigDecimal.class);
+        Method implementationMethod = rule3.getClass().getDeclaredMethod("apply", Integer.class, String.class, BigDecimal.class);
         ParameterNameDiscoverer discoverer = ParameterNameDiscoverer.create();
         String[] names = discoverer.getParameterNames(implementationMethod);
 

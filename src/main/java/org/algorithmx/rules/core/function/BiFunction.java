@@ -38,6 +38,7 @@ public interface BiFunction<T, A, B> extends Serializable {
      *
      * @param arg0 1st arg.
      * @param arg1 2nd arg.
+     * @return result of the function.
      */
     @Function
     T apply(A arg0, B arg1);
