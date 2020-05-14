@@ -18,21 +18,20 @@
 package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.function.ExecutableBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.LambdaUtils;
-import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
-import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Builder class for Actions.
@@ -41,88 +40,42 @@ import java.util.List;
  * @since 1.0
  *
  */
-public final class ActionBuilder {
+public final class ActionBuilder extends ExecutableBuilder {
 
-    private Object target;
-    private MethodDefinition definition;
+    private static final Function<Method, Boolean> FILTER = m -> ReflectionUtils
+            .isAnnotated(m, org.algorithmx.rules.annotation.Action.class)
+            && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
 
-    private ActionBuilder(Object target, MethodDefinition definition) {
-        super();
-        Assert.notNull(definition, "actionMethod cannot be null.");
-        this.target = target;
-        this.definition = definition;
+
+    protected ActionBuilder(Object target, MethodDefinition definition) {
+        super(target, definition);
     }
 
     public static ActionBuilder with(Object target, MethodDefinition definition) {
         return new ActionBuilder(target, definition);
     }
 
-    public static ActionBuilder with(Class<?> actionClass, Class<? extends Annotation> annotation) {
-        Method actionableMethod = findActionableMethod(actionClass, annotation);
+    private static ActionBuilder withLambda(Object target) {
+        Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
-        if (actionableMethod == null) {
-            throw new UnrulyException("Class [" + actionClass + "] does not implement any actionable methods. " +
-                    "Add @Action to a method and try again.");
+        if (candidates == null || candidates.length == 0) {
+            throw new UnrulyException("Action method not found on class [" + target.getClass() + "]");
         }
 
-        return with(ObjectFactory.create().create(actionClass), actionableMethod);
-    }
-
-    public static ActionBuilder with(Object action, Class<? extends Annotation> annotation) {
-        Assert.notNull(action, "action cannot be null.");
-
-        Method actionableMethod = findActionableMethod(action.getClass(), annotation);
-
-        if (actionableMethod == null) {
-            throw new UnrulyException("Class [" + action.getClass() + "] does not implement any actionable methods. " +
-                    "Add @Action to a method and try again.");
+        // Too many Actions declared
+        if (candidates.length > 1) {
+            throw new UnrulyException("Too many action methods found on class [" + target.getClass() + "]. Candidates ["
+                    + Arrays.toString(candidates) + "]");
         }
 
-        SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(action);
+        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
+        MethodInfo methodInfo = load(target, implementationMethod);
 
-        if (serializedLambda != null) {
-            return withLambda(action, actionableMethod, serializedLambda);
+        if (!void.class.equals(methodInfo.getDefinition().getReturnType())) {
+            throw new UnrulyException("Actions must return a void [" + methodInfo.getDefinition().getMethod() + "]");
         }
 
-        return with(action, actionableMethod);
-    }
-
-    public static ActionBuilder with(Object action, Method actionableMethod) {
-        MethodDefinition definition = MethodDefinition.load(actionableMethod);
-        return new ActionBuilder(action, definition);
-    }
-
-    private static ActionBuilder withLambda(Object action, Method actionableMethod, SerializedLambda serializedLambda) {
-        Assert.notNull(actionableMethod, "actionableMethod cannot be null.");
-        Assert.notNull(serializedLambda, "serializedLambda cannot be null.");
-        MethodDefinition methodDefinition = null;
-
-        try {
-            Class<?> implementationClass = LambdaUtils.getImplementationClass(serializedLambda);
-            Method implementationMethod = LambdaUtils.getImplementationMethod(serializedLambda, implementationClass);
-            MethodDefinition implementationMethodDefinition = MethodDefinition.load(implementationMethod);
-
-            ParameterDefinition[] parameterDefinitions = new ParameterDefinition[actionableMethod.getParameterCount()];
-            int delta = implementationMethod.getParameterCount() - actionableMethod.getParameterCount();
-
-            for (int i = delta; i < implementationMethod.getParameterCount(); i++) {
-                int index = i - delta;
-                parameterDefinitions[index] = implementationMethodDefinition.getParameterDefinition(i);
-                parameterDefinitions[index].setIndex(index);
-            }
-
-            methodDefinition = new MethodDefinition(actionableMethod, implementationMethodDefinition.getOrder(),
-                    implementationMethodDefinition.getDescription(), parameterDefinitions);
-
-        } catch (Exception e) {
-            // Log
-        }
-
-        if (methodDefinition == null) {
-            methodDefinition = MethodDefinition.load(actionableMethod);
-        }
-
-        return new ActionBuilder(action, methodDefinition);
+        return new ActionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
 
     /**
@@ -132,7 +85,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with no arguments.
      */
     public static ActionBuilder with(NoArgAction action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -152,7 +105,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with one arguments.
      */
     public static <A> ActionBuilder with(UnaryAction<A> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -164,7 +117,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with two arguments.
      */
     public static <A, B> ActionBuilder with(BiAction<A, B> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -177,7 +130,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with three arguments.
      */
     public static <A, B, C> ActionBuilder with(TriAction<A, B, C> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -191,7 +144,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with four arguments.
      */
     public static <A, B, C, D> ActionBuilder with(QuadAction<A, B, C, D> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -206,7 +159,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with five arguments.
      */
     public static <A, B, C, D, E> ActionBuilder with(QuinAction<A, B, C, D, E> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -222,7 +175,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with six arguments.
      */
     public static <A, B, C, D, E, F> ActionBuilder with(SexAction<A, B, C, D, E, F> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -239,7 +192,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with seven arguments.
      */
     public static <A, B, C, D, E, F, G> ActionBuilder with(SeptAction<A, B, C, D, E, F, G> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -257,7 +210,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with eight arguments.
      */
     public static <A, B, C, D, E, F, G, H> ActionBuilder with(OctAction<A, B, C, D, E, F, G, H> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -276,7 +229,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with nine arguments.
      */
     public static <A, B, C, D, E, F, G, H, I> ActionBuilder with(NovAction<A, B, C, D, E, F, G, H, I> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -296,7 +249,7 @@ public final class ActionBuilder {
      * @return new ActionBuilder with ten arguments.
      */
     public static <A, B, C, D, E, F, G, H, I, J> ActionBuilder with(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
-        return with(action, org.algorithmx.rules.annotation.Action.class);
+        return withLambda(action);
     }
 
     /**
@@ -308,7 +261,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder parameterType(int index, Type type) {
-        this.definition.getParameterDefinition(index).setType(type);
+        getDefinition().getParameterDefinition(index).setType(type);
         return this;
     }
 
@@ -321,7 +274,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder parameterType(String name, Type type) {
-        ParameterDefinition definition = this.definition.getParameterDefinition(name);
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {
             throw new UnrulyException("No such parameter [" + name + "] found");
@@ -339,8 +292,8 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder parameterName(int index, String name) {
-        this.definition.getParameterDefinition(index).setName(name);
-        this.definition.createParameterNameIndex();
+        getDefinition().getParameterDefinition(index).setName(name);
+        getDefinition().createParameterNameIndex();
         return this;
     }
 
@@ -353,7 +306,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder parameterDescription(int index, String description) {
-        this.definition.getParameterDefinition(index).setDescription(description);
+        getDefinition().getParameterDefinition(index).setDescription(description);
         return this;
     }
 
@@ -366,7 +319,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder parameterDescription(String name, String description) {
-        ParameterDefinition definition = this.definition.getParameterDefinition(name);
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {
             throw new UnrulyException("No such parameter [" + name + "] found");
@@ -383,7 +336,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder name(String name) {
-        this.definition.setName(name);
+        getDefinition().setName(name);
         return this;
     }
 
@@ -394,7 +347,7 @@ public final class ActionBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder description(String description) {
-        this.definition.setDescription(description);
+        getDefinition().setDescription(description);
         return this;
     }
 
@@ -404,50 +357,6 @@ public final class ActionBuilder {
      * @return a new Action.
      */
     public Action build() {
-        return new DefaultAction(target, definition);
-    }
-
-    private static Method findActionableMethod(Class<?> c, Class<? extends Annotation> annotation) {
-        Method[] result = findActionableMethods(c, annotation);
-
-        if (result == null || result.length == 0) return null;
-
-        // Too many Actions declared
-        if (result.length > 1) {
-            throw new UnrulyException("Too many actionable methods found on class [" + c + "]. Candidates ["
-                    + Arrays.toString(result) + "]");
-        }
-
-        return result[0];
-    }
-
-    /**
-     *
-     * @param c
-     * @return
-     */
-    private static Method[] findActionableMethods(Class<?> c, Class<? extends Annotation> annotation) {
-        Assert.notNull(c, "c cannot be null");
-
-        if (Modifier.isAbstract(c.getModifiers())) {
-            throw new UnrulyException("Actionable classes cannot be abstract [" + c + "]");
-        }
-
-        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(c, annotation);
-
-        if (candidates == null || candidates.length == 0) {
-            return null;
-        }
-
-        List<Method> result = new ArrayList<>(candidates.length);
-
-        for (Method method : candidates) {
-            if (!void.class.equals(method.getReturnType())) continue;
-            if (!Modifier.isPublic(method.getModifiers())) continue;
-            if (method.isBridge()) continue;
-            result.add(ReflectionUtils.getImplementationMethod(c, method));
-        }
-
-        return result.toArray(new Method[result.size()]);
+        return new DefaultAction(getTarget(), getDefinition());
     }
 }

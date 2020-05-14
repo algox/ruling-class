@@ -1,19 +1,12 @@
 package org.algorithmx.rules.core.function;
 
-import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
-import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class ExecutableBuilder {
 
@@ -30,28 +23,22 @@ public abstract class ExecutableBuilder {
     /**
      * Loads the given target.
      *
-     * @param target desired target object.
-     * @param annotation searching for annotation.
+     * @param target target object.
+     * @param targetMethod target method.
      *
      * @return matched method.
      */
-    public static MethodInfo load(Object target, Class<? extends Annotation> annotation) {
+    public static MethodInfo load(Object target, Method targetMethod) {
         Assert.notNull(target, "function cannot be null.");
-
-        Method functionMethod = findFunctionMethod(target.getClass(), annotation);
-
-        if (functionMethod == null) {
-            throw new UnrulyException("Class [" + target.getClass() + "] does not implement any function methods. " +
-                    "Add @Function to a method and try again.");
-        }
+        Assert.notNull(targetMethod, "targetMethod cannot be null.");
 
         SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(target);
 
         if (serializedLambda != null) {
-            return withLambda(target, functionMethod, serializedLambda);
+            return withLambda(target, targetMethod, serializedLambda);
         }
 
-        return new MethodInfo(target, MethodDefinition.load(functionMethod));
+        return new MethodInfo(target, MethodDefinition.load(targetMethod));
     }
 
     /**
@@ -94,57 +81,6 @@ public abstract class ExecutableBuilder {
         }
 
         return new MethodInfo(function, methodDefinition);
-    }
-
-    /**
-     * Finds the function method in the given class.
-     *
-     * @param c target class.
-     * @param annotation target annotation.
-     * @return matching method.
-     */
-    protected static Method findFunctionMethod(Class<?> c, Class<? extends Annotation> annotation) {
-        Method[] result = findFunctionMethods(c, annotation);
-
-        if (result == null || result.length == 0) return null;
-
-        // Too many Actions declared
-        if (result.length > 1) {
-            throw new UnrulyException("Too many actionable methods found on class [" + c + "]. Candidates ["
-                    + Arrays.toString(result) + "]");
-        }
-
-        return result[0];
-    }
-
-    /**
-     * Finds all the function methods in the given class.
-     * @param c target class.
-     * @param annotation target annotation.
-     * @return matching methods.
-     */
-    protected static Method[] findFunctionMethods(Class<?> c, Class<? extends Annotation> annotation) {
-        Assert.notNull(c, "c cannot be null");
-
-        if (Modifier.isAbstract(c.getModifiers())) {
-            throw new UnrulyException("Function classes cannot be abstract [" + c + "]");
-        }
-
-        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(c, annotation);
-
-        if (candidates == null || candidates.length == 0) {
-            return null;
-        }
-
-        List<Method> result = new ArrayList<>(candidates.length);
-
-        for (Method method : candidates) {
-            if (!Modifier.isPublic(method.getModifiers())) continue;
-            if (method.isBridge()) continue;
-            result.add(ReflectionUtils.getImplementationMethod(c, method));
-        }
-
-        return result.toArray(new Method[result.size()]);
     }
 
     public Object getTarget() {

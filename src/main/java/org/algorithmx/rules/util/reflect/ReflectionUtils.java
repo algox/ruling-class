@@ -178,8 +178,19 @@ public final class ReflectionUtils {
      * @return all methods that are annotated with annotationClass or any other annotation that has annotationClass on it.
      */
     public static Method[] getMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        return getMethods(clazz, m -> isAnnotated(m, annotationClass));
+    }
+
+    /**
+     * Finds all the methods that match the filter criteria.
+     *
+     * @param clazz class to look up.
+     * @param filter annotation to look for.
+     * @return all methods that match the filter.
+     */
+    public static Method[] getMethods(Class<?> clazz, Function<Method, Boolean> filter) {
         Assert.notNull(clazz, "clazz cannot be null");
-        Assert.notNull(annotationClass, "annotationClass cannot be null");
+        Assert.notNull(filter, "filter cannot be null");
 
         List<Method> result = new ArrayList<>();
         List<Class<?>> candidateClasses = new ArrayList<>();
@@ -188,7 +199,7 @@ public final class ReflectionUtils {
         candidateClasses.addAll(ClassUtils.getAllInterfaces(clazz));
 
         for (Class<?> c : candidateClasses) {
-            result.addAll(findMethods(c, m -> isAnnotated(m, annotationClass)));
+            result.addAll(findMethods(c, filter));
         }
 
         return result.toArray(new Method[result.size()]);
@@ -198,10 +209,10 @@ public final class ReflectionUtils {
      * Finds all the method have meet the given matcher.
      *
      * @param clazz working class.
-     * @param matcher function to determine whether the given method matches the desired criteria.
+     * @param filter function to determine whether the given method matches the desired criteria.
      * @return all the matching methods.
      */
-    private static List<Method> findMethods(Class<?> clazz, Function<Method, Boolean> matcher) {
+    private static List<Method> findMethods(Class<?> clazz, Function<Method, Boolean> filter) {
         Assert.notNull(clazz, "clazz cannot be null.");
         Assert.notNull(clazz, "annotationClazz cannot be null.");
 
@@ -210,7 +221,7 @@ public final class ReflectionUtils {
 
         do {
             for (Method method : targetClass.getDeclaredMethods()) {
-                if (matcher.apply(method)) {
+                if (filter.apply(method)) {
                     result.add(method);
                 }
             }
