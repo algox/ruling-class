@@ -21,6 +21,7 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -52,10 +53,11 @@ public abstract class ExecutableBuilder {
         SerializedLambda serializedLambda = LambdaUtils.getSafeSerializedLambda(target);
 
         if (serializedLambda != null) {
-            return withLambda(target, targetMethod, serializedLambda);
+            return loadLambda(target, targetMethod, serializedLambda);
         }
 
-        return new MethodInfo(target, MethodDefinition.load(targetMethod));
+        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), targetMethod);
+        return new MethodInfo(target, MethodDefinition.load(implementationMethod));
     }
 
     /**
@@ -66,7 +68,7 @@ public abstract class ExecutableBuilder {
      * @param serializedLambda serialized function.
      * @return matched method.
      */
-    protected static MethodInfo withLambda(Object function, Method functionMethod, SerializedLambda serializedLambda) {
+    protected static MethodInfo loadLambda(Object function, Method functionMethod, SerializedLambda serializedLambda) {
         Assert.notNull(functionMethod, "functionMethod cannot be null.");
         Assert.notNull(serializedLambda, "serializedLambda cannot be null.");
         MethodDefinition methodDefinition = null;

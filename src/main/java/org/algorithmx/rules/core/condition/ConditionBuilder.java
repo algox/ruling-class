@@ -60,7 +60,7 @@ public class ConditionBuilder extends ExecutableBuilder {
         return new ConditionBuilder(target, definition);
     }
 
-    private static ConditionBuilder withLambda(Object target) {
+    private static ConditionBuilder withCondition(Object target) {
         Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
         if (candidates == null || candidates.length == 0) {
@@ -108,7 +108,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with no arguments.
      */
     public static ConditionBuilder with(NoArgFunction<Boolean> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -119,7 +119,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with one arguments.
      */
     public static <A> ConditionBuilder with(UnaryFunction<Boolean, A> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -131,7 +131,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with two arguments.
      */
     public static <A, B> ConditionBuilder with(BiFunction<Boolean, A, B> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -144,7 +144,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with three arguments.
      */
     public static <A, B, C> ConditionBuilder with(TriFunction<Boolean, A, B, C> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -158,7 +158,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with four arguments.
      */
     public static <A, B, C, D> ConditionBuilder with(QuadFunction<Boolean, A, B, C, D> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -173,7 +173,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with five arguments.
      */
     public static <A, B, C, D, E> ConditionBuilder with(QuinFunction<Boolean, A, B, C, D, E> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -189,7 +189,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with six arguments.
      */
     public static <A, B, C, D, E, F> ConditionBuilder with(SexFunction<Boolean, A, B, C, D, E, F> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -206,7 +206,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with seven arguments.
      */
     public static <A, B, C, D, E, F, G> ConditionBuilder with(SeptFunction<Boolean, A, B, C, D, E, F, G> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -224,7 +224,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with eight arguments.
      */
     public static <A, B, C, D, E, F, G, H> ConditionBuilder with(OctFunction<Boolean, A, B, C, D, E, F, G, H> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -243,7 +243,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with nine arguments.
      */
     public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with(NovFunction<Boolean, A, B, C, D, E, F, G, H, I> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**
@@ -263,7 +263,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with ten arguments.
      */
     public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with(DecFunction<Boolean, A, B, C, D, E, F, G, H, I, J> function) {
-        return withLambda(function);
+        return withCondition(function);
     }
 
     /**

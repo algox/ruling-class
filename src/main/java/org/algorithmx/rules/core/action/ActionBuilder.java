@@ -21,16 +21,12 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.function.ExecutableBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
-import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -42,9 +38,9 @@ import java.util.function.Function;
  */
 public final class ActionBuilder extends ExecutableBuilder {
 
-    private static final Function<Method, Boolean> FILTER = m -> ReflectionUtils
-            .isAnnotated(m, org.algorithmx.rules.annotation.Action.class)
-            && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
+    private static final Function<Method, Boolean> FILTER =
+            m -> ReflectionUtils.isAnnotated(m, org.algorithmx.rules.annotation.Action.class)
+                    && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
 
 
     protected ActionBuilder(Object target, MethodDefinition definition) {
@@ -55,7 +51,7 @@ public final class ActionBuilder extends ExecutableBuilder {
         return new ActionBuilder(target, definition);
     }
 
-    private static ActionBuilder withLambda(Object target) {
+    private static ActionBuilder withAction(Object target) {
         Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
         if (candidates == null || candidates.length == 0) {
@@ -68,8 +64,7 @@ public final class ActionBuilder extends ExecutableBuilder {
                     + Arrays.toString(candidates) + "]");
         }
 
-        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
-        MethodInfo methodInfo = load(target, implementationMethod);
+        MethodInfo methodInfo = load(target, candidates[0]);
 
         if (!void.class.equals(methodInfo.getDefinition().getReturnType())) {
             throw new UnrulyException("Actions must return a void [" + methodInfo.getDefinition().getMethod() + "]");
@@ -85,7 +80,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with no arguments.
      */
     public static ActionBuilder with(NoArgAction action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -105,7 +100,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with one arguments.
      */
     public static <A> ActionBuilder with(UnaryAction<A> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -117,7 +112,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with two arguments.
      */
     public static <A, B> ActionBuilder with(BiAction<A, B> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -130,7 +125,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with three arguments.
      */
     public static <A, B, C> ActionBuilder with(TriAction<A, B, C> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -144,7 +139,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with four arguments.
      */
     public static <A, B, C, D> ActionBuilder with(QuadAction<A, B, C, D> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -159,7 +154,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with five arguments.
      */
     public static <A, B, C, D, E> ActionBuilder with(QuinAction<A, B, C, D, E> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -175,7 +170,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with six arguments.
      */
     public static <A, B, C, D, E, F> ActionBuilder with(SexAction<A, B, C, D, E, F> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -192,7 +187,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with seven arguments.
      */
     public static <A, B, C, D, E, F, G> ActionBuilder with(SeptAction<A, B, C, D, E, F, G> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -210,7 +205,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with eight arguments.
      */
     public static <A, B, C, D, E, F, G, H> ActionBuilder with(OctAction<A, B, C, D, E, F, G, H> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -229,7 +224,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with nine arguments.
      */
     public static <A, B, C, D, E, F, G, H, I> ActionBuilder with(NovAction<A, B, C, D, E, F, G, H, I> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**
@@ -249,7 +244,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return new ActionBuilder with ten arguments.
      */
     public static <A, B, C, D, E, F, G, H, I, J> ActionBuilder with(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
-        return withLambda(action);
+        return withAction(action);
     }
 
     /**

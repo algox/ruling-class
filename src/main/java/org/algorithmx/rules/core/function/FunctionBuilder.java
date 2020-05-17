@@ -44,7 +44,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         super(function, definition);
     }
 
-    private static FunctionBuilder withLambda(Object target) {
+    private static FunctionBuilder withFunction(Object target) {
         Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
         if (candidates == null || candidates.length == 0) {
@@ -80,7 +80,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with no arguments.
      */
     public static <T> FunctionBuilder<T> with(NoArgFunction<T> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -92,7 +92,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with one arguments.
      */
     public static <T, A> FunctionBuilder with(UnaryFunction<T, A> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -105,7 +105,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with two arguments.
      */
     public static <T, A, B> FunctionBuilder with(BiFunction<T, A, B> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -119,7 +119,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with three arguments.
      */
     public static <T, A, B, C> FunctionBuilder with(TriFunction<T, A, B, C> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -134,7 +134,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with four arguments.
      */
     public static <T, A, B, C, D> FunctionBuilder with(QuadFunction<T, A, B, C, D> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -150,7 +150,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with five arguments.
      */
     public static <T, A, B, C, D, E> FunctionBuilder with(QuinFunction<T, A, B, C, D, E> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -167,7 +167,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with six arguments.
      */
     public static <T, A, B, C, D, E, F> FunctionBuilder with(SexFunction<T, A, B, C, D, E, F> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -185,7 +185,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with seven arguments.
      */
     public static <T, A, B, C, D, E, F, G> FunctionBuilder with(SeptFunction<T, A, B, C, D, E, F, G> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -204,7 +204,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with eight arguments.
      */
     public static <T, A, B, C, D, E, F, G, H> FunctionBuilder with(OctFunction<T, A, B, C, D, E, F, G, H> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -224,7 +224,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with nine arguments.
      */
     public static <T, A, B, C, D, E, F, G, H, I> FunctionBuilder with(NovFunction<T, A, B, C, D, E, F, G, H, I> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
@@ -245,7 +245,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return new ActionBuilder with ten arguments.
      */
     public static <T, A, B, C, D, E, F, G, H, I, J> FunctionBuilder with(DecFunction<T, A, B, C, D, E, F, G, H, I, J> function) {
-        return withLambda(function);
+        return withFunction(function);
     }
 
     /**
