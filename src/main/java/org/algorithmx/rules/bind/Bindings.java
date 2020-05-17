@@ -309,7 +309,6 @@ public interface Bindings extends Iterable<Binding<?>> {
      * Retrieves the value of the Binding with the given name.
      *
      * @param name name of the Binding.
-     * @param <T> desired Type.
      * @param <T> generic type of the Binding.
      * @return value if Binding is found.
      * @throws NoSuchBindingException if Binding is not found.

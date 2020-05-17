@@ -26,14 +26,14 @@ import java.io.Serializable;
  *
  * @param <A> generic type of the 1st parameter.
  * @param <B> generic type of the 2nd parameter.
- * @param <B> generic type of the 3rd parameter.
- * @param <B> generic type of the 4th parameter.
- * @param <B> generic type of the 5th parameter.
- * @param <B> generic type of the 6th parameter.
- * @param <B> generic type of the 7th parameter.
- * @param <B> generic type of the 8th parameter.
- * @param <B> generic type of the 9th parameter.
- * @param <B> generic type of the 10th parameter.
+ * @param <C> generic type of the 3rd parameter.
+ * @param <D> generic type of the 4th parameter.
+ * @param <E> generic type of the 5th parameter.
+ * @param <F> generic type of the 6th parameter.
+ * @param <G> generic type of the 7th parameter.
+ * @param <H> generic type of the 8th parameter.
+ * @param <I> generic type of the 9th parameter.
+ * @param <J> generic type of the 10th parameter.
  *
  * @author Max Arulananthan
  * @since 1.0
