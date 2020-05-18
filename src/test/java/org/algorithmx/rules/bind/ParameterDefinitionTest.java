@@ -94,7 +94,9 @@ public class ParameterDefinitionTest {
     @Test
     public void testBindableParameter5() {
         Function<Boolean> condition = ConditionBuilder.with((Integer a, Binding<List<String>> b, Integer x) -> a > 10)
-                .parameterType(1, new TypeReference<Binding<List<Integer>>>() {}.getType())
+                .param(1)
+                    .type(new TypeReference<Binding<List<Integer>>>() {}.getType())
+                    .build()
                 .build();
         ParameterDefinition[] parameters = condition.getMethodDefinition().getParameterDefinitions();
         Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));

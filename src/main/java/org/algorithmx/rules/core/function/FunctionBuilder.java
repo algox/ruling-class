@@ -20,12 +20,13 @@ package org.algorithmx.rules.core.function;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * Builder class for Functions.
@@ -36,7 +37,7 @@ import java.util.Arrays;
  */
 public class FunctionBuilder<T> extends ExecutableBuilder {
 
-    private static final java.util.function.Function<Method, Boolean> FILTER = m -> ReflectionUtils
+    private static final Predicate<Method> FILTER = m -> ReflectionUtils
             .isAnnotated(m, org.algorithmx.rules.annotation.Function.class)
             && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
 
@@ -69,6 +70,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @return a new Action.
      */
     public org.algorithmx.rules.core.function.Function<T> build() {
+        getDefinition().validate();
         return new DefaultFunction(getTarget(), getDefinition());
     }
 
@@ -249,83 +251,6 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param index parameter index.
-     * @param type desired type.
-     * @return ActionBuilder for fluency.
-     */
-    public FunctionBuilder<T> parameterType(int index, Type type) {
-        getDefinition().getParameterDefinition(index).setType(type);
-        return this;
-    }
-
-    /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param name parameter name.
-     * @param type desired type.
-     * @return ActionBuilder for fluency.
-     */
-    public FunctionBuilder<T> parameterType(String name, Type type) {
-        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
-
-        if (definition == null) {
-            throw new UnrulyException("No such parameter [" + name + "] found");
-        }
-
-        definition.setType(type);
-        return this;
-    }
-
-    /**
-     * Change the parameter name, useful for Actions where we are unable to retrieve the parameter name.
-     *
-     * @param index parameter index.
-     * @param name new name.
-     * @return ActionBuilder for fluency.
-     */
-    public FunctionBuilder<T> parameterName(int index, String name) {
-        getDefinition().getParameterDefinition(index).setName(name);
-        getDefinition().createParameterNameIndex();
-        return this;
-    }
-
-    /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param index parameter index.
-     * @param description desired description.
-     * @return ActionBuilder for fluency.
-     */
-    public FunctionBuilder<T> parameterDescription(int index, String description) {
-        getDefinition().getParameterDefinition(index).setDescription(description);
-        return this;
-    }
-
-    /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param name parameter name.
-     * @param description desired description.
-     * @return ActionBuilder for fluency.
-     */
-    public FunctionBuilder<T> parameterDescription(String name, String description) {
-        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
-
-        if (definition == null) {
-            throw new UnrulyException("No such parameter [" + name + "] found");
-        }
-
-        definition.setDescription(description);
-        return this;
-    }
-
-    /**
      * Provide a name for the Action.
      *
      * @param name name of the Action.
@@ -345,6 +270,20 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     public FunctionBuilder<T> description(String description) {
         getDefinition().setDescription(description);
         return this;
+    }
+
+    public ParameterDefinitionEditor<FunctionBuilder> param(int index) {
+        return new ParameterDefinitionEditor(getDefinition().getParameterDefinition(index), this);
+    }
+
+    public ParameterDefinitionEditor<FunctionBuilder> param(String name) {
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
+
+        if (definition == null) {
+            throw new UnrulyException("No such parameter found [" + name + "] in method [" + getDefinition().getMethod() + "]");
+        }
+
+        return new ParameterDefinitionEditor(definition, this);
     }
 
 }

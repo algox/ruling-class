@@ -22,6 +22,7 @@ import org.algorithmx.rules.annotation.Order;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
+import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,10 +30,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Defines a method is to be isPass dynamically (such as "when" and "then")
@@ -67,6 +71,23 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
         this.returnType = method.getGenericReturnType();
         this.parameterDefinitions = parameterDefinitions;
         createParameterNameIndex();
+        validate();
+    }
+
+    public void validate() {
+        HashSet<Integer> indexRange = IntStream.range(0, parameterDefinitions.length).collect(HashSet::new, Set::add, Set::addAll);
+
+        for (ParameterDefinition definition : parameterDefinitions) {
+            if (!paramNameMap.containsKey(definition.getName())) {
+                throw new UnrulyException("Could not find parameter name [" + definition.getName()
+                        + "] in index [" + paramNameMap + "]. Was the index created?");
+            }
+            indexRange.remove(definition.getIndex());
+        }
+
+        if (indexRange.size() > 0) {
+            throw new UnrulyException("Parameter indexes should be contiguous. Invalid index [" + indexRange + "]");
+        }
     }
 
     /**
@@ -77,30 +98,10 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      * @return all matching MethodDefinitions
      */
     public static MethodDefinition[] load(Class<?> c, Predicate<Method> predicate) {
-        Method[] matches = Arrays.stream(c.getMethods())
-                .filter(predicate != null ? predicate : m -> true)
-                .toArray(size -> new Method[size]);
-        return load(c, matches);
-    }
-
-    /**
-     * Loads all the associated method definition for the given methods.
-     *
-     * @param c container class.
-     * @param methods desired methods.
-     * @return MethodDefinitions.
-     */
-    public static MethodDefinition[] load(Class<?> c, Method...methods) {
-        Assert.notNull(methods, "methods cannot be null");
-        MethodDefinition[] result = new MethodDefinition[methods.length];
-
-        for (int i = 0; i < methods.length; i++) {
-            Method match = methods[i];
-            match.setAccessible(true);
-            result[i] = new MethodDefinition(match, 0, null, ParameterDefinition.load(methods[i]));
-        }
-
-        return result;
+        List<Method> matches = ReflectionUtils.findMethods(c, predicate);
+        List<MethodDefinition> result = new ArrayList<>(matches.size());
+        matches.stream().forEach(m -> result.add(load(m)));
+        return result.toArray(new MethodDefinition[matches.size()]);
     }
 
     public static MethodDefinition load(Method method) {
@@ -110,15 +111,6 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
         MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : 0,
                 descriptionAnnotation != null ? descriptionAnnotation.value() : null, ParameterDefinition.load(method));
         return result;
-    }
-
-    public static MethodDefinition[] load(Method[] methods) {
-        Assert.notNull(methods, "methods cannot be null");
-        List<MethodDefinition> result = new ArrayList<>(methods.length);
-
-        Arrays.stream(methods).forEach(m -> result.add(load(m)));
-
-        return result.toArray(new MethodDefinition[methods.length]);
     }
 
     /**
@@ -148,12 +140,12 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
     public ParameterDefinition getParameterDefinition(int index) {
 
         if (getParameterDefinitions().length == 0) {
-            throw new UnrulyException("There are no args found in the Action");
+            throw new UnrulyException("There are no args found in this function. [" + method + "]");
         }
 
         if (index < 0 || index >= getParameterDefinitions().length) {
             throw new UnrulyException("Invalid parameter index [" + index + "] it must be between [0, "
-                    + getParameterDefinitions().length + "]");
+                    + getParameterDefinitions().length + "] method [" + method + "]");
         }
 
         return getParameterDefinitions()[index];

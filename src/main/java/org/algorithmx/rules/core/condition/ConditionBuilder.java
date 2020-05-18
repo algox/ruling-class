@@ -32,13 +32,13 @@ import org.algorithmx.rules.core.function.TriFunction;
 import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Builder class used to defaultObjectFactory Conditions.
@@ -48,7 +48,7 @@ import java.util.function.Function;
  */
 public class ConditionBuilder extends ExecutableBuilder {
 
-    private static final Function<Method, Boolean> FILTER = m -> ReflectionUtils
+    private static final Predicate<Method> FILTER = m -> ReflectionUtils
             .isAnnotated(m, org.algorithmx.rules.annotation.Function.class)
             && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
 
@@ -90,6 +90,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @return a new Action.
      */
     public Condition build() {
+        getDefinition().validate();
         return new DefaultCondition(getTarget(), getDefinition());
     }
 
@@ -267,83 +268,6 @@ public class ConditionBuilder extends ExecutableBuilder {
     }
 
     /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param index parameter index.
-     * @param type desired type.
-     * @return ActionBuilder for fluency.
-     */
-    public ConditionBuilder parameterType(int index, Type type) {
-        getDefinition().getParameterDefinition(index).setType(type);
-        return this;
-    }
-
-    /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param name parameter name.
-     * @param type desired type.
-     * @return ActionBuilder for fluency.
-     */
-    public ConditionBuilder parameterType(String name, Type type) {
-        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
-
-        if (definition == null) {
-            throw new UnrulyException("No such parameter [" + name + "] found");
-        }
-
-        definition.setType(type);
-        return this;
-    }
-
-    /**
-     * Change the parameter name, useful for Actions where we are unable to retrieve the parameter name.
-     *
-     * @param index parameter index.
-     * @param name new name.
-     * @return ActionBuilder for fluency.
-     */
-    public ConditionBuilder parameterName(int index, String name) {
-        getDefinition().getParameterDefinition(index).setName(name);
-        getDefinition().createParameterNameIndex();
-        return this;
-    }
-
-    /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param index parameter index.
-     * @param description desired description.
-     * @return ActionBuilder for fluency.
-     */
-    public ConditionBuilder parameterDescription(int index, String description) {
-        getDefinition().getParameterDefinition(index).setDescription(description);
-        return this;
-    }
-
-    /**
-     * Change the parameter type, useful for Actions with generic types (as Java Compiler does not store generic
-     * type for lambdas).
-     *
-     * @param name parameter name.
-     * @param description desired description.
-     * @return ActionBuilder for fluency.
-     */
-    public ConditionBuilder parameterDescription(String name, String description) {
-        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
-
-        if (definition == null) {
-            throw new UnrulyException("No such parameter [" + name + "] found");
-        }
-
-        definition.setDescription(description);
-        return this;
-    }
-
-    /**
      * Provide a name for the Action.
      *
      * @param name name of the Action.
@@ -364,4 +288,19 @@ public class ConditionBuilder extends ExecutableBuilder {
         getDefinition().setDescription(description);
         return this;
     }
+
+    public ParameterDefinitionEditor<ConditionBuilder> param(int index) {
+        return new ParameterDefinitionEditor(getDefinition().getParameterDefinition(index), this);
+    }
+
+    public ParameterDefinitionEditor<ConditionBuilder> param(String name) {
+        ParameterDefinition definition = getDefinition().getParameterDefinition(name);
+
+        if (definition == null) {
+            throw new UnrulyException("No such parameter found [" + name + "] in method [" + getDefinition().getMethod() + "]");
+        }
+
+        return new ParameterDefinitionEditor(definition, this);
+    }
+
 }

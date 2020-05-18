@@ -70,7 +70,9 @@ public class ConditionTest {
         Condition condition = ConditionBuilder
                 .with((Integer a, Date date, String x, List<String> values) -> a > 35 && x.equals("x")
                         && values.get(0).equals("one"))
-                .parameterType(3, new TypeReference<List<String>>(){}.getType())
+                .param(3)
+                    .type(new TypeReference<List<String>>(){}.getType())
+                    .build()
                 .build();
         List<String> values = new ArrayList<>();
         values.add("one");
@@ -82,7 +84,9 @@ public class ConditionTest {
         Condition condition = ConditionBuilder
                 .with((Integer a, Date date, String x, List<String> values, Long longValue) -> a > 35 && x.equals("x")
                         && values.get(0).equals("one"))
-                .parameterType("values", new TypeReference<List<String>>(){}.getType())
+                .param("values")
+                    .type(new TypeReference<List<String>>(){}.getType())
+                    .build()
                 .build();
         List<String> values = new ArrayList<>();
         values.add("one");

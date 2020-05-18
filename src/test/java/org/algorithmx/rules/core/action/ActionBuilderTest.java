@@ -102,6 +102,9 @@ public class ActionBuilderTest {
                 .with((String x, BigDecimal value, Integer c, @Optional Float d) -> {
                     return;
                 })
+                .param("d")
+                    .optional(true)
+                    .build()
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 4);
@@ -116,6 +119,13 @@ public class ActionBuilderTest {
                 .with((String x, BigDecimal value, Integer c, @Optional Float d, @Optional(defaultValue = "yes") Boolean flag) -> {
                     return;
                 })
+                .param("d")
+                    .optional(true)
+                    .build()
+                .param("flag")
+                    .optional(true)
+                    .defaultValueText("yes")
+                    .build()
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 5);
@@ -162,7 +172,9 @@ public class ActionBuilderTest {
                        Map<String, Object> mapArg) -> {
                     mapArg.put("key", "Hello world!");
                 })
-                .parameterType(7, new TypeReference<Map<String, Object>>(){}.getType())
+                .param(7)
+                    .type(new TypeReference<Map<String, Object>>(){}.getType())
+                    .build()
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 8);
@@ -179,7 +191,9 @@ public class ActionBuilderTest {
                        Map<String, Object> mapArg, List<String> someList) -> {
                     mapArg.put("key", "Hello world!");
                 })
-                .parameterType("someList", new TypeReference<List<String>>(){}.getType())
+                .param("someList")
+                    .type(new TypeReference<List<String>>(){}.getType())
+                    .build()
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 9);
@@ -196,7 +210,9 @@ public class ActionBuilderTest {
                        Map<String, Object> mapArg, List<String> someList, String tenthArg) -> {
                     mapArg.put("key", "Hello world!");
                 })
-                .parameterType("someList", new TypeReference<List<String>>(){}.getType())
+                .param("someList")
+                    .type(new TypeReference<List<String>>(){}.getType())
+                    .build()
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 10);
@@ -210,7 +226,9 @@ public class ActionBuilderTest {
                 .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
-                .parameterType(3, new TypeReference<List<String>>(){}.getType())
+                .param(3)
+                    .type(new TypeReference<List<String>>(){}.getType())
+                    .build()
                 .build();
 
     }
@@ -221,7 +239,9 @@ public class ActionBuilderTest {
                 .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
-                .parameterType("y", new TypeReference<List<String>>(){}.getType())
+                .param("y")
+                    .type(new TypeReference<List<String>>(){}.getType())
+                    .build()
                 .build();
 
     }

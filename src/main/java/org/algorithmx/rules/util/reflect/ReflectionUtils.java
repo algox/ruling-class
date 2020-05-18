@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -188,7 +188,7 @@ public final class ReflectionUtils {
      * @param filter annotation to look for.
      * @return all methods that match the filter.
      */
-    public static Method[] getMethods(Class<?> clazz, Function<Method, Boolean> filter) {
+    public static Method[] getMethods(Class<?> clazz, Predicate<Method> filter) {
         Assert.notNull(clazz, "clazz cannot be null");
         Assert.notNull(filter, "filter cannot be null");
 
@@ -212,7 +212,7 @@ public final class ReflectionUtils {
      * @param filter function to determine whether the given method matches the desired criteria.
      * @return all the matching methods.
      */
-    private static List<Method> findMethods(Class<?> clazz, Function<Method, Boolean> filter) {
+    public static List<Method> findMethods(Class<?> clazz, Predicate<Method> filter) {
         Assert.notNull(clazz, "clazz cannot be null.");
         Assert.notNull(clazz, "annotationClazz cannot be null.");
 
@@ -221,7 +221,7 @@ public final class ReflectionUtils {
 
         do {
             for (Method method : targetClass.getDeclaredMethods()) {
-                if (filter.apply(method)) {
+                if (filter.test(method)) {
                     result.add(method);
                 }
             }

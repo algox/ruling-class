@@ -51,9 +51,9 @@ public final class ParameterDefinition {
     private String name;
     private String description;
     private Type type;
-    private final boolean required;
-    private final String defaultValueText;
-    private final Class<? extends BindingMatchingStrategy> bindUsing;
+    private boolean required;
+    private String defaultValueText;
+    private Class<? extends BindingMatchingStrategy> bindUsing;
     private final Annotation[] annotations;
     private Type bindingType;
 
@@ -75,10 +75,15 @@ public final class ParameterDefinition {
         validate();
     }
 
-    private void validate() {
+    public void validate() {
+
         if (isBinding() && getDefaultValueText() != null) {
             throw new UnrulyException("Bindable parameters Binding<?> cannot have default values. " +
                     "For example : @Optional(defaultValue = \"10\") Binding<Integer> value" + toString());
+        }
+
+        if (isRequired() && (defaultValue != null || getDefaultValueText() != null)) {
+            throw new UnrulyException("Required parameter [" + name + "] should not have a default value" + toString());
         }
     }
 
@@ -133,6 +138,7 @@ public final class ParameterDefinition {
     }
 
     public void setIndex(int index) {
+        Assert.isTrue(index >= 0, "index must be >= 0");
         this.index = index;
     }
 
@@ -214,6 +220,18 @@ public final class ParameterDefinition {
         return required;
     }
 
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    public boolean isOptional() {
+        return !required;
+    }
+
+    public void setOptional(boolean optional) {
+        this.required = !optional;
+    }
+
     /**
      * Default value text for this parameter if one is specified.
      *
@@ -222,6 +240,10 @@ public final class ParameterDefinition {
      */
     public String getDefaultValueText() {
         return defaultValueText;
+    }
+
+    public void setDefaultValueText(String defaultValueText) {
+        this.defaultValueText = defaultValueText;
     }
 
     /**
@@ -246,6 +268,10 @@ public final class ParameterDefinition {
         return defaultValue;
     }
 
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     /**
      * Determines whether this parameter is using custom Match. This done by specifying @Match on the parameter.
      *
@@ -263,6 +289,10 @@ public final class ParameterDefinition {
      */
     public Class<? extends BindingMatchingStrategy> getBindUsing() {
         return bindUsing;
+    }
+
+    public void setBindUsing(Class<? extends BindingMatchingStrategy> bindUsing) {
+        this.bindUsing = bindUsing;
     }
 
     /**
@@ -325,8 +355,11 @@ public final class ParameterDefinition {
                 ", description='" + description + '\'' +
                 ", type=" + type +
                 ", required=" + required +
+                ", defaultValueText='" + defaultValueText + '\'' +
+                ", bindUsing=" + bindUsing +
                 ", annotations=" + Arrays.toString(annotations) +
+                ", bindingType=" + bindingType +
+                ", defaultValue=" + defaultValue +
                 '}';
     }
-
 }
