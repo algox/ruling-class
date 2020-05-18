@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.bind.match;
 
-import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.BindingException;
@@ -437,7 +437,7 @@ public class ParameterResolverTest {
             return true;
         }
 
-        public boolean testMethod5(@Nullable(defaultValue = "12345") Long a, @Nullable int b, BigDecimal c) {
+        public boolean testMethod5(@Optional(defaultValue = "12345") Long a, @Optional int b, BigDecimal c) {
             return true;
         }
 

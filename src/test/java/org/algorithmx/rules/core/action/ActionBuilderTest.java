@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.util.TypeReference;
@@ -99,7 +99,7 @@ public class ActionBuilderTest {
     @Test
     public void test4Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d) -> {
                     return;
                 })
                 .build();
@@ -113,7 +113,7 @@ public class ActionBuilderTest {
     @Test
     public void test5Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d, @Nullable(defaultValue = "yes") Boolean flag) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d, @Optional(defaultValue = "yes") Boolean flag) -> {
                     return;
                 })
                 .build();
@@ -127,8 +127,8 @@ public class ActionBuilderTest {
     @Test
     public void test6Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
-                            @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d,
+                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue) -> {
                     bindingValue.setValue("Hello world!");
                 })
                 .build();
@@ -142,8 +142,8 @@ public class ActionBuilderTest {
     @Test
     public void test7Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
-                            @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d,
+                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg) -> {
                     bindingValue.setValue("Hello world!");
                 })
                 .build();
@@ -157,9 +157,9 @@ public class ActionBuilderTest {
     @Test
     public void test8Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
-                            @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
-                            Map<String, Object> mapArg) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d,
+                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
+                       Map<String, Object> mapArg) -> {
                     mapArg.put("key", "Hello world!");
                 })
                 .parameterType(7, new TypeReference<Map<String, Object>>(){}.getType())
@@ -174,9 +174,9 @@ public class ActionBuilderTest {
     @Test
     public void test9Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
-                            @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
-                            Map<String, Object> mapArg, List<String> someList) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d,
+                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
+                       Map<String, Object> mapArg, List<String> someList) -> {
                     mapArg.put("key", "Hello world!");
                 })
                 .parameterType("someList", new TypeReference<List<String>>(){}.getType())
@@ -191,9 +191,9 @@ public class ActionBuilderTest {
     @Test
     public void test10Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Nullable Float d,
-                            @Nullable(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
-                            Map<String, Object> mapArg, List<String> someList, String tenthArg) -> {
+                .with((String x, BigDecimal value, Integer c, @Optional Float d,
+                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
+                       Map<String, Object> mapArg, List<String> someList, String tenthArg) -> {
                     mapArg.put("key", "Hello world!");
                 })
                 .parameterType("someList", new TypeReference<List<String>>(){}.getType())

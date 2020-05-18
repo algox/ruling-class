@@ -19,7 +19,7 @@ package org.algorithmx.rules.core.model;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Match;
-import org.algorithmx.rules.annotation.Nullable;
+import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
@@ -40,7 +40,7 @@ import java.util.Arrays;
  * The definition stores the parameter index, name of parameter (automatically discovered), generic type,
  * whether the parameter is required and any associated annotations.
  *
- * A parameter is deemed not required if it is annotated @Nullable or it is declared with an Optional type.
+ * A parameter is deemed not required if it is annotated @Optional or it is declared with an Optional type.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -78,7 +78,7 @@ public final class ParameterDefinition {
     private void validate() {
         if (isBinding() && getDefaultValueText() != null) {
             throw new UnrulyException("Bindable parameters Binding<?> cannot have default values. " +
-                    "For example : @Nullable(defaultValue = \"10\") Binding<Integer> value" + toString());
+                    "For example : @Optional(defaultValue = \"10\") Binding<Integer> value" + toString());
         }
     }
 
@@ -107,15 +107,15 @@ public final class ParameterDefinition {
     }
 
     private static boolean isRequired(Method method, int index) {
-        return method.getParameters()[index].getAnnotation(Nullable.class) == null;
+        return method.getParameters()[index].getAnnotation(Optional.class) == null;
     }
 
     private static String getDefaultValueText(Method method, int index) {
-        Nullable nullable = method.getParameters()[index].getAnnotation(Nullable.class);
-        return nullable == null ? null
-                : Nullable.NOT_APPLICABLE.equals(nullable.defaultValue())
+        Optional optional = method.getParameters()[index].getAnnotation(Optional.class);
+        return optional == null ? null
+                : Optional.NOT_APPLICABLE.equals(optional.defaultValue())
                     ? null
-                    : nullable.defaultValue();
+                    : optional.defaultValue();
     }
 
     private static Class<? extends BindingMatchingStrategy> getBindUsing(Method method, int index) {
@@ -218,7 +218,7 @@ public final class ParameterDefinition {
      * Default value text for this parameter if one is specified.
      *
      * @return default value text if specified; null otherwise.
-     * @see Nullable
+     * @see Optional
      */
     public String getDefaultValueText() {
         return defaultValueText;
