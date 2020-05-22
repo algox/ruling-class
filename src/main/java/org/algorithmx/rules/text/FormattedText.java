@@ -95,6 +95,8 @@ public class FormattedText {
      * @return formatted text with resolved place holders.
      */
     public static FormattedText parse(String text) {
+        if (text == null) return null;
+
         List<Marker> result = new ArrayList<>();
         StringBuilder parameterName = null;
         StringBuilder format = null;
