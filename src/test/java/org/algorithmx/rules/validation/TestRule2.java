@@ -35,12 +35,12 @@ public class TestRule2 {
     }
 
     @Then
-    public void then(Integer value, ValidationErrorContainer errors) {
+    public void then(Integer value, RuleViolations errors) {
         errors.add("TestRule2", "Test.Error.200").param("value", value);
     }
 
     @Otherwise
-    public void otherwise(Integer value, ValidationErrorContainer errors) {
+    public void otherwise(Integer value, RuleViolations errors) {
         errors.add("TestRule2", "Test.Error.3000").param("value", value);
     }
 }

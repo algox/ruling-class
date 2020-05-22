@@ -32,11 +32,11 @@ import java.util.List;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class ValidationErrorContainer implements Iterable<ValidationError> {
+public class RuleViolations implements Iterable<RuleViolation> {
 
-    private final List<ValidationError> errors = Collections.synchronizedList(new ArrayList<>());
+    private final List<RuleViolation> errors = Collections.synchronizedList(new ArrayList<>());
 
-    public ValidationErrorContainer() {
+    public RuleViolations() {
         super();
     }
 
@@ -45,7 +45,7 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      *
      * @param error error to be added.
      */
-    public void add(ValidationError error) {
+    public void add(RuleViolation error) {
         Assert.notNull(error, "error cannot be null.");
         errors.add(error);
     }
@@ -57,7 +57,7 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      * @param errorCode validation error code.
      * @return newly created Validation error.
      */
-    public ValidationError add(String ruleName, String errorCode) {
+    public RuleViolation add(String ruleName, String errorCode) {
         return add(ruleName, errorCode, Severity.ERROR, null);
     }
 
@@ -70,8 +70,8 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      * @param errorMessage validation error message.
      * @return newly created Validation error.
      */
-    public ValidationError add(String ruleName, String errorCode, Severity severity, String errorMessage) {
-        ValidationError result = new ValidationError(ruleName, errorCode, severity, errorMessage);
+    public RuleViolation add(String ruleName, String errorCode, Severity severity, String errorMessage) {
+        RuleViolation result = new RuleViolation(ruleName, errorCode, severity, errorMessage);
         errors.add(result);
         return result;
     }
@@ -84,7 +84,7 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      * @param params rule parameters.
      * @return newly created Validation error.
      */
-    public ValidationError add(String ruleName, String errorCode, Binding<Object>...params) {
+    public RuleViolation add(String ruleName, String errorCode, Binding<Object>...params) {
         return add(ruleName, errorCode, Severity.ERROR, null, params);
     }
 
@@ -98,8 +98,8 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      * @param params rule parameters.
      * @return newly created Validation error.
      */
-    public ValidationError add(String ruleName, String errorCode, Severity severity, String errorMessage, Binding<Object>...params) {
-        ValidationError result = add(ruleName, errorCode, severity, errorMessage);
+    public RuleViolation add(String ruleName, String errorCode, Severity severity, String errorMessage, Binding<Object>...params) {
+        RuleViolation result = add(ruleName, errorCode, severity, errorMessage);
 
         if (params != null) {
             Arrays.stream(params).forEach(binding -> result.param(binding.getName(), binding.getTextValue()));
@@ -168,9 +168,9 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
      *
      * @return validation errors.
      */
-    public ValidationError[] getErrors() {
+    public RuleViolation[] getErrors() {
         if (errors.isEmpty()) return null;
-        return errors.toArray(new ValidationError[errors.size()]);
+        return errors.toArray(new RuleViolation[errors.size()]);
     }
 
     /**
@@ -183,14 +183,14 @@ public class ValidationErrorContainer implements Iterable<ValidationError> {
     }
 
     @Override
-    public Iterator<ValidationError> iterator() {
+    public Iterator<RuleViolation> iterator() {
         return errors.iterator();
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Errors [" + System.lineSeparator());
-        errors.stream().forEach(error -> result.append(error.toString() + System.lineSeparator()));
+        errors.stream().forEach(error -> result.append('\t' + error.toString() + System.lineSeparator()));
         result.append("]" + System.lineSeparator());
         return result.toString();
     }

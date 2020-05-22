@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  * Template class for Validation rules. Attempts to generalize the boilerplate code associated with Validation Rules.
- * This class will automatically add a ValidationError to the ValidationErrorContainer when the Validation condition is
+ * This class will automatically add a RuleViolation to the RuleViolations when the Validation condition is
  * not met.
  *
  * @author Max Arulananthan
@@ -101,9 +101,9 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      */
     @Otherwise
     public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx,
-                          @Match(using = MatchByTypeMatchingStrategy.class) ValidationErrorContainer errors) {
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
         Map<String, Binding> matches = resolveParameters(ctx);
-        ValidationError error = createValidationError(getErrorCode(), getSeverity(), getErrorMessage(), matches);
+        RuleViolation error = createValidationError(getErrorCode(), getSeverity(), getErrorMessage(), matches);
         if (error != null) errors.add(error);
     }
 
@@ -137,9 +137,9 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @param matches matched parameter values of the @Given condition.
      * @return newly created Validation Error.
      */
-    protected ValidationError createValidationError(String errorCode, Severity severity, String errorMessage,
-                                                    Map<String, Binding> matches) {
-        ValidationError result = new ValidationError(getRuleDefinition().getName(), errorCode, severity,
+    protected RuleViolation createValidationError(String errorCode, Severity severity, String errorMessage,
+                                                  Map<String, Binding> matches) {
+        RuleViolation result = new RuleViolation(getRuleDefinition().getName(), errorCode, severity,
                 formatErrorMessage(errorMessage, matches));
         addParameters(result, matches);
         return result;
@@ -175,8 +175,8 @@ public abstract class ValidationRule implements RuleDefinitionAware {
      * @param error existing error.
      * @param matches parameter matches.
      */
-    protected void addParameters(ValidationError error, Map<String, Binding> matches) {
-        Assert.notNull(error, "ValidationError cannot be null.");
+    protected void addParameters(RuleViolation error, Map<String, Binding> matches) {
+        Assert.notNull(error, "RuleViolation cannot be null.");
 
         if (matches != null) {
             for (Map.Entry<String, Binding> match : matches.entrySet()) {

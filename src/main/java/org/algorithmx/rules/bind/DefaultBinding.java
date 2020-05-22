@@ -128,7 +128,7 @@ public class DefaultBinding<T> implements Binding<T> {
     }
 
     @Override
-    public String getSimpleDescription() {
+    public String getTypeAndName() {
         return getTypeName() + " " + name;
     }
 

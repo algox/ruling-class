@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class ValidationError {
+public class RuleViolation {
 
     private final String ruleName;
     private final String errorCode;
@@ -39,15 +39,10 @@ public class ValidationError {
     private final String errorMessage;
     private final Map<String, String> params = new LinkedHashMap<>();
 
-    public ValidationError(String ruleName, String errorCode, String errorMessage) {
-        this(ruleName, errorCode, Severity.ERROR, errorMessage);
-    }
-
-    public ValidationError(String ruleName, String errorCode, Severity severity, String errorMessage) {
+    public RuleViolation(String ruleName, String errorCode, Severity severity, String errorMessage) {
         super();
         Assert.notNull(ruleName, "ruleName cannot be null.");
         Assert.notNull(errorCode, "errorCode cannot be null.");
-        Assert.notNull(severity, "severity cannot be null.");
         this.ruleName = ruleName;
         this.errorCode = errorCode;
         this.severity = severity == null ? Severity.ERROR : severity;
@@ -107,7 +102,7 @@ public class ValidationError {
      * @param value parameter value. Null or toString() value.
      * @return error.
      */
-    public ValidationError param(String name, Object value) {
+    public RuleViolation param(String name, Object value) {
         params.put(name, value != null ? value.toString() : null);
         return this;
     }
@@ -119,7 +114,7 @@ public class ValidationError {
      * @param value parameter value.
      * @return error.
      */
-    public ValidationError param(String name, String value) {
+    public RuleViolation param(String name, String value) {
         params.put(name, value);
         return this;
     }
@@ -128,7 +123,7 @@ public class ValidationError {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ValidationError that = (ValidationError) o;
+        RuleViolation that = (RuleViolation) o;
         return ruleName.equals(that.ruleName) &&
                 errorCode.equals(that.errorCode);
     }
@@ -140,7 +135,7 @@ public class ValidationError {
 
     @Override
     public String toString() {
-        return "ValidationError{" +
+        return "RuleViolation{" +
                 "ruleName='" + ruleName + '\'' +
                 ", errorCode='" + errorCode + '\'' +
                 ", severity=" + severity +

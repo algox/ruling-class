@@ -35,17 +35,17 @@ public class TestRule1 {
     }
 
     @Then
-    public void then1(Integer value, ValidationErrorContainer errors) {
+    public void then1(Integer value, RuleViolations errors) {
         errors.add("TestRule1", "Test.Error.100").param("value", value);
     }
 
     @Then
-    public void then2(Integer value, ValidationErrorContainer errors) {
+    public void then2(Integer value, RuleViolations errors) {
         errors.add("TestRule1", "Test.Error.101").param("value", value);
     }
 
     @Otherwise
-    public void otherwise(Integer value, ValidationErrorContainer errors) {
+    public void otherwise(Integer value, RuleViolations errors) {
         errors.add("TestRule1", "Test.Error.2000").param("value", value);
     }
 }

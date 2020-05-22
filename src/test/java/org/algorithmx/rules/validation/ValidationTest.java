@@ -50,7 +50,7 @@ public class ValidationTest {
 
         Bindings bindings = Bindings.create()
                 .bind("value", Integer.class, 1)
-                .bind("errors", ValidationErrorContainer.class, new ValidationErrorContainer());
+                .bind("errors", RuleViolations.class, new RuleViolations());
 
         rules.run(RuleContextBuilder.with(bindings).build());
     }
@@ -68,12 +68,12 @@ public class ValidationTest {
         rules.run(RuleContextBuilder.
                 with(Bindings.create()
                         .bind(value -> 75)
-                        .bind(errors -> new ValidationErrorContainer())).build());
+                        .bind(errors -> new RuleViolations())).build());
     }
 
     @Test
     public void testNotNullRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("b",1)
                 .bind("e", errors);
@@ -88,7 +88,7 @@ public class ValidationTest {
 
     @Test
     public void testNullRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("b", String.class, null)
                 .bind("e", errors);
@@ -103,7 +103,7 @@ public class ValidationTest {
 
     @Test
     public void testStringLengthRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("b", String.class, "  ")
                 .bind("e", errors);
@@ -118,7 +118,7 @@ public class ValidationTest {
 
     @Test
     public void testStringTextRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("b", String.class, "  a")
                 .bind("e", errors);
@@ -133,7 +133,7 @@ public class ValidationTest {
 
     @Test
     public void testStringPatternRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("b", String.class, "ababab")
                 .bind("e", errors);
@@ -149,7 +149,7 @@ public class ValidationTest {
 
     @Test
     public void testFutureDateRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("d", new Date())
                 .bind("e", errors);
@@ -163,7 +163,7 @@ public class ValidationTest {
 
     @Test
     public void tesPastDateRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("d", new Date())
                 .bind("e", errors);
@@ -180,7 +180,7 @@ public class ValidationTest {
 
     @Test
     public void testMaxRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("a", 25)
                 .bind("e", errors);
@@ -197,7 +197,7 @@ public class ValidationTest {
 
     @Test
     public void testMinRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("a", 10)
                 .bind("e", errors);
@@ -214,7 +214,7 @@ public class ValidationTest {
 
     @Test
     public void testMaxMinRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("a", 22)
                 .bind("e", errors);
@@ -231,7 +231,7 @@ public class ValidationTest {
 
     @Test
     public void testValidationRule() {
-        ValidationErrorContainer errors = new ValidationErrorContainer();
+        RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("x", 22)
                 .bind("z", "abcde")

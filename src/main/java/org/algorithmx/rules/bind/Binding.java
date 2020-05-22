@@ -124,8 +124,8 @@ public interface Binding<T> extends Identifiable {
 	String getDescription();
 
 	/**
-	 * Simple description of this Binding. (Type Value)
-	 * @return Type Value.
+	 * Type and Name.
+	 * @return Type and Name.
 	 */
-	String getSimpleDescription();
+	String getTypeAndName();
 }

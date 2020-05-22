@@ -63,7 +63,7 @@ public class BindingException extends UnrulyException {
     private static String matchesText(Map<String, Binding<Object>> matches) {
         if (matches == null || matches.size() == 0) return "";
         return matches.values().stream()
-                .map(m -> m.getSimpleDescription())
+                .map(m -> m.getTypeAndName())
                 .collect(Collectors.joining(", "));
     }
 }

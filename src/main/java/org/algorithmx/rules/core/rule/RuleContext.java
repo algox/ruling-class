@@ -26,6 +26,8 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
+import java.util.Locale;
+
 /**
  * Responsible for state management during Rule execution. This class provides access to everything that is required
  * by the Rule Engine to execute a given set of Rules.
@@ -40,6 +42,7 @@ public class RuleContext {
     private final ParameterResolver parameterResolver;
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
+    private Locale locale = Locale.getDefault();
 
     private RuleExecutionState state = RuleExecutionState.RUNNING;
 
@@ -73,7 +76,7 @@ public class RuleContext {
         return getParameterResolver().resolve(matches, definition, getBindings(), matchingStrategy, getRegistry());
     }
 
-                                       /**
+    /**
      * Returns the Bindings.
      *
      * @return Bindings. Cannot be null.
@@ -162,5 +165,13 @@ public class RuleContext {
      */
     public RuleExecutionState getState() {
         return state;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }
