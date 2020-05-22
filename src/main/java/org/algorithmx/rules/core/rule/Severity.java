@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.validation;
+package org.algorithmx.rules.core.rule;
 
 /**
  * Error severities are defined as follows:

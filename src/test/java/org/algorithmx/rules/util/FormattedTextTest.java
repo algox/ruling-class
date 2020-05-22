@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.util;
 
-import org.junit.Assert;
+import org.algorithmx.rules.text.FormattedText;
 import org.junit.Test;
 
 import java.util.Date;

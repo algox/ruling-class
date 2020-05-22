@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.validation;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.lib.spring.util.Assert;
@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Container for all validation errors.
+ * Container for all Rule Violations.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -41,7 +41,7 @@ public class RuleViolations implements Iterable<RuleViolation> {
     }
 
     /**
-     * Adds a new validation error.
+     * Adds a new violation.
      *
      * @param error error to be added.
      */
@@ -51,24 +51,24 @@ public class RuleViolations implements Iterable<RuleViolation> {
     }
 
     /**
-     * Adds a new Validation Error with the given name and error code.
+     * Adds a new violation with the given name and error code.
      *
      * @param ruleName rule name.
-     * @param errorCode validation error code.
-     * @return newly created Validation error.
+     * @param errorCode error code.
+     * @return newly created violation.
      */
     public RuleViolation add(String ruleName, String errorCode) {
         return add(ruleName, errorCode, Severity.ERROR, null);
     }
 
     /**
-     * Adds a new Validation Error with the given name, error code and error message.
+     * Adds a new violation with the given name, error code and error message.
      *
      * @param ruleName rule name.
-     * @param errorCode validation error code.
+     * @param errorCode error code.
      * @param severity severity of the error.
-     * @param errorMessage validation error message.
-     * @return newly created Validation error.
+     * @param errorMessage error message.
+     * @return newly created violation.
      */
     public RuleViolation add(String ruleName, String errorCode, Severity severity, String errorMessage) {
         RuleViolation result = new RuleViolation(ruleName, errorCode, severity, errorMessage);
@@ -77,26 +77,26 @@ public class RuleViolations implements Iterable<RuleViolation> {
     }
 
     /**
-     * Adds a new Validation Error with the given name, error code and the parameters.
+     * Adds a new violation with the given name, error code and the parameters.
      *
      * @param ruleName rule name.
-     * @param errorCode validation error code.
+     * @param errorCode error code.
      * @param params rule parameters.
-     * @return newly created Validation error.
+     * @return newly created violation.
      */
     public RuleViolation add(String ruleName, String errorCode, Binding<Object>...params) {
         return add(ruleName, errorCode, Severity.ERROR, null, params);
     }
 
     /**
-     * Adds a new Validation Error with the given name, error code, error message and the parameters.
+     * Adds a new violation with the given name, error code, error message and the parameters.
      *
      * @param ruleName rule name.
-     * @param errorCode validation error code.
+     * @param errorCode error code.
      * @param severity severity of the error.
-     * @param errorMessage validation error message.
+     * @param errorMessage error message.
      * @param params rule parameters.
-     * @return newly created Validation error.
+     * @return newly created violation.
      */
     public RuleViolation add(String ruleName, String errorCode, Severity severity, String errorMessage, Binding<Object>...params) {
         RuleViolation result = add(ruleName, errorCode, severity, errorMessage);
@@ -164,11 +164,11 @@ public class RuleViolations implements Iterable<RuleViolation> {
     }
 
     /**
-     * Returns all the associated validation errors.
+     * Returns all the associated violation.
      *
-     * @return validation errors.
+     * @return Rule Violations.
      */
-    public RuleViolation[] getErrors() {
+    public RuleViolation[] getViolations() {
         if (errors.isEmpty()) return null;
         return errors.toArray(new RuleViolation[errors.size()]);
     }
@@ -189,7 +189,7 @@ public class RuleViolations implements Iterable<RuleViolation> {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Errors [" + System.lineSeparator());
+        StringBuilder result = new StringBuilder("Violations [" + System.lineSeparator());
         errors.stream().forEach(error -> result.append('\t' + error.toString() + System.lineSeparator()));
         result.append("]" + System.lineSeparator());
         return result.toString();

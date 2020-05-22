@@ -21,6 +21,8 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
+import org.algorithmx.rules.core.rule.RuleViolations;
+import org.algorithmx.rules.core.rule.Severity;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.junit.Assert;

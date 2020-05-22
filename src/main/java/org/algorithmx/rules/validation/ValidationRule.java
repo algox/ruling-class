@@ -25,8 +25,11 @@ import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.core.rule.RuleDefinitionAware;
+import org.algorithmx.rules.core.rule.RuleViolation;
+import org.algorithmx.rules.core.rule.RuleViolations;
+import org.algorithmx.rules.core.rule.Severity;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.FormattedText;
+import org.algorithmx.rules.text.FormattedText;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

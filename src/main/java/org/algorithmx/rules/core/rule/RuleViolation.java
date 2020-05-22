@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.validation;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Class containing all the details of a Validation Error. It contains Rule Name, error code, error message and all
+ * Class containing all the details of a Rule Violation. It contains Rule Name, error code, severity, error message and all
  * relevant parameters.
  *
  * @author Max Arulananthan
@@ -61,7 +61,7 @@ public class RuleViolation {
     /**
      * Associated Error code.
      *
-     * @return validation error code.
+     * @return error code.
      */
     public String getErrorCode() {
         return errorCode;
@@ -79,7 +79,7 @@ public class RuleViolation {
     /**
      * Optional error message.
      *
-     * @return validation error message.
+     * @return error message.
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -88,7 +88,7 @@ public class RuleViolation {
     /**
      * Associated rule parameters.
      *
-     * @return validation rule parameters.
+     * @return rule parameters.
      */
     public Map<String, String> getParameters() {
         if (params.size() == 0) return null;

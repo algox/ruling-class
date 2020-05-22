@@ -21,6 +21,7 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
+import org.algorithmx.rules.core.rule.RuleViolations;
 
 @Rule(name = "TestRule4")
 public class TestRule4 {
