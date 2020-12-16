@@ -36,6 +36,7 @@ public class RulingClass implements Rule, Identifiable {
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
+    private final Condition preCondition;
     private final Condition condition;
     private final List<Action> actions;
     private final Action otherwiseAction;
@@ -45,17 +46,19 @@ public class RulingClass implements Rule, Identifiable {
      *
      * @param ruleDefinition meta information.
      * @param target target Rule class.
+     * @param preCondition pre-condition.
      * @param condition given condition.
      * @param thenActions all the Then actions.
      * @param otherwiseAction the Otherwise action (optional);
      */
-    public RulingClass(RuleDefinition ruleDefinition, Object target, Condition condition,
+    public RulingClass(RuleDefinition ruleDefinition, Object target, Condition preCondition, Condition condition,
                        List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
         Assert.notNull(condition, "condition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
+        this.preCondition = preCondition;
         this.condition = condition;
 
         // Then actions (optional)
@@ -80,6 +83,16 @@ public class RulingClass implements Rule, Identifiable {
                     "Try running withe a new RuleContext.");
         }
 
+        boolean preConditionCheck = true;
+
+        // Check Pre-Condition if there is one
+        if (getPreCondition() != null) {
+            preConditionCheck = getPreCondition().isPass(ctx);
+        }
+
+        // We did not pass the Pre-Condition
+        if (!preConditionCheck) return;
+
         boolean result = getCondition().isPass(ctx);
 
         // The Condition passed
@@ -92,6 +105,11 @@ public class RulingClass implements Rule, Identifiable {
             // Condition failed
             getOtherwiseAction().run(ctx);
         }
+    }
+
+    @Override
+    public Condition getPreCondition() {
+        return preCondition;
     }
 
     @Override

@@ -39,6 +39,7 @@ public abstract class RuleBuilder {
     private Class<?> ruleClass;
     private String name;
     private String description;
+    private Condition preCondition = null;
     private Condition condition;
     private Action otherwiseAction;
     private Object target;
@@ -99,6 +100,11 @@ public abstract class RuleBuilder {
         return this;
     }
 
+    public RuleBuilder preCondition(Condition preCondition) {
+        this.preCondition = preCondition;
+        return this;
+    }
+
     public RuleBuilder given(Condition condition) {
         Assert.notNull(condition, "condition cannot be null.");
         this.condition = condition;
@@ -107,6 +113,7 @@ public abstract class RuleBuilder {
 
     public RuleBuilder then(Action action) {
         Assert.notNull(action, "action cannot be null.");
+        // TODO : Do we need this?
         //action.getActionDefinition().setOrder(thenActions.size());
         this.thenActions.add(action);
         return this;
@@ -138,6 +145,10 @@ public abstract class RuleBuilder {
         return description;
     }
 
+    public Condition getPreCondition() {
+        return preCondition;
+    }
+
     public Condition getCondition() {
         return condition;
     }
@@ -165,6 +176,7 @@ public abstract class RuleBuilder {
         }
 
         RuleDefinition ruleDefinition = new RuleDefinition(getRuleClass(), getName(), getDescription(),
+                getPreCondition() != null ? getPreCondition().getMethodDefinition() : null,
                 getCondition().getMethodDefinition(),
                 thenActionDefinitions.toArray(new MethodDefinition[thenActionDefinitions.size()]),
                 getOtherwiseAction() != null ? getOtherwiseAction().getMethodDefinition() : null);
@@ -174,6 +186,7 @@ public abstract class RuleBuilder {
             ((RuleDefinitionAware) getTarget()).setRuleDefinition(ruleDefinition);
         }
 
-        return new RulingClass(ruleDefinition, getTarget(), getCondition(), getThenActions(), getOtherwiseAction());
+        return new RulingClass(ruleDefinition, getTarget(), getPreCondition(), getCondition(),
+                getThenActions(), getOtherwiseAction());
     }
 }

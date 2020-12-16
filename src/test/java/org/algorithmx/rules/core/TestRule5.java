@@ -20,6 +20,7 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
+import org.algorithmx.rules.annotation.PreCondition;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.bind.Bindings;
@@ -34,8 +35,13 @@ public class TestRule5 {
         super();
     }
 
+    @PreCondition
+    public boolean preCondition(int id) {
+        return id > 10;
+    }
+
     @Given
-    public boolean when(int id, Date birthDate, List<String> values) {
+    public boolean when(int id) {
         return id > 100;
     }
 

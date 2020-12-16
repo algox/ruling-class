@@ -18,9 +18,9 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.UnrulyException;
 
 import java.util.function.Predicate;
 
@@ -119,6 +119,15 @@ public interface Rule extends Predicate<Object[]> {
      * @return Rule meta information.
      */
     RuleDefinition getRuleDefinition();
+
+    /**
+     * Rule Pre-Condition.
+     *
+     * @return Rule Condition.
+     */
+    default Condition getPreCondition() {
+        return null;
+    }
 
     /**
      * Rule Condition.

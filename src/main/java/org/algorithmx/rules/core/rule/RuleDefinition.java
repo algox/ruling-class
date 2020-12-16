@@ -37,12 +37,14 @@ public final class RuleDefinition {
 
     // Rule class
     private final Class<?> ruleClass;
+    // PreCondition method details
+    private final MethodDefinition preConditionDefinition;
     // Given method details
     private final MethodDefinition conditionDefinition;
     // Associated Then actions
     private MethodDefinition[] thenActionDefinitions;
-    // Else action
-    private MethodDefinition elseActionDefinition;
+    // Otherwise action
+    private MethodDefinition otherwiseActionDefinition;
 
     // Name of the Rule
     private String name;
@@ -55,22 +57,25 @@ public final class RuleDefinition {
      * @param ruleClass Rule implementation class.
      * @param name Rule name.
      * @param description Rule description.
+     * @param preConditionDefinition Pre-Condition meta information.
      * @param conditionDefinition Given condition meta information.
      * @param thenActionDefinitions Then Action(s) meta information.
-     * @param elseActionDefinition Otherwise Action meta information.
+     * @param otherwiseActionDefinition Otherwise Action meta information.
      */
     public RuleDefinition(Class<?> ruleClass, String name, String description,
+                          MethodDefinition preConditionDefinition,
                           MethodDefinition conditionDefinition,
                           MethodDefinition[] thenActionDefinitions,
-                          MethodDefinition elseActionDefinition) {
+                          MethodDefinition otherwiseActionDefinition) {
         super();
         Assert.notNull(ruleClass, "Rule class cannot be null.");
         Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
         this.ruleClass = ruleClass;
         this.description = description;
+        this.preConditionDefinition = preConditionDefinition;
         this.conditionDefinition = conditionDefinition;
         this.thenActionDefinitions = thenActionDefinitions;
-        this.elseActionDefinition = elseActionDefinition;
+        this.otherwiseActionDefinition = otherwiseActionDefinition;
         setName(name);
     }
 
@@ -111,6 +116,10 @@ public final class RuleDefinition {
         this.description = description;
     }
 
+    public MethodDefinition getPreConditionDefinition() {
+        return preConditionDefinition;
+    }
+
     /**
      * Condition details.
      *
@@ -135,7 +144,7 @@ public final class RuleDefinition {
      * @return meta information about the otherwise action.
      */
     public MethodDefinition getOtherwiseActionDefinition() {
-        return elseActionDefinition;
+        return otherwiseActionDefinition;
     }
 
     /**

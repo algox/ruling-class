@@ -151,4 +151,55 @@ public class LoadTest {
                 .name("rule2")
                 .build();
     }
+
+    @Test
+    public void loadTest9() {
+        Rule rule = RuleBuilder
+                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
+                .preCondition(ConditionBuilder.with((Integer x) -> x > 10).build())
+                .name("TestRule2")
+                .description("Some rule for testing")
+                .then(ActionBuilder.emptyAction().build())
+                .build();
+        RuleDefinition def = rule.getRuleDefinition();
+
+        Assert.assertTrue(def.getPreConditionDefinition() != null);
+        Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getName().equals("x"));
+        Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getType().equals(Integer.class));
+    }
+
+    @Test
+    public void loadTest10() {
+        Rule rule = RuleBuilder
+                .with(TestRule5.class)
+                .build();
+        RuleDefinition def = rule.getRuleDefinition();
+
+        Assert.assertTrue(def.getPreConditionDefinition() != null);
+        Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getType().equals(int.class));
+    }
+
+    @Test
+    public void loadTest11() {
+        Rule rule = RuleBuilder
+                .with(TestRule4.class)
+                .build();
+        RuleDefinition def = rule.getRuleDefinition();
+
+        Assert.assertTrue(def.getPreConditionDefinition() == null);
+    }
+
+    @Test
+    public void loadTest12() {
+        Rule rule = RuleBuilder
+                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
+                .name("TestRule2")
+                .description("Some rule for testing")
+                .then(ActionBuilder.emptyAction().build())
+                .build();
+        RuleDefinition def = rule.getRuleDefinition();
+
+        Assert.assertTrue(def.getPreConditionDefinition() == null);
+    }
 }

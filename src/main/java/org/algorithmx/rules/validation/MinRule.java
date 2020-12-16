@@ -45,7 +45,7 @@ public class MinRule extends ValidationRule {
         this.min = min;
         this.supplier = supplier;
     }
-
+    
     @Given
     public boolean isValid() {
         Object value = supplier.get();

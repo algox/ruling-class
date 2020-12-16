@@ -20,6 +20,7 @@ package org.algorithmx.rules.core.rule;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
+import org.algorithmx.rules.annotation.PreCondition;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.ActionBuilder;
@@ -77,9 +78,32 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         name(ruleName);
         description(descriptionAnnotation != null ? descriptionAnnotation.value() : null);
 
+        loadPreCondition(ruleClass);
         loadCondition(ruleClass);
         loadThenActions(ruleClass);
         loadOtherwiseAction(ruleClass);
+    }
+
+    protected void loadPreCondition(Class<?> ruleClass) {
+        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(ruleClass, PreCondition.class);
+
+        if (candidates.length > 1) {
+            // Too many @PreCondition methods
+            throw new UnrulyException("Rule class [" + ruleClass.getName() + "] has too many pre-condition methods. " +
+                    "There can be at most 1 Pre-Condition method (Annotated with @PreCondition). " +
+                    "Currently there are [" + candidates.length + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
+
+        if (candidates.length == 1) {
+            if (!candidates[0].getReturnType().equals(boolean.class)) {
+                throw new UnrulyException("Rule Pre-Condition must return a boolean. Rule [" + ruleClass + "] Pre-Condition ["
+                        + candidates[0] + "] returns a [" + candidates[0].getReturnType() +"]");
+            }
+        }
+
+        preCondition(candidates.length == 1
+                ? ConditionBuilder.with(getTarget(), MethodDefinition.load(candidates[0])).build()
+                : null);
     }
 
     protected void loadCondition(Class<?> ruleClass) {
