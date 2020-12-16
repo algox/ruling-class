@@ -17,11 +17,11 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Arrays;
@@ -37,27 +37,23 @@ public class DefaultRuleSet implements RuleSet {
 
     private final String name;
     private final String description;
-    private final RuleSet.ORDER order;
     private final Rule[] rules;
 
     private final Condition preCondition;
-    private final Action preAction;
     private final Action postAction;
     private final Condition stopCondition;
 
-    public DefaultRuleSet(String name, String description, ORDER order, Rule[] rules,
-                          Condition preCondition, Action preAction, Action postAction,
-                          Condition stopCondition) {
+    public DefaultRuleSet(String name, String description,
+                          Condition preCondition, Action postAction,
+                          Condition stopCondition, Rule...rules) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.notNull(description, "description cannot be null");
         Assert.isTrue(rules != null && rules.length > 0, "RuleSet must have at least one Rule.");
         this.name = name;
         this.description = description;
-        this.order = order;
         this.rules = rules;
         this.preCondition = preCondition;
-        this.preAction = preAction;
         this.postAction = postAction;
         this.stopCondition = stopCondition;
     }
@@ -77,12 +73,8 @@ public class DefaultRuleSet implements RuleSet {
             return;
         }
 
-        // Run the PreAction if there is one.
-        if (getPreAction() != null) {
-            getPreAction().run(ctx);
-        }
-
         for (Rule rule : getRules()) {
+            // Run the rule
             rule.run(ctx);
             // Check to see if we need to stop?
             if (getStopCondition() != null && getStopCondition().isPass(ctx)) break;
@@ -106,18 +98,8 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public ORDER getOrder() {
-        return order;
-    }
-
-    @Override
     public Condition getPreCondition() {
         return preCondition;
-    }
-
-    @Override
-    public Action getPreAction() {
-        return preAction;
     }
 
     @Override
@@ -143,5 +125,17 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public Iterator<Rule> iterator() {
         return Arrays.stream(rules).iterator();
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultRuleSet{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", rules=" + Arrays.toString(rules) +
+                ", preCondition=" + preCondition +
+                ", postAction=" + postAction +
+                ", stopCondition=" + stopCondition +
+                '}';
     }
 }

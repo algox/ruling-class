@@ -38,11 +38,9 @@ public class RuleSetBuilder {
 
     private final String name;
     private String description;
-    private RuleSet.ORDER order = RuleSet.ORDER.IN_ORDER;
     private final LinkedList<Rule> rules = new LinkedList<>();
 
     private Condition preCondition;
-    private Action preAction;
     private Action postAction;
     private Condition stopCondition;
 
@@ -68,11 +66,6 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder description(String description) {
         this.description = description;
-        return this;
-    }
-
-    public RuleSetBuilder order(RuleSet.ORDER order) {
-        this.order = order;
         return this;
     }
 
@@ -116,24 +109,13 @@ public class RuleSetBuilder {
      *
      * @param condition pre check before execution of the RuleSet.
      */
-    RuleSetBuilder preCondition(Condition condition) {
+    public RuleSetBuilder preCondition(Condition condition) {
         this.preCondition = preCondition;
         return this;
     }
 
     /**
-     * PostAction(Optional) to be performed before the execution of the RuleSet.
-     *
-     * @param action pre action before the execution of the RuleSet.
-     * @return this for fluency.
-     */
-    public RuleSetBuilder preAction(Action action) {
-        this.preAction = action;
-        return this;
-    }
-
-    /**
-     * PreAction(Optional) to be performed after the execution of the RuleSet.
+     * PostAction(Optional) to be performed after the execution of the RuleSet.
      *
      * @param action post action after the execution of the RuleSet.
      * @return this for fluency.
@@ -155,8 +137,9 @@ public class RuleSetBuilder {
     }
 
     public RuleSet build() {
-        return new DefaultRuleSet(getName(), getDescription(), getOrder(), rules.toArray(new Rule[rules.size()]),
-                getPreCondition(), getPreAction(), getPostAction(), getStopCondition());
+        return new DefaultRuleSet(getName(), getDescription(),
+                getPreCondition(), getPostAction(), getStopCondition(),
+                rules.toArray(new Rule[rules.size()]));
     }
 
     public String getName() {
@@ -167,16 +150,9 @@ public class RuleSetBuilder {
         return description;
     }
 
-    public RuleSet.ORDER getOrder() {
-        return order;
-    }
 
     public Condition getPreCondition() {
         return preCondition;
-    }
-
-    public Action getPreAction() {
-        return preAction;
     }
 
     public Action getPostAction() {

@@ -32,8 +32,6 @@ import org.algorithmx.rules.core.UnrulyException;
  */
 public interface RuleSet extends Identifiable, Iterable<Rule> {
 
-    enum ORDER {IN_ORDER, NO_ORDER}
-
     void run(RuleContext ctx) throws UnrulyException;
 
     /**
@@ -50,21 +48,12 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      */
     String getDescription();
 
-    ORDER getOrder();
-
     /**
      * Returns the Condition (if one exists) to be met before the execution of the Rules.
      *
      * @return pre check before execution of the Rules.
      */
     Condition getPreCondition();
-
-    /**
-     * Returns the action performed after the execution of the Rules.
-     *
-     * @return pre action before the execution of the Rules.
-     */
-    Action getPreAction();
 
     /**
      * Returns the action to be performed after the execution of the Rules.
