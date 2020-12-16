@@ -18,10 +18,17 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleViolationBuilder;
+import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -36,36 +43,42 @@ import java.util.function.Supplier;
  */
 @Rule
 @Description("Value is less than the desired Max.")
-public class MaxRule extends BindingValidationRule<Object> {
+public class MaxRule extends ValidationRule {
 
-    private final long max;
+    private static final String ERROR_CODE        = "validators.maxRule";
+    private static final String DEFAULT_MESSAGE   = "Value must be less than/equal to {1}. Given {0}.";
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param max desired Max value.
-     * @param errorCode error code.
-     * @param bindingName name of the Binding.
-     */
-    public MaxRule(long max, String errorCode, String bindingName) {
-        super(errorCode, Severity.FATAL, null, value -> isLessThanMax(value, max), bindingName);
-        this.max = max;
+    private final Number max;
+    private final Supplier<Object> supplier;
+
+    public MaxRule(Number max, Object value) {
+        this(max, () -> value);
     }
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param max desired Max value.
-     * @param errorCode error code.
-     * @param supplier Binding.
-     */
-    public MaxRule(long max, String errorCode, Supplier<Binding<Object>> supplier) {
-        super(errorCode, Severity.FATAL, null, value -> isLessThanMax(value, max), supplier);
+    public MaxRule(Number max, Supplier<Object> supplier) {
+        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(max, "max cannot be null.");
+        Assert.notNull(supplier, "supplier cannot be null.");
         this.max = max;
+        this.supplier = supplier;
     }
 
-    public long getMax() {
-        return max;
+    @Given
+    public boolean isValid() {
+        Object value = supplier.get();
+        if (value == null) return false;
+        return isLessThanMax(value, max);
+    }
+
+    @Otherwise
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+
+        RuleViolationBuilder builder = createRuleViolationBuilder()
+                .param("value", supplier.get())
+                .param("max", max);
+
+        errors.add(builder.build(context));
     }
 
     /**
@@ -75,36 +88,42 @@ public class MaxRule extends BindingValidationRule<Object> {
      * @param max Maximum size.
      * @return given object (size/length) less than the size of the Object.
      */
-    private static boolean isLessThanMax(Object value, long max) {
-        if (value == null) return false;
-
+    public static boolean isLessThanMax(Object value, Number max) {
         if (value == null) return false;
 
         if (value instanceof Number) {
             Number number = (Number) value;
-            return number.longValue() <= max;
+            return number.doubleValue() <= max.doubleValue();
         } else if (value instanceof CharSequence) {
             CharSequence text = (CharSequence) value;
-            return text.length() <= max;
+            return text.length() <= max.intValue();
         } else if (value instanceof Collection) {
             Collection collection = (Collection) value;
-            return collection.size() <= max;
+            return collection.size() <= max.intValue();
         } else if (value instanceof Map) {
             Map map = (Map) value;
-            return map.size() <= max;
+            return map.size() <= max.intValue();
         } else if (value.getClass().isArray()) {
-            return Array.getLength(value) <= max;
+            return Array.getLength(value) <= max.intValue();
         }
 
         throw new UnrulyException("MaxRule is not supported on type [" + value.getClass()
                 + "] only supported on numbers, string, collections, maps and arrays");
     }
 
+    public Number getMax() {
+        return max;
+    }
+
+    public Supplier<Object> getSupplier() {
+        return supplier;
+    }
+
     @Override
-    public String getErrorMessage() {
-        if (super.getErrorMessage() != null) return super.getErrorMessage();
-        String bindingName = getBindingName();
-        if (bindingName == null) bindingName = "NOT BOUND";
-        return "Max value reached for [" + bindingName + "], it must be less than [" + max + "]. Given {" + bindingName + "}";
+    public String toString() {
+        return "MaxRule{" +
+                "max=" + max +
+                ", supplier=" + supplier +
+                '}';
     }
 }

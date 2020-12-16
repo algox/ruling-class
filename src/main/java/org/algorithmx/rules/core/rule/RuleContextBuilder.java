@@ -23,6 +23,8 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.text.MessageFormatter;
+import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 /**
@@ -36,6 +38,8 @@ public class RuleContextBuilder {
     private final Bindings bindings;
     private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.create();
     private ParameterResolver parameterResolver = ParameterResolver.create();
+    private MessageResolver messageResolver = MessageResolver.create("rules");
+    private MessageFormatter messageFormatter = MessageFormatter.create();
     private ObjectFactory objectFactory = ObjectFactory.create();
     private ConverterRegistry registry = ConverterRegistry.create();
 
@@ -79,7 +83,7 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder converterRegitry(ConverterRegistry registry) {
+    public RuleContextBuilder converterRegistry(ConverterRegistry registry) {
         Assert.notNull(registry, "registry cannot be null.");
         this.registry = registry;
         return this;
@@ -91,8 +95,8 @@ public class RuleContextBuilder {
      * @return new Rule Context.
      */
     public RuleContext build() {
-        RuleContext result  = new RuleContext(bindings, matchingStrategy, parameterResolver,
-                objectFactory, registry);
+        RuleContext result  = new RuleContext(bindings, matchingStrategy, parameterResolver, messageResolver,
+                messageFormatter, objectFactory, registry);
         bindings.bind("ruleContext", RuleContext.class, result);
         return result;
     }

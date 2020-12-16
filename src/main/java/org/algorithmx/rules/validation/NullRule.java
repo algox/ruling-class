@@ -18,47 +18,51 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.function.Supplier;
 
 /**
- * Null validation Rule. Check to make sure the value is null.
+ * Must be Null validation Rule. Check to make sure the value is null.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
 @Description("Given value must be null.")
-public class NullRule extends BindingValidationRule<Object> {
+public class NullRule extends ValidationRule {
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param bindingName name of the Binding.
-     */
-    public NullRule(String errorCode, String bindingName) {
-        super(errorCode, Severity.FATAL, null, value -> value == null, bindingName);
+    private static final String ERROR_CODE      = "validators.nullRule";
+    private static final String DEFAULT_MESSAGE = "Value must be null.";
+
+    private final Supplier<Object> supplier;
+
+    public NullRule(Object value) {
+        this(() -> value);
     }
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param supplier Binding.
-     */
-    public NullRule(String errorCode, Supplier<Binding<Object>> supplier) {
-        super(errorCode, Severity.FATAL, null, value -> value == null, supplier);
+    public NullRule(Supplier<Object> supplier) {
+        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(supplier, "supplier cannot be null.");
+        this.supplier = supplier;
     }
 
-    @Override
-    public String getErrorMessage() {
-        if (super.getErrorMessage() != null) return super.getErrorMessage();
-        String bindingName = getBindingName();
-        if (bindingName == null) bindingName = "NOT BOUND";
-        return "Value [" + bindingName + "] must be null.";
+    @Given
+    public boolean isValid() {
+        return supplier.get() == null;
+    }
+
+    @Otherwise
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+        errors.add(createRuleViolationBuilder().build(context));
     }
 }

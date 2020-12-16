@@ -1,144 +1,95 @@
-/**
- * This software is licensed under the Apache 2 license, quoted below.
- *
- * Copyright (c) 1999-2019, Live Software & Consultants Inc (rules@algorithmx.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.algorithmx.rules.text;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
-/**
- * Formatted Text contains named placeholders that can be replaced with formatted value using Java standard text formatting.
- *
- * ex: "this is a an example of a formatted {value|%d}"
- *
- * @author Max Arulananthan
- * @since 1.0
- */
 public class FormattedText {
 
-    private enum STATE {TEXT, PARAMETER_NAME, FORMAT}
+    private final String template;
+    private final List<Placeholder> placeholders;
 
-    private static final char START_PREFIX  = '$';
-    private static final char START_CHAR    = '{';
-    private static final char END_CHAR      = '}';
-    private static final char START_FORMAT  = '|';
-
-    private final String text;
-    private final List<Marker> markers;
-
-    private FormattedText(String text, List<Marker> markers) {
+    public FormattedText(String template, List<Placeholder> placeholders) {
         super();
-        Assert.notNull(text, "text cannot be null.");
-        this.text = text;
-        this.markers = markers;
+        Assert.notNull(template, "template cannot be null.");
+        this.template = template;
+        this.placeholders = Collections.unmodifiableList(placeholders);
+        Collections.sort(placeholders);
     }
 
-    /**
-     * Determines if the given text does truly requires formatting.
-     *
-     * @return true if formatting is required; false otherwise.
-     */
-    public boolean requiresFormatting() {
-        return markers.size() > 0;
+    public String getTemplate() {
+        return template;
     }
 
-    /**
-     * Replaces the named placeholders in this formatted text with the given values.
-     *
-     * @param values desired values.
-     * @return formatted output text.
-     */
-    public String format(Map<String, Object> values) {
-        if (markers.size() == 0) return text;
+    public Placeholder getFirstPlaceholder(String name) {
+        Placeholder result = null;
+
+       for (Placeholder placeholder : placeholders) {
+           if (placeholder.getName().equals(name)) {
+               result = placeholder;
+               break;
+           }
+       }
+
+        return result;
+    }
+
+    public List<Placeholder> getPlaceholder(String name) {
+        List<Placeholder> result = new ArrayList<>();
+
+        placeholders.stream().forEach(p -> {
+            if (p.getName().equals(name)) result.add(p);
+        });
+
+        return result;
+    }
+
+    public int getPlaceholderSize() {
+        return placeholders.size();
+    }
+
+    public boolean hasPlaceholders() {
+        return placeholders.size() > 0;
+    }
+
+    public String replaceWithIndex(ParameterInfo...parameters) {
+
+        if (placeholders == null || placeholders.size() == 0) return template;
+        if (parameters == null || parameters.length == 0) return template;
+
+        Map<String, ParameterInfo> matchMap = new HashMap<>();
+
+        for (ParameterInfo parameter : parameters) {
+            matchMap.put(parameter.getName(), parameter);
+        }
 
         StringBuilder result = new StringBuilder();
-        LinkedList<Marker> linkedList = new LinkedList<>(markers);
-        Marker marker = linkedList.pop();
+        Queue<Placeholder> queue = new ArrayBlockingQueue<>(placeholders.size(), false, placeholders);
 
-        for (int index = 0; index < text.toCharArray().length; index++) {
-            char c = text.charAt(index);
+        for (int i = 0; i < template.length(); i++) {
 
-            if (marker != null && index == marker.getStartIndex()) {
-                result.append(marker.format(values.get(marker.getParameterName())));
-                index = marker.getEndIndex();
-                if (!linkedList.isEmpty()) marker = linkedList.pop();
+            if (!queue.isEmpty() && queue.peek().getStartPosition() == i) {
+                Placeholder match = queue.poll();
+                ParameterInfo parameter = matchMap.get(match.getName());
+
+                if (parameter != null) {
+                    result.append(match.getMessageFormatText(parameter.getIndex()));
+                } else {
+                    result.append("[" + match.getName() + " not found]");
+                }
+
+                i = match.getEndPosition() - 1;
             } else {
-                result.append(c);
+                result.append(template.charAt(i));
             }
         }
 
         return result.toString();
-    }
-
-    /**
-     * Parses the given text into a formatted text. It resolves all the place holders so that they can be formatted later.
-     *
-     * @param text text with optional place holders.
-     * @return formatted text with resolved place holders.
-     */
-    public static FormattedText parse(String text) {
-        if (text == null) return null;
-
-        List<Marker> result = new ArrayList<>();
-        StringBuilder parameterName = null;
-        StringBuilder format = null;
-        Integer startIndex = null;
-        STATE state = STATE.TEXT;
-
-        for (int index = 0; index < text.toCharArray().length; index++) {
-            char c = text.charAt(index);
-
-            if (index > 0 && text.charAt(index - 1) == START_PREFIX && c == START_CHAR && state == STATE.TEXT) {
-                startIndex = index - 1;
-                state = STATE.PARAMETER_NAME;
-                parameterName = new StringBuilder();
-                continue;
-            } else if (c == END_CHAR && (state == STATE.PARAMETER_NAME || state == STATE.FORMAT)) {
-                state = STATE.TEXT;
-                result.add(new Marker(parameterName.toString(), format != null ? format.toString() : null, startIndex, index));
-                parameterName = null;
-                format = null;
-                startIndex = null;
-                continue;
-            } else if (c == START_FORMAT && state == STATE.PARAMETER_NAME) {
-                state = STATE.FORMAT;
-                format = new StringBuilder();
-                continue;
-            }
-
-            if (state == STATE.FORMAT) {
-                format.append(c);
-            } else if (state == STATE.PARAMETER_NAME) {
-                parameterName.append(c);
-            }
-        }
-
-        return new FormattedText(text, result);
-    }
-
-    @Override
-    public String toString() {
-        return "FormattedText{" +
-                "text='" + text + '\'' +
-                ", markers=" + markers +
-                '}';
     }
 }

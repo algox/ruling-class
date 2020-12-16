@@ -18,9 +18,16 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.function.Supplier;
 
@@ -32,38 +39,31 @@ import java.util.function.Supplier;
  */
 @Rule
 @Description("Binding must exist.")
-public class MustBeDefinedRule extends BindingValidationRule<Object> {
+public class MustBeDefinedRule extends ValidationRule {
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param bindingName name of the Binding.
-     */
-    public MustBeDefinedRule(String errorCode, String bindingName) {
-        super(errorCode, Severity.FATAL, null, value -> true, bindingName);
+    private static final String ERROR_CODE      = "validators.mustBeDefinedRule";
+    private static final String DEFAULT_MESSAGE = "Binding not defined.";
+
+    private final Supplier<Binding> supplier;
+
+    public MustBeDefinedRule(Binding value) {
+        this(() -> value);
     }
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param supplier Binding.
-     */
-    public MustBeDefinedRule(String errorCode, Supplier<Binding<Object>> supplier) {
-        super(errorCode, Severity.FATAL, null, value -> true, supplier);
+    public MustBeDefinedRule(Supplier<Binding> supplier) {
+        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(supplier, "supplier cannot be null.");
+        this.supplier = supplier;
     }
 
-    @Override
-    protected boolean when(Binding<Object> binding) {
-        return binding != null;
+    @Given
+    public boolean isValid() {
+        return supplier.get() != null;
     }
 
-    @Override
-    public String getErrorMessage() {
-        if (super.getErrorMessage() != null) return super.getErrorMessage();
-        String bindingName = getBindingName();
-        if (bindingName == null) bindingName = "NOT BOUND";
-        return "Binding [" + bindingName + "] is not defined.";
+    @Otherwise
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+        errors.add(createRuleViolationBuilder().build(context));
     }
 }

@@ -18,59 +18,66 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleViolationBuilder;
+import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Date;
 import java.util.function.Supplier;
 
 /**
- * Validation Rule to make sure the Date binding is in the past.
+ * Validation Rule to make sure the Date is in the past.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Date binding is in the past.")
-public class PastDateRule extends BindingValidationRule<Date> {
+@Description("Date must be in the past.")
+public class PastDateRule extends ValidationRule {
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param bindingName name of the Binding.
-     */
-    public PastDateRule(String errorCode, String bindingName) {
-        super(errorCode, Severity.FATAL, null, date -> isPast(date), bindingName);
+    private static final String ERROR_CODE      = "validators.pastDateRule";
+    private static final String DEFAULT_MESSAGE = "Date must be in the past. Given {0}. Current Date {1}.";
+
+    private final Supplier<Date> supplier;
+
+    public PastDateRule(Date value) {
+        this(() -> value);
     }
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param supplier Binding.
-     */
-    public PastDateRule(String errorCode, Supplier<Binding<Date>> supplier) {
-        super(errorCode, Severity.FATAL, null, date -> isPast(date), supplier);
+    public PastDateRule(Supplier<Date> supplier) {
+        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(supplier, "supplier cannot be null.");
+        this.supplier = supplier;
     }
 
     /**
      * Determines if the given date is in the past.
      *
-     * @param date given date.
      * @return true if the given date is in the past; false otherwise.
      */
-    private static boolean isPast(Date date) {
+    @Given
+    public boolean isValid() {
+        Date value = supplier.get();
+        if (value == null) return false;
         Date currentDate = new Date();
-        return date != null && currentDate.after(date);
+        return currentDate.after(value);
     }
 
-    @Override
-    public String getErrorMessage() {
-        if (super.getErrorMessage() != null) return super.getErrorMessage();
-        String bindingName = getBindingName();
-        if (bindingName == null) bindingName = "NOT BOUND";
-        return "Date [" + bindingName + "] must be in the past. Given {" + bindingName + "}";
+    @Otherwise
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+
+        RuleViolationBuilder builder = createRuleViolationBuilder()
+                .param("value", supplier.get())
+                .param("currentDate", new Date());
+
+        errors.add(builder.build(context));
     }
 }

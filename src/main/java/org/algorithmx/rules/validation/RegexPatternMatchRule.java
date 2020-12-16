@@ -29,45 +29,42 @@ import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
-import java.util.Date;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
- * Validation Rule to make sure the Date is in the future.
+ * Validation Rule to make sure the String value matches the given regex pattern.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Date must be in the future.")
-public class FutureDateRule extends ValidationRule {
+@Description("String value matches the given regex pattern.")
+public class RegexPatternMatchRule extends ValidationRule {
 
-    private static final String ERROR_CODE      = "validators.futureDateRule";
-    private static final String DEFAULT_MESSAGE = "Date must be in the future. Given {0}. Current Date {1}.";
+    private static final String ERROR_CODE      = "validators.regexPatternMatchRule";
+    private static final String DEFAULT_MESSAGE = "Value must match Regex pattern {1}. Given {0}.";
 
-    private final Supplier<Date> supplier;
+    private final Pattern pattern;
+    private final Supplier<String> supplier;
 
-    public FutureDateRule(Date value) {
-        this(() -> value);
+    public RegexPatternMatchRule(String pattern, String value) {
+        this(pattern, () -> value);
     }
 
-    public FutureDateRule(Supplier<Date> supplier) {
+    public RegexPatternMatchRule(String pattern, Supplier<String> supplier) {
         super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(pattern, "pattern cannot be null.");
         Assert.notNull(supplier, "supplier cannot be null.");
+        this.pattern = Pattern.compile(pattern);
         this.supplier = supplier;
     }
 
-    /**
-     * Determines if the given date is in the future.
-     *
-     * @return true if the given date is in the future; false otherwise.
-     */
     @Given
     public boolean isValid() {
-        Date value = supplier.get();
+        String value = supplier.get();
         if (value == null) return false;
-        Date currentDate = new Date();
-        return value != null && currentDate.before(value);
+        return matches(value, pattern);
     }
 
     @Otherwise
@@ -76,9 +73,31 @@ public class FutureDateRule extends ValidationRule {
 
         RuleViolationBuilder builder = createRuleViolationBuilder()
                 .param("value", supplier.get())
-                .param("currentDate", new Date());
+                .param("pattern", pattern.pattern());
 
         errors.add(builder.build(context));
     }
 
+    public Pattern getPattern() {
+        return pattern;
+    }
+
+    /**
+     * Determines whether the given value matches the desired regex pattern.
+     *
+     * @param value text value.
+     * @param pattern desired pattern.
+     * @return true if the text matches the pattern; false otherwise.
+     */
+    private static boolean matches(String value, Pattern pattern) {
+        return value != null && pattern.matcher(value).matches();
+    }
+
+    @Override
+    public String toString() {
+        return "RegexPatternMatchRule{" +
+                "pattern=" + pattern +
+                ", supplier=" + supplier +
+                '}';
+    }
 }

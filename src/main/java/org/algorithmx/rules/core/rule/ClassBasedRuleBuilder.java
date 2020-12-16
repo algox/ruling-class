@@ -65,6 +65,8 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         // Try and locate the Rule annotation on the class
         org.algorithmx.rules.annotation.Rule rule = ruleClass.getAnnotation(org.algorithmx.rules.annotation.Rule.class);
 
+        if (rule == null) throw new UnrulyException("Rule class [" + ruleClass.getName() + "] must be annotated with @Rule");
+
         String ruleName = rule == null ? ruleClass.getSimpleName() :
                 org.algorithmx.rules.annotation.Rule.NOT_APPLICABLE.equals(rule.name())
                 ? ruleClass.getSimpleName()

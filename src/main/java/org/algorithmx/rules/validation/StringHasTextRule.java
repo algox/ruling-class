@@ -18,9 +18,17 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleViolationBuilder;
+import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.lib.apache.StringUtils;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.function.Supplier;
 
@@ -32,56 +40,43 @@ import java.util.function.Supplier;
  */
 @Rule
 @Description("String value has text in it.")
-public class StringHasTextRule extends BindingValidationRule<String> {
+public class StringHasTextRule extends ValidationRule {
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param bindingName name of the Binding.
-     */
-    public StringHasTextRule(String errorCode, String bindingName) {
-        super(errorCode, Severity.FATAL, null, value -> hasText(value), bindingName);
+    private static final String ERROR_CODE      = "validators.stringHasTextRule";
+    private static final String DEFAULT_MESSAGE = "Value must contain text. Given {0}.";
+
+    private final Supplier<String> supplier;
+
+    public StringHasTextRule(String value) {
+        this(() -> value);
     }
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param supplier Binding.
-     */
-    public StringHasTextRule(String errorCode, Supplier<Binding<String>> supplier) {
-        super(errorCode, Severity.FATAL, null, value -> hasText(value), supplier);
+    public StringHasTextRule(Supplier<String> supplier) {
+        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(supplier, "supplier cannot be null.");
+        this.supplier = supplier;
     }
 
     /**
      * Determines if the given text has any characters in it.
      *
-     * @param text text value.
      * @return true if there are some chars in the text; false otherwise.
      */
-    private static boolean hasText(String text) {
-        return (text != null && !text.isEmpty() && containsText(text));
+    @Given
+    public boolean isValid() {
+        String value = supplier.get();
+        if (value == null) return false;
+        return !StringUtils.isBlank(value);
     }
 
-    private static boolean containsText(CharSequence str) {
-        int strLen = str.length();
+    @Otherwise
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
 
-        for (int i = 0; i < strLen; i++) {
-            if (!Character.isWhitespace(str.charAt(i))) {
-                return true;
-            }
-        }
+        RuleViolationBuilder builder = createRuleViolationBuilder()
+                .param("value", supplier.get());
 
-        return false;
-    }
-
-    @Override
-    public String getErrorMessage() {
-        if (super.getErrorMessage() != null) return super.getErrorMessage();
-        String bindingName = getBindingName();
-        if (bindingName == null) bindingName = "NOT BOUND";
-        return "Binding [" + bindingName + "] does not have any length. Given {" + bindingName + "}";
+        errors.add(builder.build(context));
     }
 
 }

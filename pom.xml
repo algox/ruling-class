@@ -98,6 +98,14 @@
     <build>
         <resources>
             <resource>
+                <filtering>false</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>../properties/**</include>
+                </includes>
+            </resource>
+            <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>NOTICE*</include>

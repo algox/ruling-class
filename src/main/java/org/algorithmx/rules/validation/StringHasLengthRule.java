@@ -18,9 +18,16 @@
 package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.annotation.Description;
+import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleViolationBuilder;
+import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.function.Supplier;
 
@@ -32,43 +39,42 @@ import java.util.function.Supplier;
  */
 @Rule
 @Description("String value has length.")
-public class StringHasLengthRule extends BindingValidationRule<String> {
+public class StringHasLengthRule extends ValidationRule {
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param bindingName name of the Binding.
-     */
-    public StringHasLengthRule(String errorCode, String bindingName) {
-        super(errorCode, Severity.FATAL, null, value -> hasLength(value), bindingName);
+    private static final String ERROR_CODE      = "validators.stringHasLengthRule";
+    private static final String DEFAULT_MESSAGE = "Value cannot be empty. Given {0}.";
+
+    private final Supplier<String> supplier;
+
+    public StringHasLengthRule(String value) {
+        this(() -> value);
     }
 
-    /**
-     * Ctor taking the error code and name of the Binding.
-     *
-     * @param errorCode error code.
-     * @param supplier Binding.
-     */
-    public StringHasLengthRule(String errorCode, Supplier<Binding<String>> supplier) {
-        super(errorCode, Severity.FATAL, null, value -> hasLength(value), supplier);
+    public StringHasLengthRule(Supplier<String> supplier) {
+        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
+        Assert.notNull(supplier, "supplier cannot be null.");
+        this.supplier = supplier;
     }
 
     /**
      * Determines whether the given text is not empty.
      *
-     * @param text given text.
      * @return true if not empty; false otherwise.
      */
-    private static boolean hasLength(String text) {
-        return (text != null && !text.isEmpty());
+    @Given
+    public boolean isValid() {
+        String value = supplier.get();
+        if (value == null) return false;
+        return value.length() > 0;
     }
 
-    @Override
-    public String getErrorMessage() {
-        if (super.getErrorMessage() != null) return super.getErrorMessage();
-        String bindingName = getBindingName();
-        if (bindingName == null) bindingName = "NOT BOUND";
-        return "Binding [" + bindingName + "] does not have any length. Given {" + bindingName + "}";
+    @Otherwise
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+
+        RuleViolationBuilder builder = createRuleViolationBuilder()
+                .param("value", supplier.get());
+
+        errors.add(builder.build(context));
     }
 }

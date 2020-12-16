@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.lib.spring.util.Assert;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,12 +35,11 @@ public class RuleViolation {
     private final String errorCode;
     private final Severity severity;
     private final String errorMessage;
+    private String bindingName;
     private final Map<String, String> params = new LinkedHashMap<>();
 
     public RuleViolation(String ruleName, String errorCode, Severity severity, String errorMessage) {
         super();
-        Assert.notNull(ruleName, "ruleName cannot be null.");
-        Assert.notNull(errorCode, "errorCode cannot be null.");
         this.ruleName = ruleName;
         this.errorCode = errorCode;
         this.severity = severity == null ? Severity.ERROR : severity;
@@ -83,6 +80,14 @@ public class RuleViolation {
      */
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
     }
 
     /**

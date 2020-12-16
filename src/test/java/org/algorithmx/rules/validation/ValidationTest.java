@@ -17,12 +17,12 @@
  */
 package org.algorithmx.rules.validation;
 
-import org.algorithmx.rules.annotation.Given;
-import org.algorithmx.rules.annotation.Rule;
+import org.algorithmx.rules.annotation.Optional;
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.rule.RuleViolations;
-import org.algorithmx.rules.core.rule.Severity;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.junit.Assert;
@@ -81,7 +81,7 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
-                .rule(new NotNullRule("Error.100", () -> bindings.getBinding("b")))
+                .rule((Object b) -> new NotNullRule(b))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -96,7 +96,7 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
-                .rule(new NullRule("Error.100", () -> bindings.getBinding("b")))
+                .rule((Object b) -> new NullRule(b))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -111,7 +111,7 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
-                .rule(new StringHasLengthRule("Error.100", () -> bindings.getBinding("b")))
+                .rule((String b) -> new StringHasLengthRule(b))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -126,7 +126,7 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
-                .rule(new StringHasTextRule("Error.100", () -> bindings.getBinding("b")))
+                .rule((String b) -> new StringHasTextRule(b))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -141,7 +141,7 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
-                .rule(new PatternMatchRule("[z]*", "Error.100", () -> bindings.getBinding("b")))
+                .rule((String b) -> new RegexPatternMatchRule("[z]*", b))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -157,7 +157,7 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
-                .rule(new FutureDateRule("Error.100", "d"))
+                .rule((Date d) -> new FutureDateRule(d))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -171,12 +171,11 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
-                .rule(new PastDateRule("Error.100", "d"))
+                .rule((Date d) -> new PastDateRule(d))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
-
-        //Assert.assertTrue(errors.size() == 0);
+        Assert.assertTrue(errors.size() == 0);
     }
 
 
@@ -188,12 +187,11 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
-                .rule(new MaxRule(50, "Error.100", "a"))
-                .rule(new MaxRule(20, "Error.101", "a"))
+                .rule((Integer a) -> new MaxRule(50, a))
+                .rule((Integer a) -> new MaxRule(20, a))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
-
         Assert.assertTrue(errors.size() == 1);
     }
 
@@ -205,59 +203,61 @@ public class ValidationTest {
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
-                .rule(new MinRule(11, "Error.100", "a"))
-                .rule(new MinRule(5, "Error.101", "a"))
+                .rule((Integer a) -> new MinRule(11, a))
+                .rule((Integer a) -> new MinRule(5, a))
+                .rule(new MinRule(25, 22).defaultMessage("test ${value} ${min}"))
+                .rule(FunctionBuilder.with((Integer a) -> new MinRule(25, a)).build())
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
-
-        Assert.assertTrue(errors.size() == 1);
+        Assert.assertTrue(errors.size() == 3);
     }
 
     @Test
-    public void testMaxMinRule() {
+    public void testRangeRule() {
         RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
                 .bind("a", 22)
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
-                .rule(new RangeRule(1, 10, "Error.100", "a"))
-                .rule(new RangeRule(20, 25, "Error.101", "a"))
+                .rule((Integer a) -> new RangeRule(1, 10, a))
+                .rule((Integer a) -> new RangeRule(20, 25, a))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
-
         Assert.assertTrue(errors.size() == 1);
     }
 
     @Test
-    public void testValidationRule() {
+    public void testMustBeDefinedRule() {
         RuleViolations errors = new RuleViolations();
         Bindings bindings = Bindings.create()
-                .bind("x", 22)
-                .bind("z", "abcde")
+                .bind("a", 22)
                 .bind("e", errors);
 
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
-                .rule(TestValidationRule.class)
+                .rule((@Optional Binding<Integer> a) -> new MustBeDefinedRule(a))
+                .rule((@Optional Binding<Integer> c) -> new MustBeDefinedRule(c))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
-
         Assert.assertTrue(errors.size() == 1);
     }
 
-    @Rule
-    public static class TestValidationRule extends ValidationRule {
+    @Test
+    public void testMustNotBeDefinedRule() {
+        RuleViolations errors = new RuleViolations();
+        Bindings bindings = Bindings.create()
+                .bind("a", 22)
+                .bind("e", errors);
 
-        public TestValidationRule() {
-            super("Error.101", Severity.ERROR, "Invalid input ${x} ${z}");
-        }
+        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+                .rule((@Optional Binding<Integer> a) -> new MustNotBeDefinedRule(a))
+                .rule((@Optional Binding<Integer> c) -> new MustNotBeDefinedRule(c))
+                .build();
 
-        @Given
-        public boolean when(Integer x, String z) {
-            return x != null && x > 100;
-        }
+        rules.run(RuleContextBuilder.with(bindings).build());
+        Assert.assertTrue(errors.size() == 1);
     }
 }

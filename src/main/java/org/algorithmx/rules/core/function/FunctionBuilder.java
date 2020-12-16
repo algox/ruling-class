@@ -18,6 +18,7 @@
 package org.algorithmx.rules.core.function;
 
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
@@ -45,7 +46,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         super(function, definition);
     }
 
-    private static FunctionBuilder withFunction(Object target) {
+    private static <T> FunctionBuilder<T> withFunction(Object target) {
         Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
         if (candidates == null || candidates.length == 0) {
@@ -60,7 +61,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
 
         Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
         MethodInfo methodInfo = load(target, implementationMethod);
-        return new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
+        return (FunctionBuilder<T>) new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
 
 
@@ -93,7 +94,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new ActionBuilder with one arguments.
      */
-    public static <T, A> FunctionBuilder with(UnaryFunction<T, A> function) {
+    public static <T, A> FunctionBuilder<T> with(UnaryFunction<T, A> function) {
         return withFunction(function);
     }
 
@@ -106,7 +107,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new ActionBuilder with two arguments.
      */
-    public static <T, A, B> FunctionBuilder with(BiFunction<T, A, B> function) {
+    public static <T, A, B> FunctionBuilder<T> with(BiFunction<T, A, B> function) {
         return withFunction(function);
     }
 
@@ -272,11 +273,11 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         return this;
     }
 
-    public ParameterDefinitionEditor<FunctionBuilder> param(int index) {
+    public ParameterDefinitionEditor<FunctionBuilder<T>> param(int index) {
         return new ParameterDefinitionEditor(getDefinition().getParameterDefinition(index), this);
     }
 
-    public ParameterDefinitionEditor<FunctionBuilder> param(String name) {
+    public ParameterDefinitionEditor<FunctionBuilder<T>> param(String name) {
         ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {

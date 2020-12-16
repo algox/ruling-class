@@ -17,12 +17,15 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
-import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.function.Function;
+import org.algorithmx.rules.core.function.FunctionBuilder;
+import org.algorithmx.rules.core.function.UnaryFunction;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.validation.ValidationRule;
+import org.algorithmx.rules.validation.RuleProducingFunctionRule;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -78,8 +81,16 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder rule(ValidationRule rule) {
-        rule(RuleBuilder.with(rule).build());
+    public <T> RuleSetBuilder rule(UnaryFunction<?, T> supplier) {
+        return rule(new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build()));
+    }
+
+    public RuleSetBuilder rule(Function<?> supplier) {
+        return rule(new RuleProducingFunctionRule(supplier));
+    }
+
+    public RuleSetBuilder rule(Object ruleTarget) {
+        rule(RuleBuilder.with(ruleTarget).build());
         return this;
     }
 
