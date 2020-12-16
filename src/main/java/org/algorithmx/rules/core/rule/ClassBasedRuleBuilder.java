@@ -23,8 +23,8 @@ import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.PreCondition;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.action.ActionBuilder;
-import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.action.Actions;
+import org.algorithmx.rules.core.condition.Conditions;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
@@ -102,7 +102,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         }
 
         preCondition(candidates.length == 1
-                ? ConditionBuilder.with(getTarget(), MethodDefinition.load(candidates[0])).build()
+                ? Conditions.with(getTarget(), MethodDefinition.load(candidates[0])).build()
                 : null);
     }
 
@@ -123,8 +123,8 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
             }
         }
 
-        given(candidates.length == 1 ? ConditionBuilder.with(getTarget(), MethodDefinition.load(candidates[0])).build()
-                : ConditionBuilder.TRUE().build());
+        given(candidates.length == 1 ? Conditions.with(getTarget(), MethodDefinition.load(candidates[0])).build()
+                : Conditions.TRUE().build());
     }
 
     /**
@@ -138,7 +138,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
 
         if (thenActions != null) {
             for (Method thenAction : thenActions) {
-                then(ActionBuilder.with(getTarget(), MethodDefinition.load(thenAction)).build());
+                then(Actions.with(getTarget(), MethodDefinition.load(thenAction)).build());
             }
         }
     }
@@ -160,7 +160,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         }
 
         if (otherwiseActions.length == 1) {
-            otherwise(ActionBuilder.with(getTarget(), MethodDefinition.load(otherwiseActions[0])).build());
+            otherwise(Actions.with(getTarget(), MethodDefinition.load(otherwiseActions[0])).build());
         }
     }
 }

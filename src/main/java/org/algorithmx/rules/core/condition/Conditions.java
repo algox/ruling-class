@@ -15,10 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.function;
+package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.function.BiFunction;
+import org.algorithmx.rules.core.function.DecFunction;
+import org.algorithmx.rules.core.function.ExecutableBuilder;
+import org.algorithmx.rules.core.function.NoArgFunction;
+import org.algorithmx.rules.core.function.NovFunction;
+import org.algorithmx.rules.core.function.OctFunction;
+import org.algorithmx.rules.core.function.QuadFunction;
+import org.algorithmx.rules.core.function.QuinFunction;
+import org.algorithmx.rules.core.function.SeptFunction;
+import org.algorithmx.rules.core.function.SexFunction;
+import org.algorithmx.rules.core.function.TriFunction;
+import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
@@ -30,60 +41,75 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 /**
- * Builder class for Functions.
+ * Builder class used to defaultObjectFactory Conditions.
  *
  * @author Max Arulananthan
  * @since 1.0
- *
  */
-public class FunctionBuilder<T> extends ExecutableBuilder {
+public class Conditions extends ExecutableBuilder {
 
     private static final Predicate<Method> FILTER = m -> ReflectionUtils
             .isAnnotated(m, org.algorithmx.rules.annotation.Function.class)
             && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
 
-    protected FunctionBuilder(Object function, MethodDefinition definition) {
-        super(function, definition);
+    protected Conditions(Object target, MethodDefinition definition) {
+        super(target, definition);
     }
 
-    private static <T> FunctionBuilder<T> withFunction(Object target) {
+    public static Conditions with(Object target, MethodDefinition definition) {
+        return new Conditions(target, definition);
+    }
+
+    private static Conditions withCondition(Object target) {
         Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
         if (candidates == null || candidates.length == 0) {
-            throw new UnrulyException("Function method not found on class [" + target.getClass() + "]");
+            throw new UnrulyException("Condition method not found on class [" + target.getClass() + "]");
         }
 
         // Too many Actions declared
         if (candidates.length > 1) {
-            throw new UnrulyException("Too many function methods found on class [" + target.getClass() + "]. Candidates ["
+            throw new UnrulyException("Too many condition methods found on class [" + target.getClass() + "]. Candidates ["
                     + Arrays.toString(candidates) + "]");
         }
 
         Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
         MethodInfo methodInfo = load(target, implementationMethod);
-        return (FunctionBuilder<T>) new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
-    }
 
+        if (!boolean.class.equals(methodInfo.getDefinition().getReturnType()) &&
+                !Boolean.class.equals(methodInfo.getDefinition().getReturnType())) {
+            throw new UnrulyException("Conditions must return a boolean [" + methodInfo.getDefinition().getMethod() + "]");
+        }
+
+        return new Conditions(methodInfo.getTarget(), methodInfo.getDefinition());
+    }
 
     /**
      * Builds the Action based on the set properties.
      *
      * @return a new Action.
      */
-    public org.algorithmx.rules.core.function.Function<T> build() {
+    public Condition build() {
         getDefinition().validate();
-        return new DefaultFunction(getTarget(), getDefinition());
+        return new DefaultCondition(getTarget(), getDefinition());
+    }
+
+    public static Conditions TRUE() {
+        return with(() -> true);
+    }
+
+    public static Conditions FALSE() {
+        return with(() -> false);
     }
 
     /**
      * Creates a new action builder with no arguments.
      *
      * @param function desired action.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with no arguments.
      */
-    public static <T> FunctionBuilder<T> with(NoArgFunction<T> function) {
-        return withFunction(function);
+    public static Conditions with(NoArgFunction<Boolean> function) {
+        return withCondition(function);
     }
 
     /**
@@ -91,11 +117,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      *
      * @param function desired action.
      * @param <A> generic type of the first parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with one arguments.
      */
-    public static <T, A> FunctionBuilder<T> with(UnaryFunction<T, A> function) {
-        return withFunction(function);
+    public static <A> Conditions with(UnaryFunction<Boolean, A> function) {
+        return withCondition(function);
     }
 
     /**
@@ -104,11 +129,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param function desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with two arguments.
      */
-    public static <T, A, B> FunctionBuilder<T> with(BiFunction<T, A, B> function) {
-        return withFunction(function);
+    public static <A, B> Conditions with(BiFunction<Boolean, A, B> function) {
+        return withCondition(function);
     }
 
     /**
@@ -118,11 +142,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with three arguments.
      */
-    public static <T, A, B, C> FunctionBuilder with(TriFunction<T, A, B, C> function) {
-        return withFunction(function);
+    public static <A, B, C> Conditions with(TriFunction<Boolean, A, B, C> function) {
+        return withCondition(function);
     }
 
     /**
@@ -133,11 +156,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with four arguments.
      */
-    public static <T, A, B, C, D> FunctionBuilder with(QuadFunction<T, A, B, C, D> function) {
-        return withFunction(function);
+    public static <A, B, C, D> Conditions with(QuadFunction<Boolean, A, B, C, D> function) {
+        return withCondition(function);
     }
 
     /**
@@ -149,11 +171,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with five arguments.
      */
-    public static <T, A, B, C, D, E> FunctionBuilder with(QuinFunction<T, A, B, C, D, E> function) {
-        return withFunction(function);
+    public static <A, B, C, D, E> Conditions with(QuinFunction<Boolean, A, B, C, D, E> function) {
+        return withCondition(function);
     }
 
     /**
@@ -166,11 +187,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <D> generic type of the fourth parameter.
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with six arguments.
      */
-    public static <T, A, B, C, D, E, F> FunctionBuilder with(SexFunction<T, A, B, C, D, E, F> function) {
-        return withFunction(function);
+    public static <A, B, C, D, E, F> Conditions with(SexFunction<Boolean, A, B, C, D, E, F> function) {
+        return withCondition(function);
     }
 
     /**
@@ -184,11 +204,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <E> generic type of the fifth parameter.
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with seven arguments.
      */
-    public static <T, A, B, C, D, E, F, G> FunctionBuilder with(SeptFunction<T, A, B, C, D, E, F, G> function) {
-        return withFunction(function);
+    public static <A, B, C, D, E, F, G> Conditions with(SeptFunction<Boolean, A, B, C, D, E, F, G> function) {
+        return withCondition(function);
     }
 
     /**
@@ -203,11 +222,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <F> generic type of the sixth parameter.
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with eight arguments.
      */
-    public static <T, A, B, C, D, E, F, G, H> FunctionBuilder with(OctFunction<T, A, B, C, D, E, F, G, H> function) {
-        return withFunction(function);
+    public static <A, B, C, D, E, F, G, H> Conditions with(OctFunction<Boolean, A, B, C, D, E, F, G, H> function) {
+        return withCondition(function);
     }
 
     /**
@@ -223,11 +241,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <G> generic type of the seventh parameter.
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with nine arguments.
      */
-    public static <T, A, B, C, D, E, F, G, H, I> FunctionBuilder with(NovFunction<T, A, B, C, D, E, F, G, H, I> function) {
-        return withFunction(function);
+    public static <A, B, C, D, E, F, G, H, I> Conditions with(NovFunction<Boolean, A, B, C, D, E, F, G, H, I> function) {
+        return withCondition(function);
     }
 
     /**
@@ -244,11 +261,10 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <H> generic type of the eighth parameter.
      * @param <I> generic type of the ninth parameter.
      * @param <J> generic type of the ninth parameter.
-     * @param <T> generic return type of the function.
      * @return new ActionBuilder with ten arguments.
      */
-    public static <T, A, B, C, D, E, F, G, H, I, J> FunctionBuilder with(DecFunction<T, A, B, C, D, E, F, G, H, I, J> function) {
-        return withFunction(function);
+    public static <A, B, C, D, E, F, G, H, I, J> Conditions with(DecFunction<Boolean, A, B, C, D, E, F, G, H, I, J> function) {
+        return withCondition(function);
     }
 
     /**
@@ -257,7 +273,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param name name of the Action.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder<T> name(String name) {
+    public Conditions name(String name) {
         getDefinition().setName(name);
         return this;
     }
@@ -268,16 +284,16 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param description description of the Action.
      * @return ActionBuilder for fluency.
      */
-    public FunctionBuilder<T> description(String description) {
+    public Conditions description(String description) {
         getDefinition().setDescription(description);
         return this;
     }
 
-    public ParameterDefinitionEditor<FunctionBuilder<T>> param(int index) {
+    public ParameterDefinitionEditor<Conditions> param(int index) {
         return new ParameterDefinitionEditor(getDefinition().getParameterDefinition(index), this);
     }
 
-    public ParameterDefinitionEditor<FunctionBuilder<T>> param(String name) {
+    public ParameterDefinitionEditor<Conditions> param(String name) {
         ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {

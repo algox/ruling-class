@@ -17,7 +17,7 @@ public class ActionDefinitionTest {
         String y = "yyyyy";
         String z = "zzzzz";
 
-        Action action = ActionBuilder.with((List<String> test) -> {
+        Action action = Actions.with((List<String> test) -> {
             System.err.println(x.substring(2));
             System.err.println(y.substring(2));
             System.err.println(z.trim());

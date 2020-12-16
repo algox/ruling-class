@@ -18,7 +18,7 @@
 package org.algorithmx.rules.condition;
 
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.condition.Conditions;
 import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition0() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with(() -> true)
                 .build();
         Assert.assertTrue(condition.isPass());
@@ -51,7 +51,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition2() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, String x) -> a > 55)
                 .build();
         Assert.assertTrue(condition.isPass(56, "abc"));
@@ -59,7 +59,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition3() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x) -> a != null)
                 .build();
         Assert.assertTrue(condition.isPass(10, new Date(), "abc"));
@@ -67,7 +67,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition4() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values) -> a > 35 && x.equals("x")
                         && values.get(0).equals("one"))
                 .param(3)
@@ -81,7 +81,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition5() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values, Long longValue) -> a > 35 && x.equals("x")
                         && values.get(0).equals("one"))
                 .param("values")
@@ -95,7 +95,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition6() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b) -> a > 35 && x.equals("x"))
                 .build();
         Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b"));
@@ -103,7 +103,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition7() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b, BigDecimal big)
                         -> big.compareTo(BigDecimal.ZERO) > 0)
                 .build();
@@ -112,7 +112,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition8() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b,
                             BigDecimal big, List<Integer> numbers) ->
                 {
@@ -132,7 +132,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition9() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b,
                             BigDecimal big, List<Integer> numbers, Map<String, String> map)
                         -> map.containsKey("abcde")
@@ -154,7 +154,7 @@ public class ConditionTest {
 
     @Test
     public void testCondition10() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b,
                             BigDecimal big, List<Integer> numbers, Map<String, String> map, Integer z)
                         -> map.containsKey("abcde")
@@ -177,7 +177,7 @@ public class ConditionTest {
 
     @Test
     public void testConditionConsumer() {
-        Condition condition = ConditionBuilder
+        Condition condition = Conditions
                 .with((Integer a) -> a > 10)
                 .build();
         Assert.assertTrue(condition.isPass(13));

@@ -5,15 +5,15 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-public class FunctionBuilderTest {
+public class FunctionsTest {
 
-    public FunctionBuilderTest() {
+    public FunctionsTest() {
         super();
     }
 
     @Test
     public void testNoArg() {
-        Function<Boolean> function = FunctionBuilder
+        Function<Boolean> function = Functions
                 .with(() -> true)
                 .name("function0")
                 .build();
@@ -24,7 +24,7 @@ public class FunctionBuilderTest {
 
     @Test
     public void test2Args() {
-        Function<BigDecimal> function = FunctionBuilder
+        Function<BigDecimal> function = Functions
                 .with((String x, BigDecimal value) -> value)
                 .build();
 

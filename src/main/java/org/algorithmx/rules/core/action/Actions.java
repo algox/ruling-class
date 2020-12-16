@@ -15,21 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.core.condition;
+package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.function.BiFunction;
-import org.algorithmx.rules.core.function.DecFunction;
 import org.algorithmx.rules.core.function.ExecutableBuilder;
-import org.algorithmx.rules.core.function.NoArgFunction;
-import org.algorithmx.rules.core.function.NovFunction;
-import org.algorithmx.rules.core.function.OctFunction;
-import org.algorithmx.rules.core.function.QuadFunction;
-import org.algorithmx.rules.core.function.QuinFunction;
-import org.algorithmx.rules.core.function.SeptFunction;
-import org.algorithmx.rules.core.function.SexFunction;
-import org.algorithmx.rules.core.function.TriFunction;
-import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
@@ -41,47 +30,21 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 /**
- * Builder class used to defaultObjectFactory Conditions.
+ * Builder class for Actions.
  *
  * @author Max Arulananthan
  * @since 1.0
+ *
  */
-public class ConditionBuilder extends ExecutableBuilder {
+public final class Actions extends ExecutableBuilder {
 
-    private static final Predicate<Method> FILTER = m -> ReflectionUtils
-            .isAnnotated(m, org.algorithmx.rules.annotation.Function.class)
-            && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
+    private static final Predicate<Method> FILTER =
+            m -> ReflectionUtils.isAnnotated(m, org.algorithmx.rules.annotation.Action.class)
+                    && Modifier.isPublic(m.getModifiers()) && !m.isBridge();
 
-    protected ConditionBuilder(Object target, MethodDefinition definition) {
+
+    protected Actions(Object target, MethodDefinition definition) {
         super(target, definition);
-    }
-
-    public static ConditionBuilder with(Object target, MethodDefinition definition) {
-        return new ConditionBuilder(target, definition);
-    }
-
-    private static ConditionBuilder withCondition(Object target) {
-        Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
-
-        if (candidates == null || candidates.length == 0) {
-            throw new UnrulyException("Condition method not found on class [" + target.getClass() + "]");
-        }
-
-        // Too many Actions declared
-        if (candidates.length > 1) {
-            throw new UnrulyException("Too many condition methods found on class [" + target.getClass() + "]. Candidates ["
-                    + Arrays.toString(candidates) + "]");
-        }
-
-        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
-        MethodInfo methodInfo = load(target, implementationMethod);
-
-        if (!boolean.class.equals(methodInfo.getDefinition().getReturnType()) &&
-                !Boolean.class.equals(methodInfo.getDefinition().getReturnType())) {
-            throw new UnrulyException("Conditions must return a boolean [" + methodInfo.getDefinition().getMethod() + "]");
-        }
-
-        return new ConditionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
 
     /**
@@ -89,83 +52,110 @@ public class ConditionBuilder extends ExecutableBuilder {
      *
      * @return a new Action.
      */
-    public Condition build() {
+    public Action build() {
         getDefinition().validate();
-        return new DefaultCondition(getTarget(), getDefinition());
+        return new DefaultAction(getTarget(), getDefinition());
     }
 
-    public static ConditionBuilder TRUE() {
-        return with(() -> true);
+    public static Actions with(Object target, MethodDefinition definition) {
+        return new Actions(target, definition);
     }
 
-    public static ConditionBuilder FALSE() {
-        return with(() -> false);
+    private static Actions withAction(Object target) {
+        Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
+
+        if (candidates == null || candidates.length == 0) {
+            throw new UnrulyException("Action method not found on class [" + target.getClass() + "]");
+        }
+
+        // Too many Actions declared
+        if (candidates.length > 1) {
+            throw new UnrulyException("Too many action methods found on class [" + target.getClass() + "]. Candidates ["
+                    + Arrays.toString(candidates) + "]");
+        }
+
+        MethodInfo methodInfo = load(target, candidates[0]);
+
+        if (!void.class.equals(methodInfo.getDefinition().getReturnType())) {
+            throw new UnrulyException("Actions must return a void [" + methodInfo.getDefinition().getMethod() + "]");
+        }
+
+        return new Actions(methodInfo.getTarget(), methodInfo.getDefinition());
     }
 
     /**
      * Creates a new action builder with no arguments.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @return new ActionBuilder with no arguments.
      */
-    public static ConditionBuilder with(NoArgFunction<Boolean> function) {
-        return withCondition(function);
+    public static Actions with(NoArgAction action) {
+        return withAction(action);
+    }
+
+    /**
+     * As the name suggestion, this create an Action that does nothing.
+     *
+     * @return do nothing action.
+     */
+    public static Actions emptyAction() {
+        return Actions.with(() -> {});
     }
 
     /**
      * Creates a new action builder with one argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @return new ActionBuilder with one arguments.
      */
-    public static <A> ConditionBuilder with(UnaryFunction<Boolean, A> function) {
-        return withCondition(function);
+    public static <A> Actions with(UnaryAction<A> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with two argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @return new ActionBuilder with two arguments.
      */
-    public static <A, B> ConditionBuilder with(BiFunction<Boolean, A, B> function) {
-        return withCondition(function);
+    public static <A, B> Actions with(BiAction<A, B> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with three argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @return new ActionBuilder with three arguments.
      */
-    public static <A, B, C> ConditionBuilder with(TriFunction<Boolean, A, B, C> function) {
-        return withCondition(function);
+    public static <A, B, C> Actions with(TriAction<A, B, C> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with four argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
      * @param <D> generic type of the fourth parameter.
      * @return new ActionBuilder with four arguments.
      */
-    public static <A, B, C, D> ConditionBuilder with(QuadFunction<Boolean, A, B, C, D> function) {
-        return withCondition(function);
+    public static <A, B, C, D> Actions with(QuadAction<A, B, C, D> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with five argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -173,14 +163,14 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <E> generic type of the fifth parameter.
      * @return new ActionBuilder with five arguments.
      */
-    public static <A, B, C, D, E> ConditionBuilder with(QuinFunction<Boolean, A, B, C, D, E> function) {
-        return withCondition(function);
+    public static <A, B, C, D, E> Actions with(QuinAction<A, B, C, D, E> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with six argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -189,14 +179,14 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <F> generic type of the sixth parameter.
      * @return new ActionBuilder with six arguments.
      */
-    public static <A, B, C, D, E, F> ConditionBuilder with(SexFunction<Boolean, A, B, C, D, E, F> function) {
-        return withCondition(function);
+    public static <A, B, C, D, E, F> Actions with(SexAction<A, B, C, D, E, F> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with seven argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -206,14 +196,14 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <G> generic type of the seventh parameter.
      * @return new ActionBuilder with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> ConditionBuilder with(SeptFunction<Boolean, A, B, C, D, E, F, G> function) {
-        return withCondition(function);
+    public static <A, B, C, D, E, F, G> Actions with(SeptAction<A, B, C, D, E, F, G> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with eight argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -224,14 +214,14 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <H> generic type of the eighth parameter.
      * @return new ActionBuilder with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> ConditionBuilder with(OctFunction<Boolean, A, B, C, D, E, F, G, H> function) {
-        return withCondition(function);
+    public static <A, B, C, D, E, F, G, H> Actions with(OctAction<A, B, C, D, E, F, G, H> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action with nine argument.
      *
-     * @param function action action.
+     * @param action action action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -243,14 +233,14 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <I> generic type of the ninth parameter.
      * @return new ActionBuilder with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> ConditionBuilder with(NovFunction<Boolean, A, B, C, D, E, F, G, H, I> function) {
-        return withCondition(function);
+    public static <A, B, C, D, E, F, G, H, I> Actions with(NovAction<A, B, C, D, E, F, G, H, I> action) {
+        return withAction(action);
     }
 
     /**
      * Creates a new action builder with ten argument.
      *
-     * @param function desired action.
+     * @param action desired action.
      * @param <A> generic type of the first parameter.
      * @param <B> generic type of the second parameter.
      * @param <C> generic type of the third parameter.
@@ -263,8 +253,8 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <J> generic type of the ninth parameter.
      * @return new ActionBuilder with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> ConditionBuilder with(DecFunction<Boolean, A, B, C, D, E, F, G, H, I, J> function) {
-        return withCondition(function);
+    public static <A, B, C, D, E, F, G, H, I, J> Actions with(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
+        return withAction(action);
     }
 
     /**
@@ -273,7 +263,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param name name of the Action.
      * @return ActionBuilder for fluency.
      */
-    public ConditionBuilder name(String name) {
+    public Actions name(String name) {
         getDefinition().setName(name);
         return this;
     }
@@ -284,16 +274,16 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param description description of the Action.
      * @return ActionBuilder for fluency.
      */
-    public ConditionBuilder description(String description) {
+    public Actions description(String description) {
         getDefinition().setDescription(description);
         return this;
     }
 
-    public ParameterDefinitionEditor<ConditionBuilder> param(int index) {
+    public ParameterDefinitionEditor<Actions> param(int index) {
         return new ParameterDefinitionEditor(getDefinition().getParameterDefinition(index), this);
     }
 
-    public ParameterDefinitionEditor<ConditionBuilder> param(String name) {
+    public ParameterDefinitionEditor<Actions> param(String name) {
         ParameterDefinition definition = getDefinition().getParameterDefinition(name);
 
         if (definition == null) {

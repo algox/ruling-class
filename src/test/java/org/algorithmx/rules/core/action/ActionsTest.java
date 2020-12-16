@@ -36,15 +36,15 @@ import java.util.Map;
  * @since 1.0
  *
  */
-public class ActionBuilderTest {
+public class ActionsTest {
 
-    public ActionBuilderTest() {
+    public ActionsTest() {
         super();
     }
 
     @Test
     public void testNoArg() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with(() -> {
                     return;
                 })
@@ -57,7 +57,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test1Arg() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x) -> {
                     return;
                 })
@@ -72,7 +72,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test2Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value) -> {
                     return;
                 })
@@ -85,7 +85,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test3Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
@@ -98,7 +98,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test4Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d) -> {
                     return;
                 })
@@ -115,7 +115,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test5Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d, @Optional(defaultValue = "yes") Boolean flag) -> {
                     return;
                 })
@@ -136,7 +136,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test6Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d,
                        @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue) -> {
                     bindingValue.setValue("Hello world!");
@@ -151,7 +151,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test7Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d,
                        @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg) -> {
                     bindingValue.setValue("Hello world!");
@@ -166,7 +166,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test8Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d,
                        @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                        Map<String, Object> mapArg) -> {
@@ -185,7 +185,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test9Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d,
                        @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                        Map<String, Object> mapArg, List<String> someList) -> {
@@ -204,7 +204,7 @@ public class ActionBuilderTest {
 
     @Test
     public void test10Args() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c, @Optional Float d,
                        @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                        Map<String, Object> mapArg, List<String> someList, String tenthArg) -> {
@@ -222,7 +222,7 @@ public class ActionBuilderTest {
 
     @Test(expected = UnrulyException.class)
     public void testInvalidParameterIndex() {
-        ActionBuilder
+        Actions
                 .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
@@ -235,7 +235,7 @@ public class ActionBuilderTest {
 
     @Test(expected = UnrulyException.class)
     public void testInvalidParameterNameIndex() {
-        ActionBuilder
+        Actions
                 .with((String x, BigDecimal value, Integer c) -> {
                     return;
                 })
@@ -248,7 +248,7 @@ public class ActionBuilderTest {
 
     @Test
     public void testInnerClass() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with(new TriAction<String, Integer, Map<String, Integer>>() {
                     @Override
                     public void run(String a, Integer b, Map<String, Integer> map) {
@@ -271,7 +271,7 @@ public class ActionBuilderTest {
         Integer a = 12;
         String b = "b";
 
-        Action action = ActionBuilder
+        Action action = Actions
                 .with((String x, BigDecimal value, Integer c) -> {
                     a.intValue();
                     b.length();
@@ -289,8 +289,8 @@ public class ActionBuilderTest {
 
     @Test
     public void testMethodReference1() {
-        Action action = ActionBuilder
-                .with(ActionBuilderTest::testActionMethod1).build();
+        Action action = Actions
+                .with(ActionsTest::testActionMethod1).build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 3);
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getName().equals("a"));
@@ -305,7 +305,7 @@ public class ActionBuilderTest {
 
     @Test
     public void testMethodReference2() {
-        Action action = ActionBuilder
+        Action action = Actions
                 .with(this::testActionMethod2).build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 2);
