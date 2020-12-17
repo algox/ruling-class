@@ -17,8 +17,8 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.core.action.Actions;
-import org.algorithmx.rules.core.condition.Conditions;
+import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
@@ -117,10 +117,10 @@ public class LoadTest {
     @Test
     public void loadTest7() {
         Rule rule = RuleBuilder
-                .with(Conditions.with((Integer i, String text) -> i > 100 && text != null).build())
+                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
-                .then(Actions.emptyAction().build())
+                .then(ActionBuilder.emptyAction())
                 .build();
         RuleDefinition def = rule.getRuleDefinition();
 
@@ -140,14 +140,14 @@ public class LoadTest {
     @Test
     public void loadTest8() {
         Rule rule1 = RuleBuilder
-                .with(Conditions.with((Integer a, Date date, String x) -> a != null).build())
+                .with(ConditionBuilder.with((Integer a, Date date, String x) -> a != null).build())
                 .name("rule1")
                 .build();
 
         Rule rule2 = RuleBuilder
-                .with(Conditions.with((Integer a, Date date, String x, String y) -> a != null).build())
-                .then(Actions.with((Integer y, String z) -> {}).build())
-                .then(Actions.with((Integer y, String z, Date date) -> {}).build())
+                .with(ConditionBuilder.with((Integer a, Date date, String x, String y) -> a != null).build())
+                .then(ActionBuilder.with((Integer y, String z) -> {}).build())
+                .then(ActionBuilder.with((Integer y, String z, Date date) -> {}).build())
                 .name("rule2")
                 .build();
     }
@@ -155,11 +155,11 @@ public class LoadTest {
     @Test
     public void loadTest9() {
         Rule rule = RuleBuilder
-                .with(Conditions.with((Integer i, String text) -> i > 100 && text != null).build())
-                .preCondition(Conditions.with((Integer x) -> x > 10).build())
+                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
+                .preCondition(ConditionBuilder.with((Integer x) -> x > 10).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
-                .then(Actions.emptyAction().build())
+                .then(ActionBuilder.emptyAction())
                 .build();
         RuleDefinition def = rule.getRuleDefinition();
 
@@ -193,10 +193,10 @@ public class LoadTest {
     @Test
     public void loadTest12() {
         Rule rule = RuleBuilder
-                .with(Conditions.with((Integer i, String text) -> i > 100 && text != null).build())
+                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
-                .then(Actions.emptyAction().build())
+                .then(ActionBuilder.emptyAction())
                 .build();
         RuleDefinition def = rule.getRuleDefinition();
 

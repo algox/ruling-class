@@ -20,7 +20,7 @@ package org.algorithmx.rules.core.ruleset;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.function.Function;
-import org.algorithmx.rules.core.function.Functions;
+import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
@@ -75,7 +75,7 @@ public class RuleSetBuilder {
     }
 
     public <T> RuleSetBuilder rule(UnaryFunction<?, T> supplier) {
-        return rule(new RuleProducingFunctionRule(Functions.with(supplier).build()));
+        return rule(new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build()));
     }
 
     public RuleSetBuilder rule(Function<?> supplier) {

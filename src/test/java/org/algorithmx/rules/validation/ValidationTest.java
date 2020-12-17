@@ -20,7 +20,7 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.function.Functions;
+import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.ruleset.RuleSet;
@@ -206,7 +206,7 @@ public class ValidationTest {
                 .rule((Integer a) -> new MinRule(11, a))
                 .rule((Integer a) -> new MinRule(5, a))
                 .rule(new MinRule(25, 22).defaultMessage("test ${value} ${min}"))
-                .rule(Functions.with((Integer a) -> new MinRule(25, a)).build())
+                .rule(FunctionBuilder.with((Integer a) -> new MinRule(25, a)).build())
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
