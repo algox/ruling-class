@@ -17,6 +17,15 @@
  */
 package org.algorithmx.rules.core;
 
+import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContextBuilder;
+import org.junit.Test;
+
 /**
  * Tests for Condition/Action execution.
  *
@@ -172,4 +181,22 @@ public class ExecutorTest {
         boolean result = rule.isPass("hello world", 20);
         Assert.assertTrue(result);
     }*/
+
+    //@Test
+    public void test7() {
+        Bindings bindings = Bindings.create()
+                .bind("x", int.class, 123)
+                .bind("y", String.class, "Hello");
+
+        Rule rule = RuleBuilder.with(
+                ConditionBuilder.create((String x, Integer y) -> y > 10))
+                .name("rule1")
+                .build();
+
+        RuleContext ctx = RuleContextBuilder
+                .with(bindings)
+                .matchUsing(BindingMatchingStrategyType.MATCH_BY_NAME)
+                .build();
+        rule.run(ctx);
+    }
 }

@@ -17,10 +17,6 @@
  */
 package org.algorithmx.rules.core;
 
-import org.algorithmx.rules.audit.RuleExecution;
-
-import java.util.Iterator;
-
 /**
  * Parent class of all Rule Runtime exceptions.
  * UnrulyExceptions can be thrown anytime throughout the lifecycle of this framework.
@@ -36,8 +32,6 @@ import java.util.Iterator;
 public class UnrulyException extends RuntimeException {
 
     private static final long serialVersionUID = 0L;
-
-    private Iterator<RuleExecution> executionStack;
 
     /**
      * Ctor taking a message.
@@ -65,13 +59,5 @@ public class UnrulyException extends RuntimeException {
      */
     public UnrulyException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public Iterator<RuleExecution> getExecutionStack() {
-        return executionStack;
-    }
-
-    public void setExecutionStack(Iterator<RuleExecution> executionStack) {
-        this.executionStack = executionStack;
     }
 }

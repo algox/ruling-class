@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Collections;
@@ -152,8 +153,7 @@ public class DefaultBindings implements Bindings {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Bindings [" + System.lineSeparator());
-        char TAB = '\t';
+        StringBuilder result = new StringBuilder("Bindings :" + System.lineSeparator());
 
         for (Binding<?> binding : bindings.values()) {
 
@@ -161,10 +161,11 @@ public class DefaultBindings implements Bindings {
                 continue;
             }
 
-            result.append(TAB + binding.toString() + System.lineSeparator());
+            result.append(RuleUtils.TAB);
+            result.append(RuleUtils.TAB);
+            result.append(binding.toString() + System.lineSeparator());
         }
 
-        result.append("]");
         return result.toString();
     }
 }

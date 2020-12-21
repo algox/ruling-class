@@ -22,6 +22,7 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
 /**
  * Represents an operation that accepts input arguments and returns no result.
@@ -39,9 +40,22 @@ public interface Action extends Comparable<Action> {
      */
     default void run(RuleContext ctx) throws UnrulyException {
         Assert.notNull(ctx, "ctx cannot be null.");
-        ParameterMatch[] result = ctx.match(getMethodDefinition());
-        Object[] values = ctx.resolve(result, getMethodDefinition());
-        run(values);
+        ParameterMatch[] matches = ctx.match(getMethodDefinition());
+        Object[] values = ctx.resolve(matches, getMethodDefinition());
+
+        try {
+            run(values);
+        } catch (UnrulyException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            throw new UnrulyException(cause.getClass().getSimpleName() + " occurred trying to execute Action."
+                    + System.lineSeparator()
+                    + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB),
+                    cause);
+        } catch (Exception e) {
+            throw new UnrulyException(e.getClass().getSimpleName() + " occurred trying to execute Action."
+                    + System.lineSeparator()
+                    + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), e);
+        }
     }
 
     /**

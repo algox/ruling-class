@@ -48,8 +48,8 @@ public class ReflectiveMethodExecutor implements MethodExecutor {
             return (T) method.invoke(staticMethod ? null : target, userArgs);
         } catch (Throwable e) {
             // Something went wrong with the execution
-            throw new UnrulyException("Error trying to execute [" + getMethod()
-                    + "] with arguments [" + Arrays.toString(userArgs) + "]", e);
+            throw new UnrulyException("Unexpected error trying to execute [" + getMethod()
+                    + "] with arguments " + Arrays.toString(userArgs), e);
         }
     }
 

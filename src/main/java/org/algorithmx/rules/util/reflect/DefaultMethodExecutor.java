@@ -17,7 +17,6 @@ public class DefaultMethodExecutor implements MethodExecutor {
         try {
             this.delegate = new MethodHandleMethodExecutor(method);
         } catch (Exception e) {
-            //e.printStackTrace();
             this.delegate = new ReflectiveMethodExecutor(method);
         }
     }

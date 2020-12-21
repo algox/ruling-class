@@ -63,8 +63,8 @@ public class MethodHandleMethodExecutor implements MethodExecutor {
             return (T) methodHandle.invokeWithArguments(args);
         } catch (Throwable e) {
             // Something went wrong with the execution
-            throw new UnrulyException("Error trying to execute [" + getMethod()
-                    + "] with arguments [" + Arrays.toString(args) + "]", e);
+            throw new UnrulyException("Unexpected error trying to execute [" + getMethod()
+                    + "] with arguments " + Arrays.toString(args), e);
         }
     }
 

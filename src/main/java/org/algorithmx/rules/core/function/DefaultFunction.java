@@ -22,8 +22,6 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.MethodExecutor;
 
-import java.util.Arrays;
-
 /**
  * Default Function implementation.
  *
@@ -51,20 +49,9 @@ public class DefaultFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(Object... args) {
-        try {
-            // Execute the Action Method
-            return methodExecutor.execute(target, args);
-        } catch (UnrulyException e) {
-            // TODO : Add proper parameter info
-            throw e;
-        } catch (Exception e) {
-            // TODO : Add proper parameter info
-            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
-                    + getMethodDefinition().getName() + "] Method [" + getMethodDefinition().getMethod()
-                    + "] Args [" + Arrays.toString(args) + "]", e);
-            throw ex;
-        }
+    public T apply(Object... args) throws UnrulyException {
+        // Execute the Action Method
+        return methodExecutor.execute(target, args);
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -78,32 +79,63 @@ public class RulingClass implements Rule, Identifiable {
 
         // Check to make sure we are still running
         if (!ctx.getState().isRunning()) {
-            throw new UnrulyException("Error trying to run Rule [" + getName()
-                    + "]. Invalid execution state [" + ctx.getState() + "]. RuleContext is not a running state. " +
-                    "Try running withe a new RuleContext.");
+            throw new UnrulyException("Invalid execution state [" + ctx.getState()
+                    + "]. RuleContext is not a running state. Try running with a new RuleContext."
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(),
+                    RuleUtils.TAB));
         }
 
         boolean preConditionCheck = true;
 
         // Check Pre-Condition if there is one
         if (getPreCondition() != null) {
-            preConditionCheck = getPreCondition().isPass(ctx);
+            try {
+                preConditionCheck = getPreCondition().isPass(ctx);
+            } catch (Exception e) {
+                throw new UnrulyException("Unexpected error occurred trying to execute Pre-Condition on Rule."
+                        + System.lineSeparator()
+                        + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(),
+                                RuleUtils.TAB), e);
+            }
         }
 
         // We did not pass the Pre-Condition
         if (!preConditionCheck) return;
 
-        boolean result = getCondition().isPass(ctx);
+        boolean result;
+
+        try {
+            result = getCondition().isPass(ctx);
+        } catch (Exception e) {
+            throw new UnrulyException("Unexpected error occurred trying to execute Given Condition on Rule."
+                    + System.lineSeparator()
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getCondition().getMethodDefinition(),
+                            RuleUtils.TAB), e);
+        }
 
         // The Condition passed
         if (result) {
             // Execute any associated Actions.
             for (Action action : getActions()) {
-                action.run(ctx);
+                try {
+                    action.run(ctx);
+                } catch (Exception e) {
+                    throw new UnrulyException("Unexpected error occurred trying to execute Action on Rule"
+                            + System.lineSeparator()
+                            + RuleUtils.getRuleDescription(getRuleDefinition(), action.getMethodDefinition(),
+                                    RuleUtils.TAB), e);
+                }
             }
         } else if (getOtherwiseAction() != null) {
             // Condition failed
-            getOtherwiseAction().run(ctx);
+            try {
+                getOtherwiseAction().run(ctx);
+            } catch (Exception e) {
+                throw new UnrulyException("Unexpected error occurred trying to execute Otherwise Action on Rule."
+                        + System.lineSeparator()
+                        + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(),
+                                RuleUtils.TAB), e);
+            }
         }
     }
 

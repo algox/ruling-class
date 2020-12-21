@@ -20,6 +20,7 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,13 +52,12 @@ public class BindingException extends UnrulyException {
                                           ParameterDefinition parameterDefinition, Map<String, Binding<Object>> matches,
                                           Bindings bindings) {
         return message + System.lineSeparator()
-                + "Class : "  + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator()
-                + "Method : "  + methodDefinition.getSignature() + System.lineSeparator()
-                + "Parameter(index = " + parameterDefinition.getIndex() + ") : " + parameterDefinition.getTypeName () + " "
-                + parameterDefinition.getName() + System.lineSeparator()
-                + "Possible Matches : {"
-                + matchesText(matches) + "}" + System.lineSeparator()
-                + bindings;
+                + RuleUtils.TAB + "Class : "  + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator()
+                + RuleUtils.TAB + "Method : "  + methodDefinition.getSignature() + System.lineSeparator()
+                + RuleUtils.TAB + "Parameter(index = " + parameterDefinition.getIndex() + ") : " + parameterDefinition.getTypeName () + " "
+                + RuleUtils.TAB + "" + parameterDefinition.getName() + System.lineSeparator()
+                + RuleUtils.TAB + "Possible Matches : {" + matchesText(matches) + "}" + System.lineSeparator()
+                + RuleUtils.TAB + bindings;
     }
 
     private static String matchesText(Map<String, Binding<Object>> matches) {

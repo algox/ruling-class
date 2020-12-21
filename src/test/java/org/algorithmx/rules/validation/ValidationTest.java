@@ -21,6 +21,7 @@ import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.function.FunctionBuilder;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.rule.RuleViolations;
 import org.algorithmx.rules.core.ruleset.RuleSet;
@@ -84,7 +85,8 @@ public class ValidationTest {
                 .rule((Object b) -> new NotNullRule(b))
                 .build();
 
-        rules.run(RuleContextBuilder.with(bindings).build());
+        RuleContext ctx = RuleContextBuilder.with(bindings).build();
+        rules.run(ctx);
         Assert.assertTrue(errors.size() == 0);
     }
 
