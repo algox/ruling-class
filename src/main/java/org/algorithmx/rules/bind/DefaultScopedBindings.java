@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.HashMap;
@@ -230,16 +231,31 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
-    public String toString() {
+    public String prettyPrint(String prefix) {
         StringBuilder result = new StringBuilder();
         int scopeIndex = 0;
 
         for (Bindings scope : scopes) {
-            result.append("Scope " + (scopeIndex++) + " ");
-            result.append(scope);
-            result.append(System.lineSeparator());
+            result.append("Scope (index = " + (scopeIndex++) + ")");
+            result.append(prefix + scope.prettyPrint(getTabs(scopeIndex + 1)));
+            result.append(prefix + getTabs(scopeIndex));
         }
 
         return result.toString();
+    }
+
+    private String getTabs(int count) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < count; i++) {
+            result.append(RuleUtils.TAB);
+        }
+
+        return result.toString();
+    }
+
+    @Override
+    public String toString() {
+        return prettyPrint("");
     }
 }

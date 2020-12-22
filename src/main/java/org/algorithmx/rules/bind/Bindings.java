@@ -343,4 +343,11 @@ public interface Bindings extends Iterable<Binding<?>> {
         return new ImmutableBindings(this);
     }
 
+    /**
+     * Beautified version of the Bindings.
+     *
+     * @param prefix for spacing.
+     * @return textual version of the Bindings.
+     */
+    String prettyPrint(String prefix);
 }

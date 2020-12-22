@@ -172,4 +172,9 @@ public class ImmutableBindings implements Bindings {
     public String toString() {
         return target.toString();
     }
+
+    @Override
+    public String prettyPrint(String prefix) {
+        return getTarget().prettyPrint(prefix);
+    }
 }

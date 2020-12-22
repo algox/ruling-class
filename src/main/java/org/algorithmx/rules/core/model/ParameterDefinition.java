@@ -194,6 +194,14 @@ public final class ParameterDefinition {
     }
 
     /**
+     * Type and Name.
+     * @return Type and Name.
+     */
+    public String getTypeAndName() {
+        return getTypeName() + " " + getName();
+    }
+
+    /**
      * Returns the parameter description.
      *
      * @return parameter description.

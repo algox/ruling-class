@@ -43,6 +43,8 @@ public class RuleContextBuilder {
     private MessageFormatter messageFormatter = MessageFormatter.create();
     private ObjectFactory objectFactory = ObjectFactory.create();
     private ConverterRegistry registry = ConverterRegistry.create();
+    private String ruleContextBindingName = "ruleContext";
+    private String bindingsBindingName = "bindings";
 
     private RuleContextBuilder(Bindings bindings) {
         super();
@@ -90,6 +92,18 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder bindingsBindingName(String name) {
+        Assert.notNull(name, "name cannot be null.");
+        this.bindingsBindingName = name;
+        return this;
+    }
+
+    public RuleContextBuilder ruleContextBindingName(String name) {
+        Assert.notNull(name, "name cannot be null.");
+        this.ruleContextBindingName = name;
+        return this;
+    }
+
     /**
      * Builds a Rule Context with desired parameters.
      *
@@ -98,11 +112,11 @@ public class RuleContextBuilder {
     public RuleContext build() {
         ScopedBindings scopedBindings = ScopedBindings.create(bindings);
         Bindings contextScope = scopedBindings.addScope();
-        contextScope.bindSelf("bindings");
 
         RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
                 messageFormatter, objectFactory, registry);
-        contextScope.bind("ruleContext", RuleContext.class, result);
+        contextScope.bindSelf(bindingsBindingName);
+        contextScope.bind(ruleContextBindingName, RuleContext.class, result);
 
         return result;
     }

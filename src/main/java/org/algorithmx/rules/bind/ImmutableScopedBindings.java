@@ -67,4 +67,9 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     public Bindings getRootScope() {
         return getTarget().getRootScope();
     }
+
+    @Override
+    public String prettyPrint(String prefix) {
+        return getTarget().prettyPrint(prefix);
+    }
 }

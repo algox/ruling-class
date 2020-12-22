@@ -69,7 +69,7 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
         this.order = order;
         this.description = description;
         this.returnType = method.getGenericReturnType();
-        this.parameterDefinitions = parameterDefinitions;
+        this.parameterDefinitions = parameterDefinitions != null ? parameterDefinitions : new ParameterDefinition[0];
         createParameterNameIndex();
         validate();
     }

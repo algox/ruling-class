@@ -131,7 +131,8 @@ public class DefaultParameterResolver implements ParameterResolver {
                 } else if (!matches[i].getDefinition().isRequired()) {
                      value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
                 } else {
-                    throw new BindingException("No matching Binding found using (" + matchingStrategy.getClass().getSimpleName()
+                    throw new BindingException("No matching Binding found for (" + matches[i].getDefinition().getTypeAndName()
+                            + ") using (" + matchingStrategy.getClass().getSimpleName()
                             + ")", definition, matches[i].getDefinition(), null, bindings);
                 }
             } else {

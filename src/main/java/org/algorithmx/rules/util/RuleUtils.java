@@ -21,6 +21,7 @@ import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleDefinition;
+import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.regex.Pattern;
@@ -85,50 +86,69 @@ public final class RuleUtils {
         return result;
     }
 
+    public static String getRuleSetDescription(RuleSet ruleSet, String prefix) {
+        StringBuilder result = new StringBuilder();
+        result.append(prefix + "RuleSet Name    : " + ruleSet.getName() + System.lineSeparator());
+        result.append(prefix + "Description     : " + ruleSet.getDescription() + System.lineSeparator());
+        result.append(prefix + "PreCondition    : " + (ruleSet.getPreCondition() != null) + System.lineSeparator());
+        result.append(prefix + "PreAction       : " + (ruleSet.getPreAction() != null) + System.lineSeparator());
+        result.append(prefix + "PostAction      : " + (ruleSet.getPostAction() != null) + System.lineSeparator());
+        result.append(prefix + "ErrorHandler    : " + (ruleSet.getErrorHandler() != null) + System.lineSeparator());
+        result.append(prefix + "Number of Rules : " + ruleSet.size() + System.lineSeparator());
+        return result.toString();
+    }
+
     public static String getRuleDescription(RuleDefinition ruleDefinition, MethodDefinition methodDefinition,
                                             String prefix) {
         StringBuilder result = new StringBuilder();
         result.append(prefix + "Rule Name   : " + ruleDefinition.getName() + System.lineSeparator());
         result.append(prefix + "Rule Class  : " + ruleDefinition.getRuleClass().getName() + System.lineSeparator());
         result.append(prefix + "Description : " + ruleDefinition.getDescription() + System.lineSeparator());
-        result.append(prefix + "Method      : " + methodDefinition.getMethod() + System.lineSeparator());
+        result.append(prefix + "Method      : " + methodDefinition.getSignature() + System.lineSeparator());
         return result.toString();
     }
 
     public static String getMethodDescription(MethodDefinition methodDefinition, ParameterMatch[] matches,
                                               Object[] values, String prefix) {
         StringBuilder result = new StringBuilder();
-        result.append(prefix + "Method Name : " + methodDefinition.getName() + System.lineSeparator());
-        result.append(prefix + "Method      : " + methodDefinition.getMethod() + System.lineSeparator());
+        result.append(prefix + "Method      : " + methodDefinition.getSignature() + System.lineSeparator());
         result.append(prefix + "Class       : " + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator());
         result.append(prefix + "Parameter Matches :");
         result.append(System.lineSeparator());
-        result.append(getArgumentDescriptions(matches, values, prefix + prefix));
+        result.append(getArgumentDescriptions(methodDefinition, matches, values, prefix + prefix));
 
         return result.toString();
     }
 
-    public static String getArgumentDescriptions(ParameterMatch[] matches, Object[] values, String prefix) {
+    public static String getArgumentDescriptions(MethodDefinition methodDefinition, ParameterMatch[] matches,
+                                                 Object[] values, String prefix) {
         if (matches == null && values == null) return "";
 
         StringBuilder result = new StringBuilder();
-        int length = Math.max(matches != null ? matches.length : 0, values != null ? values.length : 0);
 
-        for (int i = 0; i < length; i++) {
-            result.append(prefix + prefix + "Parameter [" + i + "]");
+        for (int i = 0; i < methodDefinition.getParameterDefinitions().length; i++) {
+            result.append(prefix + prefix + "Parameter(index = " + i + ") : ");
 
-            if (matches != null && i < matches.length && matches[i] != null) {
-                result.append(" Name [" + matches[i].getDefinition().getName() + "]");
-
-                if (matches[i].getBinding() != null) {
-                    result.append(" Binding [" + matches[i].getBinding().getName() + "]");
-                }
-            }
+            result.append(" (" + methodDefinition.getParameterDefinition(i).getTypeName()
+                    + " " + methodDefinition.getParameterDefinition(i).getName()
+                    + " = ");
 
             if (values != null && i < values.length && values[i] != null) {
-                result.append(" Value [" + values[i].toString() + "]");
+                result.append(values[i].toString() + ")");
             } else {
-                result.append(" Value [null]");
+                result.append("null)");
+            }
+
+            if (matches != null && i < matches.length && matches[i] != null) {
+                if (matches[i].getBinding() != null) {
+                    result.append(" using Binding (" + matches[i].getBinding().getTypeAndName() + ")");
+
+                    boolean mismatch = matches[i].getBinding().isTypeAcceptable(methodDefinition.getParameterDefinition(i).getType());
+
+                    if (!mismatch) result.append(" ! Types Incompatible Expected ["
+                            + methodDefinition.getParameterDefinition(i).getTypeName() + "]"
+                            + " Given [" + matches[i].getBinding().getTypeName() + "]");
+                }
             }
 
             result.append(System.lineSeparator());

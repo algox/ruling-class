@@ -124,8 +124,22 @@ public interface Binding<T> extends Identifiable {
 	String getDescription();
 
 	/**
+	 * Returns the name of the parameter type. In case of classes it returns the simple name otherwise the full type name.
+	 *
+	 * @return name of the parameter type.
+	 */
+	String getTypeName();
+
+	/**
 	 * Type and Name.
 	 * @return Type and Name.
 	 */
 	String getTypeAndName();
+
+	/**
+	 * Quick summary of the Binding name, type and value.
+	 *
+	 * @return Binding summarized.
+	 */
+	String getSummary();
 }

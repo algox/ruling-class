@@ -77,14 +77,6 @@ public class RulingClass implements Rule, Identifiable {
     @Override
     public void run(RuleContext ctx) throws UnrulyException {
 
-        // Check to make sure we are still running
-        if (!ctx.getState().isRunning()) {
-            throw new UnrulyException("Invalid execution state [" + ctx.getState()
-                    + "]. RuleContext is not a running state. Try running with a new RuleContext."
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(),
-                    RuleUtils.TAB));
-        }
-
         boolean preConditionCheck = true;
 
         // Check Pre-Condition if there is one

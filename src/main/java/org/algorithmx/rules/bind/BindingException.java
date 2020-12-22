@@ -55,9 +55,9 @@ public class BindingException extends UnrulyException {
                 + RuleUtils.TAB + "Class : "  + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator()
                 + RuleUtils.TAB + "Method : "  + methodDefinition.getSignature() + System.lineSeparator()
                 + RuleUtils.TAB + "Parameter(index = " + parameterDefinition.getIndex() + ") : " + parameterDefinition.getTypeName () + " "
-                + RuleUtils.TAB + "" + parameterDefinition.getName() + System.lineSeparator()
+                + parameterDefinition.getName() + System.lineSeparator()
                 + RuleUtils.TAB + "Possible Matches : {" + matchesText(matches) + "}" + System.lineSeparator()
-                + RuleUtils.TAB + bindings;
+                + RuleUtils.TAB + "Bindings : " + bindings.prettyPrint(RuleUtils.TAB);
     }
 
     private static String matchesText(Map<String, Binding<Object>> matches) {

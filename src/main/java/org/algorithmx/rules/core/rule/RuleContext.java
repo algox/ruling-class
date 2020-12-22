@@ -28,6 +28,7 @@ import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -39,6 +40,7 @@ import java.util.Locale;
  */
 public class RuleContext {
 
+    private final Date creationTime = new Date();
     private final ScopedBindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
     private final ParameterResolver parameterResolver;
@@ -48,8 +50,6 @@ public class RuleContext {
     private final ConverterRegistry registry;
     private Locale locale = Locale.getDefault();
 
-    private RuleExecutionState state = RuleExecutionState.RUNNING;
-
     public RuleContext(ScopedBindings bindings) {
         this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
                 MessageResolver.create("rules"), MessageFormatter.create(), ObjectFactory.create(),
@@ -58,7 +58,8 @@ public class RuleContext {
 
     public RuleContext(ScopedBindings bindings, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
-                       MessageFormatter messageFormatter, ObjectFactory objectFactory, ConverterRegistry registry) {
+                       MessageFormatter messageFormatter, ObjectFactory objectFactory,
+                       ConverterRegistry registry) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
@@ -145,57 +146,16 @@ public class RuleContext {
         return registry;
     }
 
-    /**
-     * Set the execution state to RUNNING.
-     */
-    public void start() {
-        this.state = RuleExecutionState.RUNNING;
-    }
-
-    /**
-     * Determines whether the Execution State is RUNNING.
-     *
-     * @return true if Execution State is RUNNING; false otherwise.
-     */
-    public boolean isRunning() {
-        return getState().isRunning();
-    }
-
-    /**
-     * Set the execution state to STOPPED.
-     */
-    public void stop() {
-        this.state = RuleExecutionState.STOPPED;
-    }
-
-    /**
-     * Set the execution state to FINISHED.
-     */
-    public void finish() {
-        this.state = RuleExecutionState.FINISHED;
-    }
-
-    /**
-     * Set the execution state to ERROR.
-     */
-    public void error() {
-        this.state = RuleExecutionState.ERROR;
-    }
-
-    /**
-     * Returns the current execution state of this context.
-     *
-     * @return current execution state.
-     */
-    public RuleExecutionState getState() {
-        return state;
-    }
-
     public Locale getLocale() {
         return locale;
     }
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    @Override
+    public String toString() {
+        return "RuleContext created at " + creationTime;
     }
 }
