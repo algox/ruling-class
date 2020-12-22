@@ -166,6 +166,8 @@ public abstract class RuleBuilder {
     }
 
     public Rule build() {
+        Assert.notNull(getName(), "Rule Name cannot be null");
+
         // Sort Then Action per Order
         Collections.sort(thenActions);
 

@@ -20,8 +20,10 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.function.FunctionBuilder;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.rule.RuleViolations;
@@ -229,6 +231,7 @@ public class ValidationTest {
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
+
         Assert.assertTrue(errors.size() == 1);
     }
 
