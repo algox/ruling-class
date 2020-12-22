@@ -18,11 +18,11 @@
 package org.algorithmx.rules.core.ruleset;
 
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.UnrulyException;
 
 /**
  * RuleSet is a logical grouping of Rules.
@@ -93,8 +93,8 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     /**
      * Responsible to handling errors during Rule Execution. It determines whether to proceed or not.
      *
-     * @return Error Handler.
+     * @return Error Condition that decides whether the execution should proceed or not.
      */
-    RuleSetErrorHandler getErrorHandler();
+    Condition getErrorHandler();
 }
 

@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
@@ -44,11 +45,11 @@ public class DefaultRuleSet implements RuleSet {
     private final Action postAction;
     private final Condition stopCondition;
 
-    private final RuleSetErrorHandler errorHandler;
+    private final Condition errorHandler;
 
     public DefaultRuleSet(String name, String description,
                           Condition preCondition, Action preAction, Action postAction,
-                          Condition stopCondition, RuleSetErrorHandler errorHandler,
+                          Condition stopCondition, Condition errorHandler,
                           Rule...rules) {
         super();
         Assert.notNull(name, "name cannot be null");
@@ -94,12 +95,7 @@ public class DefaultRuleSet implements RuleSet {
                     // Run the rule
                     rule.run(ctx);
                 } catch (Exception e) {
-                    boolean proceed = true;
-
-                    // Ask the Error Handler to see what to do
-                    if (errorHandler != null) {
-                        proceed = errorHandler.handle(e, ctx);
-                    }
+                    boolean proceed = processError(ctx, e);
 
                     // Do not continue; Throw the exception
                     if (!proceed) throw e;
@@ -123,6 +119,18 @@ public class DefaultRuleSet implements RuleSet {
 
     protected void createRuleSetScope(RuleContext ctx) {
         ctx.getBindings().addScope();
+    }
+
+    protected boolean processError(RuleContext ctx, Exception e) {
+        if (errorHandler == null) return false;
+
+        try {
+            Bindings errorScope = ctx.getBindings().addScope();
+            errorScope.bind("ex", e);
+            return errorHandler.isPass(ctx);
+        } finally {
+            ctx.getBindings().removeScope();
+        }
     }
 
     @Override
@@ -156,7 +164,7 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleSetErrorHandler getErrorHandler() {
+    public Condition getErrorHandler() {
         return errorHandler;
     }
 

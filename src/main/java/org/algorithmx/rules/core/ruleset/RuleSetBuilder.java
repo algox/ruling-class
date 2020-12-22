@@ -45,7 +45,7 @@ public class RuleSetBuilder {
     private Action postAction;
     private Condition stopCondition;
 
-    private RuleSetErrorHandler errorHandler;
+    private Condition errorHandler;
 
     private RuleSetBuilder(String name) {
         this(name, null);
@@ -151,7 +151,7 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder errorHandler(RuleSetErrorHandler errorHandler) {
+    public RuleSetBuilder errorHandler(Condition errorHandler) {
         this.errorHandler = errorHandler;
         return this;
     }
