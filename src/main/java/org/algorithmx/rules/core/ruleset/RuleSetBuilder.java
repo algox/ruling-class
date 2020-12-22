@@ -41,6 +41,7 @@ public class RuleSetBuilder {
     private final LinkedList<Rule> rules = new LinkedList<>();
 
     private Condition preCondition;
+    private Action preAction;
     private Action postAction;
     private Condition stopCondition;
 
@@ -116,7 +117,18 @@ public class RuleSetBuilder {
     }
 
     /**
-     * PostAction(Optional) to be performed after the execution of the RuleSet.
+     * PreAction(Optional) to be performed before the execution of the Rules.
+     *
+     * @param action pre action before the execution of the RuleSet.
+     * @return this for fluency.
+     */
+    public RuleSetBuilder preAction(Action action) {
+        this.preAction = action;
+        return this;
+    }
+
+    /**
+     * PostAction(Optional) to be performed after the execution of the Rules.
      *
      * @param action post action after the execution of the RuleSet.
      * @return this for fluency.
@@ -139,7 +151,7 @@ public class RuleSetBuilder {
 
     public RuleSet build() {
         return new DefaultRuleSet(getName(), getDescription(),
-                getPreCondition(), getPostAction(), getStopCondition(),
+                getPreCondition(), getPreAction(), getPostAction(), getStopCondition(),
                 rules.toArray(new Rule[rules.size()]));
     }
 
@@ -151,9 +163,12 @@ public class RuleSetBuilder {
         return description;
     }
 
-
     public Condition getPreCondition() {
         return preCondition;
+    }
+
+    public Action getPreAction() {
+        return preAction;
     }
 
     public Action getPostAction() {

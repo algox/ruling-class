@@ -40,11 +40,12 @@ public class DefaultRuleSet implements RuleSet {
     private final Rule[] rules;
 
     private final Condition preCondition;
+    private final Action preAction;
     private final Action postAction;
     private final Condition stopCondition;
 
     public DefaultRuleSet(String name, String description,
-                          Condition preCondition, Action postAction,
+                          Condition preCondition, Action preAction, Action postAction,
                           Condition stopCondition, Rule...rules) {
         super();
         Assert.notNull(name, "name cannot be null");
@@ -54,6 +55,7 @@ public class DefaultRuleSet implements RuleSet {
         this.description = description;
         this.rules = rules;
         this.preCondition = preCondition;
+        this.preAction = preAction;
         this.postAction = postAction;
         this.stopCondition = stopCondition;
     }
@@ -73,16 +75,23 @@ public class DefaultRuleSet implements RuleSet {
             return;
         }
 
-        for (Rule rule : getRules()) {
-            // Run the rule
-            rule.run(ctx);
-            // Check to see if we need to stop?
-            if (getStopCondition() != null && getStopCondition().isPass(ctx)) break;
-        }
+        try {
+            // Run the PreAction if there is one.
+            if (getPreAction() != null) {
+                getPreAction().run(ctx);
+            }
 
-        // Run the PostAction if there is one.
-        if (getPostAction() != null) {
-            getPostAction().run(ctx);
+            for (Rule rule : getRules()) {
+                // Run the rule
+                rule.run(ctx);
+                // Check to see if we need to stop?
+                if (getStopCondition() != null && getStopCondition().isPass(ctx)) break;
+            }
+        } finally {
+            // Run the PostAction if there is one.
+            if (getPostAction() != null) {
+                getPostAction().run(ctx);
+            }
         }
 
     }
@@ -100,6 +109,11 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public Condition getPreCondition() {
         return preCondition;
+    }
+
+    @Override
+    public Action getPreAction() {
+        return preAction;
     }
 
     @Override

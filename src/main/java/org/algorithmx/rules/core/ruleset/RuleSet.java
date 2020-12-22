@@ -56,6 +56,13 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
     Condition getPreCondition();
 
     /**
+     * Returns the action to be performed before the execution of the Rules.
+     *
+     * @return pre action before the execution of the Rules.
+     */
+    Action getPreAction();
+
+    /**
      * Returns the action to be performed after the execution of the Rules.
      *
      * @return post action after the execution of the Rules.
