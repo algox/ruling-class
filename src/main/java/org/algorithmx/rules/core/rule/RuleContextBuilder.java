@@ -62,6 +62,9 @@ public class RuleContextBuilder {
         return new RuleContextBuilder(bindings);
     }
 
+    public static RuleContext create(Bindings bindings) {
+        return with(bindings).build();
+    }
     /**
      * Sets the matching strategy to uss.
      *

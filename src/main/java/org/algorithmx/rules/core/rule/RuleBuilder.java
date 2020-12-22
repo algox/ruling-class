@@ -25,6 +25,7 @@ import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,9 +52,17 @@ public abstract class RuleBuilder {
         return with(ruleClass, ObjectFactory.create());
     }
 
+    public static Rule create(Class<?> ruleClass) {
+        return with(ruleClass).build();
+    }
+
     public static ClassBasedRuleBuilder with(Object ruleTarget) {
         Assert.notNull(ruleTarget, "ruleTargetCannot be null");
         return ClassBasedRuleBuilder.with(ruleTarget.getClass(), ruleTarget);
+    }
+
+    public static Rule create(Object ruleTarget) {
+        return with(ruleTarget).build();
     }
 
     public static ClassBasedRuleBuilder with(Class<?> ruleClass, ObjectFactory objectFactory) {
@@ -62,9 +71,19 @@ public abstract class RuleBuilder {
         return ClassBasedRuleBuilder.with(ruleClass, objectFactory.createRule(ruleClass));
     }
 
+    public static Rule create(Class<?> ruleClass, ObjectFactory objectFactory) {
+        return with(ruleClass, objectFactory).build();
+    }
+
     public static LambdaBasedRuleBuilder with(Condition condition) {
         Assert.notNull(condition, "condition cannot be null.");
         return new LambdaBasedRuleBuilder(condition);
+    }
+
+    public static Rule create(Condition condition, Action...actions) {
+        LambdaBasedRuleBuilder builder = with(condition);
+        if (actions != null) Arrays.stream(actions).forEach(a -> builder.then(a));
+        return builder.build();
     }
 
     protected RuleBuilder() {
