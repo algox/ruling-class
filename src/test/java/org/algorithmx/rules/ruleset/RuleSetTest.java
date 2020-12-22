@@ -18,6 +18,7 @@
 package org.algorithmx.rules.ruleset;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.junit.Test;
 
 import java.math.BigDecimal;

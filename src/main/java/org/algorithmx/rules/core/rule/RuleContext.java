@@ -17,7 +17,7 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.ParameterMatch;
@@ -26,7 +26,6 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
-import org.algorithmx.rules.text.ParameterInfo;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 import java.util.Locale;
@@ -40,7 +39,7 @@ import java.util.Locale;
  */
 public class RuleContext {
 
-    private final Bindings bindings;
+    private final ScopedBindings bindings;
     private final BindingMatchingStrategy matchingStrategy;
     private final ParameterResolver parameterResolver;
     private final MessageResolver messageResolver;
@@ -51,13 +50,13 @@ public class RuleContext {
 
     private RuleExecutionState state = RuleExecutionState.RUNNING;
 
-    public RuleContext(Bindings bindings) {
+    public RuleContext(ScopedBindings bindings) {
         this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
                 MessageResolver.create("rules"), MessageFormatter.create(), ObjectFactory.create(),
                 ConverterRegistry.create());
     }
 
-    public RuleContext(Bindings bindings, BindingMatchingStrategy matchingStrategy,
+    public RuleContext(ScopedBindings bindings, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory, ConverterRegistry registry) {
         super();
@@ -98,7 +97,7 @@ public class RuleContext {
      *
      * @return Bindings. Cannot be null.
      */
-    public Bindings getBindings() {
+    public ScopedBindings getBindings() {
         return bindings;
     }
 

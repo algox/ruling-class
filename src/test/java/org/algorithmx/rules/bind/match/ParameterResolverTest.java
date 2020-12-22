@@ -186,7 +186,7 @@ public class ParameterResolverTest {
         ParameterResolver resolver = ParameterResolver.create();
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod2"));
 
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("key1", Integer.class, 23);
 
         bindings.addScope()
@@ -211,7 +211,7 @@ public class ParameterResolverTest {
         ParameterResolver resolver = ParameterResolver.create();
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod3"));
 
-        ScopedBindings bindings = Bindings.createWithScopes()
+        Bindings bindings = Bindings.create()
                 .bind("key1", String.class, "Ruling class")
                 .bind("key2", Integer.class, 24);
 
@@ -232,7 +232,7 @@ public class ParameterResolverTest {
         ParameterResolver resolver = ParameterResolver.create();
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
 
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind(BindingBuilder.with("key1").value("test").build());
         bindings.addScope()
                 .bind("key3", new TypeReference<List<Integer>>() {}, new ArrayList<>());
@@ -373,7 +373,7 @@ public class ParameterResolverTest {
         ParameterResolver resolver = ParameterResolver.create();
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
 
-        Bindings bindings = Bindings.create()
+        Bindings bindings = ScopedBindings.create()
                 .bind("a", String.class, "Ruling class")
                 .bind("b", new TypeReference<Set<Integer>>() {}, new HashSet<>())
                 .bind("c", new TypeReference<List<Integer>>() {}, new Vector())

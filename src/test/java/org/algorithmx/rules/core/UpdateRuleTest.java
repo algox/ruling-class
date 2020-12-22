@@ -18,6 +18,7 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.junit.Test;
 
 /**

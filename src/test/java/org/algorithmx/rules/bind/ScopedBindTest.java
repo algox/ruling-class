@@ -45,13 +45,13 @@ public class ScopedBindTest {
 
     @Test
     public void testCreateBindings() {
-        Bindings scopedBindings = Bindings.createWithScopes();
+        Bindings scopedBindings = ScopedBindings.create();
         Assert.assertTrue(scopedBindings instanceof DefaultScopedBindings);
     }
 
     @Test
     public void bindTest1() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding = BindingBuilder.with("key1").value("Hello World!").build();
         bindings.bind(binding);
         Binding match = bindings.getBinding("key1");
@@ -60,7 +60,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest2() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding = BindingBuilder.with(key1 -> "hello world!").build();
         bindings.bind(binding);
         Binding match = bindings.getBinding("key1");
@@ -69,7 +69,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest3() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("key1", 100);
         Binding match = bindings.getBinding("key1");
         Assert.assertTrue(match.getName().equals("key1"));
@@ -79,7 +79,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest4() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("key1", int.class);
         Binding match = bindings.getBinding("key1");
         Assert.assertTrue(match.getName().equals("key1"));
@@ -89,7 +89,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest5() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", new TypeReference<List<Integer>>() {
         });
         Binding match = bindings.getBinding("x");
@@ -101,7 +101,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest6() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", int.class, 250);
         Binding match = bindings.getBinding("x");
         Assert.assertTrue(match.getName().equals("x"));
@@ -112,7 +112,7 @@ public class ScopedBindTest {
     @Test
     public void bindTest7() {
         List<Integer> values = new ArrayList<>();
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", new TypeReference<List<Integer>>() {
         }, values);
         Binding match = bindings.getBinding("x");
@@ -124,7 +124,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest8() {
-        Bindings bindings = Bindings.createWithScopes()
+        Bindings bindings = ScopedBindings.create()
                 .bind(BindingBuilder.with(key1 -> "hello world!").build())
                 .bind(BindingBuilder.with(key2 -> 25).build())
                 .bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build())
@@ -136,7 +136,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest9() {
-        Bindings bindings = Bindings.createWithScopes()
+        Bindings bindings = ScopedBindings.create()
                 .bind(BindingBuilder.with(key1 -> "hello world!").build())
                 .bind(BindingBuilder.with(key2 -> 25).build())
                 .bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build())
@@ -148,7 +148,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest10() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Assert.assertTrue(bindings.size() == 0);
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
         Assert.assertTrue(bindings.size() == 1);
@@ -162,7 +162,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest11() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
         bindings.bind(BindingBuilder.with(key2 -> 25).build());
         bindings.bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build());
@@ -172,14 +172,14 @@ public class ScopedBindTest {
 
     @Test(expected = BindingAlreadyExistsException.class)
     public void bindTest12() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", int.class, 250);
         bindings.bind("x", String.class, "Hello world");
     }
 
     @Test
     public void bindTest13() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
         Binding binding2 = BindingBuilder.with("X").value(101).build();
@@ -193,7 +193,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest14() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
         Binding binding2 = BindingBuilder.with("X").value(101).build();
@@ -213,7 +213,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest15() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
         Binding binding2 = BindingBuilder.with("X").value(101).build();
@@ -240,7 +240,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest16() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
         Binding binding2 = BindingBuilder.with("X").value("101").build();
@@ -280,7 +280,7 @@ public class ScopedBindTest {
         values.add(2);
         values.add(3);
 
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", String.class, "Hello World!");
         bindings.bind("y", List.class, values);
 
@@ -290,13 +290,13 @@ public class ScopedBindTest {
 
     @Test(expected = NoSuchBindingException.class)
     public void bindTest18() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.getValue("x");
     }
 
     @Test
     public void bindTest19() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", String.class, "Hello World!");
         Assert.assertTrue(bindings.getValue("x").equals("Hello World!"));
         bindings.setValue("x", "new value");
@@ -308,7 +308,7 @@ public class ScopedBindTest {
 
     @Test(expected = InvalidBindingException.class)
     public void bindTest20() {
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         bindings.bind("x", String.class, "Hello World!");
         bindings.setValue("x", 123);
     }
@@ -320,7 +320,7 @@ public class ScopedBindTest {
         values.add(2);
         values.add(3);
 
-        Bindings bindings = Bindings.createWithScopes();
+        Bindings bindings = ScopedBindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
         Binding binding2 = BindingBuilder.with("X").value(101).build();
@@ -340,7 +340,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest22() {
-        Bindings bindings = Bindings.createWithScopes()
+        Bindings bindings = ScopedBindings.create()
                 .bind("x", int.class, 250)
                 .bind("y", Integer.class, 100);
 
@@ -350,7 +350,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest24() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("key1", String.class, "value");
 
         Assert.assertTrue(bindings.getValue("key1").equals("value"));
@@ -364,13 +364,13 @@ public class ScopedBindTest {
 
     @Test(expected = UnrulyException.class)
     public void bindTest25() {
-        ScopedBindings bindings = Bindings.createWithScopes();
+        ScopedBindings bindings = ScopedBindings.create();
         bindings.removeScope();
     }
 
     @Test
     public void bindTest26() {
-        ScopedBindings bindings = Bindings.createWithScopes();
+        ScopedBindings bindings = ScopedBindings.create();
         bindings.bind("x", Integer.class);
         Assert.assertTrue(bindings.size() == 1);
         bindings.addScope();
@@ -381,7 +381,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest27() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("x", int.class);
         Assert.assertTrue(bindings.getValue("x").equals(0));
         bindings.addScope().bind("x", 24);
@@ -392,7 +392,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest28() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("x", int.class);
         bindings.addScope().bind("x", "Hello World!");
         Binding<String> match1 = bindings.getBinding("x", String.class);
@@ -404,7 +404,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest29() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("a", new ArrayList<>());
         bindings.addScope()
                 .bind("b", new HashSet<>());
@@ -433,7 +433,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest30() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("a", new ArrayList<>());
         bindings.addScope()
                 .bind("b", new HashSet<>());
@@ -445,7 +445,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest31() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("a", new ArrayList<>());
         bindings.addScope()
                 .bind("b", new HashSet<>());
@@ -460,7 +460,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest32() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("a", new ArrayList<>());
         bindings.addScope()
                 .bind("b", new HashSet<>());
@@ -472,7 +472,7 @@ public class ScopedBindTest {
 
     @Test
     public void bindTest33() {
-        ScopedBindings bindings = Bindings.createWithScopes()
+        ScopedBindings bindings = ScopedBindings.create()
                 .bind("a", new ArrayList<>());
         bindings.addScope()
                 .bind("b", new HashSet<>());
@@ -486,7 +486,7 @@ public class ScopedBindTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void bindTest34() {
-        ScopedBindings bindings = Bindings.createWithScopes().asImmutableBindings();
+        ScopedBindings bindings = ScopedBindings.create().asImmutableBindings();
         bindings.bind("test", Integer.class);
     }
 }

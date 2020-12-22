@@ -24,7 +24,6 @@ import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
-import org.junit.Test;
 
 /**
  * Tests for Condition/Action execution.

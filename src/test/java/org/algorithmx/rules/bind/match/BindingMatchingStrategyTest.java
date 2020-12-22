@@ -19,6 +19,7 @@ package org.algorithmx.rules.bind.match;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;

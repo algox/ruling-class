@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 
 import java.util.HashMap;
@@ -42,6 +43,12 @@ public class DefaultScopedBindings implements ScopedBindings {
     DefaultScopedBindings() {
         super();
         init();
+    }
+
+    DefaultScopedBindings(Bindings bindings) {
+        super();
+        Assert.notNull(bindings, "bindings cannot be null.");
+        this.scopes.push(bindings);
     }
 
     @Override

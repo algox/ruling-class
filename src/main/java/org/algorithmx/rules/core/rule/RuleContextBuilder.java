@@ -18,6 +18,7 @@
 package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
@@ -95,9 +96,13 @@ public class RuleContextBuilder {
      * @return new Rule Context.
      */
     public RuleContext build() {
-        RuleContext result  = new RuleContext(bindings, matchingStrategy, parameterResolver, messageResolver,
+        ScopedBindings scopedBindings = ScopedBindings.create(bindings);
+        scopedBindings.bindSelf("bindings");
+
+        RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
                 messageFormatter, objectFactory, registry);
         bindings.bind("ruleContext", RuleContext.class, result);
+
         return result;
     }
 }

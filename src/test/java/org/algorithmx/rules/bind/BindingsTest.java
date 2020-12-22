@@ -45,7 +45,7 @@ public class BindingsTest {
     public void testCreateBindings() {
         Bindings bindings = Bindings.create();
         Assert.assertTrue(bindings instanceof DefaultBindings);
-        Bindings scopedBindings = Bindings.createWithScopes();
+        Bindings scopedBindings = ScopedBindings.create();
         Assert.assertTrue(scopedBindings instanceof DefaultScopedBindings);
     }
 

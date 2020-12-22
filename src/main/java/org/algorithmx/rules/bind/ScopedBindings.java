@@ -32,6 +32,16 @@ public interface ScopedBindings extends Bindings {
 
     /**
      * Creates the default implementation of these Bindings.
+     *
+     * @param bindings initial set of bindings.
+     * @return new default implementation instance.
+     */
+    static ScopedBindings create(Bindings bindings) {
+        return new DefaultScopedBindings(bindings);
+    }
+
+    /**
+     * Creates the default implementation of these Bindings.
      * @return new default implementation instance.
      */
     static ScopedBindings create() {
