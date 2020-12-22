@@ -56,6 +56,13 @@ public interface ScopedBindings extends Bindings {
     Bindings getCurrentScope();
 
     /**
+     * Returns the root scope.
+     *
+     * @return root scope.
+     */
+    Bindings getRootScope();
+
+    /**
      * Creates new scope and pushes it to the top of Stack.
      *
      * @return the newly created Bindings.

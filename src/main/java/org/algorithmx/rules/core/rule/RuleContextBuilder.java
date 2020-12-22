@@ -97,11 +97,12 @@ public class RuleContextBuilder {
      */
     public RuleContext build() {
         ScopedBindings scopedBindings = ScopedBindings.create(bindings);
-        scopedBindings.bindSelf("bindings");
+        Bindings contextScope = scopedBindings.addScope();
+        contextScope.bindSelf("bindings");
 
         RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
                 messageFormatter, objectFactory, registry);
-        bindings.bind("ruleContext", RuleContext.class, result);
+        contextScope.bind("ruleContext", RuleContext.class, result);
 
         return result;
     }

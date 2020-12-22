@@ -89,5 +89,12 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      * @return rules.
      */
     Rule[] getRules();
+
+    /**
+     * Responsible to handling errors during Rule Execution. It determines whether to proceed or not.
+     *
+     * @return Error Handler.
+     */
+    RuleSetErrorHandler getErrorHandler();
 }
 

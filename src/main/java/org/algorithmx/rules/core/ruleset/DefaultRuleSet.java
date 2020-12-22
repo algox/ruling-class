@@ -44,9 +44,12 @@ public class DefaultRuleSet implements RuleSet {
     private final Action postAction;
     private final Condition stopCondition;
 
+    private final RuleSetErrorHandler errorHandler;
+
     public DefaultRuleSet(String name, String description,
                           Condition preCondition, Action preAction, Action postAction,
-                          Condition stopCondition, Rule...rules) {
+                          Condition stopCondition, RuleSetErrorHandler errorHandler,
+                          Rule...rules) {
         super();
         Assert.notNull(name, "name cannot be null");
         Assert.notNull(description, "description cannot be null");
@@ -58,6 +61,7 @@ public class DefaultRuleSet implements RuleSet {
         this.preAction = preAction;
         this.postAction = postAction;
         this.stopCondition = stopCondition;
+        this.errorHandler = errorHandler;
     }
 
     @Override
@@ -76,24 +80,49 @@ public class DefaultRuleSet implements RuleSet {
         }
 
         try {
+            // Create a new Scope for the RuleSet to use
+            createRuleSetScope(ctx);
+
             // Run the PreAction if there is one.
             if (getPreAction() != null) {
                 getPreAction().run(ctx);
             }
 
             for (Rule rule : getRules()) {
-                // Run the rule
-                rule.run(ctx);
+
+                try {
+                    // Run the rule
+                    rule.run(ctx);
+                } catch (Exception e) {
+                    boolean proceed = true;
+
+                    // Ask the Error Handler to see what to do
+                    if (errorHandler != null) {
+                        proceed = errorHandler.handle(e, ctx);
+                    }
+
+                    // Do not continue; Throw the exception
+                    if (!proceed) throw e;
+                }
+
                 // Check to see if we need to stop?
                 if (getStopCondition() != null && getStopCondition().isPass(ctx)) break;
             }
         } finally {
-            // Run the PostAction if there is one.
-            if (getPostAction() != null) {
-                getPostAction().run(ctx);
+            try {
+                // Run the PostAction if there is one.
+                if (getPostAction() != null) {
+                    getPostAction().run(ctx);
+                }
+            } finally {
+                ctx.getBindings().removeScope();
             }
         }
 
+    }
+
+    protected void createRuleSetScope(RuleContext ctx) {
+        ctx.getBindings().addScope();
     }
 
     @Override
@@ -124,6 +153,11 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public Condition getStopCondition() {
         return stopCondition;
+    }
+
+    @Override
+    public RuleSetErrorHandler getErrorHandler() {
+        return errorHandler;
     }
 
     @Override

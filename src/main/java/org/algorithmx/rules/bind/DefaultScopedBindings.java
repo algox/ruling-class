@@ -82,6 +82,16 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
+    public Bindings getRootScope() {
+        try {
+            lock.readLock().lock();
+            return scopes.get(0);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
     public <T> Binding<T> getBinding(String name) {
         Bindings[] scopes = getScopes();
 

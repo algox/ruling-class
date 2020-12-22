@@ -45,6 +45,8 @@ public class RuleSetBuilder {
     private Action postAction;
     private Condition stopCondition;
 
+    private RuleSetErrorHandler errorHandler;
+
     private RuleSetBuilder(String name) {
         this(name, null);
     }
@@ -149,9 +151,14 @@ public class RuleSetBuilder {
         return this;
     }
 
+    public RuleSetBuilder errorHandler(RuleSetErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+        return this;
+    }
+
     public RuleSet build() {
         return new DefaultRuleSet(getName(), getDescription(),
-                getPreCondition(), getPreAction(), getPostAction(), getStopCondition(),
+                getPreCondition(), getPreAction(), getPostAction(), getStopCondition(), errorHandler,
                 rules.toArray(new Rule[rules.size()]));
     }
 

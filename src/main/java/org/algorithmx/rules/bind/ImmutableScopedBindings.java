@@ -62,4 +62,9 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     public String toString() {
         return getTarget().toString();
     }
+
+    @Override
+    public Bindings getRootScope() {
+        return getTarget().getRootScope();
+    }
 }
