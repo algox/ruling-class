@@ -1,22 +1,22 @@
-package org.algorithmx.rules.core.ruleset;
+package org.algorithmx.rules.core.rule;
 
 public enum RuleExecutionStatus {
 
     PASS, FAIL, SKIPPED, ERROR;
 
-    boolean isPass() {
+    public boolean isPass() {
         return this == PASS;
     }
 
-    boolean isFail() {
+    public boolean isFail() {
         return this == FAIL;
     }
 
-    boolean isSkipped() {
+    public boolean isSkipped() {
         return this == SKIPPED;
     }
 
-    boolean isError() {
+    public boolean isError() {
         return this == ERROR;
     }
 }

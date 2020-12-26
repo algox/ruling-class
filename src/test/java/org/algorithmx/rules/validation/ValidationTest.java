@@ -27,6 +27,7 @@ import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.core.rule.RuleViolations;
+import org.algorithmx.rules.core.ruleset.RuleResultSet;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.junit.Assert;
@@ -230,7 +231,8 @@ public class ValidationTest {
                 .rule((Integer a) -> new RangeRule(20, 25, a))
                 .build();
 
-        rules.run(RuleContextBuilder.with(bindings).build());
+        RuleResultSet result = rules.run(RuleContextBuilder.with(bindings).build());
+        System.err.println(result);
 
         Assert.assertTrue(errors.size() == 1);
     }

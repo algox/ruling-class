@@ -32,7 +32,7 @@ import org.algorithmx.rules.core.rule.RuleContext;
  */
 public interface RuleSet extends Identifiable, Iterable<Rule> {
 
-    void run(RuleContext ctx) throws UnrulyException;
+    RuleResultSet run(RuleContext ctx) throws UnrulyException;
 
     /**
      * Ruleset name.

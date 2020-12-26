@@ -24,6 +24,8 @@ import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleDefinition;
+import org.algorithmx.rules.core.rule.RuleExecutionStatus;
+import org.algorithmx.rules.core.rule.RuleResult;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
@@ -67,25 +69,32 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public void run(RuleContext ctx) throws UnrulyException {
+    public RuleResultSet run(RuleContext ctx) throws UnrulyException {
+        RuleResultSet result = new RuleResultSet();
+
+        // Run the PreCondition if there is one.
+        boolean preConditionCheck = processPreCondition(ctx);
+        result.setPreConditionCheck(preConditionCheck);
+
+        // RuleSet did not pass the precondition; Do not execute the rules.
+        if (!preConditionCheck) return result;
 
         try {
-            // Run the PreCondition if there is one.
-            processPreCondition(ctx);
             // Create a new Scope for the RuleSet to use
-            createRuleSetScope(ctx);
+            createRuleSetScope(ctx, result);
             // Run the PreAction if there is one.
             processPreAction(ctx);
 
             int index = 0;
             // Execute the rules in order; STOP if the stopCondition is met.
             for (Rule rule : getRules()) {
-
                 try {
                     // Run the rule
-                    rule.run(ctx);
+                    RuleResult ruleResult = rule.run(ctx);
+                    result.add(ruleResult);
                 } catch (Exception e) {
                     processError(ctx, rule.getRuleDefinition(), index, e);
+                    result.add(new RuleResult(rule.getRuleDefinition().getName(), RuleExecutionStatus.ERROR));
                 } finally {
                     index++;
                 }
@@ -102,14 +111,15 @@ public class DefaultRuleSet implements RuleSet {
             }
         }
 
+        return result;
     }
 
-    protected void processPreCondition(RuleContext ctx) {
+    protected boolean processPreCondition(RuleContext ctx) {
+        if (getPreCondition() == null) return true;
+
         try {
             // Run the PreCondition if there is one.
-            if (getPreCondition() != null && !getPreCondition().isPass(ctx)) {
-                return;
-            }
+            return getPreCondition().isPass(ctx);
         } catch (Exception e) {
             throw new UnrulyException("Unexpected error occurred trying to execute Pre-Condition on RuleSet."
                     + System.lineSeparator()
@@ -118,11 +128,11 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     protected void processPreAction(RuleContext ctx) {
+        if (getPreAction() == null) return;
+
         try {
             // Run the PreAction if there is one.
-            if (getPreAction() != null) {
-                getPreAction().run(ctx);
-            }
+            getPreAction().run(ctx);
         } catch (Exception e) {
             throw new UnrulyException("Unexpected error occurred trying to execute Pre-Action on RuleSet."
                     + System.lineSeparator()
@@ -131,28 +141,26 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     protected boolean processStopCondition(RuleContext ctx) {
+        if (getStopCondition() == null) return false;
+
         boolean result;
 
         try {
             // Check to see if we need to stop?
-            result = getStopCondition() != null
-                    ? getStopCondition().isPass(ctx)
-                    : false;
+            return getStopCondition().isPass(ctx);
         } catch (Exception e) {
             throw new UnrulyException("Unexpected error occurred trying to execute StopCondition on RuleSet."
                     + System.lineSeparator()
                     + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB), e);
         }
-
-        return result;
     }
 
     protected void processPostAction(RuleContext ctx) {
+        if (getPostAction() == null) return;
+
         try {
             // Run the PostAction if there is one.
-            if (getPostAction() != null) {
-                getPostAction().run(ctx);
-            }
+            getPostAction().run(ctx);
         } catch (Exception e) {
             throw new UnrulyException("Unexpected error occurred trying to execute Post-Action on RuleSet."
                     + System.lineSeparator()
@@ -160,8 +168,9 @@ public class DefaultRuleSet implements RuleSet {
         }
     }
 
-    protected void createRuleSetScope(RuleContext ctx) {
+    protected void createRuleSetScope(RuleContext ctx, RuleResultSet ruleResultSet) {
         ctx.getBindings().addScope();
+        ctx.getBindings().bind("ruleResultSet", RuleResultSet.class, ruleResultSet);
     }
 
     protected void removeRuleSetScope(RuleContext ctx) {

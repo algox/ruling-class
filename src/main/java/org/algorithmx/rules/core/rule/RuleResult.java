@@ -1,11 +1,11 @@
-package org.algorithmx.rules.core.ruleset;
+package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 public class RuleResult {
 
-    private String ruleName;
-    private RuleExecutionStatus status;
+    private final String ruleName;
+    private final RuleExecutionStatus status;
 
     public RuleResult(String ruleName, RuleExecutionStatus status) {
         super();

@@ -49,9 +49,10 @@ public interface Rule extends Predicate<Object[]> {
      * if the result is false then the Otherwise condition will be executed (if one exists).
      *
      * @param ctx used to derive the parameters required for this Rule.
+     * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(RuleContext ctx) throws UnrulyException;
+    RuleResult run(RuleContext ctx) throws UnrulyException;
 
     /**
      * Executes thr Rule Condition given all the arguments it needs.

@@ -75,59 +75,77 @@ public class RulingClass implements Rule, Identifiable {
     }
 
     @Override
-    public void run(RuleContext ctx) throws UnrulyException {
+    public RuleResult run(RuleContext ctx) throws UnrulyException {
 
-        boolean preConditionCheck = true;
-
-        // Check Pre-Condition if there is one
-        if (getPreCondition() != null) {
-            try {
-                preConditionCheck = getPreCondition().isPass(ctx);
-            } catch (Exception e) {
-                throw new UnrulyException("Unexpected error occurred trying to execute Pre-Condition on Rule."
-                        + System.lineSeparator()
-                        + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(),
-                                RuleUtils.TAB), e);
-            }
-        }
-
+        // Check the Pre-Condition
+        boolean preConditionCheck = processPreCondition(ctx);
         // We did not pass the Pre-Condition
-        if (!preConditionCheck) return;
+        if (!preConditionCheck) return new RuleResult(getName(), RuleExecutionStatus.SKIPPED);
 
-        boolean result;
-
-        try {
-            result = getCondition().isPass(ctx);
-        } catch (Exception e) {
-            throw new UnrulyException("Unexpected error occurred trying to execute Given Condition on Rule."
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), getCondition().getMethodDefinition(),
-                            RuleUtils.TAB), e);
-        }
+        boolean result = processGivenCondition(ctx);
 
         // The Condition passed
         if (result) {
-            // Execute any associated Actions.
-            for (Action action : getActions()) {
-                try {
-                    action.run(ctx);
-                } catch (Exception e) {
-                    throw new UnrulyException("Unexpected error occurred trying to execute Action on Rule"
-                            + System.lineSeparator()
-                            + RuleUtils.getRuleDescription(getRuleDefinition(), action.getMethodDefinition(),
-                                    RuleUtils.TAB), e);
-                }
-            }
-        } else if (getOtherwiseAction() != null) {
-            // Condition failed
+            // Execute associated Actions.
+            processActions(ctx);
+        } else {
+            // Execute otherwise Action.
+            processOtherwiseAction(ctx);
+        }
+
+        return new RuleResult(getName(), result ? RuleExecutionStatus.PASS : RuleExecutionStatus.FAIL);
+    }
+
+    protected boolean processPreCondition(RuleContext ctx) {
+        // Check Pre-Condition if there is one
+        if (getPreCondition() == null) return true;
+
+        try {
+            return getPreCondition().isPass(ctx);
+        } catch (Exception e) {
+            throw new UnrulyException("Unexpected error occurred trying to execute Pre-Condition on Rule."
+                    + System.lineSeparator()
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(), RuleUtils.TAB), e);
+        }
+    }
+
+    protected boolean processGivenCondition(RuleContext ctx) {
+        if (getCondition() == null) return true;
+
+        // Check the Given Condition
+        try {
+            return getCondition().isPass(ctx);
+        } catch (Exception e) {
+            throw new UnrulyException("Unexpected error occurred trying to execute Given Condition on Rule."
+                    + System.lineSeparator()
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getCondition().getMethodDefinition(), RuleUtils.TAB), e);
+        }
+    }
+
+    protected void processActions(RuleContext ctx) {
+        if (getActions() == null) return;
+
+        // Execute associated Actions.
+        for (Action action : getActions()) {
             try {
-                getOtherwiseAction().run(ctx);
+                action.run(ctx);
             } catch (Exception e) {
-                throw new UnrulyException("Unexpected error occurred trying to execute Otherwise Action on Rule."
+                throw new UnrulyException("Unexpected error occurred trying to execute Action on Rule."
                         + System.lineSeparator()
-                        + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(),
-                                RuleUtils.TAB), e);
+                        + RuleUtils.getRuleDescription(getRuleDefinition(), action.getMethodDefinition(), RuleUtils.TAB), e);
             }
+        }
+    }
+
+    protected void processOtherwiseAction(RuleContext ctx) {
+        if (getOtherwiseAction() == null) return;
+
+        try {
+            getOtherwiseAction().run(ctx);
+        } catch (Exception e) {
+            throw new UnrulyException("Unexpected error occurred trying to execute Otherwise Action on Rule."
+                    + System.lineSeparator()
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(), RuleUtils.TAB), e);
         }
     }
 
