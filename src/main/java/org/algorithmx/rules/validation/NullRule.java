@@ -65,4 +65,15 @@ public class NullRule extends ValidationRule {
                           @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
         errors.add(createRuleViolationBuilder().build(context));
     }
+
+    @Override
+    public String toString() {
+        return "NullRule{" +
+                "value=" + supplier.get() +
+                ", errorCode=" + getErrorCode() +
+                ", severity=" + getSeverity() +
+                ", errorMessage=" + getErrorMessage() +
+                ", defaultMessage=" + getDefaultMessage() +
+                '}';
+    }
 }

@@ -123,7 +123,11 @@ public class MaxRule extends ValidationRule {
     public String toString() {
         return "MaxRule{" +
                 "max=" + max +
-                ", supplier=" + supplier +
+                ", value=" + supplier.get() +
+                ", errorCode=" + getErrorCode() +
+                ", severity=" + getSeverity() +
+                ", errorMessage=" + getErrorMessage() +
+                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

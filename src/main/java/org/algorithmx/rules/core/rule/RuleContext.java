@@ -159,11 +159,11 @@ public class RuleContext {
         this.locale = locale;
     }
 
-    public synchronized void addRuleListener(ExecutionListener listener) {
+    public synchronized void addEventListener(ExecutionListener listener) {
         this.listeners.add(listener);
     }
 
-    public synchronized void removeRuleListener(ExecutionListener listener) {
+    public synchronized void removeEventListener(ExecutionListener listener) {
         this.listeners.remove(listener);
     }
 

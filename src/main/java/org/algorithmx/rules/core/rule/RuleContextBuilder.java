@@ -23,10 +23,14 @@ import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.match.ParameterResolver;
+import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Builder class to properly build a RuleContext with the bells and whistles.
@@ -45,6 +49,7 @@ public class RuleContextBuilder {
     private ConverterRegistry registry = ConverterRegistry.create();
     private String ruleContextBindingName = "ruleContext";
     private String bindingsBindingName = "bindings";
+    private List<ExecutionListener> listeners = new ArrayList<>();
 
     private RuleContextBuilder(Bindings bindings) {
         super();
@@ -107,6 +112,12 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder eventListener(ExecutionListener listener) {
+        Assert.notNull(listener, "listener cannot be null.");
+        this.listeners.add(listener);
+        return this;
+    }
+
     /**
      * Builds a Rule Context with desired parameters.
      *
@@ -120,7 +131,7 @@ public class RuleContextBuilder {
                 messageFormatter, objectFactory, registry);
         contextScope.bindSelf(bindingsBindingName);
         contextScope.bind(ruleContextBindingName, RuleContext.class, result);
-
+        listeners.stream().forEach(listener -> result.addEventListener(listener));
         return result;
     }
 }

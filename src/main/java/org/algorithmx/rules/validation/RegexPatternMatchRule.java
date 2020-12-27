@@ -97,7 +97,11 @@ public class RegexPatternMatchRule extends ValidationRule {
     public String toString() {
         return "RegexPatternMatchRule{" +
                 "pattern=" + pattern +
-                ", supplier=" + supplier +
+                ", value=" + supplier.get() +
+                ", errorCode=" + getErrorCode() +
+                ", severity=" + getSeverity() +
+                ", errorMessage=" + getErrorMessage() +
+                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

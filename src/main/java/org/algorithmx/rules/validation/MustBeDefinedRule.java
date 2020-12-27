@@ -66,4 +66,15 @@ public class MustBeDefinedRule extends ValidationRule {
                           @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
         errors.add(createRuleViolationBuilder().build(context));
     }
+
+    @Override
+    public String toString() {
+        return "MustBeDefinedRule{" +
+                "binding=" + supplier.get() +
+                ", errorCode=" + getErrorCode() +
+                ", severity=" + getSeverity() +
+                ", errorMessage=" + getErrorMessage() +
+                ", defaultMessage=" + getDefaultMessage() +
+                '}';
+    }
 }

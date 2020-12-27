@@ -19,6 +19,7 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
+import org.algorithmx.rules.annotation.NoTrace;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.PreCondition;
 import org.algorithmx.rules.annotation.Then;
@@ -74,8 +75,10 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
                 : rule.name();
 
         Description descriptionAnnotation = ruleClass.getAnnotation(Description.class);
+        NoTrace traceAnnotation = ruleClass.getAnnotation(NoTrace.class);
 
         name(ruleName);
+        trace(traceAnnotation == null);
         description(descriptionAnnotation != null ? descriptionAnnotation.value() : null);
 
         loadPreCondition(ruleClass);

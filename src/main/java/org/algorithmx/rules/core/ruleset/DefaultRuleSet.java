@@ -104,6 +104,7 @@ public class DefaultRuleSet implements RuleSet {
                     RuleResult ruleResult = rule.run(ctx);
                     result.add(ruleResult);
                 } catch (Exception e) {
+                    ctx.fireListeners(createEvent(EventType.RULE_SET_ERROR, e, null, null));
                     processError(ctx, rule.getRuleDefinition(), index, e);
                     result.add(new RuleResult(rule.getRuleDefinition().getName(), RuleExecutionStatus.ERROR));
                 } finally {
@@ -200,7 +201,7 @@ public class DefaultRuleSet implements RuleSet {
 
         try {
             setupErrorScope(ctx, ex, "ex");
-            proceed = processCondition(ctx, getErrorCondition(), EventType.RULE_SET_ERROR,
+            proceed = processCondition(ctx, getErrorCondition(), EventType.RULE_SET_ERROR_CONDITION,
                     "Unexpected error occurred trying to execute errorCondition on RuleSet.");
         } finally {
             removeErrorScope(ctx);

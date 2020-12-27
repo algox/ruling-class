@@ -106,7 +106,11 @@ public class MinRule extends ValidationRule {
     public String toString() {
         return "MinRule{" +
                 "min=" + min +
-                ", supplier=" + supplier +
+                ", value=" + supplier.get() +
+                ", errorCode=" + getErrorCode() +
+                ", severity=" + getSeverity() +
+                ", errorMessage=" + getErrorMessage() +
+                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

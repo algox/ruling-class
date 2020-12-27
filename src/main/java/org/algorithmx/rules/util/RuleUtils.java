@@ -156,4 +156,14 @@ public final class RuleUtils {
 
         return result.toString();
     }
+
+    public static String getTabs(int count) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < count; i++) {
+            result.append(TAB);
+        }
+
+        return result.toString();
+    }
 }

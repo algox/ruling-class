@@ -80,4 +80,15 @@ public class PastDateRule extends ValidationRule {
 
         errors.add(builder.build(context));
     }
+
+    @Override
+    public String toString() {
+        return "PastDateRule{" +
+                "value=" + supplier.get() +
+                ", errorCode=" + getErrorCode() +
+                ", severity=" + getSeverity() +
+                ", errorMessage=" + getErrorMessage() +
+                ", defaultMessage=" + getDefaultMessage() +
+                '}';
+    }
 }

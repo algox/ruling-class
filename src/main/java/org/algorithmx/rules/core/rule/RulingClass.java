@@ -94,7 +94,7 @@ public class RulingClass implements Rule, Identifiable {
             // We did not pass the Pre-Condition
             if (!preConditionCheck) return new RuleResult(getName(), RuleExecutionStatus.SKIPPED);
 
-            result = processCondition(ctx, getCondition(), EventType.RULE_GIVEN_CONDITION,
+            result = processCondition(ctx, getCondition(), EventType.RULE_CONDITION,
                     "Unexpected error occurred trying to execute Given Condition on Rule.");
 
             // The Condition passed
