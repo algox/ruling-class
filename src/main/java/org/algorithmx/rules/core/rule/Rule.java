@@ -39,7 +39,7 @@ import java.util.function.Predicate;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Rule extends Predicate<Object[]> {
+public interface Rule extends Predicate<Object[]>, Identifiable {
 
     // Rule Name Pattern.
     String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";

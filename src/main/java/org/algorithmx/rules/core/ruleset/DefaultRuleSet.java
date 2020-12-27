@@ -22,6 +22,7 @@ import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleDefinition;
@@ -77,7 +78,7 @@ public class DefaultRuleSet implements RuleSet {
         Assert.notNull(ctx, "ctx cannot be null");
 
         // RuleSet Start Event
-        ctx.fireListeners(createEvent(EventType.RULE_SET_START, null, null, null));
+        ctx.fireListeners(createEvent(EventType.RULE_SET_START, null, null,null, null));
 
         RuleResultSet result = new RuleResultSet();
 
@@ -104,9 +105,16 @@ public class DefaultRuleSet implements RuleSet {
                     RuleResult ruleResult = rule.run(ctx);
                     result.add(ruleResult);
                 } catch (Exception e) {
-                    ctx.fireListeners(createEvent(EventType.RULE_SET_ERROR, e, null, null));
-                    processError(ctx, rule.getRuleDefinition(), index, e);
-                    result.add(new RuleResult(rule.getRuleDefinition().getName(), RuleExecutionStatus.ERROR));
+                    ctx.fireListeners(createEvent(EventType.RULE_SET_ERROR, e, null, null, null));
+                    boolean proceed = processError(ctx, rule.getRuleDefinition(), index, e);
+
+                    if (!proceed) {
+                        throw new UnrulyException("Unexpected error occurred trying to execute Rule"
+                                +" Name [" + rule.getRuleDefinition().getName() + "] at Index [" + index + "] on RuleSet."
+                                + System.lineSeparator()
+                                + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB), e);
+                    }
+                    result.add(new RuleResult(rule.getName(), RuleExecutionStatus.ERROR));
                 } finally {
                     index++;
                 }
@@ -128,7 +136,7 @@ public class DefaultRuleSet implements RuleSet {
             }
 
             // RuleSet Start Event
-            ctx.fireListeners(createEvent(EventType.RULE_SET_END, result, null, null));
+            ctx.fireListeners(createEvent(EventType.RULE_SET_END, result, null, null, null));
         }
 
         return result;
@@ -146,11 +154,11 @@ public class DefaultRuleSet implements RuleSet {
             matches = ctx.match(condition.getMethodDefinition());
             values = ctx.resolve(matches, condition.getMethodDefinition());
             boolean result = condition.isPass(values);
-            event = createEvent(eventType, result, matches, values);
+            event = createEvent(eventType, result, condition.getMethodDefinition(), matches, values);
             return result;
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(eventType, e, matches, values);
+            event = createEvent(eventType, e, condition.getMethodDefinition(), matches, values);
             throw new UnrulyException(errorMessage
                     + System.lineSeparator()
                     + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
@@ -172,10 +180,10 @@ public class DefaultRuleSet implements RuleSet {
             matches = ctx.match(action.getMethodDefinition());
             values = ctx.resolve(matches, action.getMethodDefinition());
             action.run(values);
-            event = createEvent(eventType, null, matches, values);
+            event = createEvent(eventType, null, action.getMethodDefinition(), matches, values);
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(eventType, e, matches, values);
+            event = createEvent(eventType, e, action.getMethodDefinition(), matches, values);
             throw new UnrulyException(errorMessage
                     + System.lineSeparator()
                     + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
@@ -194,8 +202,8 @@ public class DefaultRuleSet implements RuleSet {
         ctx.getBindings().removeScope();
     }
 
-    protected void processError(RuleContext ctx, RuleDefinition ruleDefinition, int index, Exception ex) throws UnrulyException{
-        if (errorCondition == null) return;
+    protected boolean processError(RuleContext ctx, RuleDefinition ruleDefinition, int index, Exception ex) throws UnrulyException{
+        if (errorCondition == null) return false;
 
         boolean proceed;
 
@@ -207,13 +215,7 @@ public class DefaultRuleSet implements RuleSet {
             removeErrorScope(ctx);
         }
 
-        // Do not continue; Throw the exception
-        if (!proceed) {
-            throw new UnrulyException("Unexpected error occurred trying to execute Rule ["
-                    + "] Name [" + ruleDefinition.getName() + "] at Index [" + index + "] on RuleSet."
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB), ex);
-        }
+        return proceed;
     }
 
     protected void setupErrorScope(RuleContext ctx, Exception ex, String bindingName) {
@@ -225,9 +227,9 @@ public class DefaultRuleSet implements RuleSet {
         ctx.getBindings().removeScope();
     }
 
-    protected ExecutionEvent<RuleSetExecution> createEvent(EventType eventType, Object result,
+    protected ExecutionEvent<RuleSetExecution> createEvent(EventType eventType, Object result, MethodDefinition methodDefinition,
                                                         ParameterMatch[] parameterMatches, Object[] values) {
-        RuleSetExecution ruleSetExecution = new RuleSetExecution(result, this, parameterMatches, values);
+        RuleSetExecution ruleSetExecution = new RuleSetExecution(result, this, methodDefinition, parameterMatches, values);
         return new ExecutionEvent<>(eventType, ruleSetExecution);
     }
 

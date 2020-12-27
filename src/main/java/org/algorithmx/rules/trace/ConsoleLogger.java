@@ -8,6 +8,11 @@ public class ConsoleLogger extends ExecutionCollector {
         super();
     }
 
+    public ConsoleLogger(boolean detailed) {
+        super();
+        setDetailed(true);
+    }
+
     @Override
     public void collect(ExecutionEvent event, String executionText) {
         System.out.println(executionText);

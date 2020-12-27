@@ -189,9 +189,9 @@ public class RuleViolations implements Iterable<RuleViolation> {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Violations [" + System.lineSeparator());
-        errors.stream().forEach(error -> result.append('\t' + error.toString() + System.lineSeparator()));
-        result.append("]" + System.lineSeparator());
+        StringBuilder result = new StringBuilder("Violations [");
+        errors.stream().forEach(error -> result.append(error.toString()));
+        result.append("]");
         return result.toString();
     }
 }

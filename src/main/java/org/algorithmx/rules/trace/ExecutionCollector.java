@@ -1,5 +1,7 @@
 package org.algorithmx.rules.trace;
 
+import org.algorithmx.rules.bind.match.ParameterMatch;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.RuleExecution;
 import org.algorithmx.rules.event.RuleSetExecution;
@@ -7,7 +9,7 @@ import org.algorithmx.rules.util.RuleUtils;
 
 public class ExecutionCollector implements ExecutionTracer {
 
-    private boolean detailed;
+    private boolean detailed = false;
     private int tabCount = 0;
 
     public ExecutionCollector() {
@@ -22,40 +24,49 @@ public class ExecutionCollector implements ExecutionTracer {
         result.append(RuleUtils.getTabs(tabCount));
         result.append("Rule : " + event.getData().getRule().getTarget());
         tabCount++;
-
         collect(event, result.toString());
     }
 
     @Override
     public void onRulePreCondition(ExecutionEvent<RuleExecution<Boolean>> event) {
+        collect(event, createLog("PreCondition : " + event.getData().getResult(),
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount + 1));
+    }
+
+    protected String createLog(String description, MethodDefinition methodDefinition,
+                                ParameterMatch[] matches, Object[] values, int tabCount) {
         StringBuilder result = new StringBuilder();
         result.append(RuleUtils.getTabs(tabCount));
-        result.append("PreCondition : " + event.getData().getResult());
-        collect(event, result.toString());
+        result.append(description);
+
+        if (isDetailed()) {
+            result.append(System.lineSeparator());
+            result.append(RuleUtils.getMethodDescription(methodDefinition, matches, values, RuleUtils.getTabs(tabCount)));
+        }
+
+        return result.toString();
     }
 
     @Override
     public void onRuleCondition(ExecutionEvent<RuleExecution<Boolean>> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("Condition Met ?  : " + event.getData().getResult());
-        collect(event, result.toString());
+        collect(event, createLog("Condition : " + event.getData().getResult(),
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount + 1));
     }
 
     @Override
     public void onRuleAction(ExecutionEvent<RuleExecution> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("Action   : Executed" );
-        collect(event, result.toString());
+        collect(event, createLog("Action : Executed",
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount + 1));
     }
 
     @Override
     public void onRuleOtherwiseAction(ExecutionEvent<RuleExecution> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("Otherwise Action : Executed" );
-        collect(event, result.toString());
+        collect(event, createLog("Otherwise Action : Executed",
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount + 1));
     }
 
     @Override
@@ -74,56 +85,50 @@ public class ExecutionCollector implements ExecutionTracer {
             result.append("Description  : " + event.getData().getRules().getDescription());
         }
 
+        result.append(System.lineSeparator());
         tabCount++;
         collect(event, result.toString());
     }
 
     @Override
     public void onRuleSetPreCondition(ExecutionEvent<RuleSetExecution<Boolean>> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("PreCondition : " + event.getData().getResult());
-        collect(event, result.toString());
+        collect(event, createLog("PreCondition : " + event.getData().getResult(),
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount));
     }
 
     @Override
     public void onRuleSetPreAction(ExecutionEvent<RuleSetExecution> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("PreAction : Executed");
-        collect(event, result.toString());
+        collect(event, createLog("PreAction : Executed",
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount));
     }
 
     @Override
     public void onRuleSetError(ExecutionEvent<RuleSetExecution<Exception>> event) {
         StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("Error : " + event.getData().getResult().getMessage());
-        collect(event, result.toString());
+        result.append("Error : " +  event.getData().getResult().getMessage());
     }
 
     @Override
     public void onRuleSetErrorCondition(ExecutionEvent<RuleSetExecution<Boolean>> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("ErrorCondition : " + event.getData().getResult());
-        collect(event, result.toString());
+        collect(event, createLog("ErrorCondition : " + event.getData().getResult(),
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount));
     }
 
     @Override
     public void onRuleSetStopCondition(ExecutionEvent<RuleSetExecution<Boolean>> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("StopCondition : " + event.getData().getResult());
-        collect(event, result.toString());
+        collect(event, createLog("StopCondition : " + event.getData().getResult(),
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount));
     }
 
     @Override
     public void onRuleSetPostAction(ExecutionEvent<RuleSetExecution> event) {
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("PostAction : Executed");
-        collect(event, result.toString());
+        collect(event, createLog("PostAction : Executed" + event.getData().getResult(),
+                event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
+                event.getData().getValues(), tabCount));
     }
 
     @Override
@@ -137,5 +142,9 @@ public class ExecutionCollector implements ExecutionTracer {
 
     public boolean isDetailed() {
         return detailed;
+    }
+
+    public void setDetailed(boolean detailed) {
+        this.detailed = detailed;
     }
 }

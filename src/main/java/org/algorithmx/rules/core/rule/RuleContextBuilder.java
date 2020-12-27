@@ -112,7 +112,7 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder eventListener(ExecutionListener listener) {
+    public RuleContextBuilder traceUsing(ExecutionListener listener) {
         Assert.notNull(listener, "listener cannot be null.");
         this.listeners.add(listener);
         return this;

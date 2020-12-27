@@ -22,6 +22,7 @@ import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.RuleExecution;
@@ -37,7 +38,7 @@ import java.util.List;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RulingClass implements Rule, Identifiable {
+public class RulingClass implements Rule {
 
     private final RuleDefinition ruleDefinition;
     private final Object target;
@@ -83,7 +84,7 @@ public class RulingClass implements Rule, Identifiable {
         Assert.notNull(ctx, "ctx cannot be null");
 
         // Rule Start Event
-        ctx.fireListeners(createEvent(EventType.RULE_START, null, null, null));
+        ctx.fireListeners(createEvent(EventType.RULE_START, null, null, null, null));
 
         Boolean result = false;
 
@@ -111,7 +112,7 @@ public class RulingClass implements Rule, Identifiable {
             }
         } finally {
             // Rule End Event
-            ctx.fireListeners(createEvent(EventType.RULE_END, result, null, null));
+            ctx.fireListeners(createEvent(EventType.RULE_END, result, null, null, null));
         }
 
         return new RuleResult(getName(), result ? RuleExecutionStatus.PASS : RuleExecutionStatus.FAIL);
@@ -129,11 +130,11 @@ public class RulingClass implements Rule, Identifiable {
             matches = ctx.match(condition.getMethodDefinition());
             values = ctx.resolve(matches, condition.getMethodDefinition());
             boolean result = condition.isPass(values);
-            event = createEvent(eventType, result, matches, values);
+            event = createEvent(eventType, result, condition.getMethodDefinition(), matches, values);
             return result;
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(eventType, e, matches, values);
+            event = createEvent(eventType, e, condition.getMethodDefinition(), matches, values);
             throw new UnrulyException(errorMessage
                     + System.lineSeparator()
                     + RuleUtils.getRuleDescription(getRuleDefinition(), condition.getMethodDefinition(), RuleUtils.TAB)
@@ -155,10 +156,10 @@ public class RulingClass implements Rule, Identifiable {
             matches = ctx.match(action.getMethodDefinition());
             values = ctx.resolve(matches, action.getMethodDefinition());
             action.run(values);
-            event = createEvent(eventType, null, matches, values);
+            event = createEvent(eventType, null, action.getMethodDefinition(), matches, values);
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(eventType, e, matches, values);
+            event = createEvent(eventType, e, action.getMethodDefinition(), matches, values);
             throw new UnrulyException(errorMessage
                     + System.lineSeparator()
                     + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(), RuleUtils.TAB)
@@ -168,9 +169,9 @@ public class RulingClass implements Rule, Identifiable {
         }
     }
 
-    protected ExecutionEvent<RuleExecution> createEvent(EventType eventType, Object result,
+    protected ExecutionEvent<RuleExecution> createEvent(EventType eventType, Object result, MethodDefinition methodDefinition,
                                                         ParameterMatch[] parameterMatches, Object[] values) {
-        RuleExecution ruleExecution = new RuleExecution(result, this, parameterMatches, values);
+        RuleExecution ruleExecution = new RuleExecution(result, this, methodDefinition, parameterMatches, values);
         return new ExecutionEvent<>(eventType, ruleExecution);
     }
 
@@ -191,6 +192,7 @@ public class RulingClass implements Rule, Identifiable {
 
     @Override
     public String getName() {
+        if (getTarget() != null && getTarget() instanceof Identifiable) return ((Identifiable) getTarget()).getName();
         return ruleDefinition.getName();
     }
 

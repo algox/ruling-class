@@ -20,6 +20,8 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
@@ -227,11 +229,14 @@ public class ValidationTest {
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
                 .rule((Integer a) -> new RangeRule(1, 10, a))
                 .rule((Integer a) -> new RangeRule(20, 25, a))
+                .preAction(ActionBuilder.create(() -> System.err.println("Pre Action")))
+                .postAction(ActionBuilder.create(() -> System.err.println("Post Action")))
+                .stopWhen(ConditionBuilder.create((RuleViolations e) -> e.hasErrors()))
                 .build();
 
         RuleContext ctx = RuleContextBuilder
                 .with(bindings)
-                .eventListener(new ConsoleLogger())
+                .traceUsing(new ConsoleLogger(true))
                 .build();
         RuleResultSet result = rules.run(ctx);
         Assert.assertTrue(errors.size() == 1);

@@ -113,9 +113,12 @@ public final class RuleUtils {
         StringBuilder result = new StringBuilder();
         result.append(prefix + "Method      : " + methodDefinition.getSignature() + System.lineSeparator());
         result.append(prefix + "Class       : " + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator());
-        result.append(prefix + "Parameter Matches :");
-        result.append(System.lineSeparator());
-        result.append(getArgumentDescriptions(methodDefinition, matches, values, prefix + prefix));
+
+        if (methodDefinition.getParameterDefinitions().length > 0) {
+            result.append(prefix + "Parameter Matches :");
+            result.append(System.lineSeparator());
+            result.append(getArgumentDescriptions(methodDefinition, matches, values, (prefix + TAB)));
+        }
 
         return result.toString();
     }
@@ -127,7 +130,7 @@ public final class RuleUtils {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < methodDefinition.getParameterDefinitions().length; i++) {
-            result.append(prefix + prefix + "Parameter(index = " + i + ") : ");
+            result.append(prefix + "Parameter(index = " + i + ") :");
 
             result.append(" (" + methodDefinition.getParameterDefinition(i).getTypeName()
                     + " " + methodDefinition.getParameterDefinition(i).getName()
@@ -141,7 +144,9 @@ public final class RuleUtils {
 
             if (matches != null && i < matches.length && matches[i] != null) {
                 if (matches[i].getBinding() != null) {
-                    result.append(" using Binding (" + matches[i].getBinding().getTypeAndName() + ")");
+                    result.append(System.lineSeparator());
+                    result.append(prefix);
+                    result.append("Matched Binding      : (" + matches[i].getBinding().getTypeAndName() + ")");
 
                     boolean mismatch = matches[i].getBinding().isTypeAcceptable(methodDefinition.getParameterDefinition(i).getType());
 
@@ -151,6 +156,7 @@ public final class RuleUtils {
                 }
             }
 
+            result.append(System.lineSeparator());
             result.append(System.lineSeparator());
         }
 

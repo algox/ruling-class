@@ -143,9 +143,6 @@ public class RuleViolation {
         return "RuleViolation{" +
                 "ruleName='" + ruleName + '\'' +
                 ", errorCode='" + errorCode + '\'' +
-                ", severity=" + severity +
-                ", errorMessage='" + errorMessage + '\'' +
-                ", params=" + params +
                 '}';
     }
 }
