@@ -23,12 +23,16 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.model.MethodDefinition;
+import org.algorithmx.rules.event.ExecutionEvent;
+import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -48,6 +52,7 @@ public class RuleContext {
     private final MessageFormatter messageFormatter;
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
+    private final List<ExecutionListener> listeners = new ArrayList<>();
     private Locale locale = Locale.getDefault();
 
     public RuleContext(ScopedBindings bindings) {
@@ -152,6 +157,22 @@ public class RuleContext {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public synchronized void addRuleListener(ExecutionListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public synchronized void removeRuleListener(ExecutionListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    public synchronized  <T> void fireListeners(ExecutionEvent<T> event) {
+        Assert.notNull(event, "event cannot be null.");
+
+        for (ExecutionListener listener : listeners) {
+            listener.onEvent(event);
+        }
     }
 
     @Override

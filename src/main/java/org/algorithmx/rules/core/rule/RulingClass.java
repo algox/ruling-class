@@ -17,10 +17,14 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.event.EventType;
+import org.algorithmx.rules.event.ExecutionEvent;
+import org.algorithmx.rules.event.RuleExecution;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
@@ -100,39 +104,78 @@ public class RulingClass implements Rule, Identifiable {
         // Check Pre-Condition if there is one
         if (getPreCondition() == null) return true;
 
+        ParameterMatch[] matches = null;
+        Object[] values = null;
+        ExecutionEvent<RuleExecution> event = null;
+
         try {
-            return getPreCondition().isPass(ctx);
+            matches = ctx.match(getPreCondition().getMethodDefinition());
+            values = ctx.resolve(matches, getPreCondition().getMethodDefinition());
+            boolean result = getPreCondition().isPass(values);
+            event = createEvent(EventType.RULE_PRE_CONDITION, result, matches, values);
+            return result;
         } catch (Exception e) {
+            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
+            event = createEvent(EventType.RULE_PRE_CONDITION, e, matches, values);
             throw new UnrulyException("Unexpected error occurred trying to execute Pre-Condition on Rule."
                     + System.lineSeparator()
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(), RuleUtils.TAB), e);
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getPreCondition().getMethodDefinition(), RuleUtils.TAB)
+                    + RuleUtils.getMethodDescription(getPreCondition().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+
+        } finally {
+            if (event != null) ctx.fireListeners(event);
         }
     }
 
     protected boolean processGivenCondition(RuleContext ctx) {
         if (getCondition() == null) return true;
 
+        ParameterMatch[] matches = null;
+        Object[] values = null;
+        ExecutionEvent<RuleExecution> event = null;
+
         // Check the Given Condition
         try {
-            return getCondition().isPass(ctx);
+            matches = ctx.match(getCondition().getMethodDefinition());
+            values = ctx.resolve(matches, getCondition().getMethodDefinition());
+            boolean result = getCondition().isPass(values);
+            event = createEvent(EventType.RULE_GIVEN_CONDITION, result, matches, values);
+            return result;
         } catch (Exception e) {
+            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
+            event = createEvent(EventType.RULE_GIVEN_CONDITION, e, matches, values);
             throw new UnrulyException("Unexpected error occurred trying to execute Given Condition on Rule."
                     + System.lineSeparator()
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), getCondition().getMethodDefinition(), RuleUtils.TAB), e);
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getCondition().getMethodDefinition(), RuleUtils.TAB)
+                    + RuleUtils.getMethodDescription(getCondition().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+        } finally {
+            if (event != null) ctx.fireListeners(event);
         }
     }
 
     protected void processActions(RuleContext ctx) {
         if (getActions() == null) return;
 
+        ParameterMatch[] matches = null;
+        Object[] values = null;
+        ExecutionEvent<RuleExecution> event = null;
+
         // Execute associated Actions.
         for (Action action : getActions()) {
             try {
-                action.run(ctx);
+                matches = ctx.match(action.getMethodDefinition());
+                values = ctx.resolve(matches, action.getMethodDefinition());
+                action.run(values);
+                event = createEvent(EventType.RULE_ACTION, null, matches, values);
             } catch (Exception e) {
+                Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
+                event = createEvent(EventType.RULE_GIVEN_CONDITION, e, matches, values);
                 throw new UnrulyException("Unexpected error occurred trying to execute Action on Rule."
                         + System.lineSeparator()
-                        + RuleUtils.getRuleDescription(getRuleDefinition(), action.getMethodDefinition(), RuleUtils.TAB), e);
+                        + RuleUtils.getRuleDescription(getRuleDefinition(), action.getMethodDefinition(), RuleUtils.TAB)
+                        + RuleUtils.getMethodDescription(action.getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+            } finally {
+                if (event != null) ctx.fireListeners(event);
             }
         }
     }
@@ -140,13 +183,31 @@ public class RulingClass implements Rule, Identifiable {
     protected void processOtherwiseAction(RuleContext ctx) {
         if (getOtherwiseAction() == null) return;
 
+        ParameterMatch[] matches = null;
+        Object[] values = null;
+        ExecutionEvent<RuleExecution> event = null;
+
         try {
-            getOtherwiseAction().run(ctx);
+            matches = ctx.match(getOtherwiseAction().getMethodDefinition());
+            values = ctx.resolve(matches, getOtherwiseAction().getMethodDefinition());
+            getOtherwiseAction().run(values);
+            event = createEvent(EventType.RULE_OTHERWISE_ACTION, null, matches, values);
         } catch (Exception e) {
+            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
+            event = createEvent(EventType.RULE_OTHERWISE_ACTION, e, matches, values);
             throw new UnrulyException("Unexpected error occurred trying to execute Otherwise Action on Rule."
                     + System.lineSeparator()
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(), RuleUtils.TAB), e);
+                    + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(), RuleUtils.TAB)
+                    + RuleUtils.getMethodDescription(getOtherwiseAction().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+        } finally {
+            if (event != null) ctx.fireListeners(event);
         }
+    }
+
+    protected ExecutionEvent<RuleExecution> createEvent(EventType eventType, Object result,
+                                                        ParameterMatch[] parameterMatches, Object[] values) {
+        RuleExecution ruleExecution = new RuleExecution(result, this, parameterMatches, values);
+        return new ExecutionEvent<>(eventType, ruleExecution);
     }
 
     @Override

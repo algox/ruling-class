@@ -41,21 +41,18 @@ public interface Function<T> extends Comparable<Function> {
      */
     default T apply(RuleContext ctx) throws UnrulyException {
         Assert.notNull(ctx, "ctx cannot be null.");
-        ParameterMatch[] matches = ctx.match(getMethodDefinition());
-        Object[] values = ctx.resolve(matches, getMethodDefinition());
+        ParameterMatch[] matches = null;
+        Object[] values = null;
 
         try {
+            matches = ctx.match(getMethodDefinition());
+            values = ctx.resolve(matches, getMethodDefinition());
             return apply(values);
-        } catch (UnrulyException e) {
-            Throwable cause = e.getCause() != null ? e.getCause() : e;
-            throw new UnrulyException(cause.getClass().getSimpleName() + " occurred trying to execute Function."
-                    + System.lineSeparator()
-                    + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB),
-                    cause);
         } catch (Exception e) {
+            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
             throw new UnrulyException(e.getClass().getSimpleName() + " occurred trying to execute Function."
                     + System.lineSeparator()
-                    + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), e);
+                    + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
         }
     }
 
