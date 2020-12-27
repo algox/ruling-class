@@ -95,6 +95,6 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      *
      * @return Error Condition that decides whether the execution should proceed or not.
      */
-    Condition getErrorHandler();
+    Condition getErrorCondition();
 }
 

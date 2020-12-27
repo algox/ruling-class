@@ -52,11 +52,11 @@ public class DefaultRuleSet implements RuleSet {
     private final Action preAction;
     private final Action postAction;
     private final Condition stopCondition;
-    private final Condition errorHandler;
+    private final Condition errorCondition;
 
     public DefaultRuleSet(String name, String description,
                           Condition preCondition, Action preAction, Action postAction,
-                          Condition stopCondition, Condition errorHandler,
+                          Condition stopCondition, Condition errorCondition,
                           Rule...rules) {
         super();
         Assert.notNull(name, "name cannot be null");
@@ -69,15 +69,21 @@ public class DefaultRuleSet implements RuleSet {
         this.preAction = preAction;
         this.postAction = postAction;
         this.stopCondition = stopCondition;
-        this.errorHandler = errorHandler;
+        this.errorCondition = errorCondition;
     }
 
     @Override
     public RuleResultSet run(RuleContext ctx) throws UnrulyException {
+        Assert.notNull(ctx, "ctx cannot be null");
+
+        // RuleSet Start Event
+        ctx.fireListeners(createEvent(EventType.RULE_SET_START, null, null, null));
+
         RuleResultSet result = new RuleResultSet();
 
         // Run the PreCondition if there is one.
-        boolean preConditionCheck = processPreCondition(ctx);
+        boolean preConditionCheck = processCondition(ctx, getPreCondition(), EventType.RULE_SET_PRE_CONDITION,
+                "Unexpected error occurred trying to execute Pre-Condition on RuleSet.");
         result.setPreConditionCheck(preConditionCheck);
 
         // RuleSet did not pass the precondition; Do not execute the rules.
@@ -87,7 +93,8 @@ public class DefaultRuleSet implements RuleSet {
             // Create a new Scope for the RuleSet to use
             createRuleSetScope(ctx, result);
             // Run the PreAction if there is one.
-            processPreAction(ctx);
+            processAction(ctx, getPreAction(), EventType.RULE_SET_PRE_ACTION,
+                    "Unexpected error occurred trying to execute Pre-Action on RuleSet.");
 
             int index = 0;
             // Execute the rules in order; STOP if the stopCondition is met.
@@ -104,118 +111,74 @@ public class DefaultRuleSet implements RuleSet {
                 }
 
                 // Check to see if we need to stop the execution?
-                if (processStopCondition(ctx)) break;
+                if (getStopCondition() != null && processCondition(ctx, getStopCondition(), EventType.RULE_SET_STOP_CONDITION,
+                        "Unexpected error occurred trying to execute StopCondition on RuleSet.")) {
+                    break;
+                }
             }
         } finally {
+
             try {
                 // Run the PostAction if there is one.
-                processPostAction(ctx);
+                processAction(ctx, getPostAction(), EventType.RULE_SET_POST_ACTION,
+                        "Unexpected error occurred trying to execute Post-Action on RuleSet.");
             } finally {
                 removeRuleSetScope(ctx);
             }
+
+            // RuleSet Start Event
+            ctx.fireListeners(createEvent(EventType.RULE_SET_END, result, null, null));
         }
 
         return result;
     }
 
-    protected boolean processPreCondition(RuleContext ctx) {
-        if (getPreCondition() == null) return true;
+    protected boolean processCondition(RuleContext ctx, Condition condition, EventType eventType, String errorMessage) {
+        // Check Condition if there is one
+        if (condition == null) return true;
 
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<RuleSetExecution> event = null;
 
         try {
-            matches = ctx.match(getPreCondition().getMethodDefinition());
-            values = ctx.resolve(matches, getPreCondition().getMethodDefinition());
-            // Run the PreCondition if there is one.
-            boolean result = getPreCondition().isPass(values);
-            event = createEvent(EventType.RULE_SET_PRE_CONDITION, result, matches, values);
+            matches = ctx.match(condition.getMethodDefinition());
+            values = ctx.resolve(matches, condition.getMethodDefinition());
+            boolean result = condition.isPass(values);
+            event = createEvent(eventType, result, matches, values);
             return result;
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(EventType.RULE_SET_PRE_CONDITION, e, matches, values);
-            throw new UnrulyException("Unexpected error occurred trying to execute Pre-Condition on RuleSet."
+            event = createEvent(eventType, e, matches, values);
+            throw new UnrulyException(errorMessage
                     + System.lineSeparator()
                     + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(getPreCondition().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+                    + RuleUtils.getMethodDescription(condition.getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+
         } finally {
             if (event != null) ctx.fireListeners(event);
         }
     }
 
-    protected void processPreAction(RuleContext ctx) {
-        if (getPreAction() == null) return;
+    protected void processAction(RuleContext ctx, Action action, EventType eventType, String errorMessage) {
+        if (action == null) return;
 
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<RuleSetExecution> event = null;
 
         try {
-            matches = ctx.match(getPreAction().getMethodDefinition());
-            values = ctx.resolve(matches, getPreAction().getMethodDefinition());
-            // Run the PreAction if there is one.
-            getPreAction().run(values);
-            event = createEvent(EventType.RULE_SET_PRE_ACTION, null, matches, values);
+            matches = ctx.match(action.getMethodDefinition());
+            values = ctx.resolve(matches, action.getMethodDefinition());
+            action.run(values);
+            event = createEvent(eventType, null, matches, values);
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(EventType.RULE_SET_PRE_ACTION, e, matches, values);
-            throw new UnrulyException("Unexpected error occurred trying to execute Pre-Action on RuleSet."
+            event = createEvent(eventType, e, matches, values);
+            throw new UnrulyException(errorMessage
                     + System.lineSeparator()
                     + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(getPreAction().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
-        } finally {
-            if (event != null) ctx.fireListeners(event);
-        }
-    }
-
-    protected boolean processStopCondition(RuleContext ctx) {
-        if (getStopCondition() == null) return false;
-
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<RuleSetExecution> event = null;
-        boolean result;
-
-        try {
-            matches = ctx.match(getStopCondition().getMethodDefinition());
-            values = ctx.resolve(matches, getStopCondition().getMethodDefinition());
-            // Check to see if we need to stop?
-            result = getStopCondition().isPass(values);
-            event = createEvent(EventType.RULE_SET_STOP_CONDITION, result, matches, values);
-            return result;
-        } catch (Exception e) {
-            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(EventType.RULE_SET_STOP_CONDITION, e, matches, values);
-            throw new UnrulyException("Unexpected error occurred trying to execute StopCondition on RuleSet."
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(getStopCondition().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
-        } finally {
-            if (event != null) ctx.fireListeners(event);
-        }
-    }
-
-    protected void processPostAction(RuleContext ctx) {
-        if (getPostAction() == null) return;
-
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<RuleSetExecution> event = null;
-
-        try {
-            matches = ctx.match(getPostAction().getMethodDefinition());
-            values = ctx.resolve(matches, getPostAction().getMethodDefinition());
-            // Run the PostAction if there is one.
-            getPostAction().run(values);
-            event = createEvent(EventType.RULE_SET_POST_ACTION, null, matches, values);
-        } catch (Exception e) {
-            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(EventType.RULE_SET_POST_ACTION, e, matches, values);
-            throw new UnrulyException("Unexpected error occurred trying to execute Post-Action on RuleSet."
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(getPostAction().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+                    + RuleUtils.getMethodDescription(action.getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
         } finally {
             if (event != null) ctx.fireListeners(event);
         }
@@ -231,29 +194,16 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     protected void processError(RuleContext ctx, RuleDefinition ruleDefinition, int index, Exception ex) throws UnrulyException{
-        if (errorHandler == null) return;
+        if (errorCondition == null) return;
 
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<RuleSetExecution> event = null;
         boolean proceed;
 
         try {
-            Bindings errorScope = ctx.getBindings().addScope();
-            errorScope.bind("ex", ex);
-            matches = ctx.match(getErrorHandler().getMethodDefinition());
-            values = ctx.resolve(matches, getErrorHandler().getMethodDefinition());
-            proceed = getErrorHandler().isPass(values);
-        } catch (Exception e) {
-            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(EventType.RULE_SET_ERROR, e, matches, values);
-            throw new UnrulyException("Unexpected error occurred trying to execute errorHandler on RuleSet."
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(getErrorHandler().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+            setupErrorScope(ctx, ex, "ex");
+            proceed = processCondition(ctx, getErrorCondition(), EventType.RULE_SET_ERROR,
+                    "Unexpected error occurred trying to execute errorCondition on RuleSet.");
         } finally {
-            ctx.getBindings().removeScope();
-            if (event != null) ctx.fireListeners(event);
+            removeErrorScope(ctx);
         }
 
         // Do not continue; Throw the exception
@@ -263,6 +213,15 @@ public class DefaultRuleSet implements RuleSet {
                     + System.lineSeparator()
                     + RuleUtils.getRuleSetDescription(this, RuleUtils.TAB), ex);
         }
+    }
+
+    protected void setupErrorScope(RuleContext ctx, Exception ex, String bindingName) {
+        Bindings errorScope = ctx.getBindings().addScope();
+        errorScope.bind(bindingName, ex);
+    }
+
+    protected void removeErrorScope(RuleContext ctx) {
+        ctx.getBindings().removeScope();
     }
 
     protected ExecutionEvent<RuleSetExecution> createEvent(EventType eventType, Object result,
@@ -302,8 +261,8 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Condition getErrorHandler() {
-        return errorHandler;
+    public Condition getErrorCondition() {
+        return errorCondition;
     }
 
     @Override

@@ -93,7 +93,7 @@ public final class RuleUtils {
         result.append(prefix + "PreCondition    : " + (ruleSet.getPreCondition() != null) + System.lineSeparator());
         result.append(prefix + "PreAction       : " + (ruleSet.getPreAction() != null) + System.lineSeparator());
         result.append(prefix + "PostAction      : " + (ruleSet.getPostAction() != null) + System.lineSeparator());
-        result.append(prefix + "ErrorHandler    : " + (ruleSet.getErrorHandler() != null) + System.lineSeparator());
+        result.append(prefix + "ErrorCondition  : " + (ruleSet.getErrorCondition() != null) + System.lineSeparator());
         result.append(prefix + "Number of Rules : " + ruleSet.size() + System.lineSeparator());
         return result.toString();
     }
