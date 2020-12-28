@@ -17,6 +17,8 @@
  */
 package org.algorithmx.rules.core.condition;
 
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.function.BiFunction;
 import org.algorithmx.rules.core.function.DecFunction;
@@ -33,6 +35,7 @@ import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -100,6 +103,19 @@ public class ConditionBuilder extends ExecutableBuilder {
 
     public static Condition FALSE() {
         return with(() -> false).build();
+    }
+
+    public static Condition script(String script) {
+        return with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
+            Object result = ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
+
+            if (result == null) throw new UnrulyException("Script Condition excepts a boolean return type. " +
+                    "Actual [null]. Script [" + script + "]");
+            if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
+                    "Actual [" + result + "]. Script [" + script + "]");
+
+            return (Boolean) result;
+        }).build();
     }
 
     /**

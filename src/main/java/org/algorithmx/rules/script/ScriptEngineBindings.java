@@ -20,6 +20,7 @@ public class ScriptEngineBindings implements Bindings {
     public ScriptEngineBindings(org.algorithmx.rules.bind.Bindings target) {
         super();
         this.target = target;
+        this.put("bindings", target);
     }
 
     @Override

@@ -65,12 +65,8 @@ public interface Function<T> extends Comparable<Function> {
                     + System.lineSeparator()
                     + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
         } finally {
-            if (event != null && shouldTriggerEvent()) ctx.fireListeners(event);
+            if (event != null) ctx.fireListeners(event);
         }
-    }
-
-    default boolean shouldTriggerEvent() {
-        return true;
     }
 
     /**

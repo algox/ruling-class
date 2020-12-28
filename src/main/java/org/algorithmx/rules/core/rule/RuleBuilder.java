@@ -103,7 +103,8 @@ public abstract class RuleBuilder {
      * @return LambdaBasedRuleBuilder for fluency.
      */
     public RuleBuilder name(String name) {
-        Assert.isTrue(RuleUtils.isValidName(name), "Rule name not valid. It must conform to [" + RuleUtils.NAME_REGEX + "]");
+        Assert.isTrue(RuleUtils.isValidName(name), "Rule name [" + name + "] not valid. It must conform to ["
+                + RuleUtils.NAME_REGEX + "]");
         this.name = name;
         return this;
     }

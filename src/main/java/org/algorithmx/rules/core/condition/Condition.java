@@ -37,7 +37,13 @@ public interface Condition extends Function<Boolean> {
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
     default boolean isPass(RuleContext ctx) throws UnrulyException {
-        return apply(ctx);
+        Object result = apply(ctx);
+
+        if (result == null) throw new UnrulyException("Condition excepts a boolean return type. Actual [null]");
+        if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
+                "Actual [" + result.getClass().getSimpleName() + "]");
+
+        return (Boolean) result;
     }
 
     /**
@@ -48,6 +54,12 @@ public interface Condition extends Function<Boolean> {
      * @return true if the condition is met; false otherwise.
      */
     default boolean isPass(Object...params) throws UnrulyException {
-        return apply(params);
+        Object result = apply(params);
+
+        if (result == null) throw new UnrulyException("Condition excepts a boolean return type. Actual [null]");
+        if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
+                "Actual [" + result.getClass().getSimpleName() + "]");
+
+        return (Boolean) result;
     }
 }

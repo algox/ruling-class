@@ -17,11 +17,14 @@
  */
 package org.algorithmx.rules.core.action;
 
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.function.ExecutableBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -55,6 +58,12 @@ public final class ActionBuilder extends ExecutableBuilder {
     public Action build() {
         getDefinition().validate();
         return new DefaultAction(getTarget(), getDefinition());
+    }
+
+    public static Action script(String script) {
+        return with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
+            ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
+        }).build();
     }
 
     public static ActionBuilder with(Object target, MethodDefinition definition) {

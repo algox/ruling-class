@@ -138,7 +138,6 @@ public class RuleContextBuilder {
 
         RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
                 messageFormatter, objectFactory, registry, scriptProcessor);
-        contextScope.bindSelf(bindingsBindingName);
         contextScope.bind(ruleContextBindingName, RuleContext.class, result);
         listeners.stream().forEach(listener -> result.addEventListener(listener));
         return result;

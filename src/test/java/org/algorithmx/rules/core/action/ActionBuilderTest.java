@@ -103,7 +103,7 @@ public class ActionBuilderTest {
                     return;
                 })
                 .param("d")
-                    .optional(true)
+                    //.optional(true)
                     .build()
                 .build();
 
@@ -144,6 +144,7 @@ public class ActionBuilderTest {
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 6);
+        Assert.assertTrue(!action.getMethodDefinition().getParameterDefinitions()[3].isRequired());
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].getName().equals("bindingValue"));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].getType().equals(Binding.class));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].isBinding());

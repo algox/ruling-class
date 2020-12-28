@@ -17,10 +17,13 @@
  */
 package org.algorithmx.rules.core.function;
 
+import org.algorithmx.rules.annotation.Match;
+import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -72,6 +75,23 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     public Function<T> build() {
         getDefinition().validate();
         return new DefaultFunction(getTarget(), getDefinition());
+    }
+
+    public static <T> Function<T> script(String script) {
+        FunctionBuilder<T> builder = with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
+            Object value = ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
+            T result;
+
+            try {
+                result = (T) value;
+            } catch (ClassCastException e) {
+                throw new UnrulyException("Function returned an invalid type. " +
+                        "Actual [" + value + "]. Script [" + script + "]");
+            }
+
+            return result;
+        });
+        return builder.build();
     }
 
     /**
