@@ -63,7 +63,7 @@ public interface Function<T> extends Comparable<Function> {
      * @return result of the function.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    T apply(Object... params) throws UnrulyException;
+    T apply(Object ... params) throws UnrulyException;
 
     /**
      * Meta information about the Function.

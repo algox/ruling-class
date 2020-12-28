@@ -73,6 +73,7 @@ public class DefaultBindings implements Bindings {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Binding<T> getBinding(String name) {
+        Assert.notNull(name, "name cannot be null.");
         return (Binding<T>) bindings.get(name);
     }
 

@@ -210,6 +210,15 @@ public interface Bindings extends Iterable<Binding<?>> {
     int size();
 
     /**
+     * Determines whether there are any Bindings.
+     *
+     * @return true if its empty; false otherwise.
+     */
+    default boolean isEmpty() {
+        return size() == 0;
+    }
+
+    /**
      * Retrieves the Binding identified by the given name.
      *
      * @param name name of the Binding.

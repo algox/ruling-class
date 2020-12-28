@@ -25,6 +25,8 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.script.ScriptProcessor;
+import org.algorithmx.rules.script.js.NashornScriptProcessor;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
@@ -49,6 +51,7 @@ public class RuleContextBuilder {
     private ConverterRegistry registry = ConverterRegistry.create();
     private String ruleContextBindingName = "ruleContext";
     private String bindingsBindingName = "bindings";
+    private ScriptProcessor scriptProcessor = NashornScriptProcessor.isAvailable() ? new NashornScriptProcessor() : null;
     private List<ExecutionListener> listeners = new ArrayList<>();
 
     private RuleContextBuilder(Bindings bindings) {
@@ -118,6 +121,12 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder scriptProcessor(ScriptProcessor scriptProcessor) {
+        Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
+        this.scriptProcessor = scriptProcessor;
+        return this;
+    }
+
     /**
      * Builds a Rule Context with desired parameters.
      *
@@ -128,7 +137,7 @@ public class RuleContextBuilder {
         Bindings contextScope = scopedBindings.addScope();
 
         RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
-                messageFormatter, objectFactory, registry);
+                messageFormatter, objectFactory, registry, scriptProcessor);
         contextScope.bindSelf(bindingsBindingName);
         contextScope.bind(ruleContextBindingName, RuleContext.class, result);
         listeners.stream().forEach(listener -> result.addEventListener(listener));

@@ -26,6 +26,7 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.script.ScriptProcessor;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
@@ -52,19 +53,20 @@ public class RuleContext {
     private final MessageFormatter messageFormatter;
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
+    private final ScriptProcessor scriptProcessor;
     private final List<ExecutionListener> listeners = new ArrayList<>();
     private Locale locale = Locale.getDefault();
 
     public RuleContext(ScopedBindings bindings) {
         this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
                 MessageResolver.create("rules"), MessageFormatter.create(), ObjectFactory.create(),
-                ConverterRegistry.create());
+                ConverterRegistry.create(), null);
     }
 
     public RuleContext(ScopedBindings bindings, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,
-                       ConverterRegistry registry) {
+                       ConverterRegistry registry, ScriptProcessor scriptProcessor) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
@@ -80,6 +82,7 @@ public class RuleContext {
         this.messageResolver = messageResolver;
         this.objectFactory = objectFactory;
         this.registry = registry;
+        this.scriptProcessor = scriptProcessor;
     }
 
     public ParameterMatch[] match(MethodDefinition definition) {
@@ -157,6 +160,10 @@ public class RuleContext {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public ScriptProcessor getScriptProcessor() {
+        return scriptProcessor;
     }
 
     public synchronized void addEventListener(ExecutionListener listener) {
