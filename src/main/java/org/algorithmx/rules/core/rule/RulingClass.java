@@ -17,17 +17,14 @@
  */
 package org.algorithmx.rules.core.rule;
 
-import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.RuleExecution;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -84,94 +81,73 @@ public class RulingClass implements Rule {
         Assert.notNull(ctx, "ctx cannot be null");
 
         // Rule Start Event
-        ctx.fireListeners(createEvent(EventType.RULE_START, null, null, null, null));
+        ctx.fireListeners(createEvent(EventType.RULE_START, null));
 
         Boolean result = false;
 
         try {
             // Check the Pre-Condition
-            boolean preConditionCheck = processCondition(ctx, getPreCondition(), EventType.RULE_PRE_CONDITION,
-                    "Unexpected error occurred trying to execute Pre-Condition on Rule.");
+            boolean preConditionCheck = processCondition(ctx, getPreCondition(), EventType.RULE_PRE_CONDITION_START,
+                    EventType.RULE_PRE_CONDITION_END);
             // We did not pass the Pre-Condition
             if (!preConditionCheck) return new RuleResult(getName(), RuleExecutionStatus.SKIPPED);
 
-            result = processCondition(ctx, getCondition(), EventType.RULE_CONDITION,
-                    "Unexpected error occurred trying to execute Given Condition on Rule.");
+            result = processCondition(ctx, getCondition(), EventType.RULE_CONDITION_START, EventType.RULE_CONDITION_END);
 
             // The Condition passed
             if (result) {
                 // Execute associated Actions.
                 for (Action action : getActions()) {
-                    processAction(ctx, action, EventType.RULE_ACTION,
-                            "Unexpected error occurred trying to execute Action on Rule.");
+                    processAction(ctx, action, EventType.RULE_ACTION_START, EventType.RULE_ACTION_END);
                 }
             } else {
                 // Execute otherwise Action.
-                processAction(ctx, getOtherwiseAction(), EventType.RULE_OTHERWISE_ACTION,
-                        "Unexpected error occurred trying to execute Otherwise Action on Rule.");
+                processAction(ctx, getOtherwiseAction(), EventType.RULE_OTHERWISE_ACTION_START,
+                        EventType.RULE_OTHERWISE_ACTION_END);
             }
         } finally {
             // Rule End Event
-            ctx.fireListeners(createEvent(EventType.RULE_END, result, null, null, null));
+            ctx.fireListeners(createEvent(EventType.RULE_END, result));
         }
 
         return new RuleResult(getName(), result ? RuleExecutionStatus.PASS : RuleExecutionStatus.FAIL);
     }
 
-    protected boolean processCondition(RuleContext ctx, Condition condition, EventType eventType, String errorMessage) {
-        // Check Condition if there is one
+    protected boolean processCondition(RuleContext ctx, Condition condition, EventType startEventType, EventType endEventType) {
+
+        // Check Condition exists
         if (condition == null) return true;
 
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<RuleExecution> event = null;
+        // Fire the event
+        ctx.fireListeners(createEvent(startEventType, condition));
 
         try {
-            matches = ctx.match(condition.getMethodDefinition());
-            values = ctx.resolve(matches, condition.getMethodDefinition());
-            boolean result = condition.isPass(values);
-            event = createEvent(eventType, result, condition.getMethodDefinition(), matches, values);
-            return result;
-        } catch (Exception e) {
-            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(eventType, e, condition.getMethodDefinition(), matches, values);
-            throw new UnrulyException(errorMessage
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), condition.getMethodDefinition(), RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(condition.getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
-
+            // Check the condition
+            return condition.isPass(ctx);
         } finally {
-            if (event != null) ctx.fireListeners(event);
+            // Fire the end event
+            ctx.fireListeners(createEvent(endEventType, condition));
         }
     }
 
-    protected void processAction(RuleContext ctx, Action action, EventType eventType, String errorMessage) {
+    protected void processAction(RuleContext ctx, Action action, EventType startEventType, EventType endEventType) {
+
+        // Check if Action exists
         if (action == null) return;
 
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<RuleExecution> event = null;
+        // Fire the start event
+        ctx.fireListeners(createEvent(startEventType, action));
 
         try {
-            matches = ctx.match(action.getMethodDefinition());
-            values = ctx.resolve(matches, action.getMethodDefinition());
-            action.run(values);
-            event = createEvent(eventType, null, action.getMethodDefinition(), matches, values);
-        } catch (Exception e) {
-            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            event = createEvent(eventType, e, action.getMethodDefinition(), matches, values);
-            throw new UnrulyException(errorMessage
-                    + System.lineSeparator()
-                    + RuleUtils.getRuleDescription(getRuleDefinition(), getOtherwiseAction().getMethodDefinition(), RuleUtils.TAB)
-                    + RuleUtils.getMethodDescription(getOtherwiseAction().getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+            action.run(ctx);
         } finally {
-            if (event != null) ctx.fireListeners(event);
+            // Fire the end event
+            ctx.fireListeners(createEvent(endEventType, action));
         }
     }
 
-    protected ExecutionEvent<RuleExecution> createEvent(EventType eventType, Object result, MethodDefinition methodDefinition,
-                                                        ParameterMatch[] parameterMatches, Object[] values) {
-        RuleExecution ruleExecution = new RuleExecution(result, this, methodDefinition, parameterMatches, values);
+    protected ExecutionEvent<RuleExecution> createEvent(EventType eventType, Object executingElement) {
+        RuleExecution ruleExecution = new RuleExecution( this, executingElement);
         return new ExecutionEvent<>(eventType, ruleExecution);
     }
 
@@ -217,13 +193,9 @@ public class RulingClass implements Rule {
     }
 
     @Override
-    public final boolean isIdentifiable() {
-        return true;
-    }
-
-    @Override
     public String toString() {
-        return "RulingClass{" +
+        String result = getTarget() != null ? getTarget().toString() : null;
+        return result != null ? result : "RulingClass{" +
                 "ruleDefinition=" + ruleDefinition +
                 '}';
     }

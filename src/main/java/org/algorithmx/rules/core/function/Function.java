@@ -19,8 +19,12 @@ package org.algorithmx.rules.core.function;
 
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.event.EventType;
+import org.algorithmx.rules.event.ExecutionEvent;
+import org.algorithmx.rules.event.FunctionExecution;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
@@ -41,19 +45,32 @@ public interface Function<T> extends Comparable<Function> {
      */
     default T apply(RuleContext ctx) throws UnrulyException {
         Assert.notNull(ctx, "ctx cannot be null.");
+
         ParameterMatch[] matches = null;
         Object[] values = null;
+        ExecutionEvent<FunctionExecution> event = null;
 
         try {
             matches = ctx.match(getMethodDefinition());
             values = ctx.resolve(matches, getMethodDefinition());
-            return apply(values);
+            T result = apply(values);
+            event = new ExecutionEvent(this instanceof Condition ? EventType.ON_CONDITION : EventType.ON_FUNCTION,
+                    new FunctionExecution(this, result, getMethodDefinition(), matches, values));
+            return result;
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            throw new UnrulyException(e.getClass().getSimpleName() + " occurred trying to execute Function."
+            event = new ExecutionEvent(this instanceof Condition ? EventType.ON_CONDITION : EventType.ON_FUNCTION,
+                    new FunctionExecution(this, e, getMethodDefinition(), matches, values));
+            throw new UnrulyException("Unexpected error occurred trying to execute " + getClass().getSimpleName() + "."
                     + System.lineSeparator()
                     + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+        } finally {
+            if (event != null && shouldTriggerEvent()) ctx.fireListeners(event);
         }
+    }
+
+    default boolean shouldTriggerEvent() {
+        return true;
     }
 
     /**

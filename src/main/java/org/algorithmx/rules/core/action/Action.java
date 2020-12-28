@@ -21,6 +21,9 @@ import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.event.ActionExecution;
+import org.algorithmx.rules.event.EventType;
+import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
@@ -40,18 +43,26 @@ public interface Action extends Comparable<Action> {
      */
     default void run(RuleContext ctx) throws UnrulyException {
         Assert.notNull(ctx, "ctx cannot be null.");
+
         ParameterMatch[] matches = null;
         Object[] values = null;
+        ExecutionEvent<ActionExecution> event = null;
 
         try {
             matches = ctx.match(getMethodDefinition());
             values = ctx.resolve(matches, getMethodDefinition());
             run(values);
+            event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, getMethodDefinition(),
+                    matches, values));
         } catch (Exception e) {
             Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
-            throw new UnrulyException(e.getClass().getSimpleName() + " occurred trying to execute Action."
+            event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, e, getMethodDefinition(),
+                    matches, values));
+            throw new UnrulyException("Unexpected error occurred trying to execute Action."
                     + System.lineSeparator()
                     + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+        } finally {
+            if (event != null) ctx.fireListeners(event);
         }
     }
 
@@ -61,7 +72,7 @@ public interface Action extends Comparable<Action> {
      * @param params Action parameters in order.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(Object...params) throws UnrulyException;
+    void run(Object ... params) throws UnrulyException;
 
     /**
      * Meta information about the Action.

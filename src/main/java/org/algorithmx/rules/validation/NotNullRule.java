@@ -70,10 +70,6 @@ public class NotNullRule extends ValidationRule {
     public String toString() {
         return "NotNullRule{" +
                 "value=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

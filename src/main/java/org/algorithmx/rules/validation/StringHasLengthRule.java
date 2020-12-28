@@ -82,10 +82,6 @@ public class StringHasLengthRule extends ValidationRule {
     public String toString() {
         return "StringHasLengthRule{" +
                 "value=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

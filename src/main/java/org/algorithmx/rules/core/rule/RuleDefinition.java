@@ -50,7 +50,6 @@ public final class RuleDefinition {
     private String name;
     // Description of the Rule
     private final String description;
-    private final boolean trace;
 
     /**
      * Creates a RuleDefinition taking in all the required parameters.
@@ -62,14 +61,12 @@ public final class RuleDefinition {
      * @param conditionDefinition Given condition meta information.
      * @param thenActionDefinitions Then Action(s) meta information.
      * @param otherwiseActionDefinition Otherwise Action meta information.
-     * @param trace determines whether the Rule should be traced or ignored.
      */
     public RuleDefinition(Class<?> ruleClass, String name, String description,
                           MethodDefinition preConditionDefinition,
                           MethodDefinition conditionDefinition,
                           MethodDefinition[] thenActionDefinitions,
-                          MethodDefinition otherwiseActionDefinition,
-                          boolean trace) {
+                          MethodDefinition otherwiseActionDefinition) {
         super();
         Assert.notNull(ruleClass, "Rule class cannot be null.");
         Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
@@ -79,7 +76,6 @@ public final class RuleDefinition {
         this.conditionDefinition = conditionDefinition;
         this.thenActionDefinitions = thenActionDefinitions;
         this.otherwiseActionDefinition = otherwiseActionDefinition;
-        this.trace = trace;
         setName(name);
     }
 
@@ -154,10 +150,6 @@ public final class RuleDefinition {
      */
     public boolean isStatic() {
         return conditionDefinition.isStatic();
-    }
-
-    public boolean isTrace() {
-        return trace;
     }
 
     @Override

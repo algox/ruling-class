@@ -20,7 +20,6 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
@@ -229,9 +228,12 @@ public class ValidationTest {
         RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
                 .rule((Integer a) -> new RangeRule(1, 10, a))
                 .rule((Integer a) -> new RangeRule(20, 25, a))
-                .preAction(ActionBuilder.create(() -> System.err.println("Pre Action")))
-                .postAction(ActionBuilder.create(() -> System.err.println("Post Action")))
-                .stopWhen(ConditionBuilder.create((RuleViolations e) -> e.hasErrors()))
+                //.preAction(ActionBuilder.create(() -> System.out.println("Pre Action")))
+                //.postAction(ActionBuilder.create(() -> System.out.println("Post Action")))
+                .stopWhen(ConditionBuilder.create((RuleViolations e) -> e.size() > 5))
+                .errorHandler(ConditionBuilder.create((Exception ex) -> {
+                    return false;
+                }))
                 .build();
 
         RuleContext ctx = RuleContextBuilder
@@ -239,6 +241,7 @@ public class ValidationTest {
                 .traceUsing(new ConsoleLogger(true))
                 .build();
         RuleResultSet result = rules.run(ctx);
+        System.err.println(result);
         Assert.assertTrue(errors.size() == 1);
     }
 

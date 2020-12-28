@@ -10,7 +10,7 @@ public class ConsoleLogger extends ExecutionCollector {
 
     public ConsoleLogger(boolean detailed) {
         super();
-        setDetailed(true);
+        setDetailed(detailed);
     }
 
     @Override

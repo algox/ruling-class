@@ -27,6 +27,7 @@ public class NashornScriptProcessor implements ScriptProcessor {
     @Override
     public Object evaluate(String script, Bindings bindings) throws EvaluationException {
         ScriptEngineBindings scriptEngineBindings = new ScriptEngineBindings(bindings);
+
         try {
             Object result = engine.eval(script, scriptEngineBindings);
             return result;

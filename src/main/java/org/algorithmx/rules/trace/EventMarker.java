@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.annotation;
+package org.algorithmx.rules.trace;
+
+import org.algorithmx.rules.event.EventType;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates the class with this annotation is not to be traced.
+ * Annotation to mark the handler for an event type.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 @Documented
-public @interface NoTrace {
+@interface EventMarker {
+
+    EventType eventType();
 }

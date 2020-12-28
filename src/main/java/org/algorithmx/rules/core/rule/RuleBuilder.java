@@ -45,7 +45,6 @@ public abstract class RuleBuilder {
     private Action otherwiseAction;
     private Object target;
     private final List<Action> thenActions = new ArrayList<>();
-    private boolean trace = true;
     private RuleDefinition ruleDefinition = null;
 
     public static ClassBasedRuleBuilder with(Class<?> ruleClass) {
@@ -144,11 +143,6 @@ public abstract class RuleBuilder {
         return this;
     }
 
-    public RuleBuilder trace(boolean flag) {
-        this.trace = flag;
-        return this;
-    }
-
     protected RuleBuilder target(Object target) {
         this.target = target;
         return this;
@@ -190,10 +184,6 @@ public abstract class RuleBuilder {
         return target;
     }
 
-    public boolean isTrace() {
-        return trace;
-    }
-
     public Rule build() {
         Assert.notNull(getName(), "Rule Name cannot be null");
 
@@ -210,8 +200,7 @@ public abstract class RuleBuilder {
                 getPreCondition() != null ? getPreCondition().getMethodDefinition() : null,
                 getCondition().getMethodDefinition(),
                 thenActionDefinitions.toArray(new MethodDefinition[thenActionDefinitions.size()]),
-                getOtherwiseAction() != null ? getOtherwiseAction().getMethodDefinition() : null,
-                isTrace());
+                getOtherwiseAction() != null ? getOtherwiseAction().getMethodDefinition() : null);
 
         // Call back to set the RuleDefinition
         if (getTarget() instanceof RuleDefinitionAware) {

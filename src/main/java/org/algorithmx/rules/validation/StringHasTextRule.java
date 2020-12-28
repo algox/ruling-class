@@ -83,10 +83,6 @@ public class StringHasTextRule extends ValidationRule {
     public String toString() {
         return "StringHasTextRule{" +
                 "value=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

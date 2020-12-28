@@ -18,6 +18,7 @@
 package org.algorithmx.rules.bind;
 
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -155,7 +156,7 @@ public class DefaultBinding<T> implements Binding<T> {
     public String toString() {
         return "Name = " + name +
                 ", Type = " + getTypeName() +
-                ", Value = " + value +
+                ", Value = " + RuleUtils.getTextValue(value, 80) +
                 ", Primary = " + primary +
                 ", Editable = " + editable +
                 ", Description = " + description;

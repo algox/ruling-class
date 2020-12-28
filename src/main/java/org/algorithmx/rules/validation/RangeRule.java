@@ -82,10 +82,6 @@ public class RangeRule extends ValidationRule {
                 "min=" + min +
                 ", max=" + max +
                 ", value=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

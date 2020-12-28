@@ -74,10 +74,6 @@ public class MustNotBeDefinedRule extends ValidationRule {
     public String toString() {
         return "MustNotBeDefinedRule{" +
                 "binding=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

@@ -124,10 +124,6 @@ public class MaxRule extends ValidationRule {
         return "MaxRule{" +
                 "max=" + max +
                 ", value=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

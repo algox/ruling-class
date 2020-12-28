@@ -99,15 +99,6 @@ public interface Rule extends Predicate<Object[]>, Identifiable {
     }
 
     /**
-     * Determines if this Rule can be Identified with a name.
-     *
-     * @return true if the Rule implements Identifiable.
-     */
-    default boolean isIdentifiable() {
-        return this instanceof Identifiable;
-    }
-
-    /**
      * The actual Rule implementation instance.
      *
      * @return Rule instance.

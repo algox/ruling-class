@@ -85,4 +85,15 @@ public abstract class ValidationRule implements RuleDefinitionAware {
                 .errorMessage(getErrorMessage())
                 .defaultMessage(getDefaultMessage());
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                "errorCode='" + errorCode + '\'' +
+                ", severity=" + severity +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", defaultMessage='" + defaultMessage + '\'' +
+                ", ruleDefinition=" + ruleDefinition +
+                '}';
+    }
 }

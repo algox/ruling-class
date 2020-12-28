@@ -98,10 +98,6 @@ public class RegexPatternMatchRule extends ValidationRule {
         return "RegexPatternMatchRule{" +
                 "pattern=" + pattern +
                 ", value=" + supplier.get() +
-                ", errorCode=" + getErrorCode() +
-                ", severity=" + getSeverity() +
-                ", errorMessage=" + getErrorMessage() +
-                ", defaultMessage=" + getDefaultMessage() +
                 '}';
     }
 }

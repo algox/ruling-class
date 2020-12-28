@@ -102,8 +102,12 @@ public final class RuleUtils {
                                             String prefix) {
         StringBuilder result = new StringBuilder();
         result.append(prefix + "Rule Name   : " + ruleDefinition.getName() + System.lineSeparator());
-        result.append(prefix + "Rule Class  : " + ruleDefinition.getRuleClass().getName() + System.lineSeparator());
-        result.append(prefix + "Description : " + ruleDefinition.getDescription() + System.lineSeparator());
+        result.append(prefix + "Rule Class  : " + ruleDefinition.getRuleClass().getSimpleName() + System.lineSeparator());
+
+        if (ruleDefinition.getDescription() != null) {
+            result.append(prefix + "Description : " + ruleDefinition.getDescription() + System.lineSeparator());
+        }
+
         result.append(prefix + "Method      : " + methodDefinition.getSignature() + System.lineSeparator());
         return result.toString();
     }
@@ -111,8 +115,8 @@ public final class RuleUtils {
     public static String getMethodDescription(MethodDefinition methodDefinition, ParameterMatch[] matches,
                                               Object[] values, String prefix) {
         StringBuilder result = new StringBuilder();
-        result.append(prefix + "Method      : " + methodDefinition.getSignature() + System.lineSeparator());
-        result.append(prefix + "Class       : " + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator());
+        result.append(prefix + "Method      : " + methodDefinition.getMethod().getDeclaringClass().getSimpleName() + "."
+                + methodDefinition.getSignature() + System.lineSeparator());
 
         if (methodDefinition.getParameterDefinitions().length > 0) {
             result.append(prefix + "Parameter Matches :");
@@ -137,7 +141,7 @@ public final class RuleUtils {
                     + " = ");
 
             if (values != null && i < values.length && values[i] != null) {
-                result.append(values[i].toString() + ")");
+                result.append(getTextValue(values[i], 80) + ")");
             } else {
                 result.append("null)");
             }
@@ -171,5 +175,12 @@ public final class RuleUtils {
         }
 
         return result.toString();
+    }
+
+    public static String getTextValue(Object value, int max) {
+        if (value == null) return "null";
+        String result = value.toString();
+        if (result == null) return "null";
+        return result.length() > max ? (result.substring(0, max) + "...+") : result;
     }
 }

@@ -3,31 +3,31 @@ package org.algorithmx.rules.event;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
-public class RuleSetExecution<T> {
+public class RuleSetExecutionError {
 
     private final RuleSet rules;
-    private final T executingElement;
+    private final Exception error;
 
-    public RuleSetExecution(RuleSet rules, T executingElement) {
+    public RuleSetExecutionError(RuleSet rules, Exception error) {
         super();
         Assert.notNull(rules, "rules cannot be null.");
         this.rules = rules;
-        this.executingElement = executingElement;
+        this.error = error;
     }
 
     public RuleSet getRules() {
         return rules;
     }
 
-    public T getExecutingElement() {
-        return executingElement;
+    public Exception getError() {
+        return error;
     }
 
     @Override
     public String toString() {
-        return "RuleSetExecution{" +
+        return "RuleSetExecutionError{" +
                 "rules=" + rules +
-                ", executingElement=" + executingElement +
+                ", error=" + error +
                 '}';
     }
 }
