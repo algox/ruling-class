@@ -34,14 +34,14 @@ import java.util.List;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class RulingClass implements Rule {
+public class RulingClass<T> implements Rule<T> {
 
     private final RuleDefinition ruleDefinition;
     private final Condition preCondition;
     private final Condition condition;
     private final List<Action> actions;
     private final Action otherwiseAction;
-    private Object target;
+    private T target;
 
     /**
      * Rule defined with all the given properties.
@@ -53,7 +53,7 @@ public class RulingClass implements Rule {
      * @param thenActions all the Then actions.
      * @param otherwiseAction the Otherwise action (optional);
      */
-    public RulingClass(RuleDefinition ruleDefinition, Object target, Condition preCondition, Condition condition,
+    public RulingClass(RuleDefinition ruleDefinition, T target, Condition preCondition, Condition condition,
                        List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
@@ -76,7 +76,7 @@ public class RulingClass implements Rule {
 
     protected RulingClass(RuleDefinition ruleDefinition) {
         this(ruleDefinition, null, null, null, null, null);
-        this.target = this;
+        this.target = (T) this;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class RulingClass implements Rule {
     }
 
     @Override
-    public Object getTarget() {
+    public T getTarget() {
         return target;
     }
 

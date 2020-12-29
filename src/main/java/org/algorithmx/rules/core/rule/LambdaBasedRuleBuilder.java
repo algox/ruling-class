@@ -19,11 +19,11 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.condition.Condition;
 
-public class LambdaBasedRuleBuilder extends RuleBuilder {
+public class LambdaBasedRuleBuilder<T> extends RuleBuilder<T> {
 
     public LambdaBasedRuleBuilder(Condition condition) {
         super();
-        ruleClass(condition.getMethodDefinition().getMethod().getDeclaringClass());
+        ruleClass((Class<T>) condition.getMethodDefinition().getMethod().getDeclaringClass());
         given(condition);
     }
 }

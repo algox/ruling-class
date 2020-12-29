@@ -176,7 +176,7 @@ public class LoadTest {
         RuleDefinition def = rule.getRuleDefinition();
 
         Assert.assertTrue(def.getPreConditionDefinition() != null);
-        Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getName().equals("id"));
+        Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getName().equals("x"));
         Assert.assertTrue(def.getPreConditionDefinition().getParameterDefinitions()[0].getType().equals(int.class));
     }
 

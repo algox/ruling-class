@@ -25,8 +25,12 @@ import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.validation.RuleProducingFunctionRule;
+import org.algorithmx.rules.validation.ValidationRule;
 
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -77,7 +81,7 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public <T> RuleSetBuilder rule(UnaryFunction<?, T> supplier) {
+    public <R extends ValidationRule, T> RuleSetBuilder rule(UnaryFunction<R, T> supplier) {
         return rule(new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build()));
     }
 

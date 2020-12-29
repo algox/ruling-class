@@ -39,7 +39,7 @@ import java.util.function.Predicate;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Rule extends Predicate<Object[]>, Identifiable {
+public interface Rule<T> extends Predicate<Object[]>, Identifiable {
 
     // Rule Name Pattern.
     String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
@@ -75,18 +75,7 @@ public interface Rule extends Predicate<Object[]>, Identifiable {
     default boolean isPass(Object...args) throws UnrulyException {
         return getCondition() != null ? getCondition().isPass(args) : true;
     }
-
-    /**
-     * Executes thr Rule Condition given all the arguments it needs.
-     *
-     * @param args Rule Condition args in necessary order.
-     * @return true if the Rule Condition is false; false otherwise.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default boolean isFail(Object...args) throws UnrulyException {
-        return !isPass(args);
-    }
-
+    
     /**
      * Executes thr Rule Condition given all the arguments it needs.
      *
@@ -103,7 +92,7 @@ public interface Rule extends Predicate<Object[]>, Identifiable {
      *
      * @return Rule instance.
      */
-    Object getTarget();
+    T getTarget();
 
     /**
      * Meta information about the Rule.

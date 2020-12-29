@@ -2,7 +2,6 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.event.EventType;
-import org.algorithmx.rules.lib.spring.util.Assert;
 
 public class RuleExecutionException extends UnrulyException {
 
@@ -15,7 +14,6 @@ public class RuleExecutionException extends UnrulyException {
 
     public RuleExecutionException(String message, Throwable cause, Object ruleTarget, EventType event) {
         super(message, cause);
-        Assert.notNull(ruleTarget, "ruleTarget cannot be null.");
         this.ruleTarget = ruleTarget;
         this.event = event;
     }

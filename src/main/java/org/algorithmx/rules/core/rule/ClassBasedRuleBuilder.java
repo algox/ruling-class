@@ -38,15 +38,32 @@ import java.util.Arrays;
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class ClassBasedRuleBuilder extends RuleBuilder {
+public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
 
-    private ClassBasedRuleBuilder(Class<?> ruleClass, Object target) {
+    private ClassBasedRuleBuilder(Class<T> ruleClass, T target) {
         super();
         load(ruleClass, target);
     }
 
-    public static ClassBasedRuleBuilder with(Class<?> ruleClass, Object target) {
+    public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass, T target) {
         return new ClassBasedRuleBuilder(ruleClass, target);
+    }
+
+    public static <T> String getRuleName(Class<T> ruleClass) {
+        // Try and locate the Rule annotation on the class
+        org.algorithmx.rules.annotation.Rule rule = ruleClass.getAnnotation(org.algorithmx.rules.annotation.Rule.class);
+
+        String ruleName = rule == null ? ruleClass.getSimpleName() :
+                org.algorithmx.rules.annotation.Rule.NOT_APPLICABLE.equals(rule.name())
+                        ? ruleClass.getSimpleName()
+                        : rule.name();
+
+        return ruleName;
+    }
+
+    public static <T> String getRuleDescription(Class<T> ruleClass) {
+        Description descriptionAnnotation = ruleClass.getAnnotation(Description.class);
+        return descriptionAnnotation != null ? descriptionAnnotation.value() : null;
     }
 
     /**
@@ -56,7 +73,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
      * @param ruleClass desired Rule class.
      * @param target rule implementation.
      */
-    protected void load(Class<?> ruleClass, Object target) {
+    protected void load(Class<T> ruleClass, T target) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         Assert.notNull(target, "target cannot be null.");
 
@@ -66,17 +83,8 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         // Try and locate the Rule annotation on the class
         org.algorithmx.rules.annotation.Rule rule = ruleClass.getAnnotation(org.algorithmx.rules.annotation.Rule.class);
 
-        if (rule == null) throw new UnrulyException("Rule class [" + ruleClass.getName() + "] must be annotated with @Rule");
-
-        String ruleName = rule == null ? ruleClass.getSimpleName() :
-                org.algorithmx.rules.annotation.Rule.NOT_APPLICABLE.equals(rule.name())
-                ? ruleClass.getSimpleName()
-                : rule.name();
-
-        Description descriptionAnnotation = ruleClass.getAnnotation(Description.class);
-
-        name(ruleName);
-        description(descriptionAnnotation != null ? descriptionAnnotation.value() : null);
+        name(getRuleName(ruleClass));
+        description(getRuleDescription(ruleClass));
 
         loadPreCondition(ruleClass);
         loadCondition(ruleClass);
@@ -84,7 +92,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
         loadOtherwiseAction(ruleClass);
     }
 
-    protected void loadPreCondition(Class<?> ruleClass) {
+    protected void loadPreCondition(Class<T> ruleClass) {
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(ruleClass, PreCondition.class);
 
         if (candidates.length > 1) {
@@ -106,7 +114,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
                 : null);
     }
 
-    protected void loadCondition(Class<?> ruleClass) {
+    protected void loadCondition(Class<T> ruleClass) {
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Given.class);
 
         if (candidates.length > 1) {
@@ -133,7 +141,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
      *
      * @param ruleClass desired class
      */
-    protected void loadThenActions(Class<?> ruleClass) {
+    protected void loadThenActions(Class<T> ruleClass) {
         Method[] thenActions = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Then.class);
 
         if (thenActions != null) {
@@ -149,7 +157,7 @@ public class ClassBasedRuleBuilder extends RuleBuilder {
      *
      * @param ruleClass desired class
      */
-    protected void loadOtherwiseAction(Class<?> ruleClass) {
+    protected void loadOtherwiseAction(Class<T> ruleClass) {
         Method[] otherwiseActions = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Otherwise.class);
 
         if (otherwiseActions.length > 1) {

@@ -322,6 +322,22 @@ public interface Bindings extends Iterable<Binding<?>> {
     }
 
     /**
+     * Retrieves the value of the Binding with the given name.
+     *
+     * @param name name of the Binding.
+     * @param type required type.
+     * @param <T> generic type of the Binding.
+     * @return value if Binding is found.
+     * @throws NoSuchBindingException if Binding is not found.
+     */
+    default <T> T getValue(String name, Class<T> type) {
+        Binding<T> result = getBinding(name);
+        // Could not find Binding
+        if (result == null) throw new NoSuchBindingException(name);
+        return result.getValue();
+    }
+
+    /**
      * Sets the value of Binding with the given name.
      *
      * @param name name of the Binding.

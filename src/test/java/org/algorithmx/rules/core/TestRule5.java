@@ -19,14 +19,10 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Given;
-import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.PreCondition;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.annotation.Then;
-import org.algorithmx.rules.bind.Bindings;
-
-import java.util.Date;
-import java.util.List;
+import org.algorithmx.rules.bind.Binding;
 
 @Rule(name = "TestRule") @Description("Test Rule")
 public class TestRule5 {
@@ -36,24 +32,17 @@ public class TestRule5 {
     }
 
     @PreCondition
-    public boolean preCondition(int id) {
-        return id > 10;
+    public boolean preCondition(int x) {
+        return x > 10;
     }
 
     @Given
-    public boolean when(int id) {
-        return id > 100;
+    public boolean when(int x) {
+        return x > 100;
     }
 
     @Then
-    public void then(Bindings bindings) {
-        int x = bindings.getValue("result");
-        x += 2;
-        bindings.setValue("result", x);
-    }
-
-    @Otherwise
-    public void otherwise() {
-        throw new IllegalStateException();
+    public void then(Binding<Integer> x) {
+        x.setValue(0);
     }
 }

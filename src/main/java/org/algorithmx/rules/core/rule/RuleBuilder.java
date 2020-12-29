@@ -35,52 +35,52 @@ import java.util.List;
  * @author Max Arulananthan.
  * @since 1.0
  */
-public abstract class RuleBuilder {
+public abstract class RuleBuilder<T> {
 
-    private Class<?> ruleClass;
+    private Class<T> ruleClass;
     private String name;
     private String description;
     private Condition preCondition = null;
     private Condition condition;
     private Action otherwiseAction;
-    private Object target;
+    private T target;
     private final List<Action> thenActions = new ArrayList<>();
     private RuleDefinition ruleDefinition = null;
 
-    public static ClassBasedRuleBuilder with(Class<?> ruleClass) {
+    public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         return with(ruleClass, ObjectFactory.create());
     }
 
-    public static Rule create(Class<?> ruleClass) {
+    public static <T> Rule<T> create(Class<T> ruleClass) {
         return with(ruleClass).build();
     }
 
-    public static ClassBasedRuleBuilder with(Object ruleTarget) {
+    public static <T> ClassBasedRuleBuilder<T> with(T ruleTarget) {
         Assert.notNull(ruleTarget, "ruleTargetCannot be null");
-        return ClassBasedRuleBuilder.with(ruleTarget.getClass(), ruleTarget);
+        return ClassBasedRuleBuilder.with((Class<T>) ruleTarget.getClass(), ruleTarget);
     }
 
-    public static Rule create(Object ruleTarget) {
+    public static <T> Rule<T> create(T ruleTarget) {
         return with(ruleTarget).build();
     }
 
-    public static ClassBasedRuleBuilder with(Class<?> ruleClass, ObjectFactory objectFactory) {
+    public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass, ObjectFactory objectFactory) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         return ClassBasedRuleBuilder.with(ruleClass, objectFactory.createRule(ruleClass));
     }
 
-    public static Rule create(Class<?> ruleClass, ObjectFactory objectFactory) {
+    public static <T> Rule<T> create(Class<T> ruleClass, ObjectFactory objectFactory) {
         return with(ruleClass, objectFactory).build();
     }
 
-    public static LambdaBasedRuleBuilder with(Condition condition) {
+    public static LambdaBasedRuleBuilder<?> with(Condition condition) {
         Assert.notNull(condition, "condition cannot be null.");
         return new LambdaBasedRuleBuilder(condition);
     }
 
-    public static Rule create(Condition condition, Action...actions) {
+    public static Rule<?> create(Condition condition, Action...actions) {
         LambdaBasedRuleBuilder builder = with(condition);
         if (actions != null) Arrays.stream(actions).forEach(a -> builder.then(a));
         return builder.build();
@@ -90,7 +90,7 @@ public abstract class RuleBuilder {
         super();
     }
 
-    protected RuleBuilder ruleClass(Class<?> ruleClass) {
+    protected RuleBuilder<T> ruleClass(Class<T> ruleClass) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         this.ruleClass = ruleClass;
         return this;
@@ -102,7 +102,7 @@ public abstract class RuleBuilder {
      * @param name name of the Rule.
      * @return LambdaBasedRuleBuilder for fluency.
      */
-    public RuleBuilder name(String name) {
+    public RuleBuilder<T> name(String name) {
         Assert.isTrue(RuleUtils.isValidName(name), "Rule name [" + name + "] not valid. It must conform to ["
                 + RuleUtils.NAME_REGEX + "]");
         this.name = name;
@@ -115,23 +115,23 @@ public abstract class RuleBuilder {
      * @param description Rule description.
      * @return LambdaBasedRuleBuilder for fluency.
      */
-    public RuleBuilder description(String description) {
+    public RuleBuilder<T> description(String description) {
         this.description = description;
         return this;
     }
 
-    public RuleBuilder preCondition(Condition preCondition) {
+    public RuleBuilder<T> preCondition(Condition preCondition) {
         this.preCondition = preCondition;
         return this;
     }
 
-    public RuleBuilder given(Condition condition) {
+    public RuleBuilder<T> given(Condition condition) {
         Assert.notNull(condition, "condition cannot be null.");
         this.condition = condition;
         return this;
     }
 
-    public RuleBuilder then(Action action) {
+    public RuleBuilder<T> then(Action action) {
         Assert.notNull(action, "action cannot be null.");
         // TODO : Do we need this?
         //action.getActionDefinition().setOrder(thenActions.size());
@@ -139,12 +139,12 @@ public abstract class RuleBuilder {
         return this;
     }
 
-    public RuleBuilder otherwise(Action action) {
+    public RuleBuilder<T> otherwise(Action action) {
         this.otherwiseAction = action;
         return this;
     }
 
-    protected RuleBuilder target(Object target) {
+    protected RuleBuilder<T> target(T target) {
         this.target = target;
         return this;
     }
@@ -153,7 +153,7 @@ public abstract class RuleBuilder {
         return ruleDefinition;
     }
 
-    public Class<?> getRuleClass() {
+    public Class<T> getRuleClass() {
         return ruleClass;
     }
 
@@ -181,11 +181,11 @@ public abstract class RuleBuilder {
         return otherwiseAction;
     }
 
-    public Object getTarget() {
+    public T getTarget() {
         return target;
     }
 
-    public Rule build() {
+    public Rule<T> build() {
         Assert.notNull(getName(), "Rule Name cannot be null");
 
         // Sort Then Action per Order

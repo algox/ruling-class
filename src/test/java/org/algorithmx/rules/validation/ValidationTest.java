@@ -212,7 +212,7 @@ public class ValidationTest {
                 .rule((Integer a) -> new MinRule(11, a))
                 .rule((Integer a) -> new MinRule(5, a))
                 .rule(new MinRule(25, 22).defaultMessage("test ${value} ${min}"))
-                .rule(FunctionBuilder.with((Integer a) -> new MinRule(25, a)).build())
+                .rule(FunctionBuilder.create((Integer a) -> new MinRule(25, a)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
