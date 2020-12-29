@@ -56,6 +56,7 @@ public class RuleContext {
     private final ScriptProcessor scriptProcessor;
     private final List<ExecutionListener> listeners = new ArrayList<>();
     private Locale locale = Locale.getDefault();
+    private boolean eventsEnabled = true;
 
     public RuleContext(ScopedBindings bindings) {
         this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
@@ -166,6 +167,14 @@ public class RuleContext {
         return scriptProcessor;
     }
 
+    public boolean isEventsEnabled() {
+        return eventsEnabled;
+    }
+
+    public void setEventsEnabled(boolean eventsEnabled) {
+        this.eventsEnabled = eventsEnabled;
+    }
+
     public synchronized void addEventListener(ExecutionListener listener) {
         this.listeners.add(listener);
     }
@@ -176,7 +185,9 @@ public class RuleContext {
 
     public synchronized  <T> void fireListeners(ExecutionEvent<T> event) {
         Assert.notNull(event, "event cannot be null.");
-
+        // Events turned off
+        if (!isEventsEnabled()) return;
+        // Fire all the listeners
         for (ExecutionListener listener : listeners) {
             listener.onEvent(event);
         }

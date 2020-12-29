@@ -24,11 +24,15 @@ public class RuleProducingFunctionRule extends RulingClass {
     @Override
     public RuleResult run(RuleContext ctx) throws UnrulyException {
         Object target;
+        boolean eventsEnabled = ctx.isEventsEnabled();
 
         try {
+            ctx.setEventsEnabled(false);
             target = supplier.apply(ctx);
         } catch (Exception e) {
             throw new RuleExecutionException("Unable to create Rule using the given supplier.", e, this);
+        } finally {
+            ctx.setEventsEnabled(eventsEnabled);
         }
 
         org.algorithmx.rules.core.rule.Rule rule = RuleBuilder.create(target);
