@@ -25,8 +25,8 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.script.NoOpScriptProcessor;
 import org.algorithmx.rules.script.ScriptProcessor;
-import org.algorithmx.rules.script.js.NashornScriptProcessor;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
@@ -50,13 +50,21 @@ public class RuleContextBuilder {
     private ObjectFactory objectFactory = ObjectFactory.create();
     private ConverterRegistry registry = ConverterRegistry.create();
     private String ruleContextBindingName = "ruleContext";
-    private String bindingsBindingName = "bindings";
-    private ScriptProcessor scriptProcessor = NashornScriptProcessor.isAvailable() ? new NashornScriptProcessor() : null;
+    private ScriptProcessor scriptProcessor = null;
     private List<ExecutionListener> listeners = new ArrayList<>();
 
     private RuleContextBuilder(Bindings bindings) {
         super();
         this.bindings = bindings;
+        setScriptProcessor();
+    }
+
+    protected void setScriptProcessor() {
+        try {
+            this.scriptProcessor = ScriptProcessor.create();
+        } catch (Exception e) {
+            this.scriptProcessor = new NoOpScriptProcessor();
+        }
     }
 
     /**
@@ -100,12 +108,6 @@ public class RuleContextBuilder {
     public RuleContextBuilder converterRegistry(ConverterRegistry registry) {
         Assert.notNull(registry, "registry cannot be null.");
         this.registry = registry;
-        return this;
-    }
-
-    public RuleContextBuilder bindingsBindingName(String name) {
-        Assert.notNull(name, "name cannot be null.");
-        this.bindingsBindingName = name;
         return this;
     }
 

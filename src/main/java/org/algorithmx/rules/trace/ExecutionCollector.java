@@ -12,13 +12,18 @@ import org.algorithmx.rules.event.RuleSetExecution;
 import org.algorithmx.rules.event.RuleSetExecutionError;
 import org.algorithmx.rules.util.RuleUtils;
 
-public class ExecutionCollector extends ExecutionTracer {
+public abstract class ExecutionCollector extends ExecutionTracer {
 
-    private boolean detailed = false;
+    private final boolean detailed;
     private int tabCount = 0;
 
     public ExecutionCollector() {
+        this(false);
+    }
+
+    public ExecutionCollector(boolean detailed) {
         super();
+        this.detailed = detailed;
     }
 
     public void collect(ExecutionEvent event, String executionText) {}
@@ -226,15 +231,7 @@ public class ExecutionCollector extends ExecutionTracer {
         tabCount--;
     }
 
-    public void reset() {
-        tabCount = 0;
-    }
-
     public boolean isDetailed() {
         return detailed;
-    }
-
-    public void setDetailed(boolean detailed) {
-        this.detailed = detailed;
     }
 }

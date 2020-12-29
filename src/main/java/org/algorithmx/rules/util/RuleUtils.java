@@ -161,7 +161,7 @@ public final class RuleUtils {
             }
 
             result.append(System.lineSeparator());
-            result.append(System.lineSeparator());
+            //result.append(System.lineSeparator());
         }
 
         return result.toString();

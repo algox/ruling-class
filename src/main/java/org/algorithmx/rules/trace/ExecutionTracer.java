@@ -53,11 +53,6 @@ public abstract class ExecutionTracer implements ExecutionListener {
                 ruleStack.pop();
             }
 
-            // No Trace required
-            //if (!ruleStack.isEmpty() && !ruleStack.peek().getRuleDefinition().isTrace()) {
-            //   return;
-            //}
-
             Method handler = eventHandlers.get(event.getEventType());
             if (handler == null) return;
             handler.invoke(this, event);

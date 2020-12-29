@@ -5,12 +5,11 @@ import org.algorithmx.rules.event.ExecutionEvent;
 public class ConsoleLogger extends ExecutionCollector {
 
     public ConsoleLogger() {
-        super();
+        super(true);
     }
 
     public ConsoleLogger(boolean detailed) {
-        super();
-        setDetailed(detailed);
+        super(detailed);
     }
 
     @Override

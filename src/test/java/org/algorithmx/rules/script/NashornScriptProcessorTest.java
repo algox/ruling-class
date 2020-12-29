@@ -9,7 +9,6 @@ import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
-import org.algorithmx.rules.script.js.NashornScriptProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ public class NashornScriptProcessorTest {
 
     @Test
     public void test1() {
-        ScriptProcessor processor = new NashornScriptProcessor();
+        ScriptProcessor processor = ScriptProcessor.create(ScriptProcessor.JAVASCRIPT);
 
         Bindings bindings = Bindings.create()
                 .bind("a", "xxx")
@@ -43,7 +42,6 @@ public class NashornScriptProcessorTest {
                 .bind("b", 15);
 
         RuleContext context = RuleContextBuilder.create(bindings);
-
         Condition condition = ConditionBuilder.script("b >= 15");
         Assert.assertTrue(condition.isPass(context));
     }
@@ -55,7 +53,6 @@ public class NashornScriptProcessorTest {
                 .bind("b", 15);
 
         RuleContext context = RuleContextBuilder.create(bindings);
-
         Rule rule = RuleBuilder
                         .with(ConditionBuilder.script("b >= 15"))
                         .then(ActionBuilder.script("bindings.setValue('b', 20);"))
