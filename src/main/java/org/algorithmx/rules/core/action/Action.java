@@ -17,10 +17,13 @@
  */
 package org.algorithmx.rules.core.action;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.event.ActionExecution;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
@@ -38,9 +41,9 @@ public interface Action extends Comparable<Action> {
      * Derives all the arguments and executes this Action.
      *
      * @param ctx Rule Context.
-     * @throws UnrulyException thrown if there are any errors during the Condition execution.
+     * @throws ActionExecutionException thrown if there are any errors during the Action execution.
      */
-    default void run(RuleContext ctx) throws UnrulyException {
+    default void run(RuleContext ctx) throws ActionExecutionException {
         Assert.notNull(ctx, "ctx cannot be null.");
 
         ParameterMatch[] matches = null;
@@ -64,12 +67,22 @@ public interface Action extends Comparable<Action> {
     }
 
     /**
+     * Derives all the arguments and executes this Action.
+     *
+     * @param params Action Parameters.
+     * @throws ActionExecutionException thrown if there are any errors during the Action execution.
+     */
+    default void run(BindingDeclaration...params) throws ActionExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        run(RuleContextBuilder.create(bindings));
+    }
+    /**
      * Executes thr Action given all the arguments it needs.
      *
      * @param params Action parameters in order.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    void run(Object ... params) throws UnrulyException;
+    void run(Object...params) throws UnrulyException;
 
     /**
      * Meta information about the Action.

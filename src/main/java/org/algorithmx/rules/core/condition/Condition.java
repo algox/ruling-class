@@ -17,14 +17,19 @@
  */
 package org.algorithmx.rules.core.condition;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.event.ConditionExecution;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.lib.spring.util.Assert;
+
+import java.util.function.Predicate;
 
 /**
  * Given Condition definition.
@@ -32,16 +37,16 @@ import org.algorithmx.rules.lib.spring.util.Assert;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Condition {
+public interface Condition extends Predicate<Object[]> {
 
     /**
      * Derives all the arguments and executes this Condition.
      *
      * @param ctx Rule Context.
      * @return result of the function.
-     * @throws UnrulyException thrown if there are any errors during the Function execution.
+     * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
      */
-    default boolean apply(RuleContext ctx) throws UnrulyException {
+    default boolean isPass(RuleContext ctx) throws ConditionExecutionException {
         Assert.notNull(ctx, "ctx cannot be null.");
 
         ParameterMatch[] matches = null;
@@ -51,7 +56,7 @@ public interface Condition {
         try {
             matches = ctx.match(getMethodDefinition());
             values = ctx.resolve(matches, getMethodDefinition());
-            boolean result = apply(values);
+            boolean result = isPass(values);
             event = new ExecutionEvent(EventType.ON_CONDITION,
                     new ConditionExecution(this, result, getMethodDefinition(), matches, values));
             return result;
@@ -72,7 +77,30 @@ public interface Condition {
      * @return result of the function.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    boolean apply(Object ... params) throws UnrulyException;
+    boolean isPass(Object...params) throws UnrulyException;
+
+    /**
+     * Derives all the arguments and executes this Condition.
+     *
+     * @param params Condition Parameters.
+     * @return true if the Condition passed; false otherwise.
+     * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
+     */
+    default boolean isPass(BindingDeclaration...params) throws ConditionExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return isPass(RuleContextBuilder.create(bindings));
+    }
+
+    /**
+     * Executes Condition given all the arguments it needs.
+     *
+     * @param args Rule Condition args in necessary order.
+     * @return true if the Rule Condition is true; false otherwise.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default boolean test(Object...args) throws UnrulyException {
+        return isPass(args);
+    }
 
     /**
      * Meta information about the Function.
@@ -87,26 +115,4 @@ public interface Condition {
      * @return target instance.
      */
     Object getTarget();
-
-    /**
-     * Derives all the arguments and executed this Condition.
-     *
-     * @param ctx Rule Context.
-     * @return true if the Condition passed; false otherwise.
-     * @throws UnrulyException thrown if there are any errors during the Condition execution.
-     */
-    default boolean isPass(RuleContext ctx) throws UnrulyException {
-        return apply(ctx);
-    }
-
-    /**
-     * Executes the Condition given all the arguments it needs.
-     *
-     * @param params Condition parameters in necessary order.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     * @return true if the condition is met; false otherwise.
-     */
-    default boolean isPass(Object...params) throws UnrulyException {
-        return apply(params);
-    }
 }

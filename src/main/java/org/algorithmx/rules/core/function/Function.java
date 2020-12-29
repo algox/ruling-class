@@ -17,10 +17,13 @@
  */
 package org.algorithmx.rules.core.function;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleContextBuilder;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.FunctionExecution;
@@ -39,7 +42,7 @@ public interface Function<T> extends Comparable<Function> {
      *
      * @param ctx Rule Context.
      * @return result of the function.
-     * @throws UnrulyException thrown if there are any errors during the Function execution.
+     * @throws FunctionExecutionException thrown if there are any errors during the Function execution.
      */
     default T apply(RuleContext ctx) throws FunctionExecutionException {
         Assert.notNull(ctx, "ctx cannot be null.");
@@ -72,7 +75,19 @@ public interface Function<T> extends Comparable<Function> {
      * @return result of the function.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    T apply(Object ... params) throws UnrulyException;
+    T apply(Object...params) throws UnrulyException;
+
+    /**
+     * Derives all the arguments and executes this Function.
+     *
+     * @param params Function Parameters.
+     * @return result of the function.
+     * @throws FunctionExecutionException thrown if there are any errors during the Condition execution.
+     */
+    default T apply(BindingDeclaration...params) throws FunctionExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return apply(RuleContextBuilder.create(bindings));
+    }
 
     /**
      * Meta information about the Function.

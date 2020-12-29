@@ -22,8 +22,6 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 
-import java.util.function.Predicate;
-
 /**
  * Rule class encapsulates all the properties/methods of a Rule within the framework. A Rule consists of two parts
  * a Condition and a list of associated Actions. You can think of it as a If (Condition).. then Action(s).
@@ -39,7 +37,7 @@ import java.util.function.Predicate;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Rule<T> extends Predicate<Object[]>, Identifiable {
+public interface Rule<T> extends Identifiable {
 
     // Rule Name Pattern.
     String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
@@ -53,39 +51,6 @@ public interface Rule<T> extends Predicate<Object[]>, Identifiable {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     RuleResult run(RuleContext ctx) throws UnrulyException;
-
-    /**
-     * Executes thr Rule Condition given all the arguments it needs.
-     *
-     * @param ctx used to derive the parameters required for this Rule.
-     * @return true if the Rule Condition is true; false otherwise.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default boolean isPass(RuleContext ctx) throws UnrulyException {
-        return getCondition() != null ? getCondition().isPass(ctx) : true;
-    }
-
-    /**
-     * Executes thr Rule Condition given all the arguments it needs.
-     *
-     * @param args Rule Condition args in necessary order.
-     * @return true if the Rule Condition is true; false otherwise.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default boolean isPass(Object...args) throws UnrulyException {
-        return getCondition() != null ? getCondition().isPass(args) : true;
-    }
-    
-    /**
-     * Executes thr Rule Condition given all the arguments it needs.
-     *
-     * @param args Rule Condition args in necessary order.
-     * @return true if the Rule Condition is true; false otherwise.
-     * @throws UnrulyException thrown if there are any runtime errors during the execution.
-     */
-    default boolean test(Object...args) throws UnrulyException {
-        return isPass(args);
-    }
 
     /**
      * The actual Rule implementation instance.
@@ -106,9 +71,7 @@ public interface Rule<T> extends Predicate<Object[]>, Identifiable {
      *
      * @return Rule Condition.
      */
-    default Condition getPreCondition() {
-        return null;
-    }
+    Condition getPreCondition();
 
     /**
      * Rule Condition.
