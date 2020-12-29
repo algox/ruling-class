@@ -250,7 +250,8 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      * @return simplified method signature.
      */
     public String getSignature() {
-        StringBuilder result = new StringBuilder(getName() + "(");
+        StringBuilder result = new StringBuilder(getMethod().getDeclaringClass().getSimpleName() + "."
+                + getName() + "(");
         result.append(Arrays.stream(parameterDefinitions)
                 .map(p -> p.getTypeName() + " " + p.getName())
                 .collect(Collectors.joining(", ")));

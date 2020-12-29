@@ -1,35 +1,40 @@
 package org.algorithmx.rules.validation;
 
-import org.algorithmx.rules.annotation.Given;
-import org.algorithmx.rules.annotation.Match;
-import org.algorithmx.rules.annotation.Rule;
-import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
-import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.function.Function;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.rule.RuleDefinition;
+import org.algorithmx.rules.core.rule.RuleExecutionException;
 import org.algorithmx.rules.core.rule.RuleResult;
+import org.algorithmx.rules.core.rule.RulingClass;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
-@Rule
-public class RuleProducingFunctionRule implements Identifiable {
+public class RuleProducingFunctionRule extends RulingClass {
 
     private final Function<?> supplier;
     private String ruleName;
 
     public RuleProducingFunctionRule(Function<?> supplier) {
-        super();
+        super(new RuleDefinition(RuleProducingFunctionRule.class, "RuleProducingFunctionRule", null));
         Assert.notNull(supplier, "supplier cannot be null.");
         this.supplier = supplier;
     }
 
-    @Given
-    public boolean run(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context) {
-        org.algorithmx.rules.core.rule.Rule rule = RuleBuilder.with(supplier.apply(context))
-                .build();
+    @Override
+    public RuleResult run(RuleContext ctx) throws UnrulyException {
+        Object target;
+
+        try {
+            target = supplier.apply(ctx);
+        } catch (Exception e) {
+            throw new RuleExecutionException("Unable to create Rule using the given supplier.", e, this);
+        }
+
+        org.algorithmx.rules.core.rule.Rule rule = RuleBuilder.create(target);
         if (ruleName == null) this.ruleName = rule.getName();
-        RuleResult result = rule.run(context);
-        return result.getStatus().isPass();
+
+        return rule.run(ctx);
     }
 
     @Override
@@ -39,6 +44,6 @@ public class RuleProducingFunctionRule implements Identifiable {
 
     @Override
     public String toString() {
-        return "RuleProducingFunctionRule";
+        return getName();
     }
 }

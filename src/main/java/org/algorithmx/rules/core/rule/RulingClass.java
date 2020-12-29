@@ -37,11 +37,11 @@ import java.util.List;
 public class RulingClass implements Rule {
 
     private final RuleDefinition ruleDefinition;
-    private final Object target;
     private final Condition preCondition;
     private final Condition condition;
     private final List<Action> actions;
     private final Action otherwiseAction;
+    private Object target;
 
     /**
      * Rule defined with all the given properties.
@@ -57,7 +57,6 @@ public class RulingClass implements Rule {
                        List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
-        Assert.notNull(condition, "condition cannot be null");
         this.ruleDefinition = ruleDefinition;
         this.target = target;
         this.preCondition = preCondition;
@@ -73,6 +72,11 @@ public class RulingClass implements Rule {
 
         // Otherwise action (Optional)
         this.otherwiseAction = otherwiseAction;
+    }
+
+    protected RulingClass(RuleDefinition ruleDefinition) {
+        this(ruleDefinition, null, null, null, null, null);
+        this.target = this;
     }
 
     @Override
@@ -123,6 +127,9 @@ public class RulingClass implements Rule {
         try {
             // Check the condition
             return condition.isPass(ctx);
+        } catch (Exception e) {
+            throw new RuleExecutionException("Unexpected error occurred while trying to execution Condition ["
+                    + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);
         } finally {
             // Fire the end event
             ctx.fireListeners(createEvent(endEventType, condition));
@@ -139,6 +146,9 @@ public class RulingClass implements Rule {
 
         try {
             action.run(ctx);
+        } catch (Exception e) {
+            throw new RuleExecutionException("Unexpected error occurred while trying to execution Action ["
+                    + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);
         } finally {
             // Fire the end event
             ctx.fireListeners(createEvent(endEventType, action));

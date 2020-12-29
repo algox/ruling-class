@@ -31,7 +31,7 @@ import org.algorithmx.rules.util.reflect.MethodExecutor;
 public class DefaultFunction<T> implements Function<T> {
 
     private final MethodDefinition methodDefinition;
-    private MethodExecutor methodExecutor;
+    private final MethodExecutor methodExecutor;
     private final Object target;
 
     /**
@@ -64,8 +64,12 @@ public class DefaultFunction<T> implements Function<T> {
         return target;
     }
 
-    public void setMethodExecutor(MethodExecutor methodExecutor) {
-        Assert.notNull(methodExecutor, "methodExecutor cannot be null.");
-        this.methodExecutor = methodExecutor;
+    @Override
+    public String toString() {
+        return "DefaultFunction{" +
+                "methodDefinition=" + methodDefinition +
+                ", methodExecutor=" + methodExecutor +
+                ", target=" + target +
+                '}';
     }
 }

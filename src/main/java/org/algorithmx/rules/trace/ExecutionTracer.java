@@ -4,6 +4,7 @@ import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.event.ActionExecution;
+import org.algorithmx.rules.event.ConditionExecution;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.ExecutionListener;
@@ -69,7 +70,7 @@ public abstract class ExecutionTracer implements ExecutionListener {
     public void onFunction(ExecutionEvent<FunctionExecution> event) {}
 
     @EventMarker(eventType = EventType.ON_CONDITION)
-    public void onCondition(ExecutionEvent<FunctionExecution<Boolean>> event) {}
+    public void onCondition(ExecutionEvent<ConditionExecution> event) {}
 
     @EventMarker(eventType = EventType.ON_ACTION)
     public void onAction(ExecutionEvent<ActionExecution> event) {}

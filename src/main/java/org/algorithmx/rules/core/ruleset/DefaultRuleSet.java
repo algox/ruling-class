@@ -31,7 +31,6 @@ import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.RuleSetExecution;
 import org.algorithmx.rules.event.RuleSetExecutionError;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -108,9 +107,10 @@ public class DefaultRuleSet implements RuleSet {
                     boolean proceed = processError(ctx, rule.getRuleDefinition(), index, e);
 
                     if (!proceed) {
-                        throw new UnrulyException("Unexpected error occurred trying to execute Rule"
-                                +" Name [" + rule.getName() + "] at Index [" + index + "/" + size()
-                                + "] on RuleSet [" + getName() + "]" + System.lineSeparator(), e);
+                        throw new RuleSetExecutionException("Unexpected error occurred trying to execute Rule ["
+                                + rule.getName() + "] at Index [" + index + "/" + size()
+                                + "] on RuleSet [" + getName() + "]",
+                                e, this, EventType.RULE_SET_ERROR_CONDITION_START);
                     }
 
                     result.add(new RuleResult(rule.getName(), RuleExecutionStatus.ERROR));
@@ -151,6 +151,9 @@ public class DefaultRuleSet implements RuleSet {
         try {
             // Check the condition
             return condition.isPass(ctx);
+        } catch (Exception e) {
+            throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Condition ["
+                    + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
         } finally {
             // Fire the end event
             ctx.fireListeners(createEvent(endEventType, condition));
@@ -167,6 +170,9 @@ public class DefaultRuleSet implements RuleSet {
 
         try {
             action.run(ctx);
+        } catch (Exception e) {
+            throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Action ["
+                    + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
         } finally {
             // Fire the end event
             ctx.fireListeners(createEvent(endEventType, action));

@@ -17,9 +17,14 @@
  */
 package org.algorithmx.rules.core.condition;
 
+import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.function.Function;
+import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.event.ConditionExecution;
+import org.algorithmx.rules.event.EventType;
+import org.algorithmx.rules.event.ExecutionEvent;
+import org.algorithmx.rules.lib.spring.util.Assert;
 
 /**
  * Given Condition definition.
@@ -27,7 +32,61 @@ import org.algorithmx.rules.core.rule.RuleContext;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Condition extends Function<Boolean> {
+public interface Condition {
+
+    /**
+     * Derives all the arguments and executes this Condition.
+     *
+     * @param ctx Rule Context.
+     * @return result of the function.
+     * @throws UnrulyException thrown if there are any errors during the Function execution.
+     */
+    default boolean apply(RuleContext ctx) throws UnrulyException {
+        Assert.notNull(ctx, "ctx cannot be null.");
+
+        ParameterMatch[] matches = null;
+        Object[] values = null;
+        ExecutionEvent<ConditionExecution> event = null;
+
+        try {
+            matches = ctx.match(getMethodDefinition());
+            values = ctx.resolve(matches, getMethodDefinition());
+            boolean result = apply(values);
+            event = new ExecutionEvent(EventType.ON_CONDITION,
+                    new ConditionExecution(this, result, getMethodDefinition(), matches, values));
+            return result;
+        } catch (Exception e) {
+            event = new ExecutionEvent(EventType.ON_CONDITION,
+                    new ConditionExecution(this, e, getMethodDefinition(), matches, values));
+            throw new ConditionExecutionException("Unexpected error occurred trying to execute Condition.",
+                    e, this, matches, values);
+        } finally {
+            if (event != null) ctx.fireListeners(event);
+        }
+    }
+
+    /**
+     * Executes the Function given all the arguments it needs.
+     *
+     * @param params parameters in order.
+     * @return result of the function.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    boolean apply(Object ... params) throws UnrulyException;
+
+    /**
+     * Meta information about the Function.
+     *
+     * @return Function meta information.
+     */
+    MethodDefinition getMethodDefinition();
+
+    /**
+     * The actual target instance the Function is associated to.
+     *
+     * @return target instance.
+     */
+    Object getTarget();
 
     /**
      * Derives all the arguments and executed this Condition.
@@ -37,13 +96,7 @@ public interface Condition extends Function<Boolean> {
      * @throws UnrulyException thrown if there are any errors during the Condition execution.
      */
     default boolean isPass(RuleContext ctx) throws UnrulyException {
-        Object result = apply(ctx);
-
-        if (result == null) throw new UnrulyException("Condition excepts a boolean return type. Actual [null]");
-        if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
-                "Actual [" + result.getClass().getSimpleName() + "]");
-
-        return (Boolean) result;
+        return apply(ctx);
     }
 
     /**
@@ -54,12 +107,6 @@ public interface Condition extends Function<Boolean> {
      * @return true if the condition is met; false otherwise.
      */
     default boolean isPass(Object...params) throws UnrulyException {
-        Object result = apply(params);
-
-        if (result == null) throw new UnrulyException("Condition excepts a boolean return type. Actual [null]");
-        if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
-                "Actual [" + result.getClass().getSimpleName() + "]");
-
-        return (Boolean) result;
+        return apply(params);
     }
 }

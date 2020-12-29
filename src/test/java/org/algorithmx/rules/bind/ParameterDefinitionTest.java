@@ -17,8 +17,8 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
-import org.algorithmx.rules.core.function.Function;
 import org.algorithmx.rules.core.function.TriFunction;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.util.LambdaUtils;
@@ -93,7 +93,7 @@ public class ParameterDefinitionTest {
 
     @Test
     public void testBindableParameter5() {
-        Function<Boolean> condition = ConditionBuilder.with((Integer a, Binding<List<String>> b, Integer x) -> a > 10)
+        Condition condition = ConditionBuilder.with((Integer a, Binding<List<String>> b, Integer x) -> a > 10)
                 .param(1)
                     .type(new TypeReference<Binding<List<Integer>>>() {}.getType())
                     .build()

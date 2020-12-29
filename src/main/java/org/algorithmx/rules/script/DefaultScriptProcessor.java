@@ -24,7 +24,7 @@ public class DefaultScriptProcessor implements ScriptProcessor {
             Object result = engine.eval(script, scriptEngineBindings);
             return result;
         } catch (ScriptException e) {
-            throw new EvaluationException("Script Error trying to evaluate [" + script + "]", e);
+            throw new EvaluationException(script, "Script Error trying to evaluate [" + script + "]", e);
         }
     }
 

@@ -17,12 +17,14 @@
  */
 package org.algorithmx.rules.bind;
 
+import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -33,36 +35,59 @@ import java.util.stream.Collectors;
  */
 public class BindingException extends UnrulyException {
 
+    private final MethodDefinition methodDefinition;
+    private final ParameterDefinition parameterDefinition;
+    private final BindingMatchingStrategy matchingStrategy;
+    private final Collection<Binding<Object>> matches;
+
     /**
      * Creates a BindException with the following parameters.
      *
      * @param message basic message (first line).
-     * @param parameterDefinition parameter details.
      * @param methodDefinition method details.
+     * @param parameterDefinition parameter details.
+     * @param matchingStrategy matching strategy being used.
      * @param matches bind candidates.
-     * @param bindings all the bindings that are avail.
      */
     public BindingException(String message, MethodDefinition methodDefinition, ParameterDefinition parameterDefinition,
-                            Map<String, Binding<Object>> matches,
-                            Bindings bindings) {
-        super(generateMessage(message, methodDefinition, parameterDefinition, matches, bindings));
+                            BindingMatchingStrategy matchingStrategy, Collection<Binding<Object>> matches) {
+        super(generateMessage(message, methodDefinition, matchingStrategy, matches));
+        Assert.notNull(methodDefinition, "methodDefinition cannot be null");
+        Assert.notNull(matchingStrategy, "matchingStrategy cannot be null");
+        this.methodDefinition = methodDefinition;
+        this.parameterDefinition = parameterDefinition;
+        this.matchingStrategy = matchingStrategy;
+        this.matches = matches;
+    }
+
+    public MethodDefinition getMethodDefinition() {
+        return methodDefinition;
+    }
+
+    public ParameterDefinition getParameterDefinition() {
+        return parameterDefinition;
+    }
+
+    public BindingMatchingStrategy getMatchingStrategy() {
+        return matchingStrategy;
+    }
+
+    public Collection<Binding<Object>> getMatches() {
+        return matches;
     }
 
     private static String generateMessage(String message, MethodDefinition methodDefinition,
-                                          ParameterDefinition parameterDefinition, Map<String, Binding<Object>> matches,
-                                          Bindings bindings) {
+                                          BindingMatchingStrategy matchingStrategy,
+                                          Collection<Binding<Object>> matches) {
         return message + System.lineSeparator()
-                + RuleUtils.TAB + "Class : "  + methodDefinition.getMethod().getDeclaringClass() + System.lineSeparator()
                 + RuleUtils.TAB + "Method : "  + methodDefinition.getSignature() + System.lineSeparator()
-                + RuleUtils.TAB + "Parameter(index = " + parameterDefinition.getIndex() + ") : " + parameterDefinition.getTypeName () + " "
-                + parameterDefinition.getName() + System.lineSeparator()
-                + RuleUtils.TAB + "Possible Matches : {" + matchesText(matches) + "}" + System.lineSeparator()
-                + RuleUtils.TAB + "Bindings : " + bindings.prettyPrint(RuleUtils.TAB);
+                + RuleUtils.TAB + "Possible Matches (using " + matchingStrategy.getClass().getSimpleName()
+                + ") : {" + matchesText(matches) + "}";
     }
 
-    private static String matchesText(Map<String, Binding<Object>> matches) {
+    private static String matchesText(Collection<Binding<Object>> matches) {
         if (matches == null || matches.size() == 0) return "";
-        return matches.values().stream()
+        return matches.stream()
                 .map(m -> m.getTypeAndName())
                 .collect(Collectors.joining(", "));
     }

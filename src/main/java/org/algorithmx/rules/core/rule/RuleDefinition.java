@@ -51,6 +51,10 @@ public final class RuleDefinition {
     // Description of the Rule
     private final String description;
 
+    public RuleDefinition(Class<?> ruleClass, String name, String description) {
+        this(ruleClass, name, description, null, null, null, null);
+    }
+
     /**
      * Creates a RuleDefinition taking in all the required parameters.
      *
@@ -69,7 +73,6 @@ public final class RuleDefinition {
                           MethodDefinition otherwiseActionDefinition) {
         super();
         Assert.notNull(ruleClass, "Rule class cannot be null.");
-        Assert.notNull(conditionDefinition, "conditionDefinition cannot be null.");
         this.ruleClass = ruleClass;
         this.description = description;
         this.preConditionDefinition = preConditionDefinition;

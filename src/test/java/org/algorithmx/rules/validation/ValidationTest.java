@@ -237,7 +237,7 @@ public class ValidationTest {
                 }))
                 .build();
 
-        StringExecutionCollector collector = new StringExecutionCollector();
+        StringExecutionCollector collector = new StringExecutionCollector(true);
         RuleContext ctx = RuleContextBuilder
                 .with(bindings)
                 .traceUsing(collector)

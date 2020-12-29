@@ -62,7 +62,7 @@ public interface Rule extends Predicate<Object[]>, Identifiable {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default boolean isPass(RuleContext ctx) throws UnrulyException {
-        return getCondition().isPass(ctx);
+        return getCondition() != null ? getCondition().isPass(ctx) : true;
     }
 
     /**
@@ -73,7 +73,7 @@ public interface Rule extends Predicate<Object[]>, Identifiable {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default boolean isPass(Object...args) throws UnrulyException {
-        return getCondition().isPass(args);
+        return getCondition() != null ? getCondition().isPass(args) : true;
     }
 
     /**

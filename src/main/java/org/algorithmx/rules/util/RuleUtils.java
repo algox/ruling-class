@@ -115,8 +115,7 @@ public final class RuleUtils {
     public static String getMethodDescription(MethodDefinition methodDefinition, ParameterMatch[] matches,
                                               Object[] values, String prefix) {
         StringBuilder result = new StringBuilder();
-        result.append(prefix + "Method      : " + methodDefinition.getMethod().getDeclaringClass().getSimpleName() + "."
-                + methodDefinition.getSignature() + System.lineSeparator());
+        result.append(prefix + "Method : " + methodDefinition.getSignature() + System.lineSeparator());
 
         if (methodDefinition.getParameterDefinitions().length > 0) {
             result.append(prefix + "Parameter Matches :");
@@ -160,8 +159,7 @@ public final class RuleUtils {
                 }
             }
 
-            result.append(System.lineSeparator());
-            //result.append(System.lineSeparator());
+            if (i < methodDefinition.getParameterDefinitions().length - 1) result.append(System.lineSeparator());
         }
 
         return result.toString();

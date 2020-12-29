@@ -4,15 +4,14 @@ import org.algorithmx.rules.core.UnrulyException;
 
 public class EvaluationException extends UnrulyException {
 
-    public EvaluationException(String message) {
-        super(message);
-    }
+    private String script;
 
-    public EvaluationException(Throwable cause) {
-        super(cause);
-    }
-
-    public EvaluationException(String message, Throwable cause) {
+    public EvaluationException(String script, String message, Throwable cause) {
         super(message, cause);
+        this.script = script;
+    }
+
+    public String getScript() {
+        return script;
     }
 }

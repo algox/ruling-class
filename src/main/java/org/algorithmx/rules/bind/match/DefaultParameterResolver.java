@@ -90,7 +90,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                     // Too many matches found; cannot proceed.
                     throw new BindingException("Multiple Bindings found using ("
                             + matchingStrategy.getClass().getSimpleName() + "). Perhaps specify a primary Binding? ",
-                            definition, parameterDefinition, matches, bindings);
+                            definition, parameterDefinition, matchingStrategy, matches.values());
                 }
             }
 
@@ -124,7 +124,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                         throw new BindingException("Cannot find a converter that will convert default value ["
                                 + matches[i].getDefinition().getDefaultValueText() + "] to type ["
                                 + matches[i].getDefinition().getType() + "]", definition, matches[i].getDefinition(),
-                                null, bindings);
+                                matchingStrategy, null);
                     }
 
                     value = matches[i].getDefinition().getDefaultValue(converter);
@@ -133,7 +133,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                 } else {
                     throw new BindingException("No matching Binding found for (" + matches[i].getDefinition().getTypeAndName()
                             + ") using (" + matchingStrategy.getClass().getSimpleName()
-                            + ")", definition, matches[i].getDefinition(), null, bindings);
+                            + ")", definition, matches[i].getDefinition(), matchingStrategy, null);
                 }
             } else {
                 value = matches[i].isBinding()

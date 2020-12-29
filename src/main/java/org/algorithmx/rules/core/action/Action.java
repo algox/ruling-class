@@ -25,7 +25,6 @@ import org.algorithmx.rules.event.ActionExecution;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.RuleUtils;
 
 /**
  * Represents an operation that accepts input arguments and returns no result.
@@ -55,12 +54,10 @@ public interface Action extends Comparable<Action> {
             event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, getMethodDefinition(),
                     matches, values));
         } catch (Exception e) {
-            Throwable cause = e instanceof UnrulyException && e.getCause() != null ? e.getCause() : e;
             event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, e, getMethodDefinition(),
                     matches, values));
-            throw new UnrulyException("Unexpected error occurred trying to execute Action."
-                    + System.lineSeparator()
-                    + RuleUtils.getMethodDescription(getMethodDefinition(), matches, values, RuleUtils.TAB), cause);
+            throw new ActionExecutionException("Unexpected error occurred trying to execute Action.",
+                    e, this, matches, values);
         } finally {
             if (event != null) ctx.fireListeners(event);
         }

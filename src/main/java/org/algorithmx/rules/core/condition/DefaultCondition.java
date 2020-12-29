@@ -17,8 +17,10 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.core.function.DefaultFunction;
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
+import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.MethodExecutor;
 
 /**
  * Default Condition implementation.
@@ -26,9 +28,48 @@ import org.algorithmx.rules.core.model.MethodDefinition;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class DefaultCondition extends DefaultFunction<Boolean> implements Condition {
+public class DefaultCondition implements Condition {
+
+    private final MethodDefinition methodDefinition;
+    private final MethodExecutor methodExecutor;
+    private final Object target;
 
     public DefaultCondition(Object target, MethodDefinition methodDefinition) {
-        super(target, methodDefinition);
+        super();
+        Assert.notNull(methodDefinition, "methodDefinition cannot be null.");
+        this.methodDefinition = methodDefinition;
+        this.target = target;
+        this.methodExecutor = MethodExecutor.create(methodDefinition.getMethod());
+    }
+
+    @Override
+    public boolean apply(Object... args) throws UnrulyException {
+        // Execute the Action Method
+        Object result = methodExecutor.execute(target, args);
+
+        if (result == null) throw new UnrulyException("Condition excepts a boolean return type. Actual [null]");
+        if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
+                "Actual [" + result.getClass().getSimpleName() + "]");
+
+        return (Boolean) result;
+    }
+
+    @Override
+    public final MethodDefinition getMethodDefinition() {
+        return methodDefinition;
+    }
+
+    @Override
+    public final Object getTarget() {
+        return target;
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultCondition{" +
+                "methodDefinition=" + methodDefinition +
+                ", methodExecutor=" + methodExecutor +
+                ", target=" + target +
+                '}';
     }
 }

@@ -5,6 +5,7 @@ import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.event.ActionExecution;
+import org.algorithmx.rules.event.ConditionExecution;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.FunctionExecution;
 import org.algorithmx.rules.event.RuleExecution;
@@ -36,7 +37,7 @@ public abstract class ExecutionCollector extends ExecutionTracer {
     }
 
     @Override
-    public void onCondition(ExecutionEvent<FunctionExecution<Boolean>> event) {
+    public void onCondition(ExecutionEvent<ConditionExecution> event) {
         collect(event, createLog("Condition Result : " + event.getData().getResult(),
                 event.getData().getMethodDefinition(), event.getData().getParameterMatches(),
                 event.getData().getValues(), tabCount + 1));
