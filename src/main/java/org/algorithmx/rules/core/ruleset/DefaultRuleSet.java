@@ -43,8 +43,7 @@ import java.util.Iterator;
  */
 public class DefaultRuleSet implements RuleSet {
 
-    private final String name;
-    private final String description;
+    private final RuleSetDefinition ruleSetDefinition;
     private final Rule[] rules;
 
     private final Condition preCondition;
@@ -53,16 +52,14 @@ public class DefaultRuleSet implements RuleSet {
     private final Condition stopCondition;
     private final Condition errorCondition;
 
-    public DefaultRuleSet(String name, String description,
+    public DefaultRuleSet(RuleSetDefinition ruleSetDefinition,
                           Condition preCondition, Action preAction, Action postAction,
                           Condition stopCondition, Condition errorCondition,
                           Rule...rules) {
         super();
-        Assert.notNull(name, "name cannot be null");
-        Assert.notNull(description, "description cannot be null");
+        Assert.notNull(ruleSetDefinition, "ruleSetDefinition cannot be null");
         Assert.isTrue(rules != null && rules.length > 0, "RuleSet must have at least one Rule.");
-        this.name = name;
-        this.description = description;
+        this.ruleSetDefinition = ruleSetDefinition;
         this.rules = rules;
         this.preCondition = preCondition;
         this.preAction = preAction;
@@ -220,13 +217,18 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
+    public RuleSetDefinition getRuleSetDefinition() {
+        return ruleSetDefinition;
+    }
+
+    @Override
     public String getName() {
-        return name;
+        return ruleSetDefinition.getName();
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return ruleSetDefinition.getDescription();
     }
 
     @Override
@@ -272,8 +274,6 @@ public class DefaultRuleSet implements RuleSet {
     @Override
     public String toString() {
         return "DefaultRuleSet{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 ", rules=" + Arrays.toString(rules) +
                 ", preCondition=" + preCondition +
                 ", postAction=" + postAction +

@@ -185,7 +185,7 @@ public abstract class RuleBuilder<T> {
         return target;
     }
 
-    public Rule<T> build() {
+    public RuleDefinition buildRuleDefinition() {
         Assert.notNull(getName(), "Rule Name cannot be null");
 
         // Sort Then Action per Order
@@ -197,11 +197,15 @@ public abstract class RuleBuilder<T> {
             thenActionDefinitions.add(thenAction.getMethodDefinition());
         }
 
-        RuleDefinition ruleDefinition = new RuleDefinition(getRuleClass(), getName(), getDescription(),
+        return new RuleDefinition(getRuleClass(), getName(), getDescription(),
                 getPreCondition() != null ? getPreCondition().getMethodDefinition() : null,
                 getCondition().getMethodDefinition(),
                 thenActionDefinitions.toArray(new MethodDefinition[thenActionDefinitions.size()]),
                 getOtherwiseAction() != null ? getOtherwiseAction().getMethodDefinition() : null);
+    }
+
+    public Rule<T> build() {
+        RuleDefinition ruleDefinition = buildRuleDefinition();
 
         // Call back to set the RuleDefinition
         if (getTarget() instanceof RuleDefinitionAware) {

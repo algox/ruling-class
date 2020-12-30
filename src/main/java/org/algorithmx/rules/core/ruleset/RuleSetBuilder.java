@@ -24,16 +24,17 @@ import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
+import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.validation.RuleProducingFunctionRule;
 import org.algorithmx.rules.validation.ValidationRule;
 
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class RuleSetBuilder {
@@ -42,7 +43,7 @@ public class RuleSetBuilder {
 
     private final String name;
     private String description;
-    private final LinkedList<Rule> rules = new LinkedList<>();
+    private final Deque<Rule> rules = new LinkedList<>();
 
     private Condition preCondition;
     private Action preAction;
@@ -160,8 +161,24 @@ public class RuleSetBuilder {
         return this;
     }
 
+    public RuleSetDefinition buildRuleSetDefinition() {
+        List<RuleDefinition> ruleDefinitions = new ArrayList<>(rules.size());
+
+        rules.stream().forEach(r -> ruleDefinitions.add(r.getRuleDefinition()));
+
+        RuleSetDefinition result = new RuleSetDefinition(getName(), getDescription(),
+                getPreCondition() != null ? getPreCondition().getMethodDefinition() : null,
+                getPreAction() != null ? getPreAction().getMethodDefinition() : null,
+                getPostAction() != null ? getPostAction().getMethodDefinition() : null,
+                getStopCondition() != null ? getStopCondition().getMethodDefinition() : null,
+                getErrorHandler() != null ? getErrorHandler().getMethodDefinition() : null,
+                ruleDefinitions.toArray(new RuleDefinition[ruleDefinitions.size()]));
+
+        return result;
+    }
+
     public RuleSet build() {
-        return new DefaultRuleSet(getName(), getDescription(),
+        return new DefaultRuleSet(buildRuleSetDefinition(),
                 getPreCondition(), getPreAction(), getPostAction(), getStopCondition(), errorHandler,
                 rules.toArray(new Rule[rules.size()]));
     }
@@ -188,5 +205,9 @@ public class RuleSetBuilder {
 
     public Condition getStopCondition() {
         return stopCondition;
+    }
+
+    public Condition getErrorHandler() {
+        return errorHandler;
     }
 }

@@ -35,6 +35,11 @@ import java.util.Objects;
  */
 public final class RuleDefinition {
 
+    // Name of the Rule
+    private String name;
+    // Description of the Rule
+    private final String description;
+
     // Rule class
     private final Class<?> ruleClass;
     // PreCondition method details
@@ -45,11 +50,6 @@ public final class RuleDefinition {
     private MethodDefinition[] thenActionDefinitions;
     // Otherwise action
     private MethodDefinition otherwiseActionDefinition;
-
-    // Name of the Rule
-    private String name;
-    // Description of the Rule
-    private final String description;
 
     public RuleDefinition(Class<?> ruleClass, String name, String description) {
         this(ruleClass, name, description, null, null, null, null);
@@ -73,13 +73,13 @@ public final class RuleDefinition {
                           MethodDefinition otherwiseActionDefinition) {
         super();
         Assert.notNull(ruleClass, "Rule class cannot be null.");
+        setName(name);
         this.ruleClass = ruleClass;
         this.description = description;
         this.preConditionDefinition = preConditionDefinition;
         this.conditionDefinition = conditionDefinition;
         this.thenActionDefinitions = thenActionDefinitions;
         this.otherwiseActionDefinition = otherwiseActionDefinition;
-        setName(name);
     }
 
     /**

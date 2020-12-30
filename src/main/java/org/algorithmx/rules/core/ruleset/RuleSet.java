@@ -34,6 +34,8 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
 
     RuleResultSet run(RuleContext ctx) throws UnrulyException;
 
+    RuleSetDefinition getRuleSetDefinition();
+
     /**
      * Ruleset name.
      *
