@@ -163,30 +163,6 @@ public interface Bindings extends Iterable<Binding<?>> {
     <S extends Bindings, T> S bind(Binding<T> binding) throws BindingAlreadyExistsException;
 
     /**
-     * Binds this Binding to itself. This is useful when Rules want to use the Bindings (to create new ones etc)
-     *
-     * @param name name to use for the Binding name (eg : "Bindings")
-     * @param <S> type of Bindings.
-     * @return this Bindings (fluent interface).
-     */
-    default <S extends Bindings> S bindSelf(String name) {
-        bind(BindingBuilder.with(name).value(this).primary(false).editable(false).build());
-        return (S) this;
-    }
-
-    /**
-     * Binds this Binding to itself. This is useful when Rules want to use the Bindings (to create new ones etc)
-     *
-     * @param name name to use for the Binding name (eg : "Bindings")
-     * @param <S> type of Bindings.
-     * @return this Bindings (fluent interface).
-     */
-    default <S extends Bindings> S bindImmutableSelf(String name) {
-        bind(BindingBuilder.with(name).value(asImmutableBindings()).primary(false).editable(false).build());
-        return (S) this;
-    }
-
-    /**
      * Binding Loader an load a collection of Bindings from the given value object.
      *
      * @param loader BindingLoader to use (see PropertyBindingLoader, FieldBindingLoader, MapBindingLoader)

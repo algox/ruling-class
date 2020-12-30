@@ -123,30 +123,6 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest8() {
-        Bindings bindings = Bindings.create()
-                .bind(BindingBuilder.with(key1 -> "hello world!").build())
-                .bind(BindingBuilder.with(key2 -> 25).build())
-                .bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build())
-                .bindSelf("bindings");
-
-        Binding match = bindings.getBinding("bindings");
-        Assert.assertTrue(match.getValue().equals(bindings));
-    }
-
-    @Test
-    public void bindTest9() {
-        Bindings bindings = Bindings.create()
-                .bind(BindingBuilder.with(key1 -> "hello world!").build())
-                .bind(BindingBuilder.with(key2 -> 25).build())
-                .bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build())
-                .bindImmutableSelf("bindings");
-
-        Binding match = bindings.getBinding("bindings");
-        Assert.assertTrue(match.getValue().equals(bindings));
-    }
-
-    @Test
     public void bindTest10() {
         Bindings bindings = Bindings.create();
         Assert.assertTrue(bindings.size() == 0);
@@ -156,8 +132,6 @@ public class BindingsTest {
         Assert.assertTrue(bindings.size() == 2);
         bindings.bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build());
         Assert.assertTrue(bindings.size() == 3);
-        bindings.bindImmutableSelf("bindings");
-        Assert.assertTrue(bindings.size() == 4);
     }
 
     @Test
@@ -166,8 +140,7 @@ public class BindingsTest {
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
         bindings.bind(BindingBuilder.with(key2 -> 25).build());
         bindings.bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build());
-        bindings.bindImmutableSelf("bindings");
-        Assert.assertTrue(bindings.size() == 4);
+        Assert.assertTrue(bindings.size() == 3);
     }
 
     @Test(expected = BindingAlreadyExistsException.class)

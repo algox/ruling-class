@@ -149,37 +149,12 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest21() {
-        Bindings bindings = Bindings.create()
-                .bind(BindingBuilder.with(key1 -> "hello world!").build())
-                .bind(BindingBuilder.with(key2 -> 25).build())
-                .bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build())
-                .bindSelf("bindings");
-
-        Binding match = bindings.asImmutableBindings().getBinding("bindings");
-        Assert.assertTrue(match.getValue().equals(bindings));
-    }
-
-    @Test
-    public void immutabilityTest22() {
-        Bindings bindings = Bindings.create()
-                .bind(BindingBuilder.with(key1 -> "hello world!").build())
-                .bind(BindingBuilder.with(key2 -> 25).build())
-                .bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build())
-                .bindImmutableSelf("bindings");
-
-        Binding match = bindings.asImmutableBindings().getBinding("bindings");
-        Assert.assertTrue(match.getValue().equals(bindings));
-    }
-
-    @Test
     public void immutabilityTest23() {
         Bindings bindings = Bindings.create();
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
         bindings.bind(BindingBuilder.with(key2 -> 25).build());
         bindings.bind(BindingBuilder.with(key3 -> new BigDecimal("100.00")).build());
-        bindings.bindImmutableSelf("bindings");
-        Assert.assertTrue(bindings.asImmutableBindings().size() == 4);
+        Assert.assertTrue(bindings.asImmutableBindings().size() == 3);
     }
 
     @Test
