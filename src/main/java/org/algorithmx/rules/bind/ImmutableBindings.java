@@ -21,6 +21,7 @@ import org.algorithmx.rules.bind.load.BindingLoader;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +64,8 @@ public class ImmutableBindings implements Bindings {
 
     @Override
     public <T> Binding<T> getBinding(String name) {
-        return getTarget().getBinding(name);
+        Binding<T> result = getTarget().getBinding(name);
+        return result != null ? result.immutableSelf() : null;
     }
 
     @Override
@@ -73,27 +75,40 @@ public class ImmutableBindings implements Bindings {
 
     @Override
     public <T> void setValue(String name, T value) {
-        getTarget().setValue(name, value);
+        throw new IllegalStateException("Binding [" + name + "] is immutable. It cannot be edited.");
     }
 
     @Override
     public <T> Binding<T> getBinding(String name, Class<T> type) {
-        return getTarget().getBinding(name, type);
+        Binding<T> result = getTarget().getBinding(name, type);
+        return result != null ? result.immutableSelf() : null;
     }
 
     @Override
     public <T> Binding<T> getBinding(String name, TypeReference<T> type) {
-        return getTarget().getBinding(name, type);
+        Binding<T> result = getTarget().getBinding(name, type);
+        return result != null ? result.immutableSelf() : null;
     }
 
     @Override
     public <T> Map<String, Binding<T>> getBindings(Class<T> type) {
-        return getTarget().getBindings(type);
+        return convertToImmutableMap(getTarget().getBindings(type));
     }
 
     @Override
     public <T> Map<String, Binding<T>> getBindings(TypeReference<T> type) {
-        return getTarget().getBindings(type);
+        return convertToImmutableMap(getTarget().getBindings(type));
+    }
+
+    private <T> Map<String, Binding<T>> convertToImmutableMap(Map<String, Binding<T>> original) {
+        if (original == null) return null;
+        Map<String, Binding<T>> result = new HashMap<>();
+
+        for (Map.Entry<String, Binding<T>> entry : original.entrySet()) {
+            result.put(entry.getKey(), entry.getValue() != null ? entry.getValue().immutableSelf() : null);
+        }
+
+        return result;
     }
 
     @Override

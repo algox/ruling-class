@@ -142,4 +142,13 @@ public interface Binding<T> extends Identifiable {
 	 * @return Binding summarized.
 	 */
 	String getSummary();
+
+	/**
+	 * Returns a immutable version of this Binding. The value cannot be changed.
+	 *
+	 * @return immutable version of this Binding.
+	 */
+	default Binding<T> immutableSelf() {
+		return new ImmutableBinding<>(this);
+	}
 }

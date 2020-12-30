@@ -28,6 +28,7 @@ import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.FunctionExecution;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
 /**
  * Represents a function that accepts argument(s) and produces a result.
@@ -56,11 +57,11 @@ public interface Function<T> extends Comparable<Function> {
             values = ctx.resolve(matches, getMethodDefinition());
             T result = apply(values);
             event = new ExecutionEvent(EventType.ON_FUNCTION,
-                    new FunctionExecution(this, result, getMethodDefinition(), matches, values));
+                    new FunctionExecution(this, result, getMethodDefinition(), RuleUtils.immutable(matches), values));
             return result;
         } catch (Exception e) {
             event = new ExecutionEvent(EventType.ON_FUNCTION,
-                    new FunctionExecution(this, e, getMethodDefinition(), matches, values));
+                    new FunctionExecution(this, e, getMethodDefinition(), RuleUtils.immutable(matches), values));
             throw new FunctionExecutionException("Unexpected error occurred trying to execute Function.",
                     e, this, matches, values);
         } finally {

@@ -181,4 +181,19 @@ public final class RuleUtils {
         if (result == null) return "null";
         return result.length() > max ? (result.substring(0, max) + "...+") : result;
     }
+
+    public static ParameterMatch[] immutable(ParameterMatch[] matches) {
+        if (matches == null) return null;
+
+        ParameterMatch[] result = new ParameterMatch[matches.length];
+
+        for (int i = 0; i < matches.length; i++) {
+            ParameterMatch match = matches[i];
+            ParameterMatch immutable = new ParameterMatch(match.getDefinition(),
+                    match.getBinding() != null ? match.getBinding().immutableSelf() : null, match.isBinding());
+            result[i] = immutable;
+        }
+
+        return result;
+    }
 }

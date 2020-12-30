@@ -28,6 +28,7 @@ import org.algorithmx.rules.event.ConditionExecution;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.function.Predicate;
 
@@ -58,11 +59,11 @@ public interface Condition extends Predicate<Object[]> {
             values = ctx.resolve(matches, getMethodDefinition());
             boolean result = isPass(values);
             event = new ExecutionEvent(EventType.ON_CONDITION,
-                    new ConditionExecution(this, result, getMethodDefinition(), matches, values));
+                    new ConditionExecution(this, result, getMethodDefinition(), RuleUtils.immutable(matches), values));
             return result;
         } catch (Exception e) {
             event = new ExecutionEvent(EventType.ON_CONDITION,
-                    new ConditionExecution(this, e, getMethodDefinition(), matches, values));
+                    new ConditionExecution(this, e, getMethodDefinition(), RuleUtils.immutable(matches), values));
             throw new ConditionExecutionException("Unexpected error occurred trying to execute Condition.",
                     e, this, matches, values);
         } finally {

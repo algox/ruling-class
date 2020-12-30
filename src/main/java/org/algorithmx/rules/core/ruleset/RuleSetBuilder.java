@@ -114,10 +114,10 @@ public class RuleSetBuilder {
     /**
      * PreCondition(Optional) Condition to be met before the execution of the RuleSet.
      *
-     * @param condition pre check before execution of the RuleSet.
+     * @param preCondition pre check before execution of the RuleSet.
      * @return this for fluency.
      */
-    public RuleSetBuilder preCondition(Condition condition) {
+    public RuleSetBuilder preCondition(Condition preCondition) {
         this.preCondition = preCondition;
         return this;
     }
