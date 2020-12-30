@@ -73,7 +73,7 @@ public class DefaultRuleSet implements RuleSet {
         Assert.notNull(ctx, "ctx cannot be null");
 
         // RuleSet Start Event
-        ctx.fireListeners(createEvent(EventType.RULE_SET_START, null));
+        ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_START, null));
 
         RuleResultSet result = new RuleResultSet();
 
@@ -99,7 +99,8 @@ public class DefaultRuleSet implements RuleSet {
                     RuleResult ruleResult = rule.run(ctx);
                     result.add(ruleResult);
                 } catch (Exception e) {
-                    ctx.fireListeners(new ExecutionEvent<>(EventType.RULE_SET_ERROR, new RuleSetExecutionError(this, e)));
+                    ctx.getEventProcessor().fireListeners(new ExecutionEvent<>(EventType.RULE_SET_ERROR,
+                            new RuleSetExecutionError(this, e)));
 
                     boolean proceed = processError(ctx, rule.getRuleDefinition(), index, e);
 
@@ -131,7 +132,7 @@ public class DefaultRuleSet implements RuleSet {
             }
 
             // RuleSet Start Event
-            ctx.fireListeners(createEvent(EventType.RULE_SET_END, null));
+            ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_END, null));
         }
 
         return result;
@@ -143,7 +144,7 @@ public class DefaultRuleSet implements RuleSet {
         if (condition == null) return true;
 
         // Fire the event
-        ctx.fireListeners(createEvent(startEventType, condition));
+        ctx.getEventProcessor().fireListeners(createEvent(startEventType, condition));
 
         try {
             // Check the condition
@@ -153,7 +154,7 @@ public class DefaultRuleSet implements RuleSet {
                     + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
         } finally {
             // Fire the end event
-            ctx.fireListeners(createEvent(endEventType, condition));
+            ctx.getEventProcessor().fireListeners(createEvent(endEventType, condition));
         }
     }
 
@@ -163,7 +164,7 @@ public class DefaultRuleSet implements RuleSet {
         if (action == null) return;
 
         // Fire the start event
-        ctx.fireListeners(createEvent(startEventType, action));
+        ctx.getEventProcessor().fireListeners(createEvent(startEventType, action));
 
         try {
             action.run(ctx);
@@ -172,7 +173,7 @@ public class DefaultRuleSet implements RuleSet {
                     + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
         } finally {
             // Fire the end event
-            ctx.fireListeners(createEvent(endEventType, action));
+            ctx.getEventProcessor().fireListeners(createEvent(endEventType, action));
         }
     }
 

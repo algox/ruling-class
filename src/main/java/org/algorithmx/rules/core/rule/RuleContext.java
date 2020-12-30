@@ -23,17 +23,14 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.event.ExecutionEvent;
-import org.algorithmx.rules.event.ExecutionListener;
+import org.algorithmx.rules.event.EventProcessor;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.script.ScriptProcessor;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -54,20 +51,19 @@ public class RuleContext {
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
     private final ScriptProcessor scriptProcessor;
-    private final List<ExecutionListener> listeners = new ArrayList<>();
     private Locale locale = Locale.getDefault();
-    private boolean eventsEnabled = true;
+    private final EventProcessor eventProcessor;
 
     public RuleContext(ScopedBindings bindings) {
         this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
                 MessageResolver.create("rules"), MessageFormatter.create(), ObjectFactory.create(),
-                ConverterRegistry.create(), null);
+                EventProcessor.create(), ConverterRegistry.create(), null);
     }
 
     public RuleContext(ScopedBindings bindings, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,
-                       ConverterRegistry registry, ScriptProcessor scriptProcessor) {
+                       EventProcessor eventProcessor, ConverterRegistry registry, ScriptProcessor scriptProcessor) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
@@ -82,6 +78,7 @@ public class RuleContext {
         this.messageFormatter = messageFormatter;
         this.messageResolver = messageResolver;
         this.objectFactory = objectFactory;
+        this.eventProcessor = eventProcessor;
         this.registry = registry;
         this.scriptProcessor = scriptProcessor;
     }
@@ -167,30 +164,13 @@ public class RuleContext {
         return scriptProcessor;
     }
 
-    public boolean isEventsEnabled() {
-        return eventsEnabled;
+
+    public EventProcessor getEventProcessor() {
+        return eventProcessor;
     }
 
-    public void setEventsEnabled(boolean eventsEnabled) {
-        this.eventsEnabled = eventsEnabled;
-    }
-
-    public synchronized void addEventListener(ExecutionListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public synchronized void removeEventListener(ExecutionListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    public synchronized  <T> void fireListeners(ExecutionEvent<T> event) {
-        Assert.notNull(event, "event cannot be null.");
-        // Events turned off
-        if (!isEventsEnabled()) return;
-        // Fire all the listeners
-        for (ExecutionListener listener : listeners) {
-            listener.onEvent(event);
-        }
+    public Date getCreationTime() {
+        return creationTime;
     }
 
     @Override

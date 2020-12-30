@@ -23,6 +23,7 @@ import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rules.bind.match.ParameterResolver;
+import org.algorithmx.rules.event.EventProcessor;
 import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.script.NoOpScriptProcessor;
@@ -48,6 +49,7 @@ public class RuleContextBuilder {
     private MessageResolver messageResolver = MessageResolver.create("rules");
     private MessageFormatter messageFormatter = MessageFormatter.create();
     private ObjectFactory objectFactory = ObjectFactory.create();
+    private EventProcessor eventProcessor = EventProcessor.create();
     private ConverterRegistry registry = ConverterRegistry.create();
     private String ruleContextBindingName = "ruleContext";
     private ScriptProcessor scriptProcessor = null;
@@ -105,6 +107,12 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder eventProcessor(EventProcessor eventProcessor) {
+        Assert.notNull(eventProcessor, "eventProcessor cannot be null.");
+        this.eventProcessor = eventProcessor;
+        return this;
+    }
+
     public RuleContextBuilder converterRegistry(ConverterRegistry registry) {
         Assert.notNull(registry, "registry cannot be null.");
         this.registry = registry;
@@ -139,9 +147,10 @@ public class RuleContextBuilder {
         Bindings contextScope = scopedBindings.addScope();
 
         RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
-                messageFormatter, objectFactory, registry, scriptProcessor);
+                messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor);
         contextScope.bind(ruleContextBindingName, RuleContext.class, result);
-        listeners.stream().forEach(listener -> result.addEventListener(listener));
+        listeners.stream().forEach(listener -> result.getEventProcessor().addEventListener(listener));
+        
         return result;
     }
 }

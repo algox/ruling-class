@@ -63,7 +63,7 @@ public interface Action extends Comparable<Action> {
             throw new ActionExecutionException("Unexpected error occurred trying to execute Action.",
                     e, this, matches, values);
         } finally {
-            if (event != null) ctx.fireListeners(event);
+            if (event != null) ctx.getEventProcessor().fireListeners(event);
         }
     }
 

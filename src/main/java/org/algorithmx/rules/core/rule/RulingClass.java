@@ -84,7 +84,7 @@ public class RulingClass<T> implements Rule<T> {
         Assert.notNull(ctx, "ctx cannot be null");
 
         // Rule Start Event
-        ctx.fireListeners(createEvent(EventType.RULE_START, null));
+        ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_START, null));
 
         Boolean result = false;
 
@@ -110,7 +110,7 @@ public class RulingClass<T> implements Rule<T> {
             }
         } finally {
             // Rule End Event
-            ctx.fireListeners(createEvent(EventType.RULE_END, result));
+            ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_END, result));
         }
 
         return new RuleResult(getName(), result ? RuleExecutionStatus.PASS : RuleExecutionStatus.FAIL);
@@ -122,7 +122,7 @@ public class RulingClass<T> implements Rule<T> {
         if (condition == null) return true;
 
         // Fire the event
-        ctx.fireListeners(createEvent(startEventType, condition));
+        ctx.getEventProcessor().fireListeners(createEvent(startEventType, condition));
 
         try {
             // Check the condition
@@ -132,7 +132,7 @@ public class RulingClass<T> implements Rule<T> {
                     + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);
         } finally {
             // Fire the end event
-            ctx.fireListeners(createEvent(endEventType, condition));
+            ctx.getEventProcessor().fireListeners(createEvent(endEventType, condition));
         }
     }
 
@@ -142,7 +142,7 @@ public class RulingClass<T> implements Rule<T> {
         if (action == null) return;
 
         // Fire the start event
-        ctx.fireListeners(createEvent(startEventType, action));
+        ctx.getEventProcessor().fireListeners(createEvent(startEventType, action));
 
         try {
             action.run(ctx);
@@ -151,7 +151,7 @@ public class RulingClass<T> implements Rule<T> {
                     + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);
         } finally {
             // Fire the end event
-            ctx.fireListeners(createEvent(endEventType, action));
+            ctx.getEventProcessor().fireListeners(createEvent(endEventType, action));
         }
     }
 

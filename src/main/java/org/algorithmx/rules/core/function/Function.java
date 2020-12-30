@@ -65,7 +65,7 @@ public interface Function<T> extends Comparable<Function> {
             throw new FunctionExecutionException("Unexpected error occurred trying to execute Function.",
                     e, this, matches, values);
         } finally {
-            if (event != null) ctx.fireListeners(event);
+            if (event != null) ctx.getEventProcessor().fireListeners(event);
         }
     }
 

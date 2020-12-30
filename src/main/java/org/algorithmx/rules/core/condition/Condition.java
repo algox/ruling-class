@@ -67,7 +67,7 @@ public interface Condition extends Predicate<Object[]> {
             throw new ConditionExecutionException("Unexpected error occurred trying to execute Condition.",
                     e, this, matches, values);
         } finally {
-            if (event != null) ctx.fireListeners(event);
+            if (event != null) ctx.getEventProcessor().fireListeners(event);
         }
     }
 
