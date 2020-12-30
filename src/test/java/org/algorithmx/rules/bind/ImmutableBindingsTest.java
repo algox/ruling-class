@@ -69,7 +69,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest14() {
+    public void immutabilityTest11() {
         Bindings bindings = Bindings.create();
         Binding binding = BindingBuilder.with("key1").value("Hello World!").build();
         bindings.bind(binding);
@@ -79,7 +79,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest15() {
+    public void immutabilityTest12() {
         Bindings bindings = Bindings.create();
         Binding binding = BindingBuilder.with(key1 -> "hello world!").build();
         bindings.bind(binding);
@@ -89,7 +89,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest16() {
+    public void immutabilityTest13() {
         Bindings bindings = Bindings.create();
         bindings.bind("key1", 100);
 
@@ -100,7 +100,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest17() {
+    public void immutabilityTest14() {
         Bindings bindings = Bindings.create();
         bindings.bind("key1", int.class);
 
@@ -111,7 +111,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest18() {
+    public void immutabilityTest15() {
         Bindings bindings = Bindings.create();
         bindings.bind("x", new TypeReference<List<Integer>>() {
         });
@@ -124,7 +124,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest19() {
+    public void immutabilityTest16() {
         Bindings bindings = Bindings.create();
         bindings.bind("x", int.class, 250);
 
@@ -135,7 +135,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest20() {
+    public void immutabilityTest17() {
         List<Integer> values = new ArrayList<>();
         Bindings bindings = Bindings.create();
         bindings.bind("x", new TypeReference<List<Integer>>() {
@@ -149,7 +149,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest23() {
+    public void immutabilityTest18() {
         Bindings bindings = Bindings.create();
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
         bindings.bind(BindingBuilder.with(key2 -> 25).build());
@@ -158,7 +158,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest24() {
+    public void immutabilityTest19() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -172,7 +172,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest25() {
+    public void immutabilityTest20() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -192,7 +192,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest26() {
+    public void immutabilityTest21() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -219,7 +219,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest27() {
+    public void immutabilityTest22() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -253,7 +253,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest28() {
+    public void immutabilityTest23() {
         List<Integer> values = new ArrayList<>();
         values.add(1);
         values.add(2);
@@ -268,13 +268,13 @@ public class ImmutableBindingsTest {
     }
 
     @Test(expected = NoSuchBindingException.class)
-    public void immutabilityTest29() {
+    public void immutabilityTest24() {
         Bindings bindings = Bindings.create().asImmutableBindings();
         bindings.getValue("x");
     }
 
     @Test
-    public void immutabilityTest30() {
+    public void immutabilityTest25() {
         Bindings bindings = Bindings.create();
         bindings.bind("x", String.class, "Hello World!");
         Assert.assertTrue(bindings.asImmutableBindings().getValue("x").equals("Hello World!"));
@@ -286,7 +286,7 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest31() {
+    public void immutabilityTest26() {
         List<Integer> values = new ArrayList<>();
         values.add(1);
         values.add(2);
@@ -311,20 +311,12 @@ public class ImmutableBindingsTest {
     }
 
     @Test
-    public void immutabilityTest32() {
+    public void immutabilityTest27() {
         Bindings bindings = Bindings.create()
                 .bind("x", int.class, 250)
                 .bind("y", Integer.class, 100);
 
         Map<String, Binding<Integer>> matches = bindings.asImmutableBindings().getBindings(Integer.class);
         Assert.assertTrue(matches.size() == 2);
-    }
-
-    private static class TestClass{
-        private String field = null;
-
-        public String getField() {
-            return field;
-        }
     }
 }

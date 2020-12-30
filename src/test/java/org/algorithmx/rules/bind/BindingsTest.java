@@ -123,7 +123,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest10() {
+    public void bindTest8() {
         Bindings bindings = Bindings.create();
         Assert.assertTrue(bindings.size() == 0);
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
@@ -135,7 +135,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest11() {
+    public void bindTest9() {
         Bindings bindings = Bindings.create();
         bindings.bind(BindingBuilder.with(key1 -> "hello world!").build());
         bindings.bind(BindingBuilder.with(key2 -> 25).build());
@@ -144,14 +144,14 @@ public class BindingsTest {
     }
 
     @Test(expected = BindingAlreadyExistsException.class)
-    public void bindTest12() {
+    public void bindTest10() {
         Bindings bindings = Bindings.create();
         bindings.bind("x", int.class, 250);
         bindings.bind("x", String.class, "Hello world");
     }
 
     @Test
-    public void bindTest13() {
+    public void bindTest11() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -165,7 +165,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest14() {
+    public void bindTest12() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -185,7 +185,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest15() {
+    public void bindTest13() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -212,7 +212,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest16() {
+    public void bindTest14() {
         Bindings bindings = Bindings.create();
         Binding binding1 = BindingBuilder.with("x").value("Hello World!").build();
         bindings.bind(binding1);
@@ -247,7 +247,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest17() {
+    public void bindTest15() {
         List<Integer> values = new ArrayList<>();
         values.add(1);
         values.add(2);
@@ -262,13 +262,13 @@ public class BindingsTest {
     }
 
     @Test(expected = NoSuchBindingException.class)
-    public void bindTest18() {
+    public void bindTest16() {
         Bindings bindings = Bindings.create();
         bindings.getValue("x");
     }
 
     @Test
-    public void bindTest19() {
+    public void bindTest17() {
         Bindings bindings = Bindings.create();
         bindings.bind("x", String.class, "Hello World!");
         Assert.assertTrue(bindings.getValue("x").equals("Hello World!"));
@@ -280,14 +280,14 @@ public class BindingsTest {
     }
 
     @Test(expected = InvalidBindingException.class)
-    public void bindTest20() {
+    public void bindTest18() {
         Bindings bindings = Bindings.create();
         bindings.bind("x", String.class, "Hello World!");
         bindings.setValue("x", 123);
     }
 
     @Test
-    public void bindTest21() {
+    public void bindTest19() {
         List<Integer> values = new ArrayList<>();
         values.add(1);
         values.add(2);
@@ -312,7 +312,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest22() {
+    public void bindTest20() {
         Bindings bindings = Bindings.create()
                 .bind("x", int.class, 250)
                 .bind("y", Integer.class, 100);
@@ -322,7 +322,7 @@ public class BindingsTest {
     }
 
     @Test
-    public void bindTest23() {
+    public void bindTest21() {
         Bindings bindings = Bindings.create()
                 .bind("a", String.class)
                 .bind("b", new TypeReference<Set<Integer>>() {})
