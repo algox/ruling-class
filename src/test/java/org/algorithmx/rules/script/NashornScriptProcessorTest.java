@@ -7,8 +7,8 @@ import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
-import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.rule.RuleContextBuilder;
+import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -2,8 +2,6 @@ package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.core.rule.RuleDefinitionAware;
-import org.algorithmx.rules.core.rule.RuleViolationBuilder;
-import org.algorithmx.rules.core.rule.Severity;
 
 public abstract class ValidationRule implements RuleDefinitionAware {
 
@@ -79,11 +77,7 @@ public abstract class ValidationRule implements RuleDefinitionAware {
     }
 
     protected RuleViolationBuilder createRuleViolationBuilder() {
-        return RuleViolationBuilder.with(getName())
-                .errorCode(getErrorCode())
-                .severity(getSeverity())
-                .errorMessage(getErrorMessage())
-                .defaultMessage(getDefaultMessage());
+        return RuleViolationBuilder.with(this);
     }
 
     @Override

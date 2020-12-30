@@ -4,7 +4,7 @@ import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.function.Function;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
-import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.core.rule.RuleExecutionException;
 import org.algorithmx.rules.core.rule.RuleResult;

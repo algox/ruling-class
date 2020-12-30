@@ -21,8 +21,8 @@ import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.rule.RuleContextBuilder;
+import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 /**
  * Represents a function that accepts argument(s) and produces a result.
@@ -40,7 +40,7 @@ public interface Function<T> extends Comparable<Function> {
      * @throws FunctionExecutionException thrown if there are any errors during the Function execution.
      */
     T apply(RuleContext ctx) throws FunctionExecutionException;
-    
+
     /**
      * Executes the Function given all the arguments it needs.
      *

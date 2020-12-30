@@ -35,7 +35,7 @@ import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
-import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;

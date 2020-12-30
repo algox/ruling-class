@@ -18,17 +18,12 @@
 package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
-import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleBuilder;
-import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.rule.RuleContextBuilder;
-import org.algorithmx.rules.core.rule.RuleDefinition;
-import org.algorithmx.rules.util.TypeReference;
-import org.algorithmx.rules.util.reflect.ObjectFactory;
+import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 

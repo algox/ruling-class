@@ -24,9 +24,7 @@ import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.Rule;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
-import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.rule.RuleViolations;
-import org.algorithmx.rules.core.rule.Severity;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.function.Supplier;

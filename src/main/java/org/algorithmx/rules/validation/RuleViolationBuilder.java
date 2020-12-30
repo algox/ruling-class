@@ -1,7 +1,8 @@
-package org.algorithmx.rules.core.rule;
+package org.algorithmx.rules.validation;
 
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.match.ParameterMatch;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
@@ -31,7 +32,7 @@ public class RuleViolationBuilder {
         return new RuleViolationBuilder(ruleName);
     }
 
-    /*public static RuleViolationBuilder with(ValidationRule rule) {
+    public static RuleViolationBuilder with(ValidationRule rule) {
         Assert.notNull(rule, "rule cannot be null.");
         RuleViolationBuilder result = new RuleViolationBuilder(rule.getName())
                 .errorCode(rule.getErrorCode())
@@ -39,7 +40,7 @@ public class RuleViolationBuilder {
                 .errorMessage(rule.getErrorMessage())
                 .defaultMessage(rule.getDefaultMessage());
         return result;
-    }*/
+    }
 
     public RuleViolationBuilder errorCode(String errorCode) {
         this.errorCode = errorCode;

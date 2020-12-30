@@ -21,6 +21,7 @@ import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.context.RuleContext;
 
 /**
  * Rule class encapsulates all the properties/methods of a Rule within the framework. A Rule consists of two parts

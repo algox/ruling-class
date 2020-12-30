@@ -21,8 +21,8 @@ import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.core.rule.RuleContext;
-import org.algorithmx.rules.core.rule.RuleContextBuilder;
+import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 import java.util.function.Predicate;
 
