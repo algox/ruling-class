@@ -19,16 +19,10 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
-import org.algorithmx.rules.event.ConditionExecution;
-import org.algorithmx.rules.event.EventType;
-import org.algorithmx.rules.event.ExecutionEvent;
-import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.function.Predicate;
 
@@ -47,29 +41,7 @@ public interface Condition extends Predicate<Object[]> {
      * @return result of the function.
      * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
      */
-    default boolean isPass(RuleContext ctx) throws ConditionExecutionException {
-        Assert.notNull(ctx, "ctx cannot be null.");
-
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<ConditionExecution> event = null;
-
-        try {
-            matches = ctx.match(getMethodDefinition());
-            values = ctx.resolve(matches, getMethodDefinition());
-            boolean result = isPass(values);
-            event = new ExecutionEvent(EventType.ON_CONDITION,
-                    new ConditionExecution(this, result, getMethodDefinition(), RuleUtils.immutable(matches), values));
-            return result;
-        } catch (Exception e) {
-            event = new ExecutionEvent(EventType.ON_CONDITION,
-                    new ConditionExecution(this, e, getMethodDefinition(), RuleUtils.immutable(matches), values));
-            throw new ConditionExecutionException("Unexpected error occurred trying to execute Condition.",
-                    e, this, matches, values);
-        } finally {
-            if (event != null) ctx.getEventProcessor().fireListeners(event);
-        }
-    }
+    boolean isPass(RuleContext ctx) throws ConditionExecutionException;
 
     /**
      * Executes the Function given all the arguments it needs.

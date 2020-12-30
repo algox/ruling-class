@@ -150,7 +150,7 @@ public class RuleContextBuilder {
                 messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor);
         contextScope.bind(ruleContextBindingName, RuleContext.class, result);
         listeners.stream().forEach(listener -> result.getEventProcessor().addEventListener(listener));
-        
+
         return result;
     }
 }

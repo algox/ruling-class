@@ -17,9 +17,15 @@
  */
 package org.algorithmx.rules.core.action;
 
+import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
+import org.algorithmx.rules.core.rule.RuleContext;
+import org.algorithmx.rules.event.ActionExecution;
+import org.algorithmx.rules.event.EventType;
+import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.reflect.MethodExecutor;
 
 import java.util.Arrays;
@@ -51,18 +57,37 @@ public class DefaultAction implements Action {
     }
 
     @Override
+    public void run(RuleContext ctx) throws ActionExecutionException {
+        Assert.notNull(ctx, "ctx cannot be null.");
+
+        ParameterMatch[] matches = null;
+        Object[] values = null;
+        ExecutionEvent<ActionExecution> event = null;
+
+        try {
+            matches = ctx.match(getMethodDefinition());
+            values = ctx.resolve(matches, getMethodDefinition());
+            run(values);
+            event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, getMethodDefinition(),
+                    RuleUtils.immutable(matches), values));
+        } catch (Exception e) {
+            event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, e, getMethodDefinition(),
+                    RuleUtils.immutable(matches), values));
+            throw new ActionExecutionException("Unexpected error occurred trying to execute Action.",
+                    e, this, matches, values);
+        } finally {
+            if (event != null) ctx.getEventProcessor().fireListeners(event);
+        }
+    }
+
+    @Override
     public void run(Object... args) {
         try {
             // Execute the Action Method
             methodExecutor.execute(target, args);
-        } catch (UnrulyException e) {
-            // TODO : Add proper parameter info
-            throw e;
         } catch (Exception e) {
-            // TODO : Add proper parameter info
-            UnrulyException ex = new UnrulyException("Error trying to execute rule action ["
-                    + getMethodDefinition().getName() + "] Method [" + getMethodDefinition().getMethod()
-                    + "] Args [" + Arrays.toString(args) + "]", e);
+            UnrulyException ex = new UnrulyException("Error trying to execute action ["
+                    + getMethodDefinition().getSignature() + "] Args [" + Arrays.toString(args) + "]", e);
             throw ex;
         }
     }

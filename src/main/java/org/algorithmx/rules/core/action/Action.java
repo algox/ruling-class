@@ -19,16 +19,10 @@ package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.rule.RuleContext;
 import org.algorithmx.rules.core.rule.RuleContextBuilder;
-import org.algorithmx.rules.event.ActionExecution;
-import org.algorithmx.rules.event.EventType;
-import org.algorithmx.rules.event.ExecutionEvent;
-import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.RuleUtils;
 
 /**
  * Represents an operation that accepts input arguments and returns no result.
@@ -44,28 +38,7 @@ public interface Action extends Comparable<Action> {
      * @param ctx Rule Context.
      * @throws ActionExecutionException thrown if there are any errors during the Action execution.
      */
-    default void run(RuleContext ctx) throws ActionExecutionException {
-        Assert.notNull(ctx, "ctx cannot be null.");
-
-        ParameterMatch[] matches = null;
-        Object[] values = null;
-        ExecutionEvent<ActionExecution> event = null;
-
-        try {
-            matches = ctx.match(getMethodDefinition());
-            values = ctx.resolve(matches, getMethodDefinition());
-            run(values);
-            event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, getMethodDefinition(),
-                    RuleUtils.immutable(matches), values));
-        } catch (Exception e) {
-            event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, e, getMethodDefinition(),
-                    RuleUtils.immutable(matches), values));
-            throw new ActionExecutionException("Unexpected error occurred trying to execute Action.",
-                    e, this, matches, values);
-        } finally {
-            if (event != null) ctx.getEventProcessor().fireListeners(event);
-        }
-    }
+    void run(RuleContext ctx) throws ActionExecutionException;
 
     /**
      * Derives all the arguments and executes this Action.
