@@ -17,12 +17,8 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.core.context.RuleContext;
-import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 import java.util.function.Predicate;
 
@@ -32,16 +28,7 @@ import java.util.function.Predicate;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Condition extends Predicate<Object[]> {
-
-    /**
-     * Derives all the arguments and executes this Condition.
-     *
-     * @param ctx Rule Context.
-     * @return result of the function.
-     * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
-     */
-    boolean isPass(RuleContext ctx) throws ConditionExecutionException;
+public interface Condition extends BasicCondition, Predicate<Object[]> {
 
     /**
      * Executes the Function given all the arguments it needs.
@@ -50,19 +37,7 @@ public interface Condition extends Predicate<Object[]> {
      * @return result of the function.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    boolean isPass(Object...params) throws UnrulyException;
-
-    /**
-     * Derives all the arguments and executes this Condition.
-     *
-     * @param params Condition Parameters.
-     * @return true if the Condition passed; false otherwise.
-     * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
-     */
-    default boolean isPass(BindingDeclaration...params) throws ConditionExecutionException {
-        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return isPass(RuleContextBuilder.create(bindings));
-    }
+    boolean isTrue(Object...params) throws UnrulyException;
 
     /**
      * Executes Condition given all the arguments it needs.
@@ -72,7 +47,7 @@ public interface Condition extends Predicate<Object[]> {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     default boolean test(Object...args) throws UnrulyException {
-        return isPass(args);
+        return isTrue(args);
     }
 
     /**

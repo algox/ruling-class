@@ -50,7 +50,7 @@ public class ExecutorTest {
                 .name("rule1")
                 .build();
 
-        boolean result = rule.getCondition().isPass("hello world", 20, values);
+        boolean result = rule.getCondition().isTrue("hello world", 20, values);
         Assert.assertTrue(result);
     }
 
@@ -60,7 +60,7 @@ public class ExecutorTest {
                 ConditionBuilder.create((String x, Integer y) -> y > 10))
                 .name("rule1")
                 .build();
-        boolean result = rule.getCondition().isPass("hello world", 20);
+        boolean result = rule.getCondition().isTrue("hello world", 20);
         Assert.assertTrue(result);
     }
 

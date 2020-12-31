@@ -59,7 +59,7 @@ public class DefaultCondition implements Condition {
         try {
             matches = ctx.match(getMethodDefinition());
             values = ctx.resolve(matches, getMethodDefinition());
-            boolean result = isPass(values);
+            boolean result = isTrue(values);
             event = new ExecutionEvent(EventType.ON_CONDITION,
                     new ConditionExecution(this, result, getMethodDefinition(), RuleUtils.immutable(matches), values));
             return result;
@@ -74,7 +74,7 @@ public class DefaultCondition implements Condition {
     }
 
     @Override
-    public boolean isPass(Object... args) throws UnrulyException {
+    public boolean isTrue(Object... args) throws UnrulyException {
         // Execute the Action Method
         Object result = methodExecutor.execute(target, args);
 

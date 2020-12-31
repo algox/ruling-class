@@ -50,6 +50,7 @@ public interface Action extends Comparable<Action> {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
         run(RuleContextBuilder.create(bindings));
     }
+
     /**
      * Executes thr Action given all the arguments it needs.
      *

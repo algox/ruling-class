@@ -54,7 +54,7 @@ public class ConditionTest {
         Condition condition = ConditionBuilder
                 .with((Integer a, String x) -> a > 55)
                 .build();
-        Assert.assertTrue(condition.isPass(56, "abc"));
+        Assert.assertTrue(condition.isTrue(56, "abc"));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ConditionTest {
         Condition condition = ConditionBuilder
                 .with((Integer a, Date date, String x) -> a != null)
                 .build();
-        Assert.assertTrue(condition.isPass(10, new Date(), "abc"));
+        Assert.assertTrue(condition.isTrue(10, new Date(), "abc"));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ConditionTest {
                 .build();
         List<String> values = new ArrayList<>();
         values.add("one");
-        Assert.assertTrue(condition.isPass(36, new Date(), "x", values));
+        Assert.assertTrue(condition.isTrue(36, new Date(), "x", values));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ConditionTest {
                 .build();
         List<String> values = new ArrayList<>();
         values.add("one");
-        Assert.assertTrue(condition.isPass(36, new Date(), "x", values, 0l));
+        Assert.assertTrue(condition.isTrue(36, new Date(), "x", values, 0l));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class ConditionTest {
         Condition condition = ConditionBuilder
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b) -> a > 35 && x.equals("x"))
                 .build();
-        Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b"));
+        Assert.assertTrue(condition.isTrue(36, new Date(), "x", new ArrayList<>(), 0l, "b"));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ConditionTest {
                 .with((Integer a, Date date, String x, List<String> values, Long longValue, String b, BigDecimal big)
                         -> big.compareTo(BigDecimal.ZERO) > 0)
                 .build();
-        Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b", new BigDecimal("100")));
+        Assert.assertTrue(condition.isTrue(36, new Date(), "x", new ArrayList<>(), 0l, "b", new BigDecimal("100")));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ConditionTest {
         numbers.add(4);
         numbers.add(5);
         numbers.add(6);
-        Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b",
+        Assert.assertTrue(condition.isTrue(36, new Date(), "x", new ArrayList<>(), 0l, "b",
                 new BigDecimal("100"), numbers));
     }
 
@@ -171,13 +171,13 @@ public class ConditionTest {
         Map<String, String> map = new HashMap<>();
         map.put("abcde", "xxx");
 
-        Assert.assertTrue(condition.isPass(36, new Date(), "x", new ArrayList<>(), 0l, "b",
+        Assert.assertTrue(condition.isTrue(36, new Date(), "x", new ArrayList<>(), 0l, "b",
                 new BigDecimal("100"), numbers, map, 10));
     }
 
     @Test
     public void testConditionConsumer() {
         Condition condition = ConditionBuilder.create((Integer a) -> a > 10);
-        Assert.assertTrue(condition.isPass(13));
+        Assert.assertTrue(condition.isTrue(13));
     }
 }
