@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.context;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.bind.convert.ConverterRegistry;
@@ -80,9 +81,20 @@ public class RuleContextBuilder {
         return new RuleContextBuilder(bindings);
     }
 
+    public static RuleContextBuilder with(BindingDeclaration...params) {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return with(bindings);
+    }
+
+
     public static RuleContext create(Bindings bindings) {
         return with(bindings).build();
     }
+
+    public static RuleContext create(BindingDeclaration...params) {
+        return with(params).build();
+    }
+
     /**
      * Sets the matching strategy to uss.
      *

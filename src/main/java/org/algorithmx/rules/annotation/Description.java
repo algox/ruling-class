@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target(value={ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE})
+@Target(value={ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Description {
