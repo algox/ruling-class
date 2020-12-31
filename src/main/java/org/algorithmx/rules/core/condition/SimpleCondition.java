@@ -5,7 +5,7 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.context.RuleContextBuilder;
 
-public interface BasicCondition {
+public interface SimpleCondition {
 
     /**
      * Derives all the arguments and executes this Condition.
@@ -28,19 +28,19 @@ public interface BasicCondition {
         return isPass(RuleContextBuilder.create(bindings));
     }
 
-    default BasicCondition not() {
+    default SimpleCondition not() {
         return new DefaultNotCondition(this);
     }
 
-    default CompositeCondition and(BasicCondition condition) {
+    default CompositeCondition and(SimpleCondition condition) {
         return new DefaultCompositeCondition(this, condition, (a, b) -> a && b);
     }
 
-    default CompositeCondition or(BasicCondition condition) {
+    default CompositeCondition or(SimpleCondition condition) {
         return new DefaultCompositeCondition(this, condition, (a, b) -> a || b);
     }
 
-    default CompositeCondition xor(BasicCondition condition) {
+    default CompositeCondition xor(SimpleCondition condition) {
         return new DefaultCompositeCondition(this, condition, (a, b) -> a ^ b);
     }
 }

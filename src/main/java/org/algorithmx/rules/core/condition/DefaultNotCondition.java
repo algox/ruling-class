@@ -5,15 +5,15 @@ import org.algorithmx.rules.lib.spring.util.Assert;
 
 public class DefaultNotCondition implements NotCondition {
 
-    private BasicCondition condition;
+    private SimpleCondition condition;
 
-    public DefaultNotCondition(BasicCondition condition) {
+    public DefaultNotCondition(SimpleCondition condition) {
         super();
         Assert.notNull(condition, "condition cannot be null.");
         this.condition = condition;
     }
 
-    public BasicCondition getCondition() {
+    public SimpleCondition getCondition() {
         return condition;
     }
 

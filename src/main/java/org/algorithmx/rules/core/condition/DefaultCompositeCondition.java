@@ -7,11 +7,11 @@ import java.util.function.BiPredicate;
 
 public class DefaultCompositeCondition implements CompositeCondition {
 
-    private final BasicCondition leftOperand;
-    private final BasicCondition rightOperand;
+    private final SimpleCondition leftOperand;
+    private final SimpleCondition rightOperand;
     private final BiPredicate<Boolean, Boolean> predicate;
 
-    public DefaultCompositeCondition(BasicCondition leftOperand, BasicCondition rightOperand, BiPredicate<Boolean, Boolean> predicate) {
+    public DefaultCompositeCondition(SimpleCondition leftOperand, SimpleCondition rightOperand, BiPredicate<Boolean, Boolean> predicate) {
         super();
         Assert.notNull(leftOperand, "leftOperand cannot be null.");
         Assert.notNull(rightOperand, "rightOperand cannot be null.");
@@ -22,12 +22,12 @@ public class DefaultCompositeCondition implements CompositeCondition {
     }
 
     @Override
-    public BasicCondition getLeftOperand() {
+    public SimpleCondition getLeftOperand() {
         return leftOperand;
     }
 
     @Override
-    public BasicCondition getRightOperand() {
+    public SimpleCondition getRightOperand() {
         return rightOperand;
     }
 

@@ -2,11 +2,11 @@ package org.algorithmx.rules.core.condition;
 
 import java.util.function.BiPredicate;
 
-public interface CompositeCondition extends BasicCondition {
+public interface CompositeCondition extends SimpleCondition {
 
-    BasicCondition getLeftOperand();
+    SimpleCondition getLeftOperand();
 
-    BasicCondition getRightOperand();
+    SimpleCondition getRightOperand();
 
     BiPredicate<Boolean, Boolean> getPredicate();
 }

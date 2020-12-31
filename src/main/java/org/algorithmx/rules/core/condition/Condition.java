@@ -28,7 +28,7 @@ import java.util.function.Predicate;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Condition extends BasicCondition, Predicate<Object[]> {
+public interface Condition extends SimpleCondition, Predicate<Object[]> {
 
     /**
      * Executes the Function given all the arguments it needs.

@@ -1,6 +1,6 @@
 package org.algorithmx.rules.core.condition;
 
-public interface NotCondition extends BasicCondition {
+public interface NotCondition extends SimpleCondition {
 
-    BasicCondition getCondition();
+    SimpleCondition getCondition();
 }
