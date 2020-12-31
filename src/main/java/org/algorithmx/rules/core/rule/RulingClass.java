@@ -127,7 +127,7 @@ public class RulingClass<T> implements Rule<T> {
 
         try {
             // Check the condition
-            return condition.isPass(ctx);
+            return condition.isTrue(ctx);
         } catch (Exception e) {
             throw new RuleExecutionException("Unexpected error occurred while trying to execution Condition ["
                     + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);

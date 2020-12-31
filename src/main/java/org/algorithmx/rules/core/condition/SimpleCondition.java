@@ -14,7 +14,7 @@ public interface SimpleCondition {
      * @return result of the function.
      * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
      */
-    boolean isPass(RuleContext ctx) throws ConditionExecutionException;
+    boolean isTrue(RuleContext ctx) throws ConditionExecutionException;
 
     /**
      * Derives all the arguments and executes this Condition.
@@ -23,9 +23,9 @@ public interface SimpleCondition {
      * @return true if the Condition passed; false otherwise.
      * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
      */
-    default boolean isPass(BindingDeclaration...params) throws ConditionExecutionException {
+    default boolean isTrue(BindingDeclaration...params) throws ConditionExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return isPass(RuleContextBuilder.create(bindings));
+        return isTrue(RuleContextBuilder.create(bindings));
     }
 
     default SimpleCondition not() {

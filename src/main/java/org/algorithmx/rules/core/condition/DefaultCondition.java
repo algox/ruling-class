@@ -49,7 +49,7 @@ public class DefaultCondition implements Condition {
     }
 
     @Override
-    public boolean isPass(RuleContext ctx) throws ConditionExecutionException {
+    public boolean isTrue(RuleContext ctx) throws ConditionExecutionException {
         Assert.notNull(ctx, "ctx cannot be null.");
 
         ParameterMatch[] matches = null;

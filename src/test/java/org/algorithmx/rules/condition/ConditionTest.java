@@ -46,7 +46,7 @@ public class ConditionTest {
         Condition condition = ConditionBuilder
                 .with(() -> true)
                 .build();
-        Assert.assertTrue(condition.isPass());
+        Assert.assertTrue(condition.isTrue());
     }
 
     @Test

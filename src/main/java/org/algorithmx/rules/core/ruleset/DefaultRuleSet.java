@@ -148,7 +148,7 @@ public class DefaultRuleSet implements RuleSet {
 
         try {
             // Check the condition
-            return condition.isPass(ctx);
+            return condition.isTrue(ctx);
         } catch (Exception e) {
             throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Condition ["
                     + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);

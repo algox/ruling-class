@@ -43,7 +43,7 @@ public class NashornScriptProcessorTest {
 
         RuleContext context = RuleContextBuilder.create(bindings);
         Condition condition = ConditionBuilder.script("b >= 15");
-        Assert.assertTrue(condition.isPass(context));
+        Assert.assertTrue(condition.isTrue(context));
     }
 
     @Test
