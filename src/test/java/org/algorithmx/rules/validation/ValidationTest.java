@@ -48,7 +48,8 @@ public class ValidationTest {
 
     @Test
     public void test1() {
-        RuleSet rules = RuleSetBuilder.with("RuleSet1", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet1", "Test Rule Set")
                 .add(RuleBuilder.create(TestRule1.class))
                 .add(RuleBuilder.create(TestRule2.class))
                 .add(RuleBuilder.create(TestRule3.class))
@@ -64,7 +65,8 @@ public class ValidationTest {
 
     @Test
     public void test2() {
-        RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet2", "Test Rule Set")
                 .add(RuleBuilder.create(TestRule1.class))
                 .add(RuleBuilder.create(TestRule2.class))
                 .add(RuleBuilder.create(TestRule3.class))
@@ -85,7 +87,8 @@ public class ValidationTest {
                 .bind("b",1)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet2", "Test Rule Set")
                 .add(RuleBuilder.create((Object b) -> new NotNullRule(b)))
                 .build();
 
@@ -101,7 +104,8 @@ public class ValidationTest {
                 .bind("b", String.class, null)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet2", "Test Rule Set")
                 .add(RuleBuilder.create((Object b) -> new NullRule(b)))
                 .build();
 
@@ -116,7 +120,8 @@ public class ValidationTest {
                 .bind("b", String.class, "  ")
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet2", "Test Rule Set")
                 .add(RuleBuilder.create((String b) -> new StringHasLengthRule(b)))
                 .build();
 
@@ -131,7 +136,8 @@ public class ValidationTest {
                 .bind("b", String.class, "  a")
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet2", "Test Rule Set")
                 .add(RuleBuilder.create((String b) -> new StringHasTextRule(b)))
                 .build();
 
@@ -146,7 +152,8 @@ public class ValidationTest {
                 .bind("b", String.class, "ababab")
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet2", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet2", "Test Rule Set")
                 .add(RuleBuilder.create((String b) -> new RegexPatternMatchRule("[z]*", b)))
                 .build();
 
@@ -162,7 +169,8 @@ public class ValidationTest {
                 .bind("d", new Date())
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((Date d) -> new FutureDateRule(d)))
                 .build();
 
@@ -176,7 +184,8 @@ public class ValidationTest {
                 .bind("d", new Date())
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((Date d) -> new PastDateRule(d)))
                 .build();
 
@@ -192,7 +201,8 @@ public class ValidationTest {
                 .bind("a", 25)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((Integer a) -> new MaxRule(50, a)))
                 .add(RuleBuilder.create((Integer a) -> new MaxRule(20, a)))
                 .build();
@@ -208,7 +218,8 @@ public class ValidationTest {
                 .bind("a", 10)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((Integer a) -> new MinRule(11, a)))
                 .add(RuleBuilder.create((Integer a) -> new MinRule(5, a)))
                 .add(RuleBuilder.create(new MinRule(25, 22).defaultMessage("test ${value} ${min}")))
@@ -226,7 +237,8 @@ public class ValidationTest {
                 .bind("a", 22)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((Integer a) -> new RangeRule(1, 10, a)))
                 .add(RuleBuilder.create((Integer a) -> new RangeRule(20, 25, a)))
                 .preCondition(ConditionBuilder.create(() -> true))
@@ -257,7 +269,8 @@ public class ValidationTest {
                 .bind("a", 22)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((@Optional Binding<Integer> a) -> new MustBeDefinedRule(a)))
                 .add(RuleBuilder.create((@Optional Binding<Integer> c) -> new MustBeDefinedRule(c)))
                 .build();
@@ -273,7 +286,8 @@ public class ValidationTest {
                 .bind("a", 22)
                 .bind("e", errors);
 
-        RuleSet rules = RuleSetBuilder.with("RuleSet", "Test Rule Set")
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet", "Test Rule Set")
                 .add(RuleBuilder.create((@Optional Binding<Integer> a) -> new MustNotBeDefinedRule(a)))
                 .add(RuleBuilder.create((@Optional Binding<Integer> c) -> new MustNotBeDefinedRule(c)))
                 .build();
