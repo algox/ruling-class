@@ -196,6 +196,7 @@ public final class ReflectionUtils {
         List<Class<?>> candidateClasses = new ArrayList<>();
 
         candidateClasses.add(clazz);
+        // For Functional classes
         candidateClasses.addAll(ClassUtils.getAllInterfaces(clazz));
 
         for (Class<?> c : candidateClasses) {
@@ -212,7 +213,7 @@ public final class ReflectionUtils {
      * @param filter function to determine whether the given method matches the desired criteria.
      * @return all the matching methods.
      */
-    public static List<Method> findMethods(Class<?> clazz, Predicate<Method> filter) {
+    private static List<Method> findMethods(Class<?> clazz, Predicate<Method> filter) {
         Assert.notNull(clazz, "clazz cannot be null.");
         Assert.notNull(clazz, "annotationClazz cannot be null.");
 

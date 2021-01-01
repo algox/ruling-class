@@ -98,10 +98,10 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      * @return all matching MethodDefinitions
      */
     public static MethodDefinition[] load(Class<?> c, Predicate<Method> predicate) {
-        List<Method> matches = ReflectionUtils.findMethods(c, predicate);
-        List<MethodDefinition> result = new ArrayList<>(matches.size());
-        matches.stream().forEach(m -> result.add(load(m)));
-        return result.toArray(new MethodDefinition[matches.size()]);
+        Method[] matches = ReflectionUtils.getMethods(c, predicate);
+        List<MethodDefinition> result = new ArrayList<>(matches.length);
+        Arrays.stream(matches).forEach(m -> result.add(load(m)));
+        return result.toArray(new MethodDefinition[matches.length]);
     }
 
     public static MethodDefinition load(Method method) {
