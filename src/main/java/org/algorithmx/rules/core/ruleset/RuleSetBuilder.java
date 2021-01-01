@@ -19,22 +19,16 @@ package org.algorithmx.rules.core.ruleset;
 
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.function.Function;
-import org.algorithmx.rules.core.function.FunctionBuilder;
-import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.validation.RuleProducingFunctionRule;
-import org.algorithmx.rules.validation.ValidationRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 public class RuleSetBuilder {
@@ -43,7 +37,7 @@ public class RuleSetBuilder {
 
     private final String name;
     private String description;
-    private final Deque<Rule> rules = new LinkedList<>();
+    private final LinkedList<Rule> rules = new LinkedList<>();
 
     private Condition preCondition;
     private Action preAction;
@@ -77,36 +71,94 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder rule(Class<?> ruleClass) {
-        rule(RuleBuilder.with(ruleClass).build());
+    public RuleSetBuilder clear() {
+        this.rules.clear();
         return this;
     }
 
-    public <R extends ValidationRule, T> RuleSetBuilder rule(UnaryFunction<R, T> supplier) {
-        return rule(new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build()));
+    public Rule get(int index) {
+        return rules.get(index);
     }
 
-    public RuleSetBuilder rule(Function<?> supplier) {
-        return rule(new RuleProducingFunctionRule(supplier));
+    public Rule get(String ruleName) {
+        Assert.notNull(ruleName, "ruleName cannot be null.");
+        Rule result = null;
+
+        for (Rule rule : rules) {
+            if (ruleName.equals(rule.getName())) {
+                result = rule;
+                break;
+            }
+        }
+
+        return result;
     }
 
-    public RuleSetBuilder rule(Object ruleTarget) {
-        rule(RuleBuilder.with(ruleTarget).build());
+    public Rule[] getAll(String ruleName) {
+        Assert.notNull(ruleName, "ruleName cannot be null.");
+        List<Rule> result = null;
+
+        for (Rule rule : rules) {
+            if (ruleName.equals(rule.getName())) {
+                result.add(rule);
+                break;
+            }
+        }
+
+        return result.toArray(new Rule[result.size()]);
+    }
+
+    public int getIndex(Rule rule) {
+        Assert.notNull(rule, "Rule cannot be null.");
+        Integer result = null;
+
+        for (int i = 0; i < rules.size(); i++) {
+            if (rules.get(i).equals(rule)) {
+                result = i;
+                break;
+            }
+        }
+
+        if (result == null) throw new NoSuchElementException("Rule [" + rule + "] not found");
+
+        return result;
+    }
+
+    public RuleSetBuilder addBefore(Rule rule, Rule existingRule) {
+        Assert.notNull(rule, "Rule cannot be null.");
+        Assert.notNull(existingRule, "existingRule cannot be null.");
+        int index = getIndex(existingRule);
+        rules.add(index, rule);
         return this;
     }
 
-    public RuleSetBuilder rule(Rule rule) {
+    public RuleSetBuilder addAfter(Rule rule, Rule existingRule) {
+        Assert.notNull(rule, "Rule cannot be null.");
+        Assert.notNull(existingRule, "existingRule cannot be null.");
+        int index = getIndex(existingRule);
+        rules.add(index + 1, rule);
+        return this;
+    }
+
+    public RuleSetBuilder addFirst(Rule rule) {
+        Assert.notNull(rule, "Rule cannot be null.");
+        this.rules.addFirst(rule);
+        return this;
+    }
+
+    public RuleSetBuilder add(Rule rule) {
         Assert.notNull(rule, "Rule cannot be null.");
         this.rules.add(rule);
         return this;
     }
 
-    public RuleSetBuilder rules(Rule...rules) {
-        rules(Arrays.asList(rules));
+    public RuleSetBuilder addAll(Rule...rules) {
+        Assert.notNull(rules, "Rules cannot be null.");
+        addAll(Arrays.asList(rules));
         return this;
     }
 
-    public RuleSetBuilder rules(Collection<Rule> rules) {
+    public RuleSetBuilder addAll(Collection<Rule> rules) {
         Assert.notNull(rules, "Rules cannot be null.");
         this.rules.addAll(rules);
         return this;
@@ -209,5 +261,9 @@ public class RuleSetBuilder {
 
     public Condition getErrorHandler() {
         return errorHandler;
+    }
+
+    public Rule[] getRules() {
+        return rules.toArray(new Rule[rules.size()]);
     }
 }

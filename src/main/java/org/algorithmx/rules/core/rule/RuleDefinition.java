@@ -38,7 +38,7 @@ public final class RuleDefinition {
     // Name of the Rule
     private String name;
     // Description of the Rule
-    private final String description;
+    private String description;
 
     // Rule class
     private final Class<?> ruleClass;
@@ -113,6 +113,10 @@ public final class RuleDefinition {
         Assert.isTrue(RuleUtils.isValidName(name), "Rule name must match ["
                 + RuleUtils.NAME_REGEX + "] Given [" + name + "]");
         this.name = name;
+    }
+
+    void setDescription(String description) {
+        this.description = description;
     }
 
     public MethodDefinition getPreConditionDefinition() {

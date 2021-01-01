@@ -19,13 +19,17 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
+import org.algorithmx.rules.core.function.Function;
+import org.algorithmx.rules.core.function.FunctionBuilder;
+import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
+import org.algorithmx.rules.validation.RuleProducingFunctionRule;
+import org.algorithmx.rules.validation.ValidationRule;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,10 +84,27 @@ public abstract class RuleBuilder<T> {
         return new LambdaBasedRuleBuilder(condition);
     }
 
-    public static Rule<?> create(Condition condition, Action...actions) {
-        LambdaBasedRuleBuilder builder = with(condition);
-        if (actions != null) Arrays.stream(actions).forEach(a -> builder.then(a));
-        return builder.build();
+    public static <R extends ValidationRule, T> Rule create(UnaryFunction<R, T> supplier) {
+        return new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build());
+    }
+
+    public static <R extends ValidationRule, T> Rule create(String ruleName, String description, UnaryFunction<R, T> supplier) {
+        Assert.notNull(ruleName, "ruleName cannot be null.");
+        RuleProducingFunctionRule result = new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build());
+        result.getRuleDefinition().setName(ruleName);
+        result.getRuleDefinition().setDescription(description);
+        return result;
+    }
+
+    public static Rule create(Function<?> supplier) {
+        return new RuleProducingFunctionRule(supplier);
+    }
+
+    public static Rule create(String ruleName, String description, Function<?> supplier) {
+        RuleProducingFunctionRule result = new RuleProducingFunctionRule(supplier);
+        result.getRuleDefinition().setName(ruleName);
+        result.getRuleDefinition().setDescription(description);
+        return result;
     }
 
     protected RuleBuilder() {
