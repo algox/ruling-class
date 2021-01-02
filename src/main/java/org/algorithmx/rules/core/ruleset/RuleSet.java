@@ -20,7 +20,6 @@ package org.algorithmx.rules.core.ruleset;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
-import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
@@ -55,7 +54,7 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      * @return execution result of the RuleSet.
      * @throws RuleSetExecutionException thrown if there are any runtime errors during the execution.
      */
-    default RuleResultSet run(BindingDeclaration...params) throws UnrulyException {
+    default RuleResultSet run(BindingDeclaration...params) throws RuleSetExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
         return run(RuleContextBuilder.create(bindings));
     }

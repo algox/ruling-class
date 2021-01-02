@@ -51,7 +51,7 @@ public interface Rule<T> extends Identifiable {
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    RuleResult run(RuleContext ctx) throws UnrulyException;
+    RuleResult run(RuleContext ctx) throws RuleExecutionException;
 
     /**
      * Derives all the arguments and executes this Rule.
@@ -60,7 +60,7 @@ public interface Rule<T> extends Identifiable {
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleResult run(Bindings bindings) throws UnrulyException {
+    default RuleResult run(Bindings bindings) throws RuleExecutionException {
         return run(RuleContextBuilder.create(bindings != null ? bindings : Bindings.create()));
     }
 
@@ -71,7 +71,7 @@ public interface Rule<T> extends Identifiable {
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default RuleResult run(BindingDeclaration...params) throws UnrulyException {
+    default RuleResult run(BindingDeclaration...params) throws RuleExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
         return run(RuleContextBuilder.create(bindings));
     }
