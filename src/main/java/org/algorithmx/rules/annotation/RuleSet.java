@@ -19,20 +19,38 @@ package org.algorithmx.rules.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Annotation to mark the Pre-Condition method of a Rule.
+ * Indicates the class with this annotation is a RuleSet.
+ *
+ * A RuleSet consists of the following:
+ *
+ * PreCondition - Condition that is to be met in order for this RuleSet to execute.
+ * PreAction - Action that is executed after the PreCondition is met and before any rule is run.
+ * Rules - a list of Rules for the RuleSet.
+ * StopCondition - Condition that is checked after each Rule is run. If the Stop Condition is met then the execution is stopped.
+ * ErrorCondition - Condition that is checked when an exception is thrown. The ErrorCondition decided when the execution will continue or stop.
+ * PostAction - Executed after all the Rules are executed.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Documented
-@Condition
-public @interface PreCondition {
+public @interface RuleSet {
+
+    String NOT_APPLICABLE = "";
+
+    /**
+     * Name of the Rule.
+     *
+     * @return Name of the RuleSet.
+     */
+    String name() default NOT_APPLICABLE;
 }

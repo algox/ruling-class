@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Annotation to mark the Pre-Condition method of a Rule.
+ * Annotation to mark the Pre-Action method of a RuleSet.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -33,6 +33,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Condition
-public @interface PreCondition {
+@Action
+public @interface PreAction {
 }

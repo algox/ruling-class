@@ -19,20 +19,20 @@ package org.algorithmx.rules.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Annotation to mark the Pre-Condition method of a Rule.
+ * Annotation to mark an Condition method.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Documented
-@Condition
-public @interface PreCondition {
+public @interface Condition {
 }

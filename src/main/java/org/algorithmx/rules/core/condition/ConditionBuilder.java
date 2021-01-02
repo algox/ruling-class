@@ -20,6 +20,7 @@ package org.algorithmx.rules.core.condition;
 import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.function.BiFunction;
 import org.algorithmx.rules.core.function.DecFunction;
 import org.algorithmx.rules.core.function.ExecutableBuilder;
@@ -35,9 +36,10 @@ import org.algorithmx.rules.core.function.UnaryFunction;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
-import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -61,6 +63,39 @@ public class ConditionBuilder extends ExecutableBuilder {
 
     public static ConditionBuilder with(Object target, MethodDefinition definition) {
         return new ConditionBuilder(target, definition);
+    }
+
+    public static Condition[] loadConditions(Class<?> clazz, Object target,
+                                             Class<? extends Annotation> annotationClass, Integer max) {
+        Assert.notNull(clazz, "clazz cannot be null.");
+        Assert.notNull(annotationClass, "annotationClass cannot be null.");
+        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
+
+        if (max != null && candidates.length > max) {
+            // Too many matches
+            throw new UnrulyException(clazz.getSimpleName() + " class has too many "
+                    + annotationClass.getSimpleName() + " condition methods. " + "There can be at most " + max
+                    + " methods (Annotated with @" + annotationClass.getSimpleName()
+                    + "). Currently there are [" + candidates.length
+                    + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
+
+        for (Method candidate : candidates) {
+            if (!(candidate.getReturnType().equals(boolean.class) || candidate.getReturnType().equals(Boolean.class))) {
+                throw new UnrulyException("Condition" + annotationClass.getSimpleName() + " must return a boolean. "
+                        + clazz.getSimpleName() + " method " + candidate
+                        + "] returns a [" + candidate.getReturnType() + "]");
+            }
+
+        }
+
+        Condition[] result = new Condition[candidates.length];
+
+        for (int i = 0; i < candidates.length; i++) {
+            result[i] = with(target, MethodDefinition.load(candidates[i])).build();
+        }
+
+        return result;
     }
 
     private static ConditionBuilder withCondition(Object target) {

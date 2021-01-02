@@ -17,11 +17,14 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 /**
  * Rule class encapsulates all the properties/methods of a Rule within the framework. A Rule consists of two parts
@@ -40,9 +43,6 @@ import org.algorithmx.rules.core.context.RuleContext;
  */
 public interface Rule<T> extends Identifiable {
 
-    // Rule Name Pattern.
-    String NAME_REGEX = "^[a-zA-Z][a-zA-Z0-9]*?$";
-
     /**
      * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
      * if the result is false then the Otherwise condition will be executed (if one exists).
@@ -52,6 +52,29 @@ public interface Rule<T> extends Identifiable {
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
     RuleResult run(RuleContext ctx) throws UnrulyException;
+
+    /**
+     * Derives all the arguments and executes this Rule.
+     *
+     * @param bindings Rule Bindings.
+     * @return execution status of the rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default RuleResult run(Bindings bindings) throws UnrulyException {
+        return run(RuleContextBuilder.create(bindings != null ? bindings : Bindings.create()));
+    }
+
+    /**
+     * Derives all the arguments and executes this Rule.
+     *
+     * @param params Rule Parameters.
+     * @return execution status of the rule.
+     * @throws UnrulyException thrown if there are any runtime errors during the execution.
+     */
+    default RuleResult run(BindingDeclaration...params) throws UnrulyException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return run(RuleContextBuilder.create(bindings));
+    }
 
     /**
      * The actual Rule implementation instance.

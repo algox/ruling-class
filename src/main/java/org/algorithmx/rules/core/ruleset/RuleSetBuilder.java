@@ -22,6 +22,8 @@ import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.RuleUtils;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,13 +31,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
 
 public class RuleSetBuilder {
 
-    private static final Pattern NAME_PATTERN = Pattern.compile(Rule.NAME_REGEX);
-
-    private final String name;
+    private String name;
     private String description;
     private final LinkedList<Rule> rules = new LinkedList<>();
 
@@ -46,24 +45,51 @@ public class RuleSetBuilder {
 
     private Condition errorHandler;
 
+    protected RuleSetBuilder() {
+        super();
+    }
+
     private RuleSetBuilder(String name) {
         this(name, null);
     }
 
     private RuleSetBuilder(String name, String description) {
         super();
-        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "RuleSet name must match [" + NAME_PATTERN + "]");
-        this.name = name;
-        this.description = description;
+        name(name);
+        description(description);
     }
 
     public static RuleSetBuilder with(String name) {
         return new RuleSetBuilder(name);
     }
 
+    public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass) {
+        return with(ruleSetClass, ObjectFactory.create());
+    }
+
+    public static RuleSet create(Class<?> ruleSetClass) {
+        return with(ruleSetClass).build();
+    }
+
+    public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass, ObjectFactory objectFactory) {
+        Assert.notNull(ruleSetClass, "ruleSetClass cannot be null.");
+        Assert.notNull(objectFactory, "objectFactory cannot be null.");
+        return ClassBasedRuleSetBuilder.with(ruleSetClass, objectFactory.createRule(ruleSetClass));
+    }
+
+    public static RuleSet create(Class<?> ruleSetClass, ObjectFactory objectFactory) {
+        return with(ruleSetClass, objectFactory).build();
+    }
+
     public static RuleSetBuilder with(String name, String description) {
         return new RuleSetBuilder(name, description);
+    }
+
+    public RuleSetBuilder name(String name) {
+        Assert.isTrue(RuleUtils.isValidName(name), "RuleSet name [" + name + "] not valid. It must conform to ["
+                + RuleUtils.NAME_REGEX + "]");
+        this.name = name;
+        return this;
     }
 
     public RuleSetBuilder description(String description) {

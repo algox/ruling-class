@@ -27,6 +27,7 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Executable;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -182,7 +183,35 @@ public final class ReflectionUtils {
     }
 
     /**
-     * Finds all the methods that match the filter criteria.
+     * Finds all the declared fields that have meet the given matcher.
+     *
+     * @param clazz working class.
+     * @param filter function to determine whether the given field matches the desired criteria.
+     * @return all the matching fields.
+     */
+    public static Field[] getDeclaredFields(Class<?> clazz, Predicate<Field> filter) {
+        Assert.notNull(clazz, "clazz cannot be null");
+        Assert.notNull(filter, "filter cannot be null");
+
+        Class<?> targetClass = clazz;
+        List<Field> result = new ArrayList<>();
+
+        do {
+            for (Field field : targetClass.getDeclaredFields()) {
+                if (filter.test(field)) {
+                    result.add(field);
+                }
+            }
+
+            targetClass = targetClass.getSuperclass();
+
+        } while (targetClass != null && !Object.class.equals(targetClass));
+
+        return result.toArray(new Field[result.size()]);
+    }
+
+    /**
+     * Finds all the declared methods that match the filter criteria.
      *
      * @param clazz class to look up.
      * @param filter annotation to look for.
@@ -207,7 +236,7 @@ public final class ReflectionUtils {
     }
 
     /**
-     * Finds all the method have meet the given matcher.
+     * Finds all the declared methods that have meet the given matcher.
      *
      * @param clazz working class.
      * @param filter function to determine whether the given method matches the desired criteria.

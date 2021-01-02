@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.util;
+package org.algorithmx.rules.util.reflect;
 
 import org.algorithmx.rules.annotation.Action;
 import org.algorithmx.rules.annotation.Then;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.function.TriFunction;
+import org.algorithmx.rules.util.LambdaUtils;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 import org.junit.Assert;
 import org.junit.Test;

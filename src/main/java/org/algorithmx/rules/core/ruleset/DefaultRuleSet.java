@@ -21,8 +21,8 @@ import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
-import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.rule.Rule;
 import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.core.rule.RuleExecutionStatus;
 import org.algorithmx.rules.core.rule.RuleResult;
@@ -215,6 +215,23 @@ public class DefaultRuleSet implements RuleSet {
 
     protected void removeErrorScope(RuleContext ctx) {
         ctx.getBindings().removeScope();
+    }
+
+    public Rule get(int index) {
+        return rules[index];
+    }
+
+    public Rule get(String ruleName) {
+        Rule result = null;
+
+        for (Rule rule : rules) {
+            if (rule.getName().equals(ruleName)) {
+                result = rule;
+                break;
+            }
+        }
+
+        return result;
     }
 
     @Override

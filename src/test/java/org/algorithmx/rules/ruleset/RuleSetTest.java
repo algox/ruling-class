@@ -17,8 +17,15 @@
  */
 package org.algorithmx.rules.ruleset;
 
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.bind.ScopedBindings;
+import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
+import org.algorithmx.rules.core.ruleset.RuleSet;
+import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -44,51 +51,62 @@ public class RuleSetTest {
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        // TODO : Fix me
-       /*Rule rule6 = ruleFactory.rule()
-                .given(cond0(() -> true))
-                .then(act0(() -> System.err.println("XXX End")))
+        Rule rule6 = RuleBuilder
+                .with(ConditionBuilder.TRUE())
+                .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                .name("Rule6")
                 .build();
 
-        RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory
-                        .rule()
-                        .name("test")
-                        .given(cond1((String y) -> y.equals("")))
-                        .then(act1((String y) -> System.err.println(y)))
+        RuleSet rules = RuleSetBuilder
+                .with("RuleSet1", "Test Rule Set")
+                .add(RuleBuilder
+                        .with(ConditionBuilder.create((String y) -> y.equals("")))
+                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(0)))
+                        .name("Rule1")
                         .build())
-                .add(ruleFactory.rule()
-                        .given(cond2((String a, BigDecimal x) -> x != null))
-                        .then(act0(() -> System.err.println("XXX Hello")))
+                .add(RuleBuilder
+                        .with(ConditionBuilder.create((String a, BigDecimal x) -> x != null))
+                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .name("Rule2")
                         .build())
-                .add("testrule3", ruleFactory.rule()
-                        .given(cond3((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
-                        .then(act0(() -> System.err.println("XXX oh yeah")))
+                .add(RuleBuilder
+                        .with(ConditionBuilder.create((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
+                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .name("Rule3")
                         .build())
-                .add(rule6);
+                .add(rule6)
+                .build();
 
-        Rule rule1 = rules.getRule("test");
-        Rule rule3 = rules.getRule("testrule3");
+        Rule rule2 = rules.get("Rule2");
+        Rule rule3 = rules.get("Rule3");
+        rules.run(bindings);
 
-        Assert.assertTrue(rule3.isPass("", "hello", 20));*/
+        Assert.assertNotNull(rule2);
+        Assert.assertNotNull(rule3);
+        Assert.assertTrue(bindings.getValue("c", Integer.class) == 2);
+        Assert.assertTrue(rule3.getCondition().isTrue("", "hello", 20));
     }
 
     @Test
-    public void testBind12() {
+    public void test2() {
         Bindings bindings = Bindings.create()
-                .bind("key1", String.class, "value")
-                .bind("key2", String.class, "value");
+                .bind("y", String.class, "")
+                .bind("a", String.class, "")
+                .bind("b", String.class, "hello")
+                .bind("c", Integer.class, 20)
+                .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        // TODO : Fix me
-        /*RuleSet rules = ruleFactory.rules("RuleSet1", "Test Rule Set")
-                .add("test", ruleFactory
-                        .rule()
-                        .name("test")
-                        .given(cond1((String key1) -> key1.equals("")))
-                        .then(act1((String key2) -> System.err.println(key2)))
-                        .build());
+        RuleSet rules = RuleSetBuilder
+                            .with(TestRuleSet.class)
+                            .build();
 
-        ruleEngine.run(RuleContextBuilder.defaultObjectFactory()
-                .bindWith(bindings).build(), rules);*/
+        Rule rule2 = rules.get("Rule2");
+        Rule rule3 = rules.get("Rule3");
+        rules.run(bindings);
+
+        Assert.assertNotNull(rule2);
+        Assert.assertNotNull(rule3);
+        Assert.assertTrue(bindings.getValue("c", Integer.class) == 2);
+        Assert.assertTrue(rule3.getCondition().isTrue("", "hello", 20));
     }
 }

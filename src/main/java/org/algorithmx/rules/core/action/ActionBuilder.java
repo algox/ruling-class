@@ -27,6 +27,7 @@ import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -68,6 +69,37 @@ public final class ActionBuilder extends ExecutableBuilder {
 
     public static ActionBuilder with(Object target, MethodDefinition definition) {
         return new ActionBuilder(target, definition);
+    }
+
+    public static Action[] loadActions(Class<?> clazz, Object target,
+                                       Class<? extends Annotation> annotationClass, Integer max) {
+        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
+
+        if (max != null && candidates.length > max) {
+            // Too many matches
+            throw new UnrulyException(clazz.getSimpleName() + " class has too many "
+                    + annotationClass.getSimpleName() + " action methods. " + "There can be at most " + max
+                    + " methods (Annotated with @" + annotationClass.getSimpleName()
+                    + "). Currently there are [" + candidates.length
+                    + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
+
+        for (Method candidate : candidates) {
+            if (!(candidate.getReturnType().equals(void.class))) {
+                throw new UnrulyException("Action" + annotationClass.getSimpleName() + " must return a void. "
+                        + clazz.getSimpleName() + " method " + candidate
+                        + "] returns a [" + candidate.getReturnType() + "]");
+            }
+
+        }
+
+        Action[] result = new Action[candidates.length];
+
+        for (int i = 0; i < candidates.length; i++) {
+            result[i] = with(target, MethodDefinition.load(candidates[i])).build();
+        }
+
+        return result;
     }
 
     private static ActionBuilder withAction(Object target) {

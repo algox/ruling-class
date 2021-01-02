@@ -22,15 +22,11 @@ import org.algorithmx.rules.annotation.Given;
 import org.algorithmx.rules.annotation.Otherwise;
 import org.algorithmx.rules.annotation.PreCondition;
 import org.algorithmx.rules.annotation.Then;
-import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.action.ActionBuilder;
+import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
-import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
-import org.algorithmx.rules.util.reflect.ReflectionUtils;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
 
 /**
  * Builder class for all Class based Rule(s).
@@ -80,59 +76,30 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
         ruleClass(ruleClass);
         target(target);
 
-        // Try and locate the Rule annotation on the class
-        org.algorithmx.rules.annotation.Rule rule = ruleClass.getAnnotation(org.algorithmx.rules.annotation.Rule.class);
-
         name(getRuleName(ruleClass));
         description(getRuleDescription(ruleClass));
-
-        loadPreCondition(ruleClass);
-        loadCondition(ruleClass);
-        loadThenActions(ruleClass);
-        loadOtherwiseAction(ruleClass);
+        loadPreCondition(ruleClass, target);
+        loadCondition(ruleClass, target);
+        loadThenActions(ruleClass, target);
+        loadOtherwiseAction(ruleClass, target);
     }
 
-    protected void loadPreCondition(Class<T> ruleClass) {
-        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(ruleClass, PreCondition.class);
-
-        if (candidates.length > 1) {
-            // Too many @PreCondition methods
-            throw new UnrulyException("Rule class [" + ruleClass.getName() + "] has too many pre-condition methods. " +
-                    "There can be at most 1 Pre-Condition method (Annotated with @PreCondition). " +
-                    "Currently there are [" + candidates.length + "] candidates [" + Arrays.toString(candidates) + "]");
+    protected void loadPreCondition(Class<T> ruleClass, Object target) {
+        Condition[] preConditions = ConditionBuilder.loadConditions(ruleClass, target, PreCondition.class, 1);
+        // Load Pre-Condition
+        if (preConditions.length == 1) {
+            preCondition(preConditions[0]);
         }
-
-        if (candidates.length == 1) {
-            if (!candidates[0].getReturnType().equals(boolean.class)) {
-                throw new UnrulyException("Rule Pre-Condition must return a boolean. Rule [" + ruleClass + "] Pre-Condition ["
-                        + candidates[0] + "] returns a [" + candidates[0].getReturnType() +"]");
-            }
-        }
-
-        preCondition(candidates.length == 1
-                ? ConditionBuilder.with(getTarget(), MethodDefinition.load(candidates[0])).build()
-                : null);
     }
 
-    protected void loadCondition(Class<T> ruleClass) {
-        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Given.class);
-
-        if (candidates.length > 1) {
-            // Too many @Given methods
-            throw new UnrulyException("Rule class [" + ruleClass.getName() + "] has too many condition methods. " +
-                    "There can be at most 1 condition method (Annotated with @Given). " +
-                    "Currently there are [" + candidates.length + "] candidates [" + Arrays.toString(candidates) + "]");
+    protected void loadCondition(Class<T> ruleClass, Object target) {
+        Condition[] givenConditions = ConditionBuilder.loadConditions(ruleClass, target, Given.class, 1);
+        // Load Given-Condition
+        if (givenConditions.length == 1) {
+            given(givenConditions[0]);
+        } else {
+            given(ConditionBuilder.TRUE());
         }
-
-        if (candidates.length == 1) {
-            if (!candidates[0].getReturnType().equals(boolean.class)) {
-                throw new UnrulyException("Rule Condition must return a boolean. Rule [" + ruleClass + "] Condition ["
-                        + candidates[0] + "] returns a [" + candidates[0].getReturnType() +"]");
-            }
-        }
-
-        given(candidates.length == 1 ? ConditionBuilder.with(getTarget(), MethodDefinition.load(candidates[0])).build()
-                : ConditionBuilder.TRUE());
     }
 
     /**
@@ -140,14 +107,13 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
      * of arguments and returns nothing (ie: void) and the method is annotated with @ActionConsumer.
      *
      * @param ruleClass desired class
+     * @param target rule target.
      */
-    protected void loadThenActions(Class<T> ruleClass) {
-        Method[] thenActions = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Then.class);
-
-        if (thenActions != null) {
-            for (Method thenAction : thenActions) {
-                then(ActionBuilder.with(getTarget(), MethodDefinition.load(thenAction)).build());
-            }
+    protected void loadThenActions(Class<T> ruleClass, Object target) {
+        Action[] thenActions = ActionBuilder.loadActions(ruleClass, target, Then.class, null);
+        // Load Then-Actions
+        for (Action thenAction : thenActions) {
+            then(thenAction);
         }
     }
 
@@ -156,19 +122,13 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
      * of arguments and returns nothing (ie: void) and the method is annotated with @Otherwise.
      *
      * @param ruleClass desired class
+     * @param target rule target.
      */
-    protected void loadOtherwiseAction(Class<T> ruleClass) {
-        Method[] otherwiseActions = ReflectionUtils.getMethodsWithAnnotation(ruleClass, Otherwise.class);
-
-        if (otherwiseActions.length > 1) {
-            // Too many @Otherwise methods
-            throw new UnrulyException("Rule class [" + ruleClass.getName() + "] has too many otherwise (@Otherwise) methods. " +
-                    "There can be at most 1 otherwise method. Currently there are [" + otherwiseActions.length + "] " +
-                    "[" + Arrays.toString(otherwiseActions) + "]");
-        }
-
+    protected void loadOtherwiseAction(Class<T> ruleClass, Object target) {
+        Action[] otherwiseActions = ActionBuilder.loadActions(ruleClass, target, Otherwise.class, 1);
+        // Load Otherwise-Action
         if (otherwiseActions.length == 1) {
-            otherwise(ActionBuilder.with(getTarget(), MethodDefinition.load(otherwiseActions[0])).build());
+            otherwise(otherwiseActions[0]);
         }
     }
 }
