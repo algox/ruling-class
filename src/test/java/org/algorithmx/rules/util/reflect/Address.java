@@ -1,24 +1,29 @@
 package org.algorithmx.rules.util.reflect;
 
-public class Address {
+import org.algorithmx.rules.core.Identifiable;
 
+public class Address implements Identifiable {
+
+    private String id;
     private String number;
     private String streetName;
     private String city;
     private String state;
     private String country;
 
-    public Address() {
+    public Address(String id, String number, String streetName, String city, String state, String country) {
         super();
-    }
-
-    public Address(String number, String streetName, String city, String state, String country) {
-        super();
+        this.id = id;
         this.number = number;
         this.streetName = streetName;
         this.city = city;
         this.state = state;
         this.country = country;
+    }
+
+    @Override
+    public String getName() {
+        return id;
     }
 
     public String getNumber() {

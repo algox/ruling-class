@@ -7,13 +7,13 @@ import java.util.Map;
 
 public interface ObjectVisitor {
 
-    default boolean shouldVisitClass(Class<?> clazz) { return true; }
+    default boolean isCandidate(Class<?> field) { return true; }
 
     default boolean visitObjectStart(Object target) { return true; }
 
     default void visitObjectEnd(Object target) {}
 
-    default boolean shouldVisitField(Field field) { return true; }
+    default boolean isCandidate(Field field) { return true; }
 
     default boolean visitNull(Field field, Object value, Object parent) { return false; }
 
@@ -25,9 +25,7 @@ public interface ObjectVisitor {
 
     default boolean visitMap(Field field, Map<?, ?> values, Object parent) { return true; }
 
-    default boolean shouldVisitProperty(PropertyDescriptor field) {
-        return true;
-    }
+    default boolean isCandidate(PropertyDescriptor field) { return true; }
 
     default boolean visitNull(PropertyDescriptor property, Object value, Object parent) { return false; }
 
@@ -38,4 +36,6 @@ public interface ObjectVisitor {
     default boolean visitCollection(PropertyDescriptor property, Collection<?> values, Object parent) { return true; }
 
     default boolean visitMap(PropertyDescriptor property, Map<?, ?> values, Object parent) { return true; }
+
+    default void traversalComplete() {}
 }

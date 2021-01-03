@@ -45,38 +45,56 @@ public class ObjectGraph {
             Object candidate = candidates.remove();
 
             try {
-                if (candidate.getClass().isArray()) {
-                    traverseArray(candidate, visitor);
-                } else if (candidate instanceof Collection) {
-                    traverseCollection(candidate, visitor);
-                } else if (candidate instanceof Map) {
-                    traverseMap(candidate, visitor);
-                } else {
-                    traverseObject(candidate, visitor);
-                }
+                traverseObject(candidate, visitor);
             } catch (Exception e) {
-                throw new ObjectGraphTraversalException("Error trying to traverse [" + target.getClass() + "]", e);
+                throw new ObjectGraphTraversalException("Error trying to traverse [" + candidate + "]", e);
             }
+        }
+
+        visitor.traversalComplete();
+    }
+
+    private void traverseObject(Object target, ObjectVisitor visitor) throws IllegalAccessException,
+            IntrospectionException, InvocationTargetException {
+        if (target == null) return;
+
+        try {
+            boolean introspectObject = visitor.visitObjectStart(target);
+
+            if (introspectObject) {
+                processFields(target, visitor);
+                //processProperties(target, visitor);
+            }
+        } finally {
+            visitor.visitObjectEnd(target);
         }
     }
 
     private void addCandidate(Object candidate, ObjectVisitor visitor) {
-        // Nothing to traverse
         if (candidate == null) return;
-        // It's a java core class; no need to traverse further.
-        if (JAVA_CORE_CLASSES.test(candidate.getClass())) return;
-        // Have have already visited this object?
-        if (breadCrumbs.containsKey(candidate)) return;
-        // Check to see if we need to introspect this target class
-        if (!visitor.shouldVisitClass(candidate.getClass())) return;
-        candidates.add(candidate);
-        breadCrumbs.put(candidate, candidate.getClass());
+
+        if (candidate.getClass().isArray()) {
+            addArray(candidate, visitor);
+        } else if (candidate instanceof Collection) {
+            addCollection(candidate, visitor);
+        } else if (candidate instanceof Map) {
+            addMap(candidate, visitor);
+        } else {
+            // Nothing to traverse
+            if (candidate == null) return;
+            // It's a java core class; no need to traverse further.
+            if (JAVA_CORE_CLASSES.test(candidate.getClass())) return;
+            // Check to see if the visitor is interested in this Class
+            if (!visitor.isCandidate(candidate.getClass())) return;
+            // Have have already visited this object?
+            if (breadCrumbs.containsKey(candidate)) return;
+
+            candidates.add(candidate);
+            breadCrumbs.put(candidate, candidate.getClass());
+        }
     }
 
-
-    private void traverseArray(Object target, ObjectVisitor visitor) {
-        Assert.notNull(visitor, "visitor cannot be null.");
-
+    private void addArray(Object target, ObjectVisitor visitor) {
         // Nothing to traverse
         if (target == null) return;
         // It's not an array
@@ -92,9 +110,7 @@ public class ObjectGraph {
         }
     }
 
-    private void traverseCollection(Object target, ObjectVisitor visitor) {
-        Assert.notNull(visitor, "visitor cannot be null.");
-
+    private void addCollection(Object target, ObjectVisitor visitor) {
         // Nothing to traverse
         if (target == null) return;
         // It's not an Collection
@@ -109,9 +125,7 @@ public class ObjectGraph {
         }
     }
 
-    private void traverseMap(Object target, ObjectVisitor visitor) {
-        Assert.notNull(visitor, "visitor cannot be null.");
-
+    private void addMap(Object target, ObjectVisitor visitor) {
         // Nothing to traverse
         if (target == null) return;
         // It's not an Map
@@ -129,27 +143,13 @@ public class ObjectGraph {
         }
     }
 
-    private void traverseObject(Object target, ObjectVisitor visitor) throws IllegalAccessException,
-            IntrospectionException, InvocationTargetException {
-
-        try {
-            boolean introspectObject = visitor.visitObjectStart(target);
-            if (introspectObject) {
-                processFields(target, visitor);
-                processProperties(target, visitor);
-            }
-        } finally {
-            visitor.visitObjectEnd(target);
-        }
-    }
-
     private void processFields(Object target, ObjectVisitor visitor) throws IllegalAccessException {
 
         ClassFields classFields = classCache.get(target);
 
         if (classFields == null) {
             Field[] declaredFields = ReflectionUtils.getDeclaredFields(target.getClass(),
-                    (Field field) -> visitor.shouldVisitField(field));
+                    (Field field) -> visitor.isCandidate(field));
             classFields = new ClassFields(declaredFields);
             classCache.put(target.getClass(), classFields);
         }
@@ -161,7 +161,7 @@ public class ObjectGraph {
 
             if (value == null) {
                 visitor.visitNull(field, null, target);
-            } else if (value instanceof Collections) {
+            } else if (value instanceof Collection) {
                 introspectField = visitor.visitCollection(field, (Collection) value, target);
             } else if (value instanceof Map) {
                 introspectField = visitor.visitMap(field, (Map) value, target);
@@ -178,7 +178,7 @@ public class ObjectGraph {
     private void processProperties(Object target, ObjectVisitor visitor) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
 
         for (PropertyDescriptor property : Introspector.getBeanInfo(target.getClass()).getPropertyDescriptors()) {
-            if (!visitor.shouldVisitProperty(property)) continue;
+            if (!visitor.isCandidate(property)) continue;
 
             Object value = property.getReadMethod().invoke(target);
             boolean introspectProperty = false;
@@ -195,7 +195,7 @@ public class ObjectGraph {
                 introspectProperty = visitor.visitProperty(property, value, target);
             }
 
-            if (introspectProperty) addCandidate(value, visitor);
+            //if (introspectProperty) addCandidate(value, visitor);
         }
     }
 

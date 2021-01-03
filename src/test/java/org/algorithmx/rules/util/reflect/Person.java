@@ -1,10 +1,13 @@
 package org.algorithmx.rules.util.reflect;
 
+import org.algorithmx.rules.core.Identifiable;
+
 import java.util.List;
 import java.util.Map;
 
-public class Person {
+public class Person implements Identifiable {
 
+    private String id;
     private String firstName;
     private String lastName;
     private Address address;
@@ -13,19 +16,21 @@ public class Person {
     private Employment[] jobs;
     private Map<String, Object> attributes;
 
-    public Person() {
-        super();
-    }
-
-    public Person(String firstName, String lastName, Address address, List<Car> cars, Employment[] jobs,
+    public Person(String id, String firstName, String lastName, Address address, List<Car> cars, Employment[] jobs,
                   Map<String, Object> attributes) {
         super();
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.cars = cars;
         this.jobs = jobs;
         this.attributes = attributes;
+    }
+
+    @Override
+    public String getName() {
+        return id;
     }
 
     public String getFirstName() {

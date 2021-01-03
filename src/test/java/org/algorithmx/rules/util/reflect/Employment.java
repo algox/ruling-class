@@ -1,22 +1,27 @@
 package org.algorithmx.rules.util.reflect;
 
+import org.algorithmx.rules.core.Identifiable;
+
 import java.math.BigDecimal;
 
-public class Employment {
+public class Employment implements Identifiable {
 
+    private String id;
     private String companyName;
     private BigDecimal salary;
     private Address address;
 
-    public Employment() {
+    public Employment(String id, String companyName, BigDecimal salary, Address address) {
         super();
-    }
-
-    public Employment(String companyName, BigDecimal salary, Address address) {
-        super();
+        this.id = id;
         this.companyName = companyName;
         this.salary = salary;
         this.address = address;
+    }
+
+    @Override
+    public String getName() {
+        return id;
     }
 
     public String getCompanyName() {
