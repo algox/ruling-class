@@ -219,14 +219,10 @@ public class ObjectGraph {
     private static class ClassFields {
         private Field[] fields;
 
-        public ClassFields(Field[] fields, boolean sorted) {
+        private ClassFields(Field[] fields, boolean sorted) {
             super();
             if (fields != null && sorted) Arrays.sort(fields, Comparator.comparing(Field::getName));
             this.fields = fields;
-        }
-
-        public Field[] getFields() {
-            return fields;
         }
     }
 }
