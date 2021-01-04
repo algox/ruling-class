@@ -1,5 +1,6 @@
 package org.algorithmx.rules.util.reflect;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -27,15 +28,26 @@ public class ObjectGraphTest {
         attributes.put("title", "GOAT");
         attributes.put("jobs", jobs);
         Person result = new Person("person:1", "Michael", "Jordan", address1, cars, jobs, attributes);
+        attributes.put("person", result);
         return result;
     }
 
-    //@Test
+    @Test
     public void test1() {
         TestObjectVisitor visitor = new TestObjectVisitor();
-        ObjectGraph graph = new ObjectGraph();
+        // Set to be ordered fields so we have predictable traversal
+        ObjectGraph graph = new ObjectGraph(true);
         Person person = createTestData1();
-
         graph.traverse(person, visitor);
+        List<String> ids = visitor.getIdList();
+        Assert.assertTrue(ids.size() == 8);
+        Assert.assertTrue("person:1".equals(ids.get(0)));
+        Assert.assertTrue("address:1".equals(ids.get(1)));
+        Assert.assertTrue("employment:1".equals(ids.get(2)));
+        Assert.assertTrue("employment:2".equals(ids.get(3)));
+        Assert.assertTrue("car:1".equals(ids.get(4)));
+        Assert.assertTrue("car:2".equals(ids.get(5)));
+        Assert.assertTrue("address:2".equals(ids.get(6)));
+        Assert.assertTrue("address:3".equals(ids.get(7)));
     }
 }

@@ -9,8 +9,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -21,17 +23,24 @@ public class ObjectGraph {
 
     private static final Predicate<Class<?>> JAVA_CORE_CLASSES = (clazz) ->
             clazz == null || clazz.isPrimitive() || clazz.getPackage() == null
+                    || clazz.getClassLoader() == null
                     || clazz.getPackage().getName().startsWith("java.")
-                    || clazz.getPackage().getName().startsWith("javax.")
-                    || clazz.getClassLoader() == null;
+                    || clazz.getPackage().getName().startsWith("javax.");
 
 
     private final static Map<Class<?>, ClassFields> classCache = new HashMap<>();
     private final Map<Object, Class<?>> breadCrumbs = new IdentityHashMap<>();
     private final Deque<Object> candidates = new ArrayDeque<>();
 
+    private final boolean ordered;
+
     public ObjectGraph() {
+        this(false);
+    }
+
+    public ObjectGraph(boolean ordered) {
         super();
+        this.ordered = ordered;
     }
 
     public void traverse(Object target, ObjectVisitor visitor) throws ObjectGraphTraversalException {
@@ -63,7 +72,7 @@ public class ObjectGraph {
 
             if (introspectObject) {
                 processFields(target, visitor);
-                //processProperties(target, visitor);
+                processProperties(target, visitor);
             }
         } finally {
             visitor.visitObjectEnd(target);
@@ -73,23 +82,26 @@ public class ObjectGraph {
     private void addCandidate(Object candidate, ObjectVisitor visitor) {
         if (candidate == null) return;
 
-        if (candidate.getClass().isArray()) {
-            addArray(candidate, visitor);
-        } else if (candidate instanceof Collection) {
-            addCollection(candidate, visitor);
-        } else if (candidate instanceof Map) {
-            addMap(candidate, visitor);
-        } else {
-            // Nothing to traverse
-            if (candidate == null) return;
-            // It's a java core class; no need to traverse further.
-            if (JAVA_CORE_CLASSES.test(candidate.getClass())) return;
-            // Check to see if the visitor is interested in this Class
-            if (!visitor.isCandidate(candidate.getClass())) return;
-            // Have have already visited this object?
-            if (breadCrumbs.containsKey(candidate)) return;
-
-            candidates.add(candidate);
+        try {
+            if (candidate.getClass().isArray()) {
+                addArray(candidate, visitor);
+            } else if (candidate instanceof Collection) {
+                addCollection(candidate, visitor);
+            } else if (candidate instanceof Map) {
+                addMap(candidate, visitor);
+            } else {
+                // Nothing to traverse
+                if (candidate == null) return;
+                // It's a java core class; no need to traverse further.
+                if (JAVA_CORE_CLASSES.test(candidate.getClass())) return;
+                // Check to see if the visitor is interested in this Class
+                if (!visitor.isCandidate(candidate.getClass())) return;
+                // Have have already visited this object?
+                if (breadCrumbs.containsKey(candidate)) return;
+                // Looks like we have a viable candidate
+                candidates.add(candidate);
+            }
+        } finally {
             breadCrumbs.put(candidate, candidate.getClass());
         }
     }
@@ -150,7 +162,7 @@ public class ObjectGraph {
         if (classFields == null) {
             Field[] declaredFields = ReflectionUtils.getDeclaredFields(target.getClass(),
                     (Field field) -> visitor.isCandidate(field));
-            classFields = new ClassFields(declaredFields);
+            classFields = new ClassFields(declaredFields, isOrdered());
             classCache.put(target.getClass(), classFields);
         }
 
@@ -166,7 +178,7 @@ public class ObjectGraph {
             } else if (value instanceof Map) {
                 introspectField = visitor.visitMap(field, (Map) value, target);
             } else if (value.getClass().isArray()) {
-                introspectField = visitor.visitArray(field, (Object[]) value, target);
+                introspectField = visitor.visitArray(field, value, target);
             } else {
                 introspectField = visitor.visitField(field, value, target);
             }
@@ -179,6 +191,7 @@ public class ObjectGraph {
 
         for (PropertyDescriptor property : Introspector.getBeanInfo(target.getClass()).getPropertyDescriptors()) {
             if (!visitor.isCandidate(property)) continue;
+            if (property.getReadMethod() == null) continue;
 
             Object value = property.getReadMethod().invoke(target);
             boolean introspectProperty = false;
@@ -190,20 +203,25 @@ public class ObjectGraph {
             } else if (value instanceof Map) {
                 introspectProperty = visitor.visitMap(property, (Map) value, target);
             } else if (value.getClass().isArray()) {
-                introspectProperty = visitor.visitArray(property, (Object[]) value, target);
+                introspectProperty = visitor.visitArray(property, value, target);
             } else {
                 introspectProperty = visitor.visitProperty(property, value, target);
             }
 
-            //if (introspectProperty) addCandidate(value, visitor);
+            if (introspectProperty) addCandidate(value, visitor);
         }
+    }
+
+    public boolean isOrdered() {
+        return ordered;
     }
 
     private static class ClassFields {
         private Field[] fields;
 
-        public ClassFields(Field[] fields) {
+        public ClassFields(Field[] fields, boolean sorted) {
             super();
+            if (fields != null && sorted) Arrays.sort(fields, Comparator.comparing(Field::getName));
             this.fields = fields;
         }
 

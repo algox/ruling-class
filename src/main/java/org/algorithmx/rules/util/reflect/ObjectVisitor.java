@@ -19,7 +19,7 @@ public interface ObjectVisitor {
 
     default boolean visitField(Field field, Object value, Object parent) { return true; }
 
-    default boolean visitArray(Field field, Object[] values, Object parent) { return true; }
+    default boolean visitArray(Field field, Object values, Object parent) { return true; }
 
     default boolean visitCollection(Field field, Collection<?> values, Object parent) { return true; }
 
@@ -31,7 +31,7 @@ public interface ObjectVisitor {
 
     default boolean visitProperty(PropertyDescriptor property, Object value, Object parent) { return true; }
 
-    default boolean visitArray(PropertyDescriptor property, Object[] values, Object parent) { return true; }
+    default boolean visitArray(PropertyDescriptor property, Object values, Object parent) { return true; }
 
     default boolean visitCollection(PropertyDescriptor property, Collection<?> values, Object parent) { return true; }
 
