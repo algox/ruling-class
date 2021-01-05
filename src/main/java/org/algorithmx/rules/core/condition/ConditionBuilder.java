@@ -37,6 +37,7 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -61,14 +62,25 @@ public class ConditionBuilder extends ExecutableBuilder {
         super(target, definition);
     }
 
-    public static ConditionBuilder with(Object target, MethodDefinition definition) {
+    private static ConditionBuilder with(Object target, MethodDefinition definition) {
         return new ConditionBuilder(target, definition);
     }
 
-    public static Condition[] loadConditions(Class<?> clazz, Object target,
-                                             Class<? extends Annotation> annotationClass, Integer max) {
-        Assert.notNull(clazz, "clazz cannot be null.");
+    public static Condition[] build(Class<?> clazz) {
+        return build(clazz, ObjectFactory.create());
+    }
+
+    public static Condition[] build(Class<?> clazz, ObjectFactory factory) {
+        return build(factory.create(clazz));
+    }
+
+    public static Condition[] build(Object target) {
+        return build(target, org.algorithmx.rules.annotation.Condition.class, null);
+    }
+
+    public static Condition[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
         Assert.notNull(annotationClass, "annotationClass cannot be null.");
+        Class<?> clazz = target.getClass();
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
 
         if (max != null && candidates.length > max) {

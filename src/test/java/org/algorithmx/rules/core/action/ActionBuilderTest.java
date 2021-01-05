@@ -17,9 +17,14 @@
  */
 package org.algorithmx.rules.core.action;
 
+import org.algorithmx.rules.annotation.Condition;
+import org.algorithmx.rules.annotation.Function;
 import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
@@ -314,5 +319,40 @@ public class ActionBuilderTest {
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[0].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getName().equals("c"));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[1].getType().equals(BigDecimal.class));
+    }
+
+    @Test
+    public void testLoadFromClass() {
+        org.algorithmx.rules.core.condition.Condition[] conditions = ConditionBuilder.build(TestClass.class);
+        org.algorithmx.rules.core.action.Action[] actions = ActionBuilder.build(TestClass.class);
+        org.algorithmx.rules.core.function.Function[] functions = FunctionBuilder.build(TestClass.class);
+        Assert.assertTrue(conditions[0].run(x -> 25));
+        Bindings bindings = Bindings.create();
+        bindings.bind("x", 25);
+        actions[0].run(bindings);
+        Assert.assertTrue(bindings.getValue("x", Integer.class) == 0);
+        Assert.assertTrue(functions[0].run(x -> 25).equals(50));
+    }
+
+    public static class TestClass {
+
+        public TestClass() {
+            super();
+        }
+
+        @Condition
+        public static boolean given(Integer x) {
+            return x >= 25;
+        }
+
+        @org.algorithmx.rules.annotation.Action
+        public void action(Binding<Integer> x) {
+            x.setValue(0);
+        }
+
+        @Function
+        public Integer function(Integer x) {
+            return x * 2;
+        }
     }
 }

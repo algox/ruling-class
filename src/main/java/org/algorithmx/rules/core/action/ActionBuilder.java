@@ -25,6 +25,8 @@ import org.algorithmx.rules.core.function.ExecutableBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -67,12 +69,27 @@ public final class ActionBuilder extends ExecutableBuilder {
         }).build();
     }
 
-    public static ActionBuilder with(Object target, MethodDefinition definition) {
+    private static ActionBuilder with(Object target, MethodDefinition definition) {
         return new ActionBuilder(target, definition);
     }
 
-    public static Action[] loadActions(Class<?> clazz, Object target,
-                                       Class<? extends Annotation> annotationClass, Integer max) {
+    public static Action[] build(Class<?> clazz) {
+        return build(clazz, ObjectFactory.create());
+    }
+
+    public static Action[] build(Class<?> clazz, ObjectFactory factory) {
+        return build(factory.create(clazz));
+    }
+
+    public static Action[] build(Object target) {
+        return build(target, org.algorithmx.rules.annotation.Action.class, null);
+    }
+
+    public static Action[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
+        if (target == null) return null;
+
+        Assert.notNull(annotationClass, "annotationClass cannot be null.");
+        Class<?> clazz = target.getClass();
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
 
         if (max != null && candidates.length > max) {

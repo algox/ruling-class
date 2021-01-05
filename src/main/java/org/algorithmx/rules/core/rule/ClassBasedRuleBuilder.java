@@ -80,12 +80,12 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
         description(getRuleDescription(ruleClass));
         loadPreCondition(ruleClass, target);
         loadCondition(ruleClass, target);
-        loadThenActions(ruleClass, target);
-        loadOtherwiseAction(ruleClass, target);
+        loadThenActions(target);
+        loadOtherwiseAction(target);
     }
 
     protected void loadPreCondition(Class<T> ruleClass, Object target) {
-        Condition[] preConditions = ConditionBuilder.loadConditions(ruleClass, target, PreCondition.class, 1);
+        Condition[] preConditions = ConditionBuilder.build(target, PreCondition.class, 1);
         // Load Pre-Condition
         if (preConditions.length == 1) {
             preCondition(preConditions[0]);
@@ -93,7 +93,7 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
     }
 
     protected void loadCondition(Class<T> ruleClass, Object target) {
-        Condition[] givenConditions = ConditionBuilder.loadConditions(ruleClass, target, Given.class, 1);
+        Condition[] givenConditions = ConditionBuilder.build(target, Given.class, 1);
         // Load Given-Condition
         if (givenConditions.length == 1) {
             given(givenConditions[0]);
@@ -106,11 +106,10 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
      * Loads all the @Then actions in the given class. A method is considered an Action if takes arbitrary number
      * of arguments and returns nothing (ie: void) and the method is annotated with @ActionConsumer.
      *
-     * @param ruleClass desired class
      * @param target rule target.
      */
-    protected void loadThenActions(Class<T> ruleClass, Object target) {
-        Action[] thenActions = ActionBuilder.loadActions(ruleClass, target, Then.class, null);
+    protected void loadThenActions(Object target) {
+        Action[] thenActions = ActionBuilder.build(target, Then.class, null);
         // Load Then-Actions
         for (Action thenAction : thenActions) {
             then(thenAction);
@@ -121,11 +120,10 @@ public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
      * Loads the @Otherwise action in the given class. A method is considered an Action if takes arbitrary number
      * of arguments and returns nothing (ie: void) and the method is annotated with @Otherwise.
      *
-     * @param ruleClass desired class
      * @param target rule target.
      */
-    protected void loadOtherwiseAction(Class<T> ruleClass, Object target) {
-        Action[] otherwiseActions = ActionBuilder.loadActions(ruleClass, target, Otherwise.class, 1);
+    protected void loadOtherwiseAction(Object target) {
+        Action[] otherwiseActions = ActionBuilder.build(target, Otherwise.class, 1);
         // Load Otherwise-Action
         if (otherwiseActions.length == 1) {
             otherwise(otherwiseActions[0]);

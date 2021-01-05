@@ -65,7 +65,7 @@ public class DefaultObjectFactory implements ObjectFactory {
 
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new UnrulyException("Unable to instantiate type [" + type + "]", e);
+            throw new UnrulyException("Unable to instantiate type [" + type + "]. Does it have a default ctor ?", e);
         }
     }
 }

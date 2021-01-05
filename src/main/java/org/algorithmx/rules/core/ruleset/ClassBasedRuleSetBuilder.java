@@ -83,7 +83,7 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
     }
 
     protected void loadPreCondition(Class<?> ruleSetClass, Object target) {
-        Condition[] preConditions = ConditionBuilder.loadConditions(ruleSetClass, target, PreCondition.class, 1);
+        Condition[] preConditions = ConditionBuilder.build(target, PreCondition.class, 1);
         // Load Pre-Condition
         if (preConditions.length == 1) {
             preCondition(preConditions[0]);
@@ -91,7 +91,7 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
     }
 
     protected void loadPreAction(Class<?> ruleSetClass, Object target) {
-        Action[] preActions = ActionBuilder.loadActions(ruleSetClass, target, PreAction.class, 1);
+        Action[] preActions = ActionBuilder.build(target, PreAction.class, 1);
         // Load Pre-Action
         if (preActions.length == 1) {
             preAction(preActions[0]);
@@ -99,7 +99,7 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
     }
 
     protected void loadStopCondition(Class<?> ruleSetClass, Object target) {
-        Condition[] stopConditions = ConditionBuilder.loadConditions(ruleSetClass, target, StopCondition.class, 1);
+        Condition[] stopConditions = ConditionBuilder.build(target, StopCondition.class, 1);
         // Load Stop-Condition
         if (stopConditions.length == 1) {
             stopWhen(stopConditions[0]);
@@ -107,7 +107,7 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
     }
 
     protected void loadErrorCondition(Class<?> ruleSetClass, Object target) {
-        Condition[] errorConditions = ConditionBuilder.loadConditions(ruleSetClass, target, ErrorCondition.class, 1);
+        Condition[] errorConditions = ConditionBuilder.build(target, ErrorCondition.class, 1);
         // Load error-Condition
         if (errorConditions.length == 1) {
             errorHandler(errorConditions[0]);
@@ -115,7 +115,7 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
     }
 
     protected void loadPostAction(Class<?> ruleSetClass, Object target) {
-        Action[] postActions = ActionBuilder.loadActions(ruleSetClass, target, PostAction.class, 1);
+        Action[] postActions = ActionBuilder.build(target, PostAction.class, 1);
         // Load Post-Action
         if (postActions.length == 1) {
             postAction(postActions[0]);

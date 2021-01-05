@@ -20,12 +20,15 @@ package org.algorithmx.rules.core.function;
 import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
-import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.lib.spring.util.Assert;
+import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -66,6 +69,44 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         return (FunctionBuilder<T>) new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
 
+    public static Function[] build(Class<?> clazz) {
+        return build(clazz, ObjectFactory.create());
+    }
+
+    public static Function[] build(Class<?> clazz, ObjectFactory factory) {
+        return build(factory.create(clazz));
+    }
+
+    public static Function[] build(Object target) {
+        return build(target, org.algorithmx.rules.annotation.Function.class, null);
+    }
+
+    private static <T> FunctionBuilder<T> with(Object target, MethodDefinition definition) {
+        return new FunctionBuilder(target, definition);
+    }
+
+    public static Function[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
+        Assert.notNull(annotationClass, "annotationClass cannot be null.");
+        Class<?> clazz = target.getClass();
+        Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
+
+        if (max != null && candidates.length > max) {
+            // Too many matches
+            throw new UnrulyException(clazz.getSimpleName() + " class has too many "
+                    + annotationClass.getSimpleName() + " function methods. " + "There can be at most " + max
+                    + " methods (Annotated with @" + annotationClass.getSimpleName()
+                    + "). Currently there are [" + candidates.length
+                    + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
+
+        Function[] result = new Function[candidates.length];
+
+        for (int i = 0; i < candidates.length; i++) {
+            result[i] = with(target, MethodDefinition.load(candidates[i])).build();
+        }
+
+        return result;
+    }
 
     /**
      * Builds the Action based on the set properties.
