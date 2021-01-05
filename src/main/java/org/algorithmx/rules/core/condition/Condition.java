@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.condition;
 
+import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 
@@ -28,7 +29,7 @@ import java.util.function.Predicate;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Condition extends SimpleCondition, Predicate<Object[]> {
+public interface Condition extends SimpleCondition, Identifiable, Predicate<Object[]> {
 
     /**
      * Executes the Function given all the arguments it needs.
@@ -63,4 +64,16 @@ public interface Condition extends SimpleCondition, Predicate<Object[]> {
      * @return target instance.
      */
     Object getTarget();
+
+    @Override
+    default String getName() {
+        MethodDefinition methodDefinition = getMethodDefinition();
+        return methodDefinition != null ? methodDefinition.getName() : null;
+    }
+
+    @Override
+    default String getDescription() {
+        MethodDefinition methodDefinition = getMethodDefinition();
+        return methodDefinition != null ? methodDefinition.getDescription() : null;
+    }
 }

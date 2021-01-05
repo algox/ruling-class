@@ -57,7 +57,7 @@ public class DefaultAction implements Action {
     }
 
     @Override
-    public void run(RuleContext ctx) throws ActionExecutionException {
+    public Void run(RuleContext ctx) throws ActionExecutionException {
         Assert.notNull(ctx, "ctx cannot be null.");
 
         ParameterMatch[] matches = null;
@@ -78,6 +78,8 @@ public class DefaultAction implements Action {
         } finally {
             if (event != null) ctx.getEventProcessor().fireListeners(event);
         }
+
+        return null;
     }
 
     @Override

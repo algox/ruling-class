@@ -17,12 +17,11 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
-import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.context.RuleContext;
-import org.algorithmx.rules.core.context.RuleContextBuilder;
+import org.algorithmx.rules.core.model.MethodDefinition;
 
 /**
  * Represents an operation that accepts input arguments and returns no result.
@@ -30,7 +29,7 @@ import org.algorithmx.rules.core.context.RuleContextBuilder;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Action extends Comparable<Action> {
+public interface Action extends Runnable<Void>, Identifiable, Comparable<Action> {
 
     /**
      * Derives all the arguments and executes this Action.
@@ -38,18 +37,7 @@ public interface Action extends Comparable<Action> {
      * @param ctx Rule Context.
      * @throws ActionExecutionException thrown if there are any errors during the Action execution.
      */
-    void run(RuleContext ctx) throws ActionExecutionException;
-
-    /**
-     * Derives all the arguments and executes this Action.
-     *
-     * @param params Action Parameters.
-     * @throws ActionExecutionException thrown if there are any errors during the Action execution.
-     */
-    default void run(BindingDeclaration...params) throws ActionExecutionException {
-        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        run(RuleContextBuilder.build(bindings));
-    }
+    Void run(RuleContext ctx) throws ActionExecutionException;
 
     /**
      * Executes thr Action given all the arguments it needs.
@@ -72,6 +60,18 @@ public interface Action extends Comparable<Action> {
      * @return target instance.
      */
     Object getTarget();
+
+    @Override
+    default String getName() {
+        MethodDefinition methodDefinition = getMethodDefinition();
+        return methodDefinition != null ? methodDefinition.getName() : null;
+    }
+
+    @Override
+    default String getDescription() {
+        MethodDefinition methodDefinition = getMethodDefinition();
+        return methodDefinition != null ? methodDefinition.getDescription() : null;
+    }
 
     @Override
     default int compareTo(Action other) {

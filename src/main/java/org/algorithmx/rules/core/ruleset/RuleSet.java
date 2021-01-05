@@ -17,13 +17,11 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
-import org.algorithmx.rules.bind.BindingDeclaration;
-import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
-import org.algorithmx.rules.core.context.RuleContextBuilder;
 import org.algorithmx.rules.core.rule.Rule;
 
 /**
@@ -32,32 +30,9 @@ import org.algorithmx.rules.core.rule.Rule;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface RuleSet extends Identifiable, Iterable<Rule> {
+public interface RuleSet extends Runnable<RuleResultSet>, Identifiable, Iterable<Rule> {
 
     RuleResultSet run(RuleContext ctx) throws RuleSetExecutionException;
-
-    /**
-     * Derives all the arguments and executes this RuleSet.
-     *
-     * @param bindings RuleSet Bindings.
-     * @return execution result of the RuleSet.
-     * @throws RuleSetExecutionException thrown if there are any runtime errors during the execution.
-     */
-    default RuleResultSet run(Bindings bindings) throws RuleSetExecutionException {
-        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
-    }
-
-    /**
-     * Derives all the arguments and executes this RuleSet.
-     *
-     * @param params RuleSet Parameters.
-     * @return execution result of the RuleSet.
-     * @throws RuleSetExecutionException thrown if there are any runtime errors during the execution.
-     */
-    default RuleResultSet run(BindingDeclaration...params) throws RuleSetExecutionException {
-        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return run(RuleContextBuilder.build(bindings));
-    }
 
     RuleSetDefinition getRuleSetDefinition();
 

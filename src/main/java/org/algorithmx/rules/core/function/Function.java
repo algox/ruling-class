@@ -19,10 +19,12 @@ package org.algorithmx.rules.core.function;
 
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.context.RuleContextBuilder;
+import org.algorithmx.rules.core.model.MethodDefinition;
 
 /**
  * Represents a function that accepts argument(s) and produces a result.
@@ -30,7 +32,12 @@ import org.algorithmx.rules.core.context.RuleContextBuilder;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Function<T> extends Comparable<Function> {
+public interface Function<T> extends Runnable<T>, Identifiable, Comparable<Function> {
+
+    @Override
+    default T run(RuleContext context) {
+        return apply(context);
+    }
 
     /**
      * Derives all the arguments and executes this Function.
@@ -75,6 +82,18 @@ public interface Function<T> extends Comparable<Function> {
      * @return target instance.
      */
     Object getTarget();
+
+    @Override
+    default String getName() {
+        MethodDefinition methodDefinition = getMethodDefinition();
+        return methodDefinition != null ? methodDefinition.getName() : null;
+    }
+
+    @Override
+    default String getDescription() {
+        MethodDefinition methodDefinition = getMethodDefinition();
+        return methodDefinition != null ? methodDefinition.getDescription() : null;
+    }
 
     @Override
     default int compareTo(Function other) {

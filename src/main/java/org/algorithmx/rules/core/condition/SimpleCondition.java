@@ -2,10 +2,16 @@ package org.algorithmx.rules.core.condition;
 
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.context.RuleContextBuilder;
 
-public interface SimpleCondition {
+public interface SimpleCondition extends Runnable<Boolean> {
+
+    @Override
+    default Boolean run(RuleContext context) {
+        return isTrue(context);
+    }
 
     /**
      * Derives all the arguments and executes this Condition.
