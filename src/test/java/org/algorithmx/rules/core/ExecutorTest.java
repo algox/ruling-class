@@ -76,12 +76,12 @@ public class ExecutorTest {
                 .name("rule1")
                 .build();
 
-        RuleContext ctx = RuleContextBuilder
+        RuleContext context = RuleContextBuilder
                 .with(bindings)
                 .matchUsing(BindingMatchingStrategyType.MATCH_BY_NAME)
                 .build();
 
-        rule.run(ctx);
+        rule.run(context);
     }
 
     @Test

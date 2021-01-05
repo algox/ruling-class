@@ -17,8 +17,11 @@
  */
 package org.algorithmx.rules.core.context;
 
+import org.algorithmx.rules.bind.BindingBuilder;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.bind.DefaultBindings;
+import org.algorithmx.rules.bind.ReservedBindings;
 import org.algorithmx.rules.bind.ScopedBindings;
 import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
@@ -52,7 +55,6 @@ public class RuleContextBuilder {
     private ObjectFactory objectFactory = ObjectFactory.create();
     private EventProcessor eventProcessor = EventProcessor.create();
     private ConverterRegistry registry = ConverterRegistry.create();
-    private String ruleContextBindingName = "ruleContext";
     private ScriptProcessor scriptProcessor = null;
     private List<ExecutionListener> listeners = new ArrayList<>();
 
@@ -85,7 +87,6 @@ public class RuleContextBuilder {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
         return with(bindings);
     }
-
 
     public static RuleContext build(Bindings bindings) {
         return with(bindings).build();
@@ -131,12 +132,6 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder ruleContextBindingName(String name) {
-        Assert.notNull(name, "name cannot be null.");
-        this.ruleContextBindingName = name;
-        return this;
-    }
-
     public RuleContextBuilder traceUsing(ExecutionListener listener) {
         Assert.notNull(listener, "listener cannot be null.");
         this.listeners.add(listener);
@@ -156,11 +151,16 @@ public class RuleContextBuilder {
      */
     public RuleContext build() {
         ScopedBindings scopedBindings = ScopedBindings.create(bindings);
-        Bindings contextScope = scopedBindings.addScope();
+        DefaultBindings contextScope = (DefaultBindings) scopedBindings.addScope();
 
         RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
                 messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor);
-        contextScope.bind(ruleContextBindingName, RuleContext.class, result);
+        // Make the Context avail in the bindings.
+        contextScope.promiscuousBind(BindingBuilder
+                .with(ReservedBindings.RULE_CONTEXT.getName())
+                .type(RuleContext.class)
+                .value(result)
+                .build());
         listeners.stream().forEach(listener -> result.getEventProcessor().addEventListener(listener));
 
         return result;

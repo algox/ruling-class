@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core.condition;
 
-import org.algorithmx.rules.annotation.Match;
-import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.function.BiFunction;
@@ -153,8 +151,8 @@ public class ConditionBuilder extends ExecutableBuilder {
     }
 
     public static Condition build(String script) {
-        return with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
-            Object result = ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
+        return with((RuleContext context) -> {
+            Object result = context.getScriptProcessor().evaluate(script, context.getBindings());
 
             if (result == null) throw new UnrulyException("Script Condition excepts a boolean return type. " +
                     "Actual [null]. Script [" + script + "]");

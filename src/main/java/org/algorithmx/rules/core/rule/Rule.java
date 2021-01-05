@@ -45,11 +45,11 @@ public interface Rule<T> extends Runnable<RuleResult>, Identifiable {
      * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
      * if the result is false then the Otherwise condition will be executed (if one exists).
      *
-     * @param ctx used to derive the parameters required for this Rule.
+     * @param context used to derive the parameters required for this Rule.
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    RuleResult run(RuleContext ctx) throws RuleExecutionException;
+    RuleResult run(RuleContext context) throws RuleExecutionException;
 
     /**
      * The actual Rule implementation instance.

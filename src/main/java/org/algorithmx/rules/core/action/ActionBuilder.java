@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.core.action;
 
-import org.algorithmx.rules.annotation.Match;
-import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.function.ExecutableBuilder;
@@ -64,8 +62,8 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action build(String script) {
-        return with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
-            ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
+        return with((RuleContext context) -> {
+            context.getScriptProcessor().evaluate(script, context.getBindings());
         }).build();
     }
 

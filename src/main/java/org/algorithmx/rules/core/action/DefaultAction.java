@@ -57,16 +57,16 @@ public class DefaultAction implements Action {
     }
 
     @Override
-    public Void run(RuleContext ctx) throws ActionExecutionException {
-        Assert.notNull(ctx, "ctx cannot be null.");
+    public Void run(RuleContext context) throws ActionExecutionException {
+        Assert.notNull(context, "context cannot be null.");
 
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<ActionExecution> event = null;
 
         try {
-            matches = ctx.match(getMethodDefinition());
-            values = ctx.resolve(matches, getMethodDefinition());
+            matches = context.match(getMethodDefinition());
+            values = context.resolve(matches, getMethodDefinition());
             run(values);
             event = new ExecutionEvent(EventType.ON_ACTION, new ActionExecution(this, getMethodDefinition(),
                     RuleUtils.immutable(matches), values));
@@ -76,7 +76,7 @@ public class DefaultAction implements Action {
             throw new ActionExecutionException("Unexpected error occurred trying to execute Action.",
                     e, this, matches, values);
         } finally {
-            if (event != null) ctx.getEventProcessor().fireListeners(event);
+            if (event != null) context.getEventProcessor().fireListeners(event);
         }
 
         return null;

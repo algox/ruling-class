@@ -69,16 +69,16 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public RuleResultSet run(RuleContext ctx) throws UnrulyException {
-        Assert.notNull(ctx, "ctx cannot be null");
+    public RuleResultSet run(RuleContext context) throws UnrulyException {
+        Assert.notNull(context, "context cannot be null");
 
         // RuleSet Start Event
-        ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_START, null));
+        context.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_START, null));
 
         RuleResultSet result = new RuleResultSet();
 
         // Run the PreCondition if there is one.
-        boolean preConditionCheck = processCondition(ctx, getPreCondition(), EventType.RULE_SET_PRE_CONDITION_START,
+        boolean preConditionCheck = processCondition(context, getPreCondition(), EventType.RULE_SET_PRE_CONDITION_START,
                 EventType.RULE_SET_PRE_CONDITION_END);
         result.setPreConditionCheck(preConditionCheck);
 
@@ -87,22 +87,22 @@ public class DefaultRuleSet implements RuleSet {
 
         try {
             // Create a new Scope for the RuleSet to use
-            createRuleSetScope(ctx, result);
+            createRuleSetScope(context, result);
             // Run the PreAction if there is one.
-            processAction(ctx, getPreAction(), EventType.RULE_SET_PRE_ACTION_START, EventType.RULE_SET_PRE_ACTION_END);
+            processAction(context, getPreAction(), EventType.RULE_SET_PRE_ACTION_START, EventType.RULE_SET_PRE_ACTION_END);
 
             int index = 0;
             // Execute the rules in order; STOP if the stopCondition is met.
             for (Rule rule : getRules()) {
                 try {
                     // Run the rule
-                    RuleResult ruleResult = rule.run(ctx);
+                    RuleResult ruleResult = rule.run(context);
                     result.add(ruleResult);
                 } catch (Exception e) {
-                    ctx.getEventProcessor().fireListeners(new ExecutionEvent<>(EventType.RULE_SET_ERROR,
+                    context.getEventProcessor().fireListeners(new ExecutionEvent<>(EventType.RULE_SET_ERROR,
                             new RuleSetExecutionError(this, e)));
 
-                    boolean proceed = processError(ctx, rule.getRuleDefinition(), index, e);
+                    boolean proceed = processError(context, rule.getRuleDefinition(), index, e);
 
                     if (!proceed) {
                         throw new RuleSetExecutionException("Unexpected error occurred trying to execute Rule ["
@@ -117,7 +117,7 @@ public class DefaultRuleSet implements RuleSet {
                 }
 
                 // Check to see if we need to stop the execution?
-                if (getStopCondition() != null && processCondition(ctx, getStopCondition(),
+                if (getStopCondition() != null && processCondition(context, getStopCondition(),
                         EventType.RULE_SET_STOP_CONDITION_START, EventType.RULE_SET_STOP_CONDITION_END)) {
                     break;
                 }
@@ -126,54 +126,54 @@ public class DefaultRuleSet implements RuleSet {
 
             try {
                 // Run the PostAction if there is one.
-                processAction(ctx, getPostAction(), EventType.RULE_SET_POST_ACTION_START, EventType.RULE_SET_POST_ACTION_END);
+                processAction(context, getPostAction(), EventType.RULE_SET_POST_ACTION_START, EventType.RULE_SET_POST_ACTION_END);
             } finally {
-                removeRuleSetScope(ctx);
+                removeRuleSetScope(context);
             }
 
             // RuleSet Start Event
-            ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_END, null));
+            context.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_END, null));
         }
 
         return result;
     }
 
-    protected boolean processCondition(RuleContext ctx, Condition condition, EventType startEventType, EventType endEventType) {
+    protected boolean processCondition(RuleContext context, Condition condition, EventType startEventType, EventType endEventType) {
 
         // Check Condition exists
         if (condition == null) return true;
 
         // Fire the event
-        ctx.getEventProcessor().fireListeners(createEvent(startEventType, condition));
+        context.getEventProcessor().fireListeners(createEvent(startEventType, condition));
 
         try {
             // Check the condition
-            return condition.isTrue(ctx);
+            return condition.isTrue(context);
         } catch (Exception e) {
             throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Condition ["
                     + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
         } finally {
             // Fire the end event
-            ctx.getEventProcessor().fireListeners(createEvent(endEventType, condition));
+            context.getEventProcessor().fireListeners(createEvent(endEventType, condition));
         }
     }
 
-    protected void processAction(RuleContext ctx, Action action, EventType startEventType, EventType endEventType) {
+    protected void processAction(RuleContext context, Action action, EventType startEventType, EventType endEventType) {
 
         // Check if Action exists
         if (action == null) return;
 
         // Fire the start event
-        ctx.getEventProcessor().fireListeners(createEvent(startEventType, action));
+        context.getEventProcessor().fireListeners(createEvent(startEventType, action));
 
         try {
-            action.run(ctx);
+            action.run(context);
         } catch (Exception e) {
             throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Action ["
                     + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
         } finally {
             // Fire the end event
-            ctx.getEventProcessor().fireListeners(createEvent(endEventType, action));
+            context.getEventProcessor().fireListeners(createEvent(endEventType, action));
         }
     }
 
@@ -182,39 +182,39 @@ public class DefaultRuleSet implements RuleSet {
         return new ExecutionEvent<>(eventType, ruleExecution);
     }
 
-    protected void createRuleSetScope(RuleContext ctx, RuleResultSet ruleResultSet) {
-        ctx.getBindings().addScope();
-        ctx.getBindings().bind("ruleResultSet", RuleResultSet.class, ruleResultSet);
+    protected void createRuleSetScope(RuleContext context, RuleResultSet ruleResultSet) {
+        context.getBindings().addScope();
+        context.getBindings().bind("ruleResultSet", RuleResultSet.class, ruleResultSet);
     }
 
-    protected void removeRuleSetScope(RuleContext ctx) {
-        ctx.getBindings().removeScope();
+    protected void removeRuleSetScope(RuleContext context) {
+        context.getBindings().removeScope();
     }
 
-    protected boolean processError(RuleContext ctx, RuleDefinition ruleDefinition, int index, Exception ex) throws UnrulyException{
+    protected boolean processError(RuleContext context, RuleDefinition ruleDefinition, int index, Exception ex) throws UnrulyException{
 
         if (getErrorCondition() == null) return false;
 
         boolean proceed;
 
         try {
-            setupErrorScope(ctx, ex, "ex");
-            proceed = processCondition(ctx, getErrorCondition(), EventType.RULE_SET_ERROR_CONDITION_START,
+            setupErrorScope(context, ex, "ex");
+            proceed = processCondition(context, getErrorCondition(), EventType.RULE_SET_ERROR_CONDITION_START,
                     EventType.RULE_SET_ERROR_CONDITION_END);
         } finally {
-            removeErrorScope(ctx);
+            removeErrorScope(context);
         }
 
         return proceed;
     }
 
-    protected void setupErrorScope(RuleContext ctx, Exception ex, String bindingName) {
-        Bindings errorScope = ctx.getBindings().addScope();
+    protected void setupErrorScope(RuleContext context, Exception ex, String bindingName) {
+        Bindings errorScope = context.getBindings().addScope();
         errorScope.bind(bindingName, ex);
     }
 
-    protected void removeErrorScope(RuleContext ctx) {
-        ctx.getBindings().removeScope();
+    protected void removeErrorScope(RuleContext context) {
+        context.getBindings().removeScope();
     }
 
     public Rule get(int index) {

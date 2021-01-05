@@ -34,10 +34,10 @@ public interface Action extends Runnable<Void>, Identifiable, Comparable<Action>
     /**
      * Derives all the arguments and executes this Action.
      *
-     * @param ctx Rule Context.
+     * @param context Rule Context.
      * @throws ActionExecutionException thrown if there are any errors during the Action execution.
      */
-    Void run(RuleContext ctx) throws ActionExecutionException;
+    Void run(RuleContext context) throws ActionExecutionException;
 
     /**
      * Executes thr Action given all the arguments it needs.

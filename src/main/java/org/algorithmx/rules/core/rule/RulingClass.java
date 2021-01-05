@@ -81,78 +81,78 @@ public class RulingClass<T> implements Rule<T> {
     }
 
     @Override
-    public RuleResult run(RuleContext ctx) throws UnrulyException {
-        Assert.notNull(ctx, "ctx cannot be null");
+    public RuleResult run(RuleContext context) throws UnrulyException {
+        Assert.notNull(context, "context cannot be null");
 
         // Rule Start Event
-        ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_START, null));
+        context.getEventProcessor().fireListeners(createEvent(EventType.RULE_START, null));
 
         Boolean result = false;
 
         try {
             // Check the Pre-Condition
-            boolean preConditionCheck = processCondition(ctx, getPreCondition(), EventType.RULE_PRE_CONDITION_START,
+            boolean preConditionCheck = processCondition(context, getPreCondition(), EventType.RULE_PRE_CONDITION_START,
                     EventType.RULE_PRE_CONDITION_END);
             // We did not pass the Pre-Condition
             if (!preConditionCheck) return new RuleResult(getName(), RuleExecutionStatus.SKIPPED);
 
-            result = processCondition(ctx, getCondition(), EventType.RULE_CONDITION_START, EventType.RULE_CONDITION_END);
+            result = processCondition(context, getCondition(), EventType.RULE_CONDITION_START, EventType.RULE_CONDITION_END);
 
             // The Condition passed
             if (result) {
                 // Execute associated Actions.
                 for (Action action : getActions()) {
-                    processAction(ctx, action, EventType.RULE_ACTION_START, EventType.RULE_ACTION_END);
+                    processAction(context, action, EventType.RULE_ACTION_START, EventType.RULE_ACTION_END);
                 }
             } else {
                 // Execute otherwise Action.
-                processAction(ctx, getOtherwiseAction(), EventType.RULE_OTHERWISE_ACTION_START,
+                processAction(context, getOtherwiseAction(), EventType.RULE_OTHERWISE_ACTION_START,
                         EventType.RULE_OTHERWISE_ACTION_END);
             }
         } finally {
             // Rule End Event
-            ctx.getEventProcessor().fireListeners(createEvent(EventType.RULE_END, result));
+            context.getEventProcessor().fireListeners(createEvent(EventType.RULE_END, result));
         }
 
         return new RuleResult(getName(), result ? RuleExecutionStatus.PASS : RuleExecutionStatus.FAIL);
     }
 
-    protected boolean processCondition(RuleContext ctx, Condition condition, EventType startEventType, EventType endEventType) {
+    protected boolean processCondition(RuleContext context, Condition condition, EventType startEventType, EventType endEventType) {
 
         // Check Condition exists
         if (condition == null) return true;
 
         // Fire the event
-        ctx.getEventProcessor().fireListeners(createEvent(startEventType, condition));
+        context.getEventProcessor().fireListeners(createEvent(startEventType, condition));
 
         try {
             // Check the condition
-            return condition.isTrue(ctx);
+            return condition.isTrue(context);
         } catch (Exception e) {
             throw new RuleExecutionException("Unexpected error occurred while trying to execution Condition ["
                     + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);
         } finally {
             // Fire the end event
-            ctx.getEventProcessor().fireListeners(createEvent(endEventType, condition));
+            context.getEventProcessor().fireListeners(createEvent(endEventType, condition));
         }
     }
 
-    protected void processAction(RuleContext ctx, Action action, EventType startEventType, EventType endEventType) {
+    protected void processAction(RuleContext context, Action action, EventType startEventType, EventType endEventType) {
 
         // Check if Action exists
         if (action == null) return;
 
         // Fire the start event
-        ctx.getEventProcessor().fireListeners(createEvent(startEventType, action));
+        context.getEventProcessor().fireListeners(createEvent(startEventType, action));
 
         try {
-            action.run(ctx);
+            action.run(context);
         } catch (Exception e) {
             throw new RuleExecutionException("Unexpected error occurred while trying to execution Action ["
                     + startEventType.getDescription() + "] on Rule [" + getName() + "].", e, this.getTarget(), startEventType);
         } finally {
             // Fire the end event
-            ctx.getEventProcessor().fireListeners(createEvent(endEventType, action));
+            context.getEventProcessor().fireListeners(createEvent(endEventType, action));
         }
     }
 

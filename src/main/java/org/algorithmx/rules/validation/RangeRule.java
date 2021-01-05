@@ -50,8 +50,7 @@ public class RangeRule extends ValidationRule {
     }
 
     @Otherwise
-    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
-                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
 
         RuleViolationBuilder builder = createRuleViolationBuilder()
                 .param("value", supplier.get())

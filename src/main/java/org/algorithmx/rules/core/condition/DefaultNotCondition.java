@@ -18,7 +18,7 @@ public class DefaultNotCondition implements NotCondition {
     }
 
     @Override
-    public boolean isTrue(RuleContext ctx) throws ConditionExecutionException {
-        return !condition.isTrue(ctx);
+    public boolean isTrue(RuleContext context) throws ConditionExecutionException {
+        return !condition.isTrue(context);
     }
 }

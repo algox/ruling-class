@@ -37,9 +37,9 @@ public class DefaultCompositeCondition implements CompositeCondition {
     }
 
     @Override
-    public boolean isTrue(RuleContext ctx) throws ConditionExecutionException {
-        boolean leftResult = leftOperand.isTrue(ctx);
-        boolean rightResult = leftOperand.isTrue(ctx);
+    public boolean isTrue(RuleContext context) throws ConditionExecutionException {
+        boolean leftResult = leftOperand.isTrue(context);
+        boolean rightResult = leftOperand.isTrue(context);
         return predicate.test(leftResult, rightResult);
     }
 }

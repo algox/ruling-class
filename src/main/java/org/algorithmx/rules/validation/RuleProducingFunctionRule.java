@@ -26,22 +26,22 @@ public class RuleProducingFunctionRule<T> extends RulingClass {
     }
 
     @Override
-    public RuleResult run(RuleContext ctx) throws UnrulyException {
+    public RuleResult run(RuleContext context) throws UnrulyException {
         Object target;
-        boolean eventsEnabled = ctx.getEventProcessor().isEventsEnabled();
+        boolean eventsEnabled = context.getEventProcessor().isEventsEnabled();
 
         try {
-            ctx.getEventProcessor().setEventsEnabled(false);
-            target = supplier.apply(ctx);
+            context.getEventProcessor().setEventsEnabled(false);
+            target = supplier.apply(context);
         } catch (Exception e) {
             throw new RuleExecutionException("Unable to create Rule [" + getRuleDefinition().getName()
                     + "] using the given supplier.", e, this);
         } finally {
-            ctx.getEventProcessor().setEventsEnabled(eventsEnabled);
+            context.getEventProcessor().setEventsEnabled(eventsEnabled);
         }
 
         Rule rule = RuleBuilder.build(target);
-        return rule.run(ctx);
+        return rule.run(context);
     }
     @Override
     public String toString() {

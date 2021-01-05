@@ -16,11 +16,11 @@ public interface SimpleCondition extends Runnable<Boolean> {
     /**
      * Derives all the arguments and executes this Condition.
      *
-     * @param ctx Rule Context.
+     * @param context Rule Context.
      * @return result of the function.
      * @throws ConditionExecutionException thrown if there are any errors during the Condition execution.
      */
-    boolean isTrue(RuleContext ctx) throws ConditionExecutionException;
+    boolean isTrue(RuleContext context) throws ConditionExecutionException;
 
     /**
      * Derives all the arguments and executes this Condition.

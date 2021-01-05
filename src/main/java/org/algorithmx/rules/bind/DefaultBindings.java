@@ -22,9 +22,11 @@ import org.algorithmx.rules.util.TypeReference;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -37,16 +39,29 @@ public class DefaultBindings implements Bindings {
 
     // Stores all the Bindings
     private final Map<String, Binding<?>> bindings = createBindings();
+    private final Set<String> reservedWords = new HashSet<>();
 
     /**
      * Default Ctor. Self Reference added.
      */
     DefaultBindings() {
         super();
+        this.reservedWords.addAll(ReservedBindings.reservedBindings());
     }
 
     @Override
     public <S extends Bindings, T> S bind(Binding<T> binding) {
+        Assert.notNull(binding, "binding cannot be null");
+
+        if (reservedWords.contains(binding.getName())) {
+            throw new InvalidBindingException("Binding name [" + binding.getName() + "] is a reserved name. " +
+                    "Please rename and try again. Given Binding [" + binding + "]");
+        }
+
+        return promiscuousBind(binding);
+    }
+
+    public <S extends Bindings, T> S promiscuousBind(Binding<T> binding) {
         Assert.notNull(binding, "binding cannot be null");
 
         // Try and put the Binding

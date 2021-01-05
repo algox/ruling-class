@@ -32,7 +32,7 @@ import org.algorithmx.rules.core.rule.Rule;
  */
 public interface RuleSet extends Runnable<RuleResultSet>, Identifiable, Iterable<Rule> {
 
-    RuleResultSet run(RuleContext ctx) throws RuleSetExecutionException;
+    RuleResultSet run(RuleContext context) throws RuleSetExecutionException;
 
     RuleSetDefinition getRuleSetDefinition();
 

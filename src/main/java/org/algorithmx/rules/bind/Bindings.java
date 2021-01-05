@@ -146,7 +146,7 @@ public interface Bindings extends Iterable<Binding<?>> {
      */
     default <S extends Bindings> S bind(BindingDeclaration...declarations)  {
         Assert.notNull(declarations, "declarations cannot be null");
-        Bindings result = new DefaultBindings();
+        Bindings result = create();
         Arrays.stream(declarations).forEach(result::bind);
         return (S) result;
     }

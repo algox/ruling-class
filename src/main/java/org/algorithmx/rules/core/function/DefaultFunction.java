@@ -55,16 +55,16 @@ public class DefaultFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(RuleContext ctx) throws FunctionExecutionException {
-        Assert.notNull(ctx, "ctx cannot be null.");
+    public T apply(RuleContext context) throws FunctionExecutionException {
+        Assert.notNull(context, "context cannot be null.");
 
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<FunctionExecution> event = null;
 
         try {
-            matches = ctx.match(getMethodDefinition());
-            values = ctx.resolve(matches, getMethodDefinition());
+            matches = context.match(getMethodDefinition());
+            values = context.resolve(matches, getMethodDefinition());
             T result = apply(values);
             event = new ExecutionEvent(EventType.ON_FUNCTION,
                     new FunctionExecution(this, result, getMethodDefinition(), RuleUtils.immutable(matches), values));
@@ -75,7 +75,7 @@ public class DefaultFunction<T> implements Function<T> {
             throw new FunctionExecutionException("Unexpected error occurred trying to execute Function.",
                     e, this, matches, values);
         } finally {
-            if (event != null) ctx.getEventProcessor().fireListeners(event);
+            if (event != null) context.getEventProcessor().fireListeners(event);
         }
     }
 

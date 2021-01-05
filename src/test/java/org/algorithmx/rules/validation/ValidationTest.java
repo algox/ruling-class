@@ -92,8 +92,8 @@ public class ValidationTest {
                 .add(RuleBuilder.build((Object b) -> new NotNullRule(b)))
                 .build();
 
-        RuleContext ctx = RuleContextBuilder.with(bindings).build();
-        rules.run(ctx);
+        RuleContext context = RuleContextBuilder.with(bindings).build();
+        rules.run(context);
         Assert.assertTrue(errors.size() == 0);
     }
 
@@ -251,12 +251,12 @@ public class ValidationTest {
                 .build();
 
         StringExecutionCollector collector = new StringExecutionCollector(true);
-        RuleContext ctx = RuleContextBuilder
+        RuleContext context = RuleContextBuilder
                 .with(bindings)
                 .traceUsing(collector)
                 .build();
 
-        RuleResultSet result = rules.run(ctx);
+        RuleResultSet result = rules.run(context);
         System.err.println(collector.toString());
         System.err.println(result);
         Assert.assertTrue(errors.size() == 1);

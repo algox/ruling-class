@@ -49,16 +49,16 @@ public class DefaultCondition implements Condition {
     }
 
     @Override
-    public boolean isTrue(RuleContext ctx) throws ConditionExecutionException {
-        Assert.notNull(ctx, "ctx cannot be null.");
+    public boolean isTrue(RuleContext context) throws ConditionExecutionException {
+        Assert.notNull(context, "context cannot be null.");
 
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<ConditionExecution> event = null;
 
         try {
-            matches = ctx.match(getMethodDefinition());
-            values = ctx.resolve(matches, getMethodDefinition());
+            matches = context.match(getMethodDefinition());
+            values = context.resolve(matches, getMethodDefinition());
             boolean result = isTrue(values);
             event = new ExecutionEvent(EventType.ON_CONDITION,
                     new ConditionExecution(this, result, getMethodDefinition(), RuleUtils.immutable(matches), values));
@@ -69,7 +69,7 @@ public class DefaultCondition implements Condition {
             throw new ConditionExecutionException("Unexpected error occurred trying to execute Condition.",
                     e, this, matches, values);
         } finally {
-            if (event != null) ctx.getEventProcessor().fireListeners(event);
+            if (event != null) context.getEventProcessor().fireListeners(event);
         }
     }
 

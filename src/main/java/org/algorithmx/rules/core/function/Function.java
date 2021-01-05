@@ -42,11 +42,11 @@ public interface Function<T> extends Runnable<T>, Identifiable, Comparable<Funct
     /**
      * Derives all the arguments and executes this Function.
      *
-     * @param ctx Rule Context.
+     * @param context Rule Context.
      * @return result of the function.
      * @throws FunctionExecutionException thrown if there are any errors during the Function execution.
      */
-    T apply(RuleContext ctx) throws FunctionExecutionException;
+    T apply(RuleContext context) throws FunctionExecutionException;
 
     /**
      * Executes the Function given all the arguments it needs.
