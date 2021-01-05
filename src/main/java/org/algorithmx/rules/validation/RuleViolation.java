@@ -37,6 +37,7 @@ public class RuleViolation {
     private final String errorMessage;
     private String bindingName;
     private final Map<String, String> params = new LinkedHashMap<>();
+    private final Map<String, Object> attributes = new LinkedHashMap<>();
 
     public RuleViolation(String ruleName, String errorCode, Severity severity, String errorMessage) {
         super();
@@ -121,6 +122,18 @@ public class RuleViolation {
      */
     public RuleViolation param(String name, String value) {
         params.put(name, value);
+        return this;
+    }
+
+    /**
+     * Adds a new violation attribute.
+     *
+     * @param name attribute name.
+     * @param value attribute value.
+     * @return error.
+     */
+    public RuleViolation attribute(String name, Object value) {
+        attributes.put(name, value);
         return this;
     }
 

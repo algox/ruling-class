@@ -40,17 +40,23 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
 
     @Override
     public boolean isCandidate(Class<?> clazz) {
-        return getClassFilter() != null ? getClassFilter().test(clazz) : true;
+        return getClassFilter() != null
+                ? !getClassFilter().test(clazz)
+                : true;
     }
 
     @Override
     public boolean isCandidate(Field field) {
-        return getFieldFilter() != null ? getFieldFilter().test(field) : true;
+        return getFieldFilter() != null
+                ? getFieldFilter().test(field)
+                : true;
     }
 
     @Override
     public boolean isCandidate(PropertyDescriptor property) {
-        return getPropertyFilter() != null ? getPropertyFilter().test(property) : true;
+        return getPropertyFilter() != null
+                ? getPropertyFilter().test(property)
+                : true;
     }
 
     public Predicate<Class<?>> getClassFilter() {
