@@ -177,7 +177,7 @@ public class ConditionTest {
 
     @Test
     public void testConditionConsumer() {
-        Condition condition = ConditionBuilder.create((Integer a) -> a > 10);
+        Condition condition = ConditionBuilder.build((Integer a) -> a > 10);
         Assert.assertTrue(condition.isTrue(13));
     }
 }

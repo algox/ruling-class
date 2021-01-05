@@ -48,7 +48,7 @@ public interface Action extends Comparable<Action> {
      */
     default void run(BindingDeclaration...params) throws ActionExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        run(RuleContextBuilder.create(bindings));
+        run(RuleContextBuilder.build(bindings));
     }
 
     /**

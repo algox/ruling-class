@@ -44,7 +44,7 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      * @throws RuleSetExecutionException thrown if there are any runtime errors during the execution.
      */
     default RuleResultSet run(Bindings bindings) throws RuleSetExecutionException {
-        return run(RuleContextBuilder.create(bindings != null ? bindings : Bindings.create()));
+        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
     }
 
     /**
@@ -56,7 +56,7 @@ public interface RuleSet extends Identifiable, Iterable<Rule> {
      */
     default RuleResultSet run(BindingDeclaration...params) throws RuleSetExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return run(RuleContextBuilder.create(bindings));
+        return run(RuleContextBuilder.build(bindings));
     }
 
     RuleSetDefinition getRuleSetDefinition();

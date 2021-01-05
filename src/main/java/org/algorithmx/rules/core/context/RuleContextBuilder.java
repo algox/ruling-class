@@ -87,11 +87,11 @@ public class RuleContextBuilder {
     }
 
 
-    public static RuleContext create(Bindings bindings) {
+    public static RuleContext build(Bindings bindings) {
         return with(bindings).build();
     }
 
-    public static RuleContext create(BindingDeclaration...params) {
+    public static RuleContext build(BindingDeclaration...params) {
         return with(params).build();
     }
 

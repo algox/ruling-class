@@ -40,7 +40,7 @@ public class RuleProducingFunctionRule<T> extends RulingClass {
             ctx.getEventProcessor().setEventsEnabled(eventsEnabled);
         }
 
-        Rule rule = RuleBuilder.create(target);
+        Rule rule = RuleBuilder.build(target);
         return rule.run(ctx);
     }
     @Override

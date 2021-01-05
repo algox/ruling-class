@@ -59,7 +59,7 @@ public interface Function<T> extends Comparable<Function> {
      */
     default T apply(BindingDeclaration...params) throws FunctionExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return apply(RuleContextBuilder.create(bindings));
+        return apply(RuleContextBuilder.build(bindings));
     }
 
     /**

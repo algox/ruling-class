@@ -41,8 +41,8 @@ public class NashornScriptProcessorTest {
                 .bind("a", "xxx")
                 .bind("b", 15);
 
-        RuleContext context = RuleContextBuilder.create(bindings);
-        Condition condition = ConditionBuilder.script("b >= 15");
+        RuleContext context = RuleContextBuilder.build(bindings);
+        Condition condition = ConditionBuilder.build("b >= 15");
         Assert.assertTrue(condition.isTrue(context));
     }
 
@@ -52,11 +52,11 @@ public class NashornScriptProcessorTest {
                 .bind("a", "xxx")
                 .bind("b", 15);
 
-        RuleContext context = RuleContextBuilder.create(bindings);
+        RuleContext context = RuleContextBuilder.build(bindings);
         Rule rule = RuleBuilder
-                        .with(ConditionBuilder.script("b >= 15"))
-                        .then(ActionBuilder.script("bindings.setValue('b', 20);"))
-                        .otherwise(ActionBuilder.script("print('oh no')"))
+                        .with(ConditionBuilder.build("b >= 15"))
+                        .then(ActionBuilder.build("bindings.setValue('b', 20);"))
+                        .otherwise(ActionBuilder.build("print('oh no')"))
                         .name("TestRule")
                         .build();
         rule.run(context);

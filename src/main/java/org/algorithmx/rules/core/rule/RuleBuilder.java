@@ -56,7 +56,7 @@ public abstract class RuleBuilder<T> {
         return with(ruleClass, ObjectFactory.create());
     }
 
-    public static <T> Rule<T> create(Class<T> ruleClass) {
+    public static <T> Rule<T> build(Class<T> ruleClass) {
         return with(ruleClass).build();
     }
 
@@ -65,7 +65,7 @@ public abstract class RuleBuilder<T> {
         return ClassBasedRuleBuilder.with((Class<T>) ruleTarget.getClass(), ruleTarget);
     }
 
-    public static <T> Rule<T> create(T ruleTarget) {
+    public static <T> Rule<T> build(T ruleTarget) {
         return with(ruleTarget).build();
     }
 
@@ -75,7 +75,7 @@ public abstract class RuleBuilder<T> {
         return ClassBasedRuleBuilder.with(ruleClass, objectFactory.createRule(ruleClass));
     }
 
-    public static <T> Rule<T> create(Class<T> ruleClass, ObjectFactory objectFactory) {
+    public static <T> Rule<T> build(Class<T> ruleClass, ObjectFactory objectFactory) {
         return with(ruleClass, objectFactory).build();
     }
 
@@ -84,11 +84,11 @@ public abstract class RuleBuilder<T> {
         return new LambdaBasedRuleBuilder(condition);
     }
 
-    public static <R extends ValidationRule, T> Rule create(UnaryFunction<R, T> supplier) {
+    public static <R extends ValidationRule, T> Rule build(UnaryFunction<R, T> supplier) {
         return new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build());
     }
 
-    public static <R extends ValidationRule, T> Rule create(String ruleName, String description, UnaryFunction<R, T> supplier) {
+    public static <R extends ValidationRule, T> Rule build(String ruleName, String description, UnaryFunction<R, T> supplier) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
         RuleProducingFunctionRule result = new RuleProducingFunctionRule(FunctionBuilder.with(supplier).build());
         result.getRuleDefinition().setName(ruleName);
@@ -96,11 +96,11 @@ public abstract class RuleBuilder<T> {
         return result;
     }
 
-    public static Rule create(Function<?> supplier) {
+    public static Rule build(Function<?> supplier) {
         return new RuleProducingFunctionRule(supplier);
     }
 
-    public static Rule create(String ruleName, String description, Function<?> supplier) {
+    public static Rule build(String ruleName, String description, Function<?> supplier) {
         RuleProducingFunctionRule result = new RuleProducingFunctionRule(supplier);
         result.getRuleDefinition().setName(ruleName);
         result.getRuleDefinition().setDescription(description);

@@ -67,7 +67,7 @@ public class RuleSetBuilder {
         return with(ruleSetClass, ObjectFactory.create());
     }
 
-    public static RuleSet create(Class<?> ruleSetClass) {
+    public static RuleSet build(Class<?> ruleSetClass) {
         return with(ruleSetClass).build();
     }
 
@@ -77,7 +77,7 @@ public class RuleSetBuilder {
         return ClassBasedRuleSetBuilder.with(ruleSetClass, objectFactory.createRule(ruleSetClass));
     }
 
-    public static RuleSet create(Class<?> ruleSetClass, ObjectFactory objectFactory) {
+    public static RuleSet build(Class<?> ruleSetClass, ObjectFactory objectFactory) {
         return with(ruleSetClass, objectFactory).build();
     }
 

@@ -140,7 +140,7 @@ public class ConditionBuilder extends ExecutableBuilder {
         return with(() -> false).build();
     }
 
-    public static Condition script(String script) {
+    public static Condition build(String script) {
         return with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
             Object result = ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
 
@@ -169,7 +169,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param function desired action.
      * @return new condition with no arguments.
      */
-    public static Condition create(NoArgFunction<Boolean> function) {
+    public static Condition build(NoArgFunction<Boolean> function) {
         return withCondition(function).build();
     }
 
@@ -191,7 +191,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <A> generic type of the first parameter.
      * @return new Condition representing the passed in function.
      */
-    public static <A> Condition create(UnaryFunction<Boolean, A> function) {
+    public static <A> Condition build(UnaryFunction<Boolean, A> function) {
         return withCondition(function).build();
     }
 
@@ -215,7 +215,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <B> generic type of the second parameter.
      * @return new condition with two arguments.
      */
-    public static <A, B> Condition create(BiFunction<Boolean, A, B> function) {
+    public static <A, B> Condition build(BiFunction<Boolean, A, B> function) {
         return withCondition(function).build();
     }
 
@@ -241,7 +241,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <C> generic type of the third parameter.
      * @return new condition with three arguments.
      */
-    public static <A, B, C> Condition create(TriFunction<Boolean, A, B, C> function) {
+    public static <A, B, C> Condition build(TriFunction<Boolean, A, B, C> function) {
         return withCondition(function).build();
     }
 
@@ -269,7 +269,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <D> generic type of the fourth parameter.
      * @return new condition with four arguments.
      */
-    public static <A, B, C, D> Condition create(QuadFunction<Boolean, A, B, C, D> function) {
+    public static <A, B, C, D> Condition build(QuadFunction<Boolean, A, B, C, D> function) {
         return withCondition(function).build();
     }
 
@@ -299,7 +299,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <E> generic type of the fifth parameter.
      * @return new condition with five arguments.
      */
-    public static <A, B, C, D, E> Condition create(QuinFunction<Boolean, A, B, C, D, E> function) {
+    public static <A, B, C, D, E> Condition build(QuinFunction<Boolean, A, B, C, D, E> function) {
         return withCondition(function).build();
     }
 
@@ -331,7 +331,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <F> generic type of the sixth parameter.
      * @return new condition with six arguments.
      */
-    public static <A, B, C, D, E, F> Condition create(SexFunction<Boolean, A, B, C, D, E, F> function) {
+    public static <A, B, C, D, E, F> Condition build(SexFunction<Boolean, A, B, C, D, E, F> function) {
         return withCondition(function).build();
     }
 
@@ -365,7 +365,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <G> generic type of the seventh parameter.
      * @return new condition with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> Condition create(SeptFunction<Boolean, A, B, C, D, E, F, G> function) {
+    public static <A, B, C, D, E, F, G> Condition build(SeptFunction<Boolean, A, B, C, D, E, F, G> function) {
         return withCondition(function).build();
     }
 
@@ -401,7 +401,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <H> generic type of the eighth parameter.
      * @return new condition with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> Condition create(OctFunction<Boolean, A, B, C, D, E, F, G, H> function) {
+    public static <A, B, C, D, E, F, G, H> Condition build(OctFunction<Boolean, A, B, C, D, E, F, G, H> function) {
         return withCondition(function).build();
     }
 
@@ -439,7 +439,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <I> generic type of the ninth parameter.
      * @return new condition with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> Condition create(NovFunction<Boolean, A, B, C, D, E, F, G, H, I> function) {
+    public static <A, B, C, D, E, F, G, H, I> Condition build(NovFunction<Boolean, A, B, C, D, E, F, G, H, I> function) {
         return withCondition(function).build();
     }
 
@@ -479,7 +479,7 @@ public class ConditionBuilder extends ExecutableBuilder {
      * @param <J> generic type of the ninth parameter.
      * @return new condition with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> Condition create(DecFunction<Boolean, A, B, C, D, E, F, G, H, I, J> function) {
+    public static <A, B, C, D, E, F, G, H, I, J> Condition build(DecFunction<Boolean, A, B, C, D, E, F, G, H, I, J> function) {
         return withCondition(function).build();
     }
 

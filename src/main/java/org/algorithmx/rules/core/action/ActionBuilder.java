@@ -20,11 +20,11 @@ package org.algorithmx.rules.core.action;
 import org.algorithmx.rules.annotation.Match;
 import org.algorithmx.rules.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
+import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.function.ExecutableBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinitionEditor;
-import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -61,7 +61,7 @@ public final class ActionBuilder extends ExecutableBuilder {
         return new DefaultAction(getTarget(), getDefinition());
     }
 
-    public static Action script(String script) {
+    public static Action build(String script) {
         return with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
             ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
         }).build();
@@ -149,7 +149,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param action desired action.
      * @return new action with no arguments.
      */
-    public static Action create(NoArgAction action) {
+    public static Action build(NoArgAction action) {
         return withAction(action).build();
     }
 
@@ -171,7 +171,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <A> generic type of the first parameter.
      * @return new Action with one arguments.
      */
-    public static <A> Action create(UnaryAction<A> action) {
+    public static <A> Action build(UnaryAction<A> action) {
         return withAction(action).build();
     }
 
@@ -195,7 +195,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <B> generic type of the second parameter.
      * @return new Action with two arguments.
      */
-    public static <A, B> Action create(BiAction<A, B> action) {
+    public static <A, B> Action build(BiAction<A, B> action) {
         return withAction(action).build();
     }
 
@@ -221,7 +221,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <C> generic type of the third parameter.
      * @return new action with three arguments.
      */
-    public static <A, B, C> Action create(TriAction<A, B, C> action) {
+    public static <A, B, C> Action build(TriAction<A, B, C> action) {
         return withAction(action).build();
     }
 
@@ -249,7 +249,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <D> generic type of the fourth parameter.
      * @return new action with four arguments.
      */
-    public static <A, B, C, D> Action create(QuadAction<A, B, C, D> action) {
+    public static <A, B, C, D> Action build(QuadAction<A, B, C, D> action) {
         return withAction(action).build();
     }
 
@@ -279,7 +279,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <E> generic type of the fifth parameter.
      * @return new action with five arguments.
      */
-    public static <A, B, C, D, E> Action create(QuinAction<A, B, C, D, E> action) {
+    public static <A, B, C, D, E> Action build(QuinAction<A, B, C, D, E> action) {
         return withAction(action).build();
     }
 
@@ -311,7 +311,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <F> generic type of the sixth parameter.
      * @return new action with six arguments.
      */
-    public static <A, B, C, D, E, F> Action create(SexAction<A, B, C, D, E, F> action) {
+    public static <A, B, C, D, E, F> Action build(SexAction<A, B, C, D, E, F> action) {
         return withAction(action).build();
     }
 
@@ -345,7 +345,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <G> generic type of the seventh parameter.
      * @return new action with seven arguments.
      */
-    public static <A, B, C, D, E, F, G> Action create(SeptAction<A, B, C, D, E, F, G> action) {
+    public static <A, B, C, D, E, F, G> Action build(SeptAction<A, B, C, D, E, F, G> action) {
         return withAction(action).build();
     }
 
@@ -381,7 +381,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <H> generic type of the eighth parameter.
      * @return new action with eight arguments.
      */
-    public static <A, B, C, D, E, F, G, H> Action create(OctAction<A, B, C, D, E, F, G, H> action) {
+    public static <A, B, C, D, E, F, G, H> Action build(OctAction<A, B, C, D, E, F, G, H> action) {
         return withAction(action).build();
     }
 
@@ -419,7 +419,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <I> generic type of the ninth parameter.
      * @return new action with nine arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I> Action create(NovAction<A, B, C, D, E, F, G, H, I> action) {
+    public static <A, B, C, D, E, F, G, H, I> Action build(NovAction<A, B, C, D, E, F, G, H, I> action) {
         return withAction(action).build();
     }
 
@@ -459,7 +459,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @param <J> generic type of the ninth parameter.
      * @return new action with ten arguments.
      */
-    public static <A, B, C, D, E, F, G, H, I, J> Action create(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
+    public static <A, B, C, D, E, F, G, H, I, J> Action build(DecAction<A, B, C, D, E, F, G, H, I, J> action) {
         return withAction(action).build();
     }
 

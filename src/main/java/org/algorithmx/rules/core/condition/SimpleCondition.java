@@ -25,7 +25,7 @@ public interface SimpleCondition {
      */
     default boolean isTrue(BindingDeclaration...params) throws ConditionExecutionException {
         Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return isTrue(RuleContextBuilder.create(bindings));
+        return isTrue(RuleContextBuilder.build(bindings));
     }
 
     default SimpleCondition not() {

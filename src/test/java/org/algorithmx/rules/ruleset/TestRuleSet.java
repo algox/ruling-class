@@ -40,23 +40,23 @@ public class TestRuleSet {
     public Rule[] getRules() {
 
         Rule rule1 = RuleBuilder
-                        .with(ConditionBuilder.create((String y) -> y.equals("")))
-                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(0)))
+                        .with(ConditionBuilder.build((String y) -> y.equals("")))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(0)))
                         .name("Rule1")
                         .build();
         Rule rule2 = RuleBuilder
-                        .with(ConditionBuilder.create((String a, BigDecimal x) -> x != null))
-                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .with(ConditionBuilder.build((String a, BigDecimal x) -> x != null))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule2")
                         .build();
         Rule rule3 = RuleBuilder
-                        .with(ConditionBuilder.create((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
-                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .with(ConditionBuilder.build((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule3")
                         .build();
         Rule rule6 = RuleBuilder
                         .with(ConditionBuilder.TRUE())
-                        .then(ActionBuilder.create((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule6")
                         .build();
 

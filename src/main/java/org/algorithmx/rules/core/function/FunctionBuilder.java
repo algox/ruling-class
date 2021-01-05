@@ -77,7 +77,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         return new DefaultFunction(getTarget(), getDefinition());
     }
 
-    public static <T> Function<T> script(String script) {
+    public static <T> Function<T> build(String script) {
         FunctionBuilder<T> builder = with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext ctx) -> {
             Object value = ctx.getScriptProcessor().evaluate(script, ctx.getBindings());
             T result;
@@ -112,7 +112,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new FunctionBuilder with no arguments.
      */
-    public static <T> Function<T> create(NoArgFunction<T> function) {
+    public static <T> Function<T> build(NoArgFunction<T> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -137,7 +137,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new function with one arguments.
      */
-    public static <T, A> Function<T> create(UnaryFunction<T, A> function) {
+    public static <T, A> Function<T> build(UnaryFunction<T, A> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -164,7 +164,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new function with two arguments.
      */
-    public static <T, A, B> Function<T> create(BiFunction<T, A, B> function) {
+    public static <T, A, B> Function<T> build(BiFunction<T, A, B> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -193,7 +193,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new function with three arguments.
      */
-    public static <T, A, B, C> Function create(TriFunction<T, A, B, C> function) {
+    public static <T, A, B, C> Function build(TriFunction<T, A, B, C> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -224,7 +224,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new function with four arguments.
      */
-    public static <T, A, B, C, D> Function<T> create(QuadFunction<T, A, B, C, D> function) {
+    public static <T, A, B, C, D> Function<T> build(QuadFunction<T, A, B, C, D> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -257,7 +257,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new Function with five arguments.
      */
-    public static <T, A, B, C, D, E> Function<T> create(QuinFunction<T, A, B, C, D, E> function) {
+    public static <T, A, B, C, D, E> Function<T> build(QuinFunction<T, A, B, C, D, E> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -292,7 +292,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new Function with six arguments.
      */
-    public static <T, A, B, C, D, E, F> Function<T> create(SexFunction<T, A, B, C, D, E, F> function) {
+    public static <T, A, B, C, D, E, F> Function<T> build(SexFunction<T, A, B, C, D, E, F> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -329,7 +329,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new Function with seven arguments.
      */
-    public static <T, A, B, C, D, E, F, G> Function<T> create(SeptFunction<T, A, B, C, D, E, F, G> function) {
+    public static <T, A, B, C, D, E, F, G> Function<T> build(SeptFunction<T, A, B, C, D, E, F, G> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -368,7 +368,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new Function with eight arguments.
      */
-    public static <T, A, B, C, D, E, F, G, H> Function<T> create(OctFunction<T, A, B, C, D, E, F, G, H> function) {
+    public static <T, A, B, C, D, E, F, G, H> Function<T> build(OctFunction<T, A, B, C, D, E, F, G, H> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -409,7 +409,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new Function with nine arguments.
      */
-    public static <T, A, B, C, D, E, F, G, H, I> Function<T> create(NovFunction<T, A, B, C, D, E, F, G, H, I> function) {
+    public static <T, A, B, C, D, E, F, G, H, I> Function<T> build(NovFunction<T, A, B, C, D, E, F, G, H, I> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
@@ -452,7 +452,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
      * @param <T> generic return type of the function.
      * @return new FunctionBuilder with ten arguments.
      */
-    public static <T, A, B, C, D, E, F, G, H, I, J> Function<T> create(DecFunction<T, A, B, C, D, E, F, G, H, I, J> function) {
+    public static <T, A, B, C, D, E, F, G, H, I, J> Function<T> build(DecFunction<T, A, B, C, D, E, F, G, H, I, J> function) {
         FunctionBuilder<T> builder = withFunction(function);
         return builder.build();
     }
