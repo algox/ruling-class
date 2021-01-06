@@ -77,6 +77,14 @@ public interface ScopedBindings extends Bindings {
     Bindings removeScope();
 
     /**
+     * Pops the working Bindings off the Stack till we match our desired target.
+     *
+     * @param target removes all scopes including target and above.
+     * @return the removed Bindings.
+     */
+    Bindings removeScope(Bindings target);
+
+    /**
      * Binds the given Binding into the current scope. Follows the same rules as adding a new Binding with name, type, etc.
      *
      * @param binding existing Binding.

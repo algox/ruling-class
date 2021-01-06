@@ -20,24 +20,24 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.core.UnrulyException;
 
 /**
- * Exception thrown when Bindings is asked for a bean instance for which it cannot find a definition.
+ * Exception thrown when Bindings cannot be found in the scope.
  *
  * @author Max Arulananthan
  * @since 1.0
  *
  */
-public class NoSuchBindingException extends UnrulyException {
+public class NoSuchBindingsException extends UnrulyException {
 
     private static final long serialVersionUID = 0L;
 
-    private String bindingName;
+    private final Bindings bindings;
 
-    public NoSuchBindingException(String name) {
-        super("Binding with name [" + name + "] does not exist");
-        this.bindingName = name;
+    public NoSuchBindingsException(Bindings bindings) {
+        super("Bindings does not exist in the scope.");
+        this.bindings = bindings;
     }
 
-    public String getBindingName() {
-        return bindingName;
+    public Bindings getBindings() {
+        return bindings;
     }
 }

@@ -28,7 +28,9 @@ import org.algorithmx.rules.core.UnrulyException;
  */
 public class BindingAlreadyExistsException extends UnrulyException {
 
-	static final long serialVersionUID = 0L;
+	private static final long serialVersionUID = 0L;
+
+	private Binding existingBinding;
 
 	/**
 	 * Ctor with the existing binding.
@@ -38,5 +40,10 @@ public class BindingAlreadyExistsException extends UnrulyException {
 	public BindingAlreadyExistsException(Binding existingBinding) {
 		super(String.format("Binding with name [%s] type [%s] value [%s] already exists.",
 				existingBinding.getName(), existingBinding.getType().getTypeName(), existingBinding.getTextValue()));
+		this.existingBinding = existingBinding;
+	}
+
+	public Binding getExistingBinding() {
+		return existingBinding;
 	}
 }

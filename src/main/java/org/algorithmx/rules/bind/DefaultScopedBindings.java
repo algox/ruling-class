@@ -82,6 +82,42 @@ public class DefaultScopedBindings implements ScopedBindings {
         }
     }
 
+    public Bindings removeScope(Bindings target) {
+        try {
+            lock.writeLock().lock();
+
+            // Check to make sure we are not removing the root scope
+            if (scopes.size() == 1) {
+                throw new CannotRemoveRootScopeException();
+            }
+
+            boolean found = false;
+            for (Bindings bindings : scopes) {
+                // Compare the reference to make sure we match.
+                if (bindings == target) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+
+            }
+
+            Bindings result;
+
+            // We know the Scope exists;
+            do {
+                // Pop will we find out target
+                result = removeScope();
+            } while (result != target);
+
+            return result;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
     @Override
     public Bindings getRootScope() {
         try {

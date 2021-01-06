@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.UnrulyException;
@@ -75,10 +76,9 @@ public class DefaultRuleSet implements RuleSet {
         // RuleSet did not pass the precondition; Do not execute the rules.
         if (!preConditionCheck) return result;
 
+        // Create a new Scope for the RuleSet to use
+        Bindings ruleSetScope = createRuleSetScope(context, result);
         try {
-            // Create a new Scope for the RuleSet to use
-            createRuleSetScope(context, result);
-
             int index = 0;
 
             // Execute the rules/actions in order; STOP if the stopCondition is met.
@@ -104,7 +104,7 @@ public class DefaultRuleSet implements RuleSet {
                 }
             }
         } finally {
-            removeRuleSetScope(context);
+            removeRuleSetScope(context, ruleSetScope);
             // RuleSet End Event
             context.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_END, null));
         }
@@ -137,13 +137,14 @@ public class DefaultRuleSet implements RuleSet {
         return new ExecutionEvent<>(eventType, ruleExecution);
     }
 
-    protected void createRuleSetScope(RuleContext context, RuleSetResult ruleResultSet) {
-        context.getBindings().addScope();
+    protected Bindings createRuleSetScope(RuleContext context, RuleSetResult ruleResultSet) {
+        Bindings result = context.getBindings().addScope();
         context.getBindings().bind("ruleSetResult", RuleSetResult.class, ruleResultSet);
+        return result;
     }
 
-    protected void removeRuleSetScope(RuleContext context) {
-        context.getBindings().removeScope();
+    protected void removeRuleSetScope(RuleContext context, Bindings target) {
+        context.getBindings().removeScope(target);
     }
 
     @Override

@@ -54,6 +54,9 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     }
 
     @Override
+    public Bindings removeScope(Bindings target) { throw new UnsupportedOperationException(); }
+
+    @Override
     public <T> Map<String, Binding<T>> getAllBindings(TypeReference<T> type) {
         return getTarget().getAllBindings(type);
     }
