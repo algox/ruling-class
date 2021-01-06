@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Default implementation of the Scoped Bindings.
@@ -39,7 +37,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class DefaultScopedBindings implements ScopedBindings {
 
     private final Stack<Bindings> scopes = new Stack<>();
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     DefaultScopedBindings() {
         super();
@@ -55,77 +52,54 @@ public class DefaultScopedBindings implements ScopedBindings {
     @Override
     public Bindings addScope() {
         Bindings result = createScope();
-
-        try {
-            lock.writeLock().lock();
-            scopes.push(result);
-        } finally {
-            lock.writeLock().unlock();
-        }
-
+        scopes.push(result);
         return result;
     }
 
     @Override
     public Bindings removeScope() {
-        try {
-            lock.writeLock().lock();
-
-            // Check to make sure we are not removing the root scope
-            if (scopes.size() == 1) {
-                throw new CannotRemoveRootScopeException();
-            }
-
-            return scopes.pop();
-        } finally {
-            lock.writeLock().unlock();
+        // Check to make sure we are not removing the root scope
+        if (scopes.size() == 1) {
+            throw new CannotRemoveRootScopeException();
         }
+
+        return scopes.pop();
+
     }
 
     public Bindings removeScope(Bindings target) {
-        try {
-            lock.writeLock().lock();
-
-            // Check to make sure we are not removing the root scope
-            if (scopes.size() == 1) {
-                throw new CannotRemoveRootScopeException();
-            }
-
-            boolean found = false;
-            for (Bindings bindings : scopes) {
-                // Compare the reference to make sure we match.
-                if (bindings == target) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-
-            }
-
-            Bindings result;
-
-            // We know the Scope exists;
-            do {
-                // Pop will we find out target
-                result = removeScope();
-            } while (result != target);
-
-            return result;
-        } finally {
-            lock.writeLock().unlock();
+        // Check to make sure we are not removing the root scope
+        if (scopes.size() == 1) {
+            throw new CannotRemoveRootScopeException();
         }
+
+        boolean found = false;
+        for (Bindings bindings : scopes) {
+            // Compare the reference to make sure we match.
+            if (bindings == target) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+
+        }
+
+        Bindings result;
+
+        // We know the Scope exists;
+        do {
+            // Pop will we find out target
+            result = removeScope();
+        } while (result != target);
+
+        return result;
     }
 
     @Override
     public Bindings getRootScope() {
-        try {
-            lock.readLock().lock();
-            return scopes.get(0);
-        } finally {
-            lock.readLock().unlock();
-        }
+        return scopes.get(0);
     }
 
     @Override
@@ -188,12 +162,7 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     @Override
     public Bindings getCurrentScope() {
-        try {
-            lock.readLock().lock();
-            return scopes.peek();
-        } finally {
-            lock.readLock().unlock();
-        }
+        return scopes.peek();
     }
 
     @Override
@@ -258,12 +227,7 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     private Bindings[] getScopes() {
-        try {
-            lock.readLock().lock();
-            return scopes.toArray(new Bindings[scopes.size()]);
-        } finally {
-            lock.readLock().unlock();
-        }
+        return scopes.toArray(new Bindings[scopes.size()]);
     }
 
     @Override
