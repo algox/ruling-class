@@ -52,7 +52,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameTest1() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
 
         Bindings bindings = Bindings.create()
@@ -81,7 +81,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameTest2() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod2"));
 
         Bindings bindings = Bindings.create()
@@ -106,7 +106,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameTest3() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod3"));
 
         Bindings bindings = Bindings.create()
@@ -128,7 +128,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameTest4() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
 
         Bindings bindings = Bindings.create()
@@ -154,7 +154,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByTypeTest1() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
 
         Bindings bindings = Bindings.create()
@@ -183,7 +183,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByTypeTest2() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod2"));
 
         ScopedBindings bindings = ScopedBindings.create()
@@ -208,7 +208,7 @@ public class ParameterResolverTest {
 
     @Test(expected = BindingException.class)
     public void matchByTypeTest3() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod3"));
 
         Bindings bindings = Bindings.create()
@@ -229,7 +229,7 @@ public class ParameterResolverTest {
 
     @Test(expected = BindingException.class)
     public void matchByTypeTest4() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
 
         ScopedBindings bindings = ScopedBindings.create()
@@ -252,7 +252,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameAndTypeTest1() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
 
         Bindings bindings = Bindings.create()
@@ -281,7 +281,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameAndTypeTest2() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
 
         ScopedBindings bindings = ScopedBindings.create()
@@ -311,7 +311,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameThenByTypeTest() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
 
         ScopedBindings bindings = ScopedBindings.create()
@@ -341,7 +341,7 @@ public class ParameterResolverTest {
 
     @Test
     public void matchByNameAndTypeThenByTypeTest() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod4"));
 
         ScopedBindings bindings = ScopedBindings.create()
@@ -370,7 +370,7 @@ public class ParameterResolverTest {
 
     @Test
     public void valueResolverTest() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod1"));
 
         Bindings bindings = ScopedBindings.create()
@@ -392,7 +392,7 @@ public class ParameterResolverTest {
 
     @Test
     public void valueResolverDefaultValueTest() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod5"));
 
         Bindings bindings = Bindings.create()
@@ -410,7 +410,7 @@ public class ParameterResolverTest {
 
     @Test(expected = BindingException.class)
     public void valueResolverNoMatchTest() {
-        ParameterResolver resolver = ParameterResolver.create();
+        ParameterResolver resolver = ParameterResolver.create(true);
         MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod5"));
 
         Bindings bindings = Bindings.create();

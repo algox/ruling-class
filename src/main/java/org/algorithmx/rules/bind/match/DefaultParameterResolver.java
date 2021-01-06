@@ -25,6 +25,7 @@ import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
@@ -39,8 +40,19 @@ import java.util.Map;
  */
 public class DefaultParameterResolver implements ParameterResolver {
 
+    private final boolean strict;
+
     public DefaultParameterResolver() {
+        this(false);
+    }
+
+    public DefaultParameterResolver(boolean strict) {
         super();
+        this.strict = strict;
+    }
+
+    public boolean isStrict() {
+        return strict;
     }
 
     @Override
@@ -108,40 +120,77 @@ public class DefaultParameterResolver implements ParameterResolver {
         Object[] result = new Object[matches.length];
 
         for (int i = 0; i < result.length; i++) {
+            // Make sure matches are passed
+            if (matches[i] == null) throw new UnrulyException("Invalid state. You cannot have a null match");
+            // Strict checks that the binding exists; non strict lets the consumer deal with the consequences.
+            result[i] = isStrict()
+                    ? getStrictValue(matches[i], definition, matchingStrategy, registry)
+                    : getValue(matches[i], definition, matchingStrategy, registry);
+        }
 
-            if (matches[i] == null) {
-                throw new UnrulyException("Invalid state. You cannot have a null match");
-            }
+        return result;
+    }
 
-            Object value;
+    protected Object getStrictValue(ParameterMatch match, MethodDefinition definition,
+                              BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
+        Assert.notNull(match, "match cannot be null.");
+        Object result;
 
-            // There was no match; let's see if there is default value
-            if (matches[i].getBinding() == null) {
-                if (matches[i].getDefinition().getDefaultValueText() != null) {
-                    Converter<String, ?> converter = registry.find(String.class, matches[i].getDefinition().getType());
-
-                    if (converter == null) {
-                        throw new BindingException("Cannot find a converter that will convert default value ["
-                                + matches[i].getDefinition().getDefaultValueText() + "] to type ["
-                                + matches[i].getDefinition().getType() + "]", definition, matches[i].getDefinition(),
-                                matchingStrategy, null);
-                    }
-
-                    value = matches[i].getDefinition().getDefaultValue(converter);
-                } else if (!matches[i].getDefinition().isRequired()) {
-                     value = ReflectionUtils.getDefaultValue(matches[i].getDefinition().getType());
-                } else {
-                    throw new BindingException("No matching Binding found for (" + matches[i].getDefinition().getTypeAndName()
-                            + ") using (" + matchingStrategy.getClass().getSimpleName()
-                            + ")", definition, matches[i].getDefinition(), matchingStrategy, null);
-                }
+        // There was no match; let's see if there is default value
+        if (match.getBinding() == null) {
+            if (match.getDefinition().getDefaultValueText() != null) {
+                result = getValueFromDefaultText(match, definition, matchingStrategy, registry);
+            } else if (!match.getDefinition().isRequired()) {
+                result = ReflectionUtils.getDefaultValue(match.getDefinition().getType());
             } else {
-                value = matches[i].isBinding()
-                        ? matches[i].getBinding()
-                        : matches[i].getBinding().getValue();
+                throw new BindingException("No matching Binding found for (" + match.getDefinition().getTypeAndName()
+                        + ") using (" + matchingStrategy.getClass().getSimpleName()
+                        + ")", definition, match.getDefinition(), matchingStrategy, null);
+            }
+        } else {
+            result = match.isBinding()
+                    ? match.getBinding()
+                    : match.getBinding().getValue();
+        }
+
+        return result;
+    }
+
+    protected Object getValue(ParameterMatch match, MethodDefinition definition,
+                              BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
+        Assert.notNull(match, "match cannot be null.");
+        Object result;
+
+        // There was no match; let's see if there is default value
+        if (match.getBinding() == null) {
+            result = ReflectionUtils.getDefaultValue(match.getDefinition().getType());
+
+            if (match.getDefinition().getDefaultValueText() != null) {
+                result = getValueFromDefaultText(match, definition, matchingStrategy, registry);
+            }
+        } else {
+            result = match.isBinding()
+                    ? match.getBinding()
+                    : match.getBinding().getValue();
+        }
+
+        return result;
+    }
+
+    protected Object getValueFromDefaultText(ParameterMatch match, MethodDefinition definition,
+                                             BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
+        Object result = null;
+        if (match.getDefinition().getDefaultValueText() != null) {
+            Converter<String, ?> converter = registry.find(String.class, match.getDefinition().getType());
+
+            if (converter == null) {
+                throw new BindingException("Cannot find a converter that will convert default value ["
+                        + match.getDefinition().getDefaultValueText() + "] to type ["
+                        + match.getDefinition().getType() + "]", definition, match.getDefinition(),
+                        matchingStrategy, null);
             }
 
-            result[i] = value;
+            result = match.getDefinition().getDefaultValue(converter);
         }
 
         return result;

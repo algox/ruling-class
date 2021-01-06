@@ -19,11 +19,12 @@ package org.algorithmx.rules.core;
 
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategyType;
+import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
-import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.context.RuleContextBuilder;
+import org.algorithmx.rules.core.rule.Rule;
+import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -98,13 +99,16 @@ public class ExecutorTest {
     @Test
     public void test5() {
         Bindings bindings = Bindings.create()
-                .bind("x", Integer.class, 101);
+                .bind("x", Integer.class, 125);
 
         Rule<TestRule5> rule = RuleBuilder.with(TestRule5.class)
                 .name("rule1")
                 .build();
 
-        rule.run(RuleContextBuilder.build(bindings));
+        rule.run(RuleContextBuilder
+                .with(bindings)
+                .paramResolver(ParameterResolver.create(true))
+                .build());
         Assert.assertTrue(bindings.getValue("x", Integer.class) == 0);
     }
 }
