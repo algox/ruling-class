@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.core.model.Definition;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
@@ -33,7 +34,7 @@ import java.util.Objects;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class RuleDefinition {
+public final class RuleDefinition implements Definition {
 
     // Name of the Rule
     private String name;
@@ -96,6 +97,7 @@ public final class RuleDefinition {
      *
      * @return name of rule. If not specified the simple class name is used.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -105,6 +107,7 @@ public final class RuleDefinition {
      *
      * @return description of what the rule does.
      */
+    @Override
     public String getDescription() {
         return description;
     }

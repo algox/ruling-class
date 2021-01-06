@@ -45,7 +45,7 @@ import java.util.Arrays;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class ParameterDefinition {
+public final class ParameterDefinition implements Definition {
 
     private int index;
     private String name;
@@ -147,8 +147,19 @@ public final class ParameterDefinition {
      *
      * @return name of the parameter.
      */
+    @Override
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the parameter description.
+     *
+     * @return parameter description.
+     */
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -199,15 +210,6 @@ public final class ParameterDefinition {
      */
     public String getTypeAndName() {
         return getTypeName() + " " + getName();
-    }
-
-    /**
-     * Returns the parameter description.
-     *
-     * @return parameter description.
-     */
-    public String getDescription() {
-        return description;
     }
 
     /**

@@ -1,13 +1,13 @@
 package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.core.model.Definition;
 import org.algorithmx.rules.core.model.MethodDefinition;
-import org.algorithmx.rules.core.rule.RuleDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 
 import java.util.Arrays;
 
-public class RuleSetDefinition {
+public final class RuleSetDefinition implements Definition {
 
     // Name of the RuleSet
     private String name;
@@ -16,37 +16,27 @@ public class RuleSetDefinition {
 
     // PreCondition method details
     private final MethodDefinition preConditionDefinition;
-    // PreAction method details
-    private final MethodDefinition preActionDefinition;
-    // PostAction method details
-    private final MethodDefinition postActionDefinition;
     // StopAction method details
     private final MethodDefinition stopActionDefinition;
-    // ErrorCondition method details
-    private final MethodDefinition errorConditionDefinition;
-    private final RuleDefinition[] ruleDefinitions;
+    private final Definition[] definitions;
 
     public RuleSetDefinition(String name, String description, MethodDefinition preConditionDefinition,
-                             MethodDefinition preActionDefinition,
-                             MethodDefinition postActionDefinition,
                              MethodDefinition stopActionDefinition,
-                             MethodDefinition errorConditionDefinition,
-                             RuleDefinition...ruleDefinitions) {
+                             Definition...definitions) {
         super();
         setName(name);
         this.description = description;
         this.preConditionDefinition = preConditionDefinition;
-        this.preActionDefinition = preActionDefinition;
-        this.postActionDefinition = postActionDefinition;
         this.stopActionDefinition = stopActionDefinition;
-        this.errorConditionDefinition = errorConditionDefinition;
-        this.ruleDefinitions = ruleDefinitions;
+        this.definitions = definitions;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -55,24 +45,12 @@ public class RuleSetDefinition {
         return preConditionDefinition;
     }
 
-    public MethodDefinition getPreActionDefinition() {
-        return preActionDefinition;
-    }
-
-    public MethodDefinition getPostActionDefinition() {
-        return postActionDefinition;
-    }
-
     public MethodDefinition getStopActionDefinition() {
         return stopActionDefinition;
     }
 
-    public MethodDefinition getErrorConditionDefinition() {
-        return errorConditionDefinition;
-    }
-
-    public RuleDefinition[] getRuleDefinitions() {
-        return ruleDefinitions;
+    public Definition[] getDefinitions() {
+        return definitions;
     }
 
     void setName(String name) {
@@ -87,11 +65,8 @@ public class RuleSetDefinition {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", preConditionDefinition=" + preConditionDefinition +
-                ", preActionDefinition=" + preActionDefinition +
-                ", postActionDefinition=" + postActionDefinition +
                 ", stopActionDefinition=" + stopActionDefinition +
-                ", errorConditionDefinition=" + errorConditionDefinition +
-                ", ruleDefinitions=" + Arrays.toString(ruleDefinitions) +
+                ", definitions=" + Arrays.toString(definitions) +
                 '}';
     }
 }

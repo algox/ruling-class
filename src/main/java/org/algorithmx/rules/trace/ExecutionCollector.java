@@ -10,7 +10,6 @@ import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.FunctionExecution;
 import org.algorithmx.rules.event.RuleExecution;
 import org.algorithmx.rules.event.RuleSetExecution;
-import org.algorithmx.rules.event.RuleSetExecutionError;
 import org.algorithmx.rules.util.RuleUtils;
 
 public abstract class ExecutionCollector extends ExecutionTracer {
@@ -167,44 +166,6 @@ public abstract class ExecutionCollector extends ExecutionTracer {
     }
 
     @Override
-    public void onRuleSetPreActionStart(ExecutionEvent<RuleSetExecution<Action>> event) {
-        tabCount++;
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("RuleSet Pre Action : ");
-        collect(event, result.toString());
-    }
-
-    @Override
-    public void onRuleSetPreActionEnd(ExecutionEvent<RuleSetExecution<Action>> event) {
-        tabCount--;
-    }
-
-    @Override
-    public void onRuleSetError(ExecutionEvent<RuleSetExecutionError> event) {
-        tabCount++;
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("RuleSet Error : " + event.getData().getError().getClass());
-        collect(event, result.toString());
-        tabCount--;
-    }
-
-    @Override
-    public void onRuleSetErrorConditionStart(ExecutionEvent<RuleSetExecution<Condition>> event) {
-        tabCount++;
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("RuleSet Error Condition : ");
-        collect(event, result.toString());
-    }
-
-    @Override
-    public void onRuleSetErrorConditionEnd(ExecutionEvent<RuleSetExecution<Condition>> event) {
-        tabCount--;
-    }
-
-    @Override
     public void onRuleSetStopConditionStart(ExecutionEvent<RuleSetExecution<Condition>> event) {
         tabCount++;
         StringBuilder result = new StringBuilder();
@@ -215,20 +176,6 @@ public abstract class ExecutionCollector extends ExecutionTracer {
 
     @Override
     public void onRuleSetStopConditionEnd(ExecutionEvent<RuleSetExecution<Condition>> event) {
-        tabCount--;
-    }
-
-    @Override
-    public void onRuleSetPostActionStart(ExecutionEvent<RuleSetExecution<Action>> event) {
-        tabCount++;
-        StringBuilder result = new StringBuilder();
-        result.append(RuleUtils.getTabs(tabCount));
-        result.append("RuleSet Post Action : ");
-        collect(event, result.toString());
-    }
-
-    @Override
-    public void onRuleSetPostActionEnd(ExecutionEvent<RuleSetExecution<Action>> event) {
         tabCount--;
     }
 

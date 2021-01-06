@@ -17,19 +17,16 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
-import org.algorithmx.rules.bind.Bindings;
+import org.algorithmx.rules.core.Identifiable;
+import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.UnrulyException;
-import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.rule.Rule;
-import org.algorithmx.rules.core.rule.RuleDefinition;
-import org.algorithmx.rules.core.rule.RuleExecutionStatus;
 import org.algorithmx.rules.core.rule.RuleResult;
 import org.algorithmx.rules.event.EventType;
 import org.algorithmx.rules.event.ExecutionEvent;
 import org.algorithmx.rules.event.RuleSetExecution;
-import org.algorithmx.rules.event.RuleSetExecutionError;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.util.Arrays;
@@ -44,38 +41,31 @@ import java.util.Iterator;
 public class DefaultRuleSet implements RuleSet {
 
     private final RuleSetDefinition ruleSetDefinition;
-    private final Rule[] rules;
+    private final Runnable[] ruleSetItems;
 
     private final Condition preCondition;
-    private final Action preAction;
-    private final Action postAction;
     private final Condition stopCondition;
-    private final Condition errorCondition;
 
     public DefaultRuleSet(RuleSetDefinition ruleSetDefinition,
-                          Condition preCondition, Action preAction, Action postAction,
-                          Condition stopCondition, Condition errorCondition,
-                          Rule...rules) {
+                          Condition preCondition, Condition stopCondition,
+                          Runnable...ruleSetItems) {
         super();
         Assert.notNull(ruleSetDefinition, "ruleSetDefinition cannot be null");
-        Assert.isTrue(rules != null && rules.length > 0, "RuleSet must have at least one Rule.");
         this.ruleSetDefinition = ruleSetDefinition;
-        this.rules = rules;
+        this.ruleSetItems = ruleSetItems != null ? ruleSetItems : new Runnable[0];
         this.preCondition = preCondition;
-        this.preAction = preAction;
-        this.postAction = postAction;
         this.stopCondition = stopCondition;
-        this.errorCondition = errorCondition;
+        Assert.notNullArray(ruleSetItems, "ruleSetItems");
     }
 
     @Override
-    public RuleResultSet run(RuleContext context) throws UnrulyException {
+    public RuleSetResult run(RuleContext context) throws UnrulyException {
         Assert.notNull(context, "context cannot be null");
 
         // RuleSet Start Event
         context.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_START, null));
 
-        RuleResultSet result = new RuleResultSet();
+        RuleSetResult result = new RuleSetResult(context.getBindings());
 
         // Run the PreCondition if there is one.
         boolean preConditionCheck = processCondition(context, getPreCondition(), EventType.RULE_SET_PRE_CONDITION_START,
@@ -88,32 +78,23 @@ public class DefaultRuleSet implements RuleSet {
         try {
             // Create a new Scope for the RuleSet to use
             createRuleSetScope(context, result);
-            // Run the PreAction if there is one.
-            processAction(context, getPreAction(), EventType.RULE_SET_PRE_ACTION_START, EventType.RULE_SET_PRE_ACTION_END);
 
             int index = 0;
-            // Execute the rules in order; STOP if the stopCondition is met.
-            for (Rule rule : getRules()) {
+
+            // Execute the rules/actions in order; STOP if the stopCondition is met.
+            for (Runnable runnable : getRuleSetItems()) {
                 try {
-                    // Run the rule
-                    RuleResult ruleResult = rule.run(context);
-                    result.add(ruleResult);
-                } catch (Exception e) {
-                    context.getEventProcessor().fireListeners(new ExecutionEvent<>(EventType.RULE_SET_ERROR,
-                            new RuleSetExecutionError(this, e)));
-
-                    boolean proceed = processError(context, rule.getRuleDefinition(), index, e);
-
-                    if (!proceed) {
-                        throw new RuleSetExecutionException("Unexpected error occurred trying to execute Rule ["
-                                + rule.getName() + "] at Index [" + index + "/" + size()
-                                + "] on RuleSet [" + getName() + "]",
-                                e, this, EventType.RULE_SET_ERROR_CONDITION_START);
-                    }
-
-                    result.add(new RuleResult(rule.getName(), RuleExecutionStatus.ERROR));
-                } finally {
+                    // Run the rule/action
+                    Object executionResult = runnable.run(context);
+                    if (runnable instanceof Rule) result.add((RuleResult) executionResult);
                     index++;
+                } catch (Exception e) {
+                    throw new RuleSetExecutionException("Unexpected error occurred trying to execute "
+                            + runnable.getClass().getSimpleName()
+                            + "[" + (runnable instanceof Identifiable
+                                    ? ((Identifiable) runnable).getName()
+                                    : runnable.toString())
+                                + "] at Index [" + index + "/" + size() + "] on RuleSet [" + getName() + "]", e, this);
                 }
 
                 // Check to see if we need to stop the execution?
@@ -123,15 +104,8 @@ public class DefaultRuleSet implements RuleSet {
                 }
             }
         } finally {
-
-            try {
-                // Run the PostAction if there is one.
-                processAction(context, getPostAction(), EventType.RULE_SET_POST_ACTION_START, EventType.RULE_SET_POST_ACTION_END);
-            } finally {
-                removeRuleSetScope(context);
-            }
-
-            // RuleSet Start Event
+            removeRuleSetScope(context);
+            // RuleSet End Event
             context.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_END, null));
         }
 
@@ -150,30 +124,11 @@ public class DefaultRuleSet implements RuleSet {
             // Check the condition
             return condition.isTrue(context);
         } catch (Exception e) {
-            throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Condition ["
-                    + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
+            throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Pre Condition ["
+                    + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this);
         } finally {
             // Fire the end event
             context.getEventProcessor().fireListeners(createEvent(endEventType, condition));
-        }
-    }
-
-    protected void processAction(RuleContext context, Action action, EventType startEventType, EventType endEventType) {
-
-        // Check if Action exists
-        if (action == null) return;
-
-        // Fire the start event
-        context.getEventProcessor().fireListeners(createEvent(startEventType, action));
-
-        try {
-            action.run(context);
-        } catch (Exception e) {
-            throw new RuleSetExecutionException("Unexpected error occurred while trying to execution Action ["
-                    + startEventType.getDescription() + "] on RuleSet [" + getName() + "].", e, this, startEventType);
-        } finally {
-            // Fire the end event
-            context.getEventProcessor().fireListeners(createEvent(endEventType, action));
         }
     }
 
@@ -182,56 +137,13 @@ public class DefaultRuleSet implements RuleSet {
         return new ExecutionEvent<>(eventType, ruleExecution);
     }
 
-    protected void createRuleSetScope(RuleContext context, RuleResultSet ruleResultSet) {
+    protected void createRuleSetScope(RuleContext context, RuleSetResult ruleResultSet) {
         context.getBindings().addScope();
-        context.getBindings().bind("ruleResultSet", RuleResultSet.class, ruleResultSet);
+        context.getBindings().bind("ruleSetResult", RuleSetResult.class, ruleResultSet);
     }
 
     protected void removeRuleSetScope(RuleContext context) {
         context.getBindings().removeScope();
-    }
-
-    protected boolean processError(RuleContext context, RuleDefinition ruleDefinition, int index, Exception ex) throws UnrulyException{
-
-        if (getErrorCondition() == null) return false;
-
-        boolean proceed;
-
-        try {
-            setupErrorScope(context, ex, "ex");
-            proceed = processCondition(context, getErrorCondition(), EventType.RULE_SET_ERROR_CONDITION_START,
-                    EventType.RULE_SET_ERROR_CONDITION_END);
-        } finally {
-            removeErrorScope(context);
-        }
-
-        return proceed;
-    }
-
-    protected void setupErrorScope(RuleContext context, Exception ex, String bindingName) {
-        Bindings errorScope = context.getBindings().addScope();
-        errorScope.bind(bindingName, ex);
-    }
-
-    protected void removeErrorScope(RuleContext context) {
-        context.getBindings().removeScope();
-    }
-
-    public Rule get(int index) {
-        return rules[index];
-    }
-
-    public Rule get(String ruleName) {
-        Rule result = null;
-
-        for (Rule rule : rules) {
-            if (rule.getName().equals(ruleName)) {
-                result = rule;
-                break;
-            }
-        }
-
-        return result;
     }
 
     @Override
@@ -240,13 +152,33 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
+    public <T extends Runnable> T get(int index, Class<T> type) {
+        return (T) getRuleSetItems()[index];
+    }
+
+    @Override
+    public <T extends Runnable> T get(String name, Class<T> type) {
+        Assert.notNull(name, "name cannot be null.");
+        Runnable result = null;
+
+        for (Runnable item : getRuleSetItems()) {
+            if (item instanceof Identifiable && name.equals(((Identifiable) item).getName())) {
+                result = item;
+                break;
+            }
+        }
+
+        return (T) result;
+    }
+
+    @Override
     public String getName() {
-        return ruleSetDefinition.getName();
+        return getRuleSetDefinition().getName();
     }
 
     @Override
     public String getDescription() {
-        return ruleSetDefinition.getDescription();
+        return getRuleSetDefinition().getDescription();
     }
 
     @Override
@@ -255,47 +187,30 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
-    public Action getPreAction() {
-        return preAction;
-    }
-
-    @Override
-    public Action getPostAction() {
-        return postAction;
-    }
-
-    @Override
     public Condition getStopCondition() {
         return stopCondition;
     }
 
     @Override
-    public Condition getErrorCondition() {
-        return errorCondition;
-    }
-
-    @Override
     public int size() {
-        return rules.length;
+        return getRuleSetItems().length;
     }
 
     @Override
-    public Rule[] getRules() {
-        return rules;
+    public Iterator<Runnable> iterator() {
+        return Arrays.stream(getRuleSetItems()).iterator();
     }
 
-    @Override
-    public Iterator<Rule> iterator() {
-        return Arrays.stream(rules).iterator();
+    private Runnable[] getRuleSetItems() {
+        return ruleSetItems;
     }
 
     @Override
     public String toString() {
         return "DefaultRuleSet{" +
-                ", rules=" + Arrays.toString(rules) +
-                ", preCondition=" + preCondition +
-                ", postAction=" + postAction +
-                ", stopCondition=" + stopCondition +
+                ", ruleSetItems=" + Arrays.toString(getRuleSetItems()) +
+                ", preCondition=" + getPreCondition() +
+                ", stopCondition=" + getStopCondition() +
                 '}';
     }
 }

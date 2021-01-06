@@ -46,7 +46,7 @@ import java.util.stream.IntStream;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class MethodDefinition implements Comparable<MethodDefinition> {
+public final class MethodDefinition implements Definition, Comparable<MethodDefinition> {
 
     private final Method method;
     private final ParameterDefinition[] parameterDefinitions;
@@ -166,8 +166,19 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      *
      * @return name of the method or overridden value.
      */
+    @Override
     public String getName() {
         return name;
+    }
+
+    /**
+     * Description of this method.
+     *
+     * @return method description.
+     */
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -196,15 +207,6 @@ public final class MethodDefinition implements Comparable<MethodDefinition> {
      */
     public void setOrder(int order) {
         this.order = order;
-    }
-
-    /**
-     * Description of this method.
-     *
-     * @return method description.
-     */
-    public String getDescription() {
-        return description;
     }
 
     /**

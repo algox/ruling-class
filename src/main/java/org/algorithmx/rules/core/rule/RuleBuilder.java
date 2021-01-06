@@ -154,8 +154,6 @@ public abstract class RuleBuilder<T> {
 
     public RuleBuilder<T> then(Action action) {
         Assert.notNull(action, "action cannot be null.");
-        // TODO : Do we need this?
-        //action.getActionDefinition().setOrder(thenActions.size());
         this.thenActions.add(action);
         return this;
     }

@@ -21,15 +21,8 @@ public enum EventType {
     RULE_SET_END("RuleSet End"),
     RULE_SET_PRE_CONDITION_START("RuleSet Pre Condition"),
     RULE_SET_PRE_CONDITION_END("RuleSet Pre Condition"),
-    RULE_SET_PRE_ACTION_START("RuleSet Pre Action"),
-    RULE_SET_PRE_ACTION_END("RuleSet Pre Action"),
-    RULE_SET_ERROR("RuleSet Error"),
-    RULE_SET_ERROR_CONDITION_START("RuleSet Error Condition"),
-    RULE_SET_ERROR_CONDITION_END("RuleSet Error Condition"),
     RULE_SET_STOP_CONDITION_START("RuleSet Stop Condition"),
-    RULE_SET_STOP_CONDITION_END("RuleSet Stop Condition"),
-    RULE_SET_POST_ACTION_START("RuleSet Pre Action"),
-    RULE_SET_POST_ACTION_END("RuleSet Pre Action");
+    RULE_SET_STOP_CONDITION_END("RuleSet Stop Condition");
 
     private String description;
 

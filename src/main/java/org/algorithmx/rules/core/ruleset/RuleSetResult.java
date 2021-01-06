@@ -1,5 +1,6 @@
 package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.rule.RuleExecutionStatus;
 import org.algorithmx.rules.core.rule.RuleResult;
 import org.algorithmx.rules.lib.spring.util.Assert;
@@ -12,18 +13,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class RuleResultSet implements Iterable<RuleResult> {
+public class RuleSetResult implements Iterable<RuleResult> {
 
     private final List<RuleResult> results = new LinkedList<>();
+    private final Bindings bindings;
     private boolean preConditionCheck = false;
 
-    public RuleResultSet() {
+    public RuleSetResult(Bindings bindings) {
         super();
+        Assert.notNull(bindings, "bindings cannot be null.");
+        this.bindings = bindings;
     }
 
     public void add(RuleResult result) {
         Assert.notNull(result, "result cannot be null.");
         results.add(result);
+    }
+
+    public Bindings getBindings() {
+        return bindings;
     }
 
     public RuleResult get(int index) {

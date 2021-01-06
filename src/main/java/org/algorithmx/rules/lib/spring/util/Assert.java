@@ -186,4 +186,11 @@ public abstract class Assert {
         return (messageSupplier != null ? messageSupplier.get() : null);
     }
 
+    public static void notNullArray(Object[] array, String arrayName) {
+        Assert.notNull(array, arrayName + " cannot be null.");
+
+        for (int i = 0; i < array.length; i++) {
+            Assert.notNull(array[i], "Each item in the " + arrayName + " must be non null. Item [" + i + "] is null.");
+        }
+    }
 }

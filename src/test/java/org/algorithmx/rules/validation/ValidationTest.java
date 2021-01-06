@@ -20,15 +20,14 @@ package org.algorithmx.rules.validation;
 import org.algorithmx.rules.annotation.Optional;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
-import org.algorithmx.rules.core.action.ActionBuilder;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
 import org.algorithmx.rules.core.context.RuleContext;
 import org.algorithmx.rules.core.context.RuleContextBuilder;
 import org.algorithmx.rules.core.function.FunctionBuilder;
 import org.algorithmx.rules.core.rule.RuleBuilder;
-import org.algorithmx.rules.core.ruleset.RuleResultSet;
 import org.algorithmx.rules.core.ruleset.RuleSet;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
+import org.algorithmx.rules.core.ruleset.RuleSetResult;
 import org.algorithmx.rules.trace.StringExecutionCollector;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,11 +49,12 @@ public class ValidationTest {
     public void test1() {
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet1", "Test Rule Set")
-                .add(RuleBuilder.build(TestRule1.class))
-                .add(RuleBuilder.build(TestRule2.class))
-                .add(RuleBuilder.build(TestRule3.class))
-                .add(RuleBuilder.build(TestRule4.class))
-                .add(RuleBuilder.build(TestRule5.class)).build();
+                    .rule(RuleBuilder.build(TestRule1.class))
+                    .rule(RuleBuilder.build(TestRule2.class))
+                    .rule(RuleBuilder.build(TestRule3.class))
+                    .rule(RuleBuilder.build(TestRule4.class))
+                    .rule(RuleBuilder.build(TestRule5.class))
+                .build();
 
         Bindings bindings = Bindings.create()
                 .bind("value", Integer.class, 1)
@@ -67,11 +67,11 @@ public class ValidationTest {
     public void test2() {
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet2", "Test Rule Set")
-                .add(RuleBuilder.build(TestRule1.class))
-                .add(RuleBuilder.build(TestRule2.class))
-                .add(RuleBuilder.build(TestRule3.class))
-                .add(RuleBuilder.build(TestRule4.class))
-                .add(RuleBuilder.build(TestRule5.class))
+                    .rule(RuleBuilder.build(TestRule1.class))
+                    .rule(RuleBuilder.build(TestRule2.class))
+                    .rule(RuleBuilder.build(TestRule3.class))
+                    .rule(RuleBuilder.build(TestRule4.class))
+                    .rule(RuleBuilder.build(TestRule5.class))
                 .build();
 
         rules.run(RuleContextBuilder.
@@ -89,7 +89,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet2", "Test Rule Set")
-                .add(RuleBuilder.build((Object b) -> new NotNullRule(b)))
+                    .rule(RuleBuilder.build((Object b) -> new NotNullRule(b)))
                 .build();
 
         RuleContext context = RuleContextBuilder.with(bindings).build();
@@ -106,7 +106,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet2", "Test Rule Set")
-                .add(RuleBuilder.build((Object b) -> new NullRule(b)))
+                    .rule(RuleBuilder.build((Object b) -> new NullRule(b)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -122,7 +122,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet2", "Test Rule Set")
-                .add(RuleBuilder.build((String b) -> new StringHasLengthRule(b)))
+                    .rule(RuleBuilder.build((String b) -> new StringHasLengthRule(b)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -138,7 +138,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet2", "Test Rule Set")
-                .add(RuleBuilder.build((String b) -> new StringHasTextRule(b)))
+                    .rule(RuleBuilder.build((String b) -> new StringHasTextRule(b)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -154,7 +154,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet2", "Test Rule Set")
-                .add(RuleBuilder.build((String b) -> new RegexPatternMatchRule("[z]*", b)))
+                    .rule(RuleBuilder.build((String b) -> new RegexPatternMatchRule("[z]*", b)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -171,7 +171,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((Date d) -> new FutureDateRule(d)))
+                    .rule(RuleBuilder.build((Date d) -> new FutureDateRule(d)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -186,7 +186,7 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((Date d) -> new PastDateRule(d)))
+                    .rule(RuleBuilder.build((Date d) -> new PastDateRule(d)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -203,8 +203,8 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((Integer a) -> new MaxRule(50, a)))
-                .add(RuleBuilder.build((Integer a) -> new MaxRule(20, a)))
+                    .rule(RuleBuilder.build((Integer a) -> new MaxRule(50, a)))
+                    .rule(RuleBuilder.build((Integer a) -> new MaxRule(20, a)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -220,10 +220,10 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((Integer a) -> new MinRule(11, a)))
-                .add(RuleBuilder.build((Integer a) -> new MinRule(5, a)))
-                .add(RuleBuilder.build(new MinRule(25, 22).defaultMessage("test ${value} ${min}")))
-                .add(RuleBuilder.build(FunctionBuilder.build((Integer a) -> new MinRule(25, a))))
+                    .rule(RuleBuilder.build((Integer a) -> new MinRule(11, a)))
+                    .rule(RuleBuilder.build((Integer a) -> new MinRule(5, a)))
+                    .rule(RuleBuilder.build(new MinRule(25, 22).defaultMessage("test ${value} ${min}")))
+                    .rule(RuleBuilder.build(FunctionBuilder.build((Integer a) -> new MinRule(25, a))))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -239,15 +239,10 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((Integer a) -> new RangeRule(1, 10, a)))
-                .add(RuleBuilder.build((Integer a) -> new RangeRule(20, 25, a)))
-                .preCondition(ConditionBuilder.build(() -> true))
-                .preAction(ActionBuilder.build((Binding<Integer> a) -> a.setValue(23)))
-                .postAction(ActionBuilder.build(() -> System.out.println("Post Action")))
-                .stopWhen(ConditionBuilder.build((RuleViolations e) -> e.size() > 5))
-                .errorHandler(ConditionBuilder.build((Exception ex) -> {
-                    return false;
-                }))
+                    .preCondition(ConditionBuilder.build(() -> true))
+                    .rule(RuleBuilder.build((Integer a) -> new RangeRule(1, 10, a)))
+                    .rule(RuleBuilder.build((Integer a) -> new RangeRule(20, 25, a)))
+                    .stopWhen(ConditionBuilder.build((RuleViolations e) -> e.size() > 5))
                 .build();
 
         StringExecutionCollector collector = new StringExecutionCollector(true);
@@ -256,9 +251,8 @@ public class ValidationTest {
                 .traceUsing(collector)
                 .build();
 
-        RuleResultSet result = rules.run(context);
-        System.err.println(collector.toString());
-        System.err.println(result);
+        RuleSetResult result = rules.run(context);
+        System.err.println(collector.getOutput());
         Assert.assertTrue(errors.size() == 1);
     }
 
@@ -271,8 +265,9 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((@Optional Binding<Integer> a) -> new MustBeDefinedRule(a)))
-                .add(RuleBuilder.build((@Optional Binding<Integer> c) -> new MustBeDefinedRule(c)))
+                    .preCondition(ConditionBuilder.build(() -> true))
+                    .rule(RuleBuilder.build((@Optional Binding<Integer> c) -> new MustBeDefinedRule(c)))
+                    .rule(RuleBuilder.build((@Optional Binding<Integer> a) -> new MustBeDefinedRule(a)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());
@@ -288,8 +283,8 @@ public class ValidationTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet", "Test Rule Set")
-                .add(RuleBuilder.build((@Optional Binding<Integer> a) -> new MustNotBeDefinedRule(a)))
-                .add(RuleBuilder.build((@Optional Binding<Integer> c) -> new MustNotBeDefinedRule(c)))
+                    .rule(RuleBuilder.build((@Optional Binding<Integer> a) -> new MustNotBeDefinedRule(a)))
+                    .rule(RuleBuilder.build((@Optional Binding<Integer> c) -> new MustNotBeDefinedRule(c)))
                 .build();
 
         rules.run(RuleContextBuilder.with(bindings).build());

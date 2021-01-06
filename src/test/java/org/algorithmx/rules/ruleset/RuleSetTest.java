@@ -59,26 +59,26 @@ public class RuleSetTest {
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet1", "Test Rule Set")
-                .add(RuleBuilder
+                .rule(RuleBuilder
                         .with(ConditionBuilder.build((String y) -> y.equals("")))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(0)))
                         .name("Rule1")
                         .build())
-                .add(RuleBuilder
+                .rule(RuleBuilder
                         .with(ConditionBuilder.build((String a, BigDecimal x) -> x != null))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule2")
                         .build())
-                .add(RuleBuilder
+                .rule(RuleBuilder
                         .with(ConditionBuilder.build((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule3")
                         .build())
-                .add(rule6)
+                .rule(rule6)
                 .build();
 
-        Rule rule2 = rules.get("Rule2");
-        Rule rule3 = rules.get("Rule3");
+        Rule rule2 = rules.get("Rule2", Rule.class);
+        Rule rule3 = rules.get("Rule3", Rule.class);
         rules.run(bindings);
 
         Assert.assertNotNull(rule2);
@@ -96,12 +96,10 @@ public class RuleSetTest {
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        RuleSet rules = RuleSetBuilder
-                            .with(TestRuleSet.class)
-                            .build();
+        RuleSet rules = RuleSetBuilder.build(TestRuleSet.class);
 
-        Rule rule2 = rules.get("Rule2");
-        Rule rule3 = rules.get("Rule3");
+        Rule rule2 = rules.get("Rule2", Rule.class);
+        Rule rule3 = rules.get("Rule3", Rule.class);
         rules.run(bindings);
 
         Assert.assertNotNull(rule2);

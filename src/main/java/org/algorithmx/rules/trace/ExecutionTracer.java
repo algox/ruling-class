@@ -11,7 +11,6 @@ import org.algorithmx.rules.event.ExecutionListener;
 import org.algorithmx.rules.event.FunctionExecution;
 import org.algorithmx.rules.event.RuleExecution;
 import org.algorithmx.rules.event.RuleSetExecution;
-import org.algorithmx.rules.event.RuleSetExecutionError;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -117,30 +116,10 @@ public abstract class ExecutionTracer implements ExecutionListener {
     @EventMarker(eventType = EventType.RULE_SET_PRE_CONDITION_END)
     public void onRuleSetPreConditionEnd(ExecutionEvent<RuleSetExecution<Condition>> event) {}
 
-    @EventMarker(eventType = EventType.RULE_SET_PRE_ACTION_START)
-    public void onRuleSetPreActionStart(ExecutionEvent<RuleSetExecution<Action>> event) {}
-
-    @EventMarker(eventType = EventType.RULE_SET_PRE_ACTION_END)
-    public void onRuleSetPreActionEnd(ExecutionEvent<RuleSetExecution<Action>> event) {}
-
-    @EventMarker(eventType = EventType.RULE_SET_ERROR)
-    public void onRuleSetError(ExecutionEvent<RuleSetExecutionError> event) {}
-
-    @EventMarker(eventType = EventType.RULE_SET_ERROR_CONDITION_START)
-    public void onRuleSetErrorConditionStart(ExecutionEvent<RuleSetExecution<Condition>> event) {}
-
-    @EventMarker(eventType = EventType.RULE_SET_ERROR_CONDITION_END)
-    public void onRuleSetErrorConditionEnd(ExecutionEvent<RuleSetExecution<Condition>> event) {}
-
     @EventMarker(eventType = EventType.RULE_SET_STOP_CONDITION_START)
     public void onRuleSetStopConditionStart(ExecutionEvent<RuleSetExecution<Condition>> event) {}
 
     @EventMarker(eventType = EventType.RULE_SET_STOP_CONDITION_END)
     public void onRuleSetStopConditionEnd(ExecutionEvent<RuleSetExecution<Condition>> event) {}
 
-    @EventMarker(eventType = EventType.RULE_SET_POST_ACTION_START)
-    public void onRuleSetPostActionStart(ExecutionEvent<RuleSetExecution<Action>> event) {}
-
-    @EventMarker(eventType = EventType.RULE_SET_POST_ACTION_END)
-    public void onRuleSetPostActionEnd(ExecutionEvent<RuleSetExecution<Action>> event) {}
 }

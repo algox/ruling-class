@@ -30,4 +30,12 @@ public class DefaultMethodExecutor implements MethodExecutor {
     public Method getMethod() {
         return method;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultMethodExecutor{" +
+                "method=" + method +
+                ", delegate=" + delegate +
+                '}';
+    }
 }

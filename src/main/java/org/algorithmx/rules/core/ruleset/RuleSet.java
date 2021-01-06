@@ -19,10 +19,8 @@ package org.algorithmx.rules.core.ruleset;
 
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Runnable;
-import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
-import org.algorithmx.rules.core.rule.Rule;
 
 /**
  * RuleSet is a logical grouping of Rules.
@@ -30,9 +28,9 @@ import org.algorithmx.rules.core.rule.Rule;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface RuleSet extends Runnable<RuleResultSet>, Identifiable, Iterable<Rule> {
+public interface RuleSet extends Runnable<RuleSetResult>, Identifiable, Iterable<Runnable> {
 
-    RuleResultSet run(RuleContext context) throws RuleSetExecutionException;
+    RuleSetResult run(RuleContext context) throws RuleSetExecutionException;
 
     RuleSetDefinition getRuleSetDefinition();
 
@@ -58,20 +56,6 @@ public interface RuleSet extends Runnable<RuleResultSet>, Identifiable, Iterable
     Condition getPreCondition();
 
     /**
-     * Returns the action to be performed before the execution of the Rules.
-     *
-     * @return pre action before the execution of the Rules.
-     */
-    Action getPreAction();
-
-    /**
-     * Returns the action to be performed after the execution of the Rules.
-     *
-     * @return post action after the execution of the Rules.
-     */
-    Action getPostAction();
-
-    /**
      * Returns the Condition that determines when execution should stop.
      *
      * @return stopping condition.
@@ -85,22 +69,8 @@ public interface RuleSet extends Runnable<RuleResultSet>, Identifiable, Iterable
      */
     int size();
 
-    /**
-     * Returns all the Rules in this RuleSet.
-     *
-     * @return rules.
-     */
-    Rule[] getRules();
+    <T extends Runnable> T get(int index, Class<T> type);
 
-    Rule get(int index);
-
-    Rule get(String ruleName);
-
-    /**
-     * Responsible to handling errors during Rule Execution. It determines whether to proceed or not.
-     *
-     * @return Error Condition that decides whether the execution should proceed or not.
-     */
-    Condition getErrorCondition();
+    <T extends Runnable> T get(String name, Class<T> type);
 }
 
