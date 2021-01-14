@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.email;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = Email.EmailValidationRuleProducer.class)
+@ValidationRuleBuilder(Email.EmailValidationRuleBuilder.class)
 public @interface Email {
 
     String NOT_APPLICABLE = "N/A";
@@ -37,24 +37,20 @@ public @interface Email {
 
     boolean allowTopLevelDomain() default true;
 
-    class EmailValidationRuleProducer implements ValidationRuleProducer<Email> {
+    class EmailValidationRuleBuilder implements SingleValueValidationRuleBuilder<Email> {
 
-        public EmailValidationRuleProducer() {
+        public EmailValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(Email email, RuleSetBuilder builder) {
+        public RuleSetBuilder build(Email email, RuleSetBuilder builder) {
             EmailValidationRule rule = new EmailValidationRule(email.errorCode(),
                     email.severity(), !NOT_APPLICABLE.equals(email.message()) ? email.message() : null,
                     email.allowLocal(), email.allowTopLevelDomain());
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return EmailValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

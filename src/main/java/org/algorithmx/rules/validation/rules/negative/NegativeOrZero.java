@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.negative;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = NegativeOrZero.NegativeOrZeroValidationRuleProducer.class)
+@ValidationRuleBuilder(NegativeOrZero.NegativeOrZeroValidationRuleBuilder.class)
 public @interface NegativeOrZero {
 
     String NOT_APPLICABLE = "N/A";
@@ -33,24 +33,20 @@ public @interface NegativeOrZero {
 
     Severity severity() default Severity.ERROR;
 
-    class NegativeOrZeroValidationRuleProducer implements ValidationRuleProducer<NegativeOrZero> {
+    class NegativeOrZeroValidationRuleBuilder implements SingleValueValidationRuleBuilder<NegativeOrZero> {
 
-        public NegativeOrZeroValidationRuleProducer() {
+        public NegativeOrZeroValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(NegativeOrZero negativeOrZero, RuleSetBuilder builder) {
+        public RuleSetBuilder build(NegativeOrZero negativeOrZero, RuleSetBuilder builder) {
             NegativeOrZeroValidationRule rule = new NegativeOrZeroValidationRule(negativeOrZero.errorCode(),
                     negativeOrZero.severity(),
                     !NOT_APPLICABLE.equals(negativeOrZero.message()) ? negativeOrZero.message() : null);
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return NegativeOrZeroValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

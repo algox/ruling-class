@@ -19,5 +19,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ValidationRuleBuilder {
 
-    Class<? extends ValidationRuleProducer> producer();
+    Class<? extends SingleValueValidationRuleBuilder> value();
 }

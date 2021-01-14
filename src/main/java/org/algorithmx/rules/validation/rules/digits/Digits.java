@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.digits;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = Digits.DigitsValidationRuleProducer.class)
+@ValidationRuleBuilder(Digits.DigitsValidationRuleBuilder.class)
 public @interface Digits {
 
     String NOT_APPLICABLE = "N/A";
@@ -43,24 +43,20 @@ public @interface Digits {
      */
     int fraction();
 
-    class DigitsValidationRuleProducer implements ValidationRuleProducer<Digits> {
+    class DigitsValidationRuleBuilder implements SingleValueValidationRuleBuilder<Digits> {
 
-        public DigitsValidationRuleProducer() {
+        public DigitsValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(Digits digits, RuleSetBuilder builder) {
+        public RuleSetBuilder build(Digits digits, RuleSetBuilder builder) {
             DigitsValidationRule rule = new DigitsValidationRule(digits.errorCode(),
                     digits.severity(), !NOT_APPLICABLE.equals(digits.message()) ? digits.message() : null,
                     digits.integer(), digits.fraction());
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return DigitsValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

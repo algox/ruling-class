@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.nulll;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = Null.NullValidationRuleProducer.class)
+@ValidationRuleBuilder(Null.NullValidationRuleBuilder.class)
 public @interface Null {
 
     String NOT_APPLICABLE = "N/A";
@@ -33,24 +33,20 @@ public @interface Null {
 
     Severity severity() default Severity.ERROR;
 
-    class NullValidationRuleProducer implements ValidationRuleProducer<Null> {
+    class NullValidationRuleBuilder implements SingleValueValidationRuleBuilder<Null> {
 
-        public NullValidationRuleProducer() {
+        public NullValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(Null nullAnnotation, RuleSetBuilder builder) {
+        public RuleSetBuilder build(Null nullAnnotation, RuleSetBuilder builder) {
             NullValidationRule rule = new NullValidationRule(nullAnnotation.errorCode(),
                     nullAnnotation.severity(),
                     !NOT_APPLICABLE.equals(nullAnnotation.message()) ? nullAnnotation.message() : null);
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return NullValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

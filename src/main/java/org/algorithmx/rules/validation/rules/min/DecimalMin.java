@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.min;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -23,7 +23,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = DecimalMin.DecimalMinValidationRuleProducer.class)
+@ValidationRuleBuilder(DecimalMin.DecimalMinValidationRuleBuilder.class)
 public @interface DecimalMin {
 
     String NOT_APPLICABLE = "N/A";
@@ -38,23 +38,19 @@ public @interface DecimalMin {
 
     boolean inclusive() default true;
 
-    class DecimalMinValidationRuleProducer implements ValidationRuleProducer<DecimalMin> {
+    class DecimalMinValidationRuleBuilder implements SingleValueValidationRuleBuilder<DecimalMin> {
 
-        public DecimalMinValidationRuleProducer() {
+        public DecimalMinValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(DecimalMin min, RuleSetBuilder builder) {
+        public RuleSetBuilder build(DecimalMin min, RuleSetBuilder builder) {
             DecimalMinValidationRule rule = new DecimalMinValidationRule(min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null,
                     BigDecimal.valueOf(min.value()), min.inclusive());
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return DecimalMinValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

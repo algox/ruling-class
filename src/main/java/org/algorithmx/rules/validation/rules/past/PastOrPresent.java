@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.past;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = PastOrPresent.PastOrPresentValidationRuleProducer.class)
+@ValidationRuleBuilder(PastOrPresent.PastOrPresentValidationRuleBuilder.class)
 public @interface PastOrPresent {
 
     String NOT_APPLICABLE = "N/A";
@@ -33,24 +33,20 @@ public @interface PastOrPresent {
 
     Severity severity() default Severity.ERROR;
 
-    class PastOrPresentValidationRuleProducer implements ValidationRuleProducer<PastOrPresent> {
+    class PastOrPresentValidationRuleBuilder implements SingleValueValidationRuleBuilder<PastOrPresent> {
 
-        public PastOrPresentValidationRuleProducer() {
+        public PastOrPresentValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(PastOrPresent pastOrPresent, RuleSetBuilder builder) {
+        public RuleSetBuilder build(PastOrPresent pastOrPresent, RuleSetBuilder builder) {
             PastOrPresentValidationRule rule = new PastOrPresentValidationRule(pastOrPresent.errorCode(),
                     pastOrPresent.severity(),
                     !NOT_APPLICABLE.equals(pastOrPresent.message()) ? pastOrPresent.message() : null);
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return PastOrPresentValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

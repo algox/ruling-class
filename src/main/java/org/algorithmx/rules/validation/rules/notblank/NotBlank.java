@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.notblank;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = NotBlank.NotBlankValidationRuleProducer.class)
+@ValidationRuleBuilder(NotBlank.NotBlankValidationRuleBuilder.class)
 public @interface NotBlank {
 
     String NOT_APPLICABLE = "N/A";
@@ -33,24 +33,20 @@ public @interface NotBlank {
 
     Severity severity() default Severity.ERROR;
 
-    class NotBlankValidationRuleProducer implements ValidationRuleProducer<NotBlank> {
+    class NotBlankValidationRuleBuilder implements SingleValueValidationRuleBuilder<NotBlank> {
 
-        public NotBlankValidationRuleProducer() {
+        public NotBlankValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(NotBlank notBlank, RuleSetBuilder builder) {
+        public RuleSetBuilder build(NotBlank notBlank, RuleSetBuilder builder) {
             NotBlankValidationRule rule = new NotBlankValidationRule(notBlank.errorCode(),
                     notBlank.severity(),
                     !NOT_APPLICABLE.equals(notBlank.message()) ? notBlank.message() : null);
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return NotBlankValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }

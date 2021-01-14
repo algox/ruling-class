@@ -4,9 +4,7 @@ import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 
 import java.lang.annotation.Annotation;
 
-public interface ValidationRuleProducer<T extends Annotation> {
+public interface SingleValueValidationRuleBuilder<T extends Annotation> {
 
-    void produce(T type, RuleSetBuilder builder);
-
-    Class<?>[] types();
+    RuleSetBuilder build(T type, RuleSetBuilder builder);
 }

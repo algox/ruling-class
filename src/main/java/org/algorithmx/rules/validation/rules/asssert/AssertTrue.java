@@ -3,8 +3,8 @@ package org.algorithmx.rules.validation.rules.asssert;
 import org.algorithmx.rules.core.rule.RuleBuilder;
 import org.algorithmx.rules.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rules.validation.Severity;
+import org.algorithmx.rules.validation.SingleValueValidationRuleBuilder;
 import org.algorithmx.rules.validation.ValidationRuleBuilder;
-import org.algorithmx.rules.validation.ValidationRuleProducer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Inherited @Documented
-@ValidationRuleBuilder(producer = AssertTrue.AssertTrueValidationRuleProducer.class)
+@ValidationRuleBuilder(AssertTrue.AssertTrueValidationRuleBuilder.class)
 public @interface AssertTrue {
 
     String NOT_APPLICABLE = "N/A";
@@ -33,23 +33,19 @@ public @interface AssertTrue {
 
     Severity severity() default Severity.ERROR;
 
-    class AssertTrueValidationRuleProducer implements ValidationRuleProducer<AssertTrue> {
+    class AssertTrueValidationRuleBuilder implements SingleValueValidationRuleBuilder<AssertTrue> {
 
-        public AssertTrueValidationRuleProducer() {
+        public AssertTrueValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public void produce(AssertTrue assertTrue, RuleSetBuilder builder) {
+        public RuleSetBuilder build(AssertTrue assertTrue, RuleSetBuilder builder) {
             AssertTrueValidationRule rule = new AssertTrueValidationRule(assertTrue.errorCode(),
                     assertTrue.severity(), !NOT_APPLICABLE.equals(assertTrue.message()) ? assertTrue.message() : null);
             // TODO : Need to adapt to the annotation element
             builder.rule(RuleBuilder.build(rule));
-        }
-
-        @Override
-        public Class<?>[] types() {
-            return AssertTrueValidationRule.SUPPORTED_TYPES;
+            return builder;
         }
     }
 }
