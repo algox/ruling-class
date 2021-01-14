@@ -35,8 +35,19 @@ import org.algorithmx.rules.core.model.MethodDefinition;
 public interface Function<T> extends Runnable<T>, Identifiable, Comparable<Function> {
 
     @Override
-    default T run(RuleContext context) {
+    default T run(RuleContext context) throws FunctionExecutionException {
         return apply(context);
+    }
+
+    @Override
+    default T run(Bindings bindings) throws FunctionExecutionException {
+        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
+    }
+
+    @Override
+    default T run(BindingDeclaration...params) throws FunctionExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return run(RuleContextBuilder.build(bindings));
     }
 
     /**

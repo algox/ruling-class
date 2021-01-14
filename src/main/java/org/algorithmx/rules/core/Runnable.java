@@ -3,7 +3,6 @@ package org.algorithmx.rules.core;
 import org.algorithmx.rules.bind.BindingDeclaration;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.context.RuleContext;
-import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 public interface Runnable<T> {
 
@@ -16,9 +15,7 @@ public interface Runnable<T> {
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default T run(Bindings bindings) throws UnrulyException {
-        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
-    }
+    T run(Bindings bindings) throws UnrulyException;
 
     /**
      * Derives all the arguments and executes this Rule.
@@ -27,8 +24,5 @@ public interface Runnable<T> {
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
-    default T run(BindingDeclaration...params) throws UnrulyException {
-        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
-        return run(RuleContextBuilder.build(bindings));
-    }
+    T run(BindingDeclaration...params) throws UnrulyException;
 }

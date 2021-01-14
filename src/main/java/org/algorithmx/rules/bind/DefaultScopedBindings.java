@@ -98,6 +98,15 @@ public class DefaultScopedBindings implements ScopedBindings {
     }
 
     @Override
+    public Bindings getCurrentScope() {
+        return scopes.peek();
+    }
+
+    public Bindings getParentScope() {
+        return getScopeSize() > 2 ? scopes.get(getScopeSize() - 2) : null;
+    }
+
+    @Override
     public Bindings getRootScope() {
         return scopes.get(0);
     }
@@ -160,9 +169,8 @@ public class DefaultScopedBindings implements ScopedBindings {
         return result;
     }
 
-    @Override
-    public Bindings getCurrentScope() {
-        return scopes.peek();
+    public int getScopeSize() {
+        return scopes.size();
     }
 
     @Override

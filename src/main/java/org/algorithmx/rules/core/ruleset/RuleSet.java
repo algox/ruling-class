@@ -17,10 +17,13 @@
  */
 package org.algorithmx.rules.core.ruleset;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 /**
  * RuleSet is a logical grouping of Rules.
@@ -31,6 +34,17 @@ import org.algorithmx.rules.core.context.RuleContext;
 public interface RuleSet extends Runnable<RuleSetResult>, Identifiable, Iterable<Runnable> {
 
     RuleSetResult run(RuleContext context) throws RuleSetExecutionException;
+
+    @Override
+    default RuleSetResult run(Bindings bindings) throws RuleSetExecutionException {
+        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
+    }
+
+    @Override
+    default RuleSetResult run(BindingDeclaration...params) throws RuleSetExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return run(RuleContextBuilder.build(bindings));
+    }
 
     RuleSetDefinition getRuleSetDefinition();
 

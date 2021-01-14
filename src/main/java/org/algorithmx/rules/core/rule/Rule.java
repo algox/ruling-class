@@ -17,12 +17,15 @@
  */
 package org.algorithmx.rules.core.rule;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.action.Action;
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 
 /**
  * Rule class encapsulates all the properties/methods of a Rule within the framework. A Rule consists of two parts
@@ -49,7 +52,19 @@ public interface Rule<T> extends Runnable<RuleResult>, Identifiable {
      * @return execution status of the rule.
      * @throws UnrulyException thrown if there are any runtime errors during the execution.
      */
+    @Override
     RuleResult run(RuleContext context) throws RuleExecutionException;
+
+    @Override
+    default RuleResult run(Bindings bindings) throws RuleExecutionException {
+        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
+    }
+
+    @Override
+    default RuleResult run(BindingDeclaration...params) throws RuleExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return run(RuleContextBuilder.build(bindings));
+    }
 
     /**
      * The actual Rule implementation instance.

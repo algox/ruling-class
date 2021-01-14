@@ -29,6 +29,6 @@ public class MessageResolverTest {
     public void testMessageFormattedText3() {
         MessageResolver resolver = MessageResolver.create("message-resolver");
         String template = resolver.resolve(Locale.US, "test.001");
-        Assert.assertTrue("locale specific test {0} ${b} ${c,number,int}".equals(template));
+        Assert.assertTrue("test".equals(template));
     }
 }

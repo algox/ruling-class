@@ -29,6 +29,7 @@ public class ObjectGraph {
 
 
     private final static Map<Class<?>, ClassFields> classCache = new HashMap<>();
+
     private final Map<Object, Class<?>> breadCrumbs = new IdentityHashMap<>();
     private final Deque<Object> candidates = new ArrayDeque<>();
 

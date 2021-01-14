@@ -9,8 +9,19 @@ import org.algorithmx.rules.core.context.RuleContextBuilder;
 public interface SimpleCondition extends Runnable<Boolean> {
 
     @Override
-    default Boolean run(RuleContext context) {
+    default Boolean run(RuleContext context) throws ConditionExecutionException {
         return isTrue(context);
+    }
+
+    @Override
+    default Boolean run(Bindings bindings) throws ConditionExecutionException {
+        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
+    }
+
+    @Override
+    default Boolean run(BindingDeclaration...params) throws ConditionExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return run(RuleContextBuilder.build(bindings));
     }
 
     /**

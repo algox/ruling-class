@@ -196,6 +196,11 @@ public class RuleSetBuilder {
         return result;
     }
 
+    public RuleSetBuilder clear() {
+        this.ruleSetItems.clear();
+        return this;
+    }
+
     public RuleSet build() {
         return new DefaultRuleSet(buildRuleSetDefinition(),
                 getPreCondition(), getStopCondition(),

@@ -56,6 +56,13 @@ public interface ScopedBindings extends Bindings {
     Bindings getCurrentScope();
 
     /**
+     * Retrieves the parent of the current scope.
+     *
+     * @return parent scope; if current scope is the root scope then null.
+     */
+    Bindings getParentScope();
+
+    /**
      * Returns the root scope.
      *
      * @return root scope.
@@ -161,6 +168,13 @@ public interface ScopedBindings extends Bindings {
      */
     @Override
     int size();
+
+    /**
+     * Number of scopes.
+     *
+     * @return number of total scopes.
+     */
+    int getScopeSize();
 
     /**
      * Retrieves the number of unique (by name) Bindings in all the scopes.

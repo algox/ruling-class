@@ -5,6 +5,7 @@ import org.algorithmx.rules.core.rule.RuleExecutionStatus;
 import org.algorithmx.rules.core.rule.RuleResult;
 import org.algorithmx.rules.lib.spring.util.Assert;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +33,22 @@ public class RuleSetResult implements Iterable<RuleResult> {
 
     public Bindings getBindings() {
         return bindings;
+    }
+
+    public String[] getPassedRuleNames() {
+        return getRuleNames(RuleExecutionStatus.PASS);
+    }
+
+    public String[] getPassedOrSkippedRuleNames() {
+        return getRuleNames(RuleExecutionStatus.PASS, RuleExecutionStatus.SKIPPED);
+    }
+
+    public String[] getFailedRuleNames() {
+        return getRuleNames(RuleExecutionStatus.FAIL);
+    }
+
+    public String[] getFailedOrSkippedRuleNames() {
+        return getRuleNames(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED);
     }
 
     public RuleResult get(int index) {
@@ -90,20 +107,8 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return getCount(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED);
     }
 
-    public boolean isAnyError() {
-        return isTrue(r -> !r.getStatus().isError());
-    }
-
-    public boolean isAllError() {
-        return isTrue(r -> r.getStatus().isError());
-    }
-
-    public int getErrorCount() {
-        return getCount(RuleExecutionStatus.ERROR);
-    }
-
-    public boolean isTrue(RuleExecutionStatus ... statuses) {
-        Set<RuleExecutionStatus> values = new HashSet<>(Arrays.asList(statuses));
+    public boolean isTrue(RuleExecutionStatus...statuses) {
+        Set<RuleExecutionStatus> values = statuses != null ? new HashSet<>(Arrays.asList(statuses)) : new HashSet<>();
         return isTrue(r -> values.contains(r));
     }
 
@@ -120,8 +125,8 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return result;
     }
 
-    public int getCount(RuleExecutionStatus ... statuses) {
-        Set<RuleExecutionStatus> values = new HashSet<>(Arrays.asList(statuses));
+    public int getCount(RuleExecutionStatus...statuses) {
+        Set<RuleExecutionStatus> values = statuses != null ? new HashSet<>(Arrays.asList(statuses)) : new HashSet<>();
         return getCount(r -> values.contains(r));
     }
 
@@ -135,6 +140,23 @@ public class RuleSetResult implements Iterable<RuleResult> {
         }
 
         return result;
+    }
+
+    public String[] getRuleNames(RuleExecutionStatus...statuses) {
+        Set<RuleExecutionStatus> values = statuses != null ? new HashSet<>(Arrays.asList(statuses)) : new HashSet<>();
+        return getRuleNames(r -> values.contains(r));
+    }
+
+    public String[] getRuleNames(Predicate<RuleResult> predicate) {
+        List<String> result = new ArrayList<>();
+
+        for (RuleResult ruleResult : results) {
+            if (predicate.test(ruleResult)) {
+                result.add(ruleResult.getRuleName());
+            }
+        }
+
+        return result.toArray(new String[result.size()]);
     }
 
     @Override

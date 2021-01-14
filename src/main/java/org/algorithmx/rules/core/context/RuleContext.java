@@ -30,6 +30,7 @@ import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.Locale;
 
@@ -44,6 +45,7 @@ public class RuleContext {
 
     private final Date creationTime = new Date();
     private final ScopedBindings bindings;
+    private final Locale locale;
     private final BindingMatchingStrategy matchingStrategy;
     private final ParameterResolver parameterResolver;
     private final MessageResolver messageResolver;
@@ -51,21 +53,23 @@ public class RuleContext {
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
     private final ScriptProcessor scriptProcessor;
-    private Locale locale = Locale.getDefault();
     private final EventProcessor eventProcessor;
+    private final Clock clock;
 
     public RuleContext(ScopedBindings bindings) {
-        this(bindings, BindingMatchingStrategy.create(), ParameterResolver.create(),
+        this(bindings, Locale.getDefault(), BindingMatchingStrategy.create(),  ParameterResolver.create(),
                 MessageResolver.create("rules"), MessageFormatter.create(), ObjectFactory.create(),
-                EventProcessor.create(), ConverterRegistry.create(), null);
+                EventProcessor.create(), ConverterRegistry.create(), null, Clock.systemDefaultZone());
     }
 
-    public RuleContext(ScopedBindings bindings, BindingMatchingStrategy matchingStrategy,
+    public RuleContext(ScopedBindings bindings, Locale locale, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,
-                       EventProcessor eventProcessor, ConverterRegistry registry, ScriptProcessor scriptProcessor) {
+                       EventProcessor eventProcessor, ConverterRegistry registry,
+                       ScriptProcessor scriptProcessor, Clock clock) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
+        Assert.notNull(locale, "locale cannot be null.");
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
         Assert.notNull(parameterResolver, "parameterResolver cannot be null.");
         Assert.notNull(messageFormatter, "messageFormatter cannot be null.");
@@ -73,6 +77,7 @@ public class RuleContext {
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         Assert.notNull(registry, "registry cannot be null.");
         this.bindings = bindings;
+        this.locale = locale;
         this.matchingStrategy = matchingStrategy;
         this.parameterResolver = parameterResolver;
         this.messageFormatter = messageFormatter;
@@ -81,6 +86,7 @@ public class RuleContext {
         this.eventProcessor = eventProcessor;
         this.registry = registry;
         this.scriptProcessor = scriptProcessor;
+        this.clock = clock;
     }
 
     public ParameterMatch[] match(MethodDefinition definition) {
@@ -156,17 +162,16 @@ public class RuleContext {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
     public ScriptProcessor getScriptProcessor() {
         return scriptProcessor;
     }
 
-
     public EventProcessor getEventProcessor() {
         return eventProcessor;
+    }
+
+    public Clock getClock() {
+        return clock;
     }
 
     public Date getCreationTime() {

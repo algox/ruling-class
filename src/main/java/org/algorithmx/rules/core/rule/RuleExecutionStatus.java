@@ -2,7 +2,7 @@ package org.algorithmx.rules.core.rule;
 
 public enum RuleExecutionStatus {
 
-    PASS, FAIL, SKIPPED, ERROR;
+    PASS, FAIL, SKIPPED;
 
     public boolean isPass() {
         return this == PASS;
@@ -14,9 +14,5 @@ public enum RuleExecutionStatus {
 
     public boolean isSkipped() {
         return this == SKIPPED;
-    }
-
-    public boolean isError() {
-        return this == ERROR;
     }
 }

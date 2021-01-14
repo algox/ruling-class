@@ -17,10 +17,13 @@
  */
 package org.algorithmx.rules.core.action;
 
+import org.algorithmx.rules.bind.BindingDeclaration;
+import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.Identifiable;
 import org.algorithmx.rules.core.Runnable;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.context.RuleContext;
+import org.algorithmx.rules.core.context.RuleContextBuilder;
 import org.algorithmx.rules.core.model.MethodDefinition;
 
 /**
@@ -38,6 +41,17 @@ public interface Action extends Runnable<Void>, Identifiable, Comparable<Action>
      * @throws ActionExecutionException thrown if there are any errors during the Action execution.
      */
     Void run(RuleContext context) throws ActionExecutionException;
+
+    @Override
+    default Void run(Bindings bindings) throws ActionExecutionException {
+        return run(RuleContextBuilder.build(bindings != null ? bindings : Bindings.create()));
+    }
+
+    @Override
+    default Void run(BindingDeclaration...params) throws ActionExecutionException {
+        Bindings bindings = params != null ? Bindings.create().bind(params) : Bindings.create();
+        return run(RuleContextBuilder.build(bindings));
+    }
 
     /**
      * Executes thr Action given all the arguments it needs.

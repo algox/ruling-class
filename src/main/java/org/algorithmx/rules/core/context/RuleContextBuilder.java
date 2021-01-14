@@ -36,8 +36,10 @@ import org.algorithmx.rules.text.MessageFormatter;
 import org.algorithmx.rules.text.MessageResolver;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Builder class to properly build a RuleContext with the bells and whistles.
@@ -56,6 +58,8 @@ public class RuleContextBuilder {
     private EventProcessor eventProcessor = EventProcessor.create();
     private ConverterRegistry registry = ConverterRegistry.create();
     private ScriptProcessor scriptProcessor = null;
+    private Clock clock = Clock.systemDefaultZone();
+    private Locale locale = Locale.getDefault();
     private List<ExecutionListener> listeners = new ArrayList<>();
 
     private RuleContextBuilder(Bindings bindings) {
@@ -108,6 +112,12 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder locale(Locale locale) {
+        Assert.notNull(locale, "locale cannot be null.");
+        this.locale = locale;
+        return this;
+    }
+
     public RuleContextBuilder paramResolver(ParameterResolver parameterResolver) {
         Assert.notNull(objectFactory, "parameterResolver cannot be null.");
         this.parameterResolver = parameterResolver;
@@ -144,6 +154,12 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder clock(Clock clock) {
+        Assert.notNull(clock, "clock cannot be null.");
+        this.clock = clock;
+        return this;
+    }
+
     /**
      * Builds a Rule Context with desired parameters.
      *
@@ -153,8 +169,8 @@ public class RuleContextBuilder {
         ScopedBindings scopedBindings = ScopedBindings.create(bindings);
         DefaultBindings contextScope = (DefaultBindings) scopedBindings.addScope();
 
-        RuleContext result  = new RuleContext(scopedBindings, matchingStrategy, parameterResolver, messageResolver,
-                messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor);
+        RuleContext result  = new RuleContext(scopedBindings, locale, matchingStrategy, parameterResolver, messageResolver,
+                messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor, clock);
         // Make the Context avail in the bindings.
         contextScope.promiscuousBind(BindingBuilder
                 .with(ReservedBindings.RULE_CONTEXT.getName())
