@@ -117,7 +117,7 @@ public class LoadTest {
     @Test
     public void loadTest7() {
         Rule rule = RuleBuilder
-                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
+                .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction())
@@ -140,12 +140,12 @@ public class LoadTest {
     @Test
     public void loadTest8() {
         Rule rule1 = RuleBuilder
-                .with(ConditionBuilder.with((Integer a, Date date, String x) -> a != null).build())
+                .given(ConditionBuilder.with((Integer a, Date date, String x) -> a != null).build())
                 .name("rule1")
                 .build();
 
         Rule rule2 = RuleBuilder
-                .with(ConditionBuilder.with((Integer a, Date date, String x, String y) -> a != null).build())
+                .given(ConditionBuilder.with((Integer a, Date date, String x, String y) -> a != null).build())
                 .then(ActionBuilder.with((Integer y, String z) -> {}).build())
                 .then(ActionBuilder.with((Integer y, String z, Date date) -> {}).build())
                 .name("rule2")
@@ -155,7 +155,7 @@ public class LoadTest {
     @Test
     public void loadTest9() {
         Rule rule = RuleBuilder
-                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
+                .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .preCondition(ConditionBuilder.with((Integer x) -> x > 10).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
@@ -193,7 +193,7 @@ public class LoadTest {
     @Test
     public void loadTest12() {
         Rule rule = RuleBuilder
-                .with(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
+                .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
                 .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction())

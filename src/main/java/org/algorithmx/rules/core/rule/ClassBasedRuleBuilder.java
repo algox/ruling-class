@@ -34,7 +34,7 @@ import org.algorithmx.rules.lib.spring.util.Assert;
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class ClassBasedRuleBuilder<T> extends RuleBuilder<T> {
+public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
 
     private ClassBasedRuleBuilder(Class<T> ruleClass, T target) {
         super();

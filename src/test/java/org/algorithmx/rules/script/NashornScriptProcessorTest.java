@@ -54,7 +54,7 @@ public class NashornScriptProcessorTest {
 
         RuleContext context = RuleContextBuilder.build(bindings);
         Rule rule = RuleBuilder
-                        .with(ConditionBuilder.build("b >= 15"))
+                        .given(ConditionBuilder.build("b >= 15"))
                         .then(ActionBuilder.build("bindings.setValue('b', 20);"))
                         .otherwise(ActionBuilder.build("print('oh no')"))
                         .name("TestRule")

@@ -31,22 +31,22 @@ public class TestRuleSet {
         builder
                 .action(ActionBuilder.build(() -> System.err.println("XXX Better Pre Action")))
                 .rule(RuleBuilder
-                        .with(ConditionBuilder.build((String y) -> y.equals("")))
+                        .given(ConditionBuilder.build((String y) -> y.equals("")))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(0)))
                         .name("Rule1")
                         .build())
                 .rule(RuleBuilder
-                        .with(ConditionBuilder.build((String a, BigDecimal x) -> x != null))
+                        .given(ConditionBuilder.build((String a, BigDecimal x) -> x != null))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule2")
                         .build())
                 .rule(RuleBuilder
-                        .with(ConditionBuilder.build((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
+                        .given(ConditionBuilder.build((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule3")
                         .build())
                 .rule(RuleBuilder
-                        .with(ConditionBuilder.TRUE())
+                        .given(ConditionBuilder.TRUE())
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
                         .name("Rule6")
                         .build())

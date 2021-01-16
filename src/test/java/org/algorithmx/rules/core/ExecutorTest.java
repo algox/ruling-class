@@ -46,8 +46,8 @@ public class ExecutorTest {
     public void test1() {
         List<Integer> values = new ArrayList<>();
 
-        Rule rule = RuleBuilder.with(
-                ConditionBuilder.build((String x, Integer y, List<String> a) -> y > 10))
+        Rule rule = RuleBuilder
+                .given(ConditionBuilder.build((String x, Integer y, List<String> a) -> y > 10))
                 .name("rule1")
                 .build();
 
@@ -57,8 +57,8 @@ public class ExecutorTest {
 
     @Test
     public void test2() {
-        Rule rule = RuleBuilder.with(
-                ConditionBuilder.build((String x, Integer y) -> y > 10))
+        Rule rule = RuleBuilder
+                .given(ConditionBuilder.build((String x, Integer y) -> y > 10))
                 .name("rule1")
                 .build();
         boolean result = rule.getCondition().isTrue("hello world", 20);
@@ -72,8 +72,8 @@ public class ExecutorTest {
                 .bind("y", int.class, 123)
                 .bind("z", String.class, "Hello");
 
-        Rule rule = RuleBuilder.with(
-                ConditionBuilder.build((String x, Integer y) -> y > 10))
+        Rule rule = RuleBuilder
+                .given(ConditionBuilder.build((String x, Integer y) -> y > 10))
                 .name("rule1")
                 .build();
 

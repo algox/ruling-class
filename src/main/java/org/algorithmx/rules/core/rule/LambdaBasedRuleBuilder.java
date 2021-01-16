@@ -19,7 +19,7 @@ package org.algorithmx.rules.core.rule;
 
 import org.algorithmx.rules.core.condition.Condition;
 
-public class LambdaBasedRuleBuilder<T> extends RuleBuilder<T> {
+public class LambdaBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
 
     public LambdaBasedRuleBuilder(Condition condition) {
         super();
