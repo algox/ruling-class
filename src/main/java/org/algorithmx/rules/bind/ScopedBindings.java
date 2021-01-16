@@ -30,22 +30,32 @@ import java.util.Map;
  */
 public interface ScopedBindings extends Bindings {
 
-    /**
-     * Creates the default implementation of these Bindings.
-     *
-     * @param bindings initial set of bindings.
-     * @return new default implementation instance.
-     */
-    static ScopedBindings create(Bindings bindings) {
-        return new DefaultScopedBindings(bindings);
+    String ROOT_SCOPE   = "root-scope";
+    String GLOBAL_SCOPE = "global-scope";
+
+    static ScopedBindings create() {
+        return new DefaultScopedBindings(ROOT_SCOPE);
     }
 
     /**
      * Creates the default implementation of these Bindings.
+     *
+     * @param name name of the scope.
+     * @param bindings initial set of bindings.
      * @return new default implementation instance.
      */
-    static ScopedBindings create() {
-        return new DefaultScopedBindings();
+    static ScopedBindings create(String name, Bindings bindings) {
+        return new DefaultScopedBindings(name, bindings);
+    }
+
+    /**
+     * Creates the default implementation of these Bindings.
+     *
+     * @param name name of the scope.
+     * @return new default implementation instance.
+     */
+    static ScopedBindings create(String name) {
+        return new DefaultScopedBindings(name);
     }
 
     /**
@@ -69,12 +79,23 @@ public interface ScopedBindings extends Bindings {
      */
     Bindings getRootScope();
 
+    Bindings getGlobalScope();
+
+    Bindings addScope();
+
     /**
      * Creates new scope and pushes it to the top of Stack.
      *
+     * @param name name of the scope.
      * @return the newly created Bindings.
      */
-    Bindings addScope();
+    Bindings addScope(String name);
+
+    void addScope(String name, Bindings bindings);
+
+    Bindings getScope(String name);
+
+    String getScopeName(Bindings bindings);
 
     /**
      * Pops the working Bindings off the Stack.
@@ -82,6 +103,8 @@ public interface ScopedBindings extends Bindings {
      * @return the removed Bindings.
      */
     Bindings removeScope();
+
+    Bindings removeScope(String name);
 
     /**
      * Pops the working Bindings off the Stack till we match our desired target.

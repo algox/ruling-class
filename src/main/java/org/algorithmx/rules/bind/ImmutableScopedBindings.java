@@ -49,6 +49,31 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     }
 
     @Override
+    public Bindings addScope(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void addScope(String name, Bindings bindings) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Bindings getScope(String name) {
+        return getTarget().getScope(name);
+    }
+
+    @Override
+    public String getScopeName(Bindings bindings) {
+        return getTarget().getScopeName(bindings);
+    }
+
+    @Override
+    public Bindings removeScope(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Bindings removeScope() {
         throw new UnsupportedOperationException();
     }
@@ -79,6 +104,11 @@ public class ImmutableScopedBindings extends ImmutableBindings implements Scoped
     @Override
     public Bindings getRootScope() {
         return getTarget().getRootScope();
+    }
+
+    @Override
+    public Bindings getGlobalScope() {
+        return getTarget().getGlobalScope();
     }
 
     @Override

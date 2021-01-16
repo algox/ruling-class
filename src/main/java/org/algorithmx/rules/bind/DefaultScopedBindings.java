@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.bind;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.RuleUtils;
 import org.algorithmx.rules.util.TypeReference;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 
 /**
  * Default implementation of the Scoped Bindings.
@@ -36,23 +38,65 @@ import java.util.Stack;
  */
 public class DefaultScopedBindings implements ScopedBindings {
 
-    private final Stack<Bindings> scopes = new Stack<>();
+    private final Stack<NamedScope> scopes = new Stack<>();
 
-    DefaultScopedBindings() {
-        super();
-        init();
+    DefaultScopedBindings(String name) {
+        this(name, Bindings.create());
     }
 
-    DefaultScopedBindings(Bindings bindings) {
+    DefaultScopedBindings(String name, Bindings bindings) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
-        this.scopes.push(bindings);
+        this.scopes.push(new NamedScope(name, bindings));
     }
 
-    @Override
     public Bindings addScope() {
+        return addScope("anonymous-" + UUID.randomUUID().toString() + "-scope");
+    }
+
+    public Bindings addScope(String name) {
         Bindings result = createScope();
-        scopes.push(result);
+        addScope(name, result);
+        return result;
+    }
+
+    public void addScope(String name, Bindings bindings) {
+        Assert.notNull(name, "name cannot be null.");
+        Assert.notNull(bindings, "bindings cannot be null.");
+        Bindings existing = getScope(name);
+
+        if (existing != null) {
+            throw new BindingsAlreadyExistsException(name, existing);
+        }
+
+        scopes.push(new NamedScope(name, bindings));
+    }
+
+    public Bindings getScope(String name) {
+        Bindings result = null;
+
+        for (NamedScope scope : scopes) {
+            // Compare the reference to make sure we match.
+            if (scope.name.equals(name)) {
+                result = scope.bindings;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    public String getScopeName(Bindings bindings) {
+        String result = null;
+
+        for (NamedScope scope : scopes) {
+            // Compare the reference to make sure we match.
+            if (scope.bindings == bindings) {
+                result = scope.name;
+                break;
+            }
+        }
+
         return result;
     }
 
@@ -63,8 +107,16 @@ public class DefaultScopedBindings implements ScopedBindings {
             throw new CannotRemoveRootScopeException();
         }
 
-        return scopes.pop();
+        return scopes.pop().bindings;
+    }
 
+    public Bindings removeScope(String name) {
+        Bindings bindings = getScope(name);
+
+        // We couldn't find any such Scope.
+        if (bindings == null) throw new NoSuchBindingsException(name);
+
+        return removeScope(bindings);
     }
 
     public Bindings removeScope(Bindings target) {
@@ -74,16 +126,17 @@ public class DefaultScopedBindings implements ScopedBindings {
         }
 
         boolean found = false;
-        for (Bindings bindings : scopes) {
+        for (NamedScope scope : scopes) {
             // Compare the reference to make sure we match.
-            if (bindings == target) {
+            if (scope.bindings == target) {
                 found = true;
                 break;
             }
         }
 
+        // Could not find the requested Bindings
         if (!found) {
-
+            throw new NoSuchBindingsException(target);
         }
 
         Bindings result;
@@ -99,28 +152,32 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     @Override
     public Bindings getCurrentScope() {
-        return scopes.peek();
+        return scopes.peek().bindings;
     }
 
     public Bindings getParentScope() {
-        return getScopeSize() > 2 ? scopes.get(getScopeSize() - 2) : null;
+        return getScopeSize() > 2 ? scopes.get(getScopeSize() - 2).bindings : null;
     }
 
     @Override
     public Bindings getRootScope() {
-        return scopes.get(0);
+        return scopes.get(0).bindings;
+    }
+
+    public Bindings getGlobalScope() {
+        return getScope(ScopedBindings.GLOBAL_SCOPE);
     }
 
     @Override
     public <T> Binding<T> getBinding(String name) {
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
 
         if (scopes.length == 0) return null;
 
         Binding<T> result = null;
         // Must start at end and come up
         for (int i = scopes.length - 1; i >=0; i--) {
-            result = scopes[i].getBinding(name);
+            result = scopes[i].bindings.getBinding(name);
             if (result != null) break;
         }
 
@@ -129,12 +186,12 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     @Override
     public <T> Binding<T> getBinding(String name, TypeReference<T> type) {
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
 
         Binding<T> result = null;
         // Must start at end and come up
         for (int i = scopes.length - 1; i >=0; i--) {
-            result = scopes[i].getBinding(name, type);
+            result = scopes[i].bindings.getBinding(name, type);
             if (result != null) break;
         }
 
@@ -144,11 +201,11 @@ public class DefaultScopedBindings implements ScopedBindings {
     @Override
     public <T> Map<String, Binding<T>> getBindings(TypeReference<T> type) {
         Map<String, Binding<T>> result = new HashMap<>();
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
 
         // Must start at end and come up
         for (int i = scopes.length - 1; i >=0; i--) {
-            result.putAll(scopes[i].getBindings(type));
+            result.putAll(scopes[i].bindings.getBindings(type));
             // Found something in this scope stop.
             if (result.size() > 0) break;
         }
@@ -159,11 +216,11 @@ public class DefaultScopedBindings implements ScopedBindings {
     @Override
     public <T> Map<String, Binding<T>> getAllBindings(TypeReference<T> type) {
         Map<String, Binding<T>> result = new HashMap<>();
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
 
         // Must start at root and keep adding
-        for (Bindings scope : scopes) {
-            result.putAll(scope.getBindings(type));
+        for (NamedScope scope : scopes) {
+            result.putAll(scope.bindings.getBindings(type));
         }
 
         return result;
@@ -175,11 +232,11 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     @Override
     public int size() {
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
         int result = 0;
 
-        for (Bindings scope : scopes) {
-            result += scope.size();
+        for (NamedScope scope : scopes) {
+            result += scope.bindings.size();
         }
 
         return result;
@@ -187,11 +244,11 @@ public class DefaultScopedBindings implements ScopedBindings {
 
     @Override
     public Map<String, ?> asMap() {
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
         Map<String, Object> result = new HashMap<>();
 
-        for (Bindings scope : scopes) {
-            result.putAll(scope.asMap());
+        for (NamedScope scope : scopes) {
+            result.putAll(scope.bindings.asMap());
         }
 
         return result;
@@ -203,26 +260,17 @@ public class DefaultScopedBindings implements ScopedBindings {
      * @return all bindings (reverse order).
      */
     public Iterator<Binding<?>> iterator() {
-        Bindings[] scopes = getScopes();
+        NamedScope[] scopes = getScopes();
         Set<Binding<?>> result = new HashSet<>();
 
         // Must start at root and keep adding
-        for (Bindings scope : scopes) {
-            for (Iterator<Binding<?>> it = scope.iterator(); it.hasNext();) {
+        for (NamedScope scope : scopes) {
+            for (Iterator<Binding<?>> it = scope.bindings.iterator(); it.hasNext();) {
                 result.add(it.next());
             }
         }
 
         return result.iterator();
-    }
-
-    /**
-     * Creates a new scope and pushes it into the Stack.
-     *
-     */
-    protected void init() {
-        // Add the root scope
-        scopes.push(createScope());
     }
 
     /**
@@ -234,8 +282,8 @@ public class DefaultScopedBindings implements ScopedBindings {
         return Bindings.create();
     }
 
-    private Bindings[] getScopes() {
-        return scopes.toArray(new Bindings[scopes.size()]);
+    private NamedScope[] getScopes() {
+        return scopes.toArray(new NamedScope[scopes.size()]);
     }
 
     @Override
@@ -243,9 +291,9 @@ public class DefaultScopedBindings implements ScopedBindings {
         StringBuilder result = new StringBuilder();
         int scopeIndex = 0;
 
-        for (Bindings scope : scopes) {
+        for (NamedScope scope : scopes) {
             result.append("Scope (index = " + (scopeIndex++) + ")");
-            result.append(prefix + scope.prettyPrint(getTabs(scopeIndex + 1)));
+            result.append(prefix + scope.bindings.prettyPrint(getTabs(scopeIndex + 1)));
             result.append(prefix + getTabs(scopeIndex));
         }
 
@@ -265,5 +313,33 @@ public class DefaultScopedBindings implements ScopedBindings {
     @Override
     public String toString() {
         return prettyPrint("");
+    }
+
+    private static class NamedScope {
+        private String name;
+        private Bindings bindings;
+
+        public NamedScope(String name, Bindings bindings) {
+            Assert.notNull(name, "name cannot be null");
+            Assert.notNull(bindings, "bindings cannot be null");
+            this.name = name;
+            this.bindings = bindings;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Bindings getBindings() {
+            return bindings;
+        }
+
+        @Override
+        public String toString() {
+            return "NamedScope{" +
+                    "name='" + name + '\'' +
+                    ", bindings=" + bindings +
+                    '}';
+        }
     }
 }

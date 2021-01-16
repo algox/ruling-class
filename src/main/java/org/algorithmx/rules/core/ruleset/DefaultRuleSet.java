@@ -138,7 +138,7 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     protected Bindings createRuleSetScope(RuleContext context, RuleSetResult ruleResultSet) {
-        Bindings result = context.getBindings().addScope();
+        Bindings result = context.getBindings().addScope(getName() + "-scope");
         context.getBindings().bind("ruleSetResult", RuleSetResult.class, ruleResultSet);
         return result;
     }

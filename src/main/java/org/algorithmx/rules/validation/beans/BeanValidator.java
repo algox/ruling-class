@@ -24,20 +24,20 @@ public class BeanValidator extends ObjectVisitorTemplate {
 
     public void validate(Object target) {
         ObjectGraph objectGraph = new ObjectGraph(false);
-        this.bindings = ScopedBindings.create();
+        this.bindings = ScopedBindings.create(target.getClass().getName() + "-scope");
         objectGraph.traverse(target, this);
     }
 
     @Override
     public boolean visitObjectStart(Object target) {
         System.err.println("XXX Start [" + target + "]");
-        bindings.addScope();
+        //bindings.addScope();
         return true;
     }
 
     @Override
     public void visitObjectEnd(Object target) {
-        bindings.removeScope();
+        //bindings.removeScope();
         // TODO : Validate
     }
 

@@ -20,36 +20,36 @@ package org.algorithmx.rules.bind;
 import org.algorithmx.rules.core.UnrulyException;
 
 /**
- * Exception thrown when Bindings cannot be found in the scope.
+ * Thrown when you attempt to declare an already existing Scope.
  *
  * @author Max Arulananthan
  * @since 1.0
  *
  */
-public class NoSuchBindingsException extends UnrulyException {
+public class BindingsAlreadyExistsException extends UnrulyException {
 
-    private static final long serialVersionUID = 0L;
+	private static final long serialVersionUID = 0L;
 
-    private final Bindings bindings;
-    private final String name;
+	private final String name;
+	private final Bindings existingBindings;
 
-    public NoSuchBindingsException(Bindings bindings) {
-        super("Bindings does not exist in the scope.");
-        this.bindings = bindings;
-        this.name = null;
-    }
+	/**
+	 * Ctor with the existing bindings;
+	 *
+	 * @param name name of the scope.
+	 * @param existingBindings existing bindings.
+	 */
+	public BindingsAlreadyExistsException(String name, Bindings existingBindings) {
+		super("Scope with name [" + name + "] already exists.");
+		this.name = name;
+		this.existingBindings = existingBindings;
+	}
 
-    public NoSuchBindingsException(String name) {
-        super("Bindings [" + name + "] does not exist in the scope.");
-        this.name = name;
-        this.bindings = null;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Bindings getBindings() {
-        return bindings;
-    }
-
-    public String getName() {
-        return name;
-    }
+	public Bindings getExistingBindings() {
+		return existingBindings;
+	}
 }

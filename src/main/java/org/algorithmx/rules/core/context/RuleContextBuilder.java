@@ -166,17 +166,17 @@ public class RuleContextBuilder {
      * @return new Rule Context.
      */
     public RuleContext build() {
-        ScopedBindings scopedBindings = ScopedBindings.create(bindings);
-        DefaultBindings contextScope = (DefaultBindings) scopedBindings.addScope();
+        ScopedBindings scopedBindings = ScopedBindings.create();
 
         RuleContext result  = new RuleContext(scopedBindings, locale, matchingStrategy, parameterResolver, messageResolver,
                 messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor, clock);
         // Make the Context avail in the bindings.
-        contextScope.promiscuousBind(BindingBuilder
+        ((DefaultBindings) (scopedBindings.getRootScope())).promiscuousBind(BindingBuilder
                 .with(ReservedBindings.RULE_CONTEXT.getName())
                 .type(RuleContext.class)
                 .value(result)
                 .build());
+        scopedBindings.addScope(ScopedBindings.GLOBAL_SCOPE, bindings);
         listeners.stream().forEach(listener -> result.getEventProcessor().addEventListener(listener));
 
         return result;
