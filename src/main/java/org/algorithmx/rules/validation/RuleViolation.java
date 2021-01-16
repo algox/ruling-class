@@ -35,9 +35,7 @@ public class RuleViolation {
     private final String errorCode;
     private final Severity severity;
     private final String errorMessage;
-    private String bindingName;
     private final Map<String, String> params = new LinkedHashMap<>();
-    private final Map<String, Object> attributes = new LinkedHashMap<>();
 
     public RuleViolation(String ruleName, String errorCode, Severity severity, String errorMessage) {
         super();
@@ -83,14 +81,6 @@ public class RuleViolation {
         return errorMessage;
     }
 
-    public String getBindingName() {
-        return bindingName;
-    }
-
-    public void setBindingName(String bindingName) {
-        this.bindingName = bindingName;
-    }
-
     /**
      * Associated rule parameters.
      *
@@ -125,18 +115,6 @@ public class RuleViolation {
         return this;
     }
 
-    /**
-     * Adds a new violation attribute.
-     *
-     * @param name attribute name.
-     * @param value attribute value.
-     * @return error.
-     */
-    public RuleViolation attribute(String name, Object value) {
-        attributes.put(name, value);
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -156,6 +134,9 @@ public class RuleViolation {
         return "RuleViolation{" +
                 "ruleName='" + ruleName + '\'' +
                 ", errorCode='" + errorCode + '\'' +
+                ", severity=" + severity +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", params=" + params +
                 '}';
     }
 }
