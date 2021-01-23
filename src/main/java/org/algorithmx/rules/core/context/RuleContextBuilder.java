@@ -69,11 +69,17 @@ public class RuleContextBuilder {
     }
 
     protected void setScriptProcessor() {
-        try {
-            this.scriptProcessor = ScriptProcessor.create();
-        } catch (Exception e) {
-            this.scriptProcessor = new NoOpScriptProcessor();
+        ScriptProcessor result = ScriptProcessor.create();
+        if (result == null) {
+            /**
+             * "Unsupported Scripting Language [" + language + "] Available ["
+             *                     + scriptEngineManager.getEngineFactories().stream().map(ScriptEngineFactory::getLanguageName)
+             *                     .collect(Collectors.joining(", ")) + "]"
+             */
+            result = new NoOpScriptProcessor();
         }
+
+        this.scriptProcessor = result;
     }
 
     /**
@@ -145,6 +151,12 @@ public class RuleContextBuilder {
     public RuleContextBuilder traceUsing(ExecutionListener listener) {
         Assert.notNull(listener, "listener cannot be null.");
         this.listeners.add(listener);
+        return this;
+    }
+
+    public RuleContextBuilder scriptProcessor(String language) {
+        Assert.notNull(language, "language cannot be null.");
+        this.scriptProcessor = ScriptProcessor.create(language);
         return this;
     }
 
