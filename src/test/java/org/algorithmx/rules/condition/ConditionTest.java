@@ -19,6 +19,7 @@ package org.algorithmx.rules.condition;
 
 import org.algorithmx.rules.core.condition.Condition;
 import org.algorithmx.rules.core.condition.ConditionBuilder;
+import org.algorithmx.rules.core.function.TriFunction;
 import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
@@ -179,5 +180,22 @@ public class ConditionTest {
     public void testConditionConsumer() {
         Condition condition = ConditionBuilder.build((Integer a) -> a > 10);
         Assert.assertTrue(condition.isTrue(13));
+    }
+
+    @Test
+    public void testInnerClass() {
+        Condition condition = ConditionBuilder
+                .with(new TriFunction<Boolean, String, Integer, Map<String, Integer>>() {
+                    @Override
+                    public Boolean apply(String a, Integer b, Map<String, Integer> map) {
+                        return true;
+                    }
+                })
+                .build();
+        Assert.assertTrue(condition.getMethodDefinition().getParameterDefinitions().length == 3);
+        Assert.assertTrue(condition.getMethodDefinition().getParameterDefinitions()[2].getName().equals("map"));
+        Assert.assertTrue(condition.getMethodDefinition().getParameterDefinitions()[2]
+                .getType().equals(new TypeReference<Map<String, Integer>>(){}.getType()));
+        Assert.assertTrue(condition.isTrue("aa", 12, new HashMap<>()));
     }
 }

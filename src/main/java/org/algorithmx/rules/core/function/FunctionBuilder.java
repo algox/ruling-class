@@ -62,8 +62,8 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
                     + Arrays.toString(candidates) + "]");
         }
 
-        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
-        MethodInfo methodInfo = load(target, implementationMethod);
+        MethodInfo methodInfo = load(target, candidates[0]);
+
         return (FunctionBuilder<T>) new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
     }
 

@@ -17,14 +17,17 @@
  */
 package org.algorithmx.rules.core.function;
 
+import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.LambdaUtils;
-import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ExecutableBuilder {
 
@@ -56,7 +59,11 @@ public abstract class ExecutableBuilder {
             return loadLambda(target, targetMethod, serializedLambda);
         }
 
-        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), targetMethod);
+        // See if we need to find the implementation (so we have can access the parameter names);
+        Method implementationMethod = getImplementationMethod(target.getClass(), targetMethod);
+        // If this happens we have a bug in getImplementationMethod().
+        if (implementationMethod == null) throw new UnrulyException("Unable to find implementation method for [" + targetMethod + "]");
+
         return new MethodInfo(target, MethodDefinition.load(implementationMethod));
     }
 
@@ -108,6 +115,39 @@ public abstract class ExecutableBuilder {
 
     public MethodDefinition getDefinition() {
         return definition;
+    }
+
+    private static Method getImplementationMethod(Class<?> c, Method candidate) {
+        // We found the one
+        if (!Modifier.isAbstract(candidate.getModifiers())) return candidate;
+
+        // Looks like we have an abstract method; let's find the implementation
+        List<Method> matches = new ArrayList<>();
+
+        for (Method method : c.getMethods()) {
+            if (candidate.equals(method)) continue;
+            if (Modifier.isAbstract(method.getModifiers())) continue;
+            if (method.isBridge() || method.isSynthetic()) continue;
+            if (!candidate.getReturnType().isAssignableFrom(method.getReturnType())) continue;
+            if (!candidate.getName().equals(method.getName())) continue;
+            if (method.getParameterCount() != candidate.getParameterCount()) continue;
+
+            boolean match = true;
+
+            for (int i = 0; i < method.getParameterTypes().length; i++) {
+                if (!candidate.getParameterTypes()[i].isAssignableFrom(method.getParameterTypes()[i]))
+                    match = false;
+                    break;
+            }
+
+            if (match) matches.add(method);
+        }
+
+        /**
+         * TODO : Currently this does not do an exact match of the implementation with the all generic types of the implementing
+         * TODO : interface. We should really match the generic types declared on the interface with the method.
+        **/
+        return matches.size() >= 1 ? matches.get(0) : null;
     }
 
     protected static class MethodInfo {

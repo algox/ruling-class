@@ -121,8 +121,7 @@ public class ConditionBuilder extends ExecutableBuilder {
                     + Arrays.toString(candidates) + "]");
         }
 
-        Method implementationMethod = ReflectionUtils.getImplementationMethod(target.getClass(), candidates[0]);
-        MethodInfo methodInfo = load(target, implementationMethod);
+        MethodInfo methodInfo = load(target, candidates[0]);
 
         if (!boolean.class.equals(methodInfo.getDefinition().getReturnType()) &&
                 !Boolean.class.equals(methodInfo.getDefinition().getReturnType())) {
