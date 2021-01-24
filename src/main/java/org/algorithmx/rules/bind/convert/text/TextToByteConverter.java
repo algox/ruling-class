@@ -15,33 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
-import org.algorithmx.rules.lib.apache.math.NumberUtils;
 
 import java.lang.reflect.Type;
-import java.math.BigInteger;
 
 /**
- * Converts a String value to a BigInteger.
+ * Converts a String value to a Byte.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToBigIntegerConverter extends ConverterTemplate<String, BigInteger> {
+public class TextToByteConverter extends ConverterTemplate<CharSequence, Byte> {
 
-    public StringToBigIntegerConverter() {
+    public TextToByteConverter() {
         super();
     }
 
     @Override
-    public BigInteger convert(String value, Type toType) {
+    public Byte convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return NumberUtils.createBigInteger(value);
+            return Byte.valueOf(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

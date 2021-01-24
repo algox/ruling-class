@@ -15,28 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
+import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
-import org.algorithmx.rules.lib.apache.BooleanUtils;
 
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
- * Converts a String value to a Boolean. ("Y", "YES", "1", "TRUE") irrelevant of case is considered as True.
+ * Converts a String value to a URL.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToBooleanConverter extends ConverterTemplate<String, Boolean> {
+public class TextToUrlConverter extends ConverterTemplate<CharSequence, URL> {
 
-    public StringToBooleanConverter() {
+    public TextToUrlConverter() {
         super();
     }
 
     @Override
-    public Boolean convert(String value, Type toType) {
-        Boolean result = BooleanUtils.toBooleanObject(value);
-        return result != null ? result : false;
+    public URL convert(CharSequence value, Type toType) {
+        if (value == null) return null;
+
+
+        try {
+            return new URL(value.toString());
+        } catch (MalformedURLException e) {
+            throw new ConversionException(e, value, getSourceType(), getTargetType());
+        }
     }
 }

@@ -51,7 +51,7 @@ public class ParameterDefinitionTest {
         Assert.assertTrue(parameters[0].getType().equals(String.class));
         Assert.assertTrue(parameters[1].getType().equals(new TypeReference<List<Integer>>(){}.getType()));
         Assert.assertTrue(parameters[2].getType().equals(new TypeReference<Binding<List<Integer>>>(){}.getType()));
-        Assert.assertTrue(parameters[2].isBinding());
+        Assert.assertTrue(parameters[2].isBindingType());
         Assert.assertTrue(parameters[3].getType().equals(new TypeReference<Map<?, Long>>(){}.getType()));
     }
 
@@ -59,24 +59,24 @@ public class ParameterDefinitionTest {
     public void testBindableParameter1() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod1", int.class, Map.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
-        Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(int.class));
-        Assert.assertTrue(!parameters[1].isBinding());
+        Assert.assertTrue(!parameters[0].isBindingType() && parameters[0].getType().equals(int.class));
+        Assert.assertTrue(!parameters[1].isBindingType());
     }
 
     @Test
     public void testBindableParameter2() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod2", Binding.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
-        Assert.assertTrue(parameters[0].isBinding() && parameters[0].getBindingType().equals(Integer.class));
+        Assert.assertTrue(parameters[0].isBindingType() && parameters[0].getUnderlyingType().equals(Integer.class));
     }
 
     @Test
     public void testBindableParameter3() throws NoSuchMethodException {
         Method m = TestClass.class.getDeclaredMethod("testMethod3", String.class, Integer.class, Binding.class);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
-        Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(String.class));
-        Assert.assertTrue(!parameters[1].isBinding() && parameters[1].getType().equals(Integer.class));
-        Assert.assertTrue(parameters[2].isBinding() && parameters[2].getBindingType().equals(
+        Assert.assertTrue(!parameters[0].isBindingType() && parameters[0].getType().equals(String.class));
+        Assert.assertTrue(!parameters[1].isBindingType() && parameters[1].getType().equals(Integer.class));
+        Assert.assertTrue(parameters[2].isBindingType() && parameters[2].getUnderlyingType().equals(
                 new TypeReference<List<Integer>>() {}.getType()));
     }
 
@@ -87,8 +87,8 @@ public class ParameterDefinitionTest {
         Class c = LambdaUtils.getImplementationClass(lambda);
         Method m = LambdaUtils.getImplementationMethod(lambda, c);
         ParameterDefinition[] parameters = ParameterDefinition.load(m);
-        Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
-        Assert.assertTrue(parameters[1].isBinding() && parameters[1].getBindingType().equals(Object.class));
+        Assert.assertTrue(!parameters[0].isBindingType() && parameters[0].getType().equals(Integer.class));
+        Assert.assertTrue(parameters[1].isBindingType() && parameters[1].getUnderlyingType().equals(Object.class));
     }
 
     @Test
@@ -99,8 +99,8 @@ public class ParameterDefinitionTest {
                     .build()
                 .build();
         ParameterDefinition[] parameters = condition.getMethodDefinition().getParameterDefinitions();
-        Assert.assertTrue(!parameters[0].isBinding() && parameters[0].getType().equals(Integer.class));
-        Assert.assertTrue(parameters[1].isBinding() && parameters[1].getBindingType().equals(new TypeReference<List<Integer>>() {}.getType()));
+        Assert.assertTrue(!parameters[0].isBindingType() && parameters[0].getType().equals(Integer.class));
+        Assert.assertTrue(parameters[1].isBindingType() && parameters[1].getUnderlyingType().equals(new TypeReference<List<Integer>>() {}.getType()));
     }
 
     private static class TestClass {

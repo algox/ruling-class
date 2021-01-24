@@ -17,17 +17,22 @@
  */
 package org.algorithmx.rules.bind.convert;
 
+import org.algorithmx.rules.util.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Converter tests.
@@ -49,6 +54,15 @@ public class ConverterTest {
         Assert.assertTrue(converter.canConvert(String.class, BigDecimal.class));
         Assert.assertTrue(converter.convert("100.004", BigDecimal.class).equals(new BigDecimal("100.004")));
         converter.convert("xxxx", BigDecimal.class);
+    }
+
+    @Test
+    public void stringBuilderToBigDecimalTest() {
+        ConverterRegistry registry = ConverterRegistry.create();
+        Converter<StringBuilder, BigDecimal> converter = registry.find(StringBuilder.class, BigDecimal.class);
+        Assert.assertTrue(converter != null);
+        Assert.assertTrue(converter.canConvert(StringBuilder.class, BigDecimal.class));
+        Assert.assertTrue(converter.convert(new StringBuilder("100.004"), BigDecimal.class).equals(new BigDecimal("100.004")));
     }
 
     @Test(expected = ConversionException.class)
@@ -137,12 +151,13 @@ public class ConverterTest {
     }
 
     @Test
-    public void stringToStringTest() {
+    public void stringToUrlTest() throws MalformedURLException {
         ConverterRegistry registry = ConverterRegistry.create();
-        Converter<String, String> converter = registry.find(String.class, String.class);
+        Converter<String, URL> converter = registry.find(String.class, URL.class);
+        URL url = new URL("http://www.rulii.org");
         Assert.assertTrue(converter != null);
-        Assert.assertTrue(converter.canConvert(String.class, String.class));
-        Assert.assertTrue(converter.convert("xxxxx",String.class).equals("xxxxx"));
+        Assert.assertTrue(converter.canConvert(String.class, URL.class));
+        Assert.assertTrue(converter.convert("http://www.rulii.org",String.class).equals(url));
     }
 
     @Test(expected = ConversionException.class)
@@ -190,6 +205,13 @@ public class ConverterTest {
         Assert.assertTrue(SIMPLE.parse(LocalDate.now().toString()).equals(date1));
         Assert.assertTrue(ISO8601.parse(time.toString()).equals(date2));
         converter.convert("xxxx", Date.class);
+    }
+
+    @Test
+    public void converterNotFound() {
+        ConverterRegistry registry = ConverterRegistry.create();
+        Converter converter = registry.find(String.class, Thread.class);
+        Assert.assertNull(converter);
     }
 
     private enum DAYS {

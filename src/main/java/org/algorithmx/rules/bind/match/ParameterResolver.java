@@ -41,15 +41,6 @@ public interface ParameterResolver {
         return new DefaultParameterResolver();
     }
 
-    /**
-     * Creates a the default implementation of the ParameterResolver.
-     *
-     * @param strict determines whether a bindings check is required or not.
-     * @return a new instance of the ParameterResolver.
-     */
-    static ParameterResolver create(boolean strict) {
-        return new DefaultParameterResolver(strict);
-    }
 
     /**
      * Matches the method parameters to an array of Bindings. We use the matching strategy to resolves each parameter.

@@ -188,7 +188,7 @@ public final class RuleUtils {
         for (int i = 0; i < matches.length; i++) {
             ParameterMatch match = matches[i];
             ParameterMatch immutable = new ParameterMatch(match.getDefinition(),
-                    match.getBinding() != null ? match.getBinding().immutableSelf() : null, match.isBinding());
+                    match.getBinding() != null ? match.getBinding().immutableSelf() : null);
             result[i] = immutable;
         }
 

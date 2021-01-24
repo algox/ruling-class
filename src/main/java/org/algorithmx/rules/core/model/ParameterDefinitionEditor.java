@@ -54,11 +54,6 @@ public class ParameterDefinitionEditor<T> {
         return this;
     }
 
-    public ParameterDefinitionEditor<T> optional(boolean value) {
-        target.setOptional(value);
-        return this;
-    }
-
     public ParameterDefinitionEditor<T> description(String description) {
         target.setDescription(description);
         return this;

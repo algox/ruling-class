@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
@@ -28,18 +28,18 @@ import java.lang.reflect.Type;
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToShortConverter extends ConverterTemplate<String, Short> {
+public class TextToShortConverter extends ConverterTemplate<CharSequence, Short> {
 
-    public StringToShortConverter() {
+    public TextToShortConverter() {
         super();
     }
 
     @Override
-    public Short convert(String value, Type toType) {
+    public Short convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return Short.valueOf(value);
+            return Short.valueOf(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

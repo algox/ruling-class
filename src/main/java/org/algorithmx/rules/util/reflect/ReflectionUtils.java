@@ -17,6 +17,7 @@
  */
 package org.algorithmx.rules.util.reflect;
 
+import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.lib.apache.ClassUtils;
 import org.algorithmx.rules.lib.spring.core.ParameterNameDiscoverer;
@@ -30,12 +31,14 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -303,5 +306,41 @@ public final class ReflectionUtils {
     public static void makeAccessible(Executable executable) {
         Assert.notNull(executable, "executable cannot be null.");
         executable.setAccessible(true);
+    }
+
+    public static boolean isBinding(Type type) {
+        return isWrapped(type, Binding.class);
+    }
+
+    public static Type getUnderlyingBindingType(Type type) {
+        return getUnderlyingType(type, Binding.class);
+    }
+
+    public static boolean isOptional(Type type) {
+        return isWrapped(type, Optional.class);
+    }
+
+    public static Type getUnderlyingOptionalType(Type type) {
+        return getUnderlyingType(type, Optional.class);
+    }
+
+    private static boolean isWrapped(Type type, Class<?> wrapperClass) {
+        if (wrapperClass.equals(type)) return true;
+        if (!(type instanceof ParameterizedType)) return false;
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        return wrapperClass.equals(parameterizedType.getRawType());
+    }
+
+    private static Type getUnderlyingType(Type type, Class<?> wrapperClass) {
+        if (wrapperClass.equals(type)) return Object.class;
+        if (!(type instanceof ParameterizedType)) throw new UnrulyException("Not a " + wrapperClass.getSimpleName()
+                + " Type [" + type + "]");
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+
+        if (!wrapperClass.equals(parameterizedType.getRawType())) {
+            throw new UnrulyException("Not a " + wrapperClass.getSimpleName() + " Type [" + type + "]");
+        }
+
+        return parameterizedType.getActualTypeArguments()[0];
     }
 }

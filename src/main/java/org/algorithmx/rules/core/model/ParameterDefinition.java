@@ -17,10 +17,9 @@
  */
 package org.algorithmx.rules.core.model;
 
+import org.algorithmx.rules.annotation.Default;
 import org.algorithmx.rules.annotation.Description;
 import org.algorithmx.rules.annotation.Match;
-import org.algorithmx.rules.annotation.Optional;
-import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.convert.Converter;
 import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.core.UnrulyException;
@@ -30,7 +29,6 @@ import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
@@ -51,15 +49,16 @@ public final class ParameterDefinition implements Definition {
     private String name;
     private String description;
     private Type type;
-    private boolean required;
     private String defaultValueText;
     private Class<? extends BindingMatchingStrategy> bindUsing;
     private final Annotation[] annotations;
-    private Type bindingType;
+    private boolean bindingType;
+    private boolean optionalType;
+    private Type underlyingType;
 
     private Object defaultValue = null;
 
-    private ParameterDefinition(int index, String name, Type type, String description, boolean required,
+    private ParameterDefinition(int index, String name, Type type, String description,
                                 String defaultValueText, Class<? extends BindingMatchingStrategy> bindUsing,
                                 Annotation...annotations) {
         super();
@@ -69,7 +68,6 @@ public final class ParameterDefinition implements Definition {
         setDescription(description);
         this.index = index;
         this.annotations = annotations;
-        this.required = required;
         this.defaultValueText = defaultValueText;
         this.bindUsing = bindUsing;
         validate();
@@ -77,13 +75,9 @@ public final class ParameterDefinition implements Definition {
 
     public void validate() {
 
-        if (isBinding() && getDefaultValueText() != null) {
+        if ((isBindingType() || isOptionalType()) && getDefaultValueText() != null) {
             throw new UnrulyException("Bindable parameters Binding<?> cannot have default values. " +
                     "For example : @Optional(defaultValue = \"10\") Binding<Integer> value" + toString());
-        }
-
-        if (isRequired() && (defaultValue != null || getDefaultValueText() != null)) {
-            throw new UnrulyException("Required parameter [" + name + "] should not have a default value" + toString());
         }
     }
 
@@ -100,27 +94,19 @@ public final class ParameterDefinition implements Definition {
         ParameterDefinition[] result = new ParameterDefinition[method.getParameterTypes().length];
 
         for (int i = 0; i < method.getGenericParameterTypes().length; i++) {
-            boolean required = isRequired(method, i);
             String defaultValueText = getDefaultValueText(method, i);
             Description descriptionAnnotation = method.getParameters()[i].getAnnotation(Description.class);
             result[i] = new ParameterDefinition(i, parameterNames[i], method.getGenericParameterTypes()[i],
-                    descriptionAnnotation != null ? descriptionAnnotation.value() : null, required, defaultValueText,
+                    descriptionAnnotation != null ? descriptionAnnotation.value() : null, defaultValueText,
                     getBindUsing(method, i), method.getParameterAnnotations()[i]);
         }
 
         return result;
     }
 
-    private static boolean isRequired(Method method, int index) {
-        return method.getParameters()[index].getAnnotation(Optional.class) == null;
-    }
-
     private static String getDefaultValueText(Method method, int index) {
-        Optional optional = method.getParameters()[index].getAnnotation(Optional.class);
-        return optional == null ? null
-                : Optional.NOT_APPLICABLE.equals(optional.defaultValue())
-                    ? null
-                    : optional.defaultValue();
+        Default defaultAnnotation = method.getParameters()[index].getAnnotation(Default.class);
+        return defaultAnnotation != null ? defaultAnnotation.value() : null;
     }
 
     private static Class<? extends BindingMatchingStrategy> getBindUsing(Method method, int index) {
@@ -190,7 +176,15 @@ public final class ParameterDefinition implements Definition {
     public void setType(Type type) {
         Assert.notNull(type, "type cannot be null.");
         this.type = type;
-        setBindingType(type);
+        this.underlyingType = type;
+
+        if (ReflectionUtils.isBinding(type)) {
+            this.bindingType = true;
+            this.underlyingType = ReflectionUtils.getUnderlyingBindingType(type);
+        } else if (ReflectionUtils.isOptional(type)) {
+            this.optionalType = true;
+            this.underlyingType = ReflectionUtils.getUnderlyingOptionalType(type);
+        }
     }
 
     /**
@@ -222,31 +216,10 @@ public final class ParameterDefinition implements Definition {
     }
 
     /**
-     * Determines if this parameter is required.
-     *
-     * @return true if required; false otherwise.
-     */
-    public boolean isRequired() {
-        return required;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-
-    public boolean isOptional() {
-        return !required;
-    }
-
-    public void setOptional(boolean optional) {
-        this.required = !optional;
-    }
-
-    /**
      * Default value text for this parameter if one is specified.
      *
      * @return default value text if specified; null otherwise.
-     * @see Optional
+     * @see Default
      */
     public String getDefaultValueText() {
         return defaultValueText;
@@ -267,11 +240,6 @@ public final class ParameterDefinition implements Definition {
         if (defaultValue != null) return defaultValue;
 
         if (getDefaultValueText() == null) return null;
-
-        if (!converter.canConvert(String.class, getType())) {
-            throw new UnrulyException("Invalid Converter supplied [" + converter
-                    + "]. It cannot convert String -> " + getType() + "]");
-        }
 
         this.defaultValue = converter.convert(getDefaultValueText(), getType());
 
@@ -310,42 +278,16 @@ public final class ParameterDefinition implements Definition {
      *
      * @return true if this is a Binding; false otherwise.
      */
-    public boolean isBinding() {
-        return bindingType != null;
-    }
-
-    /**
-     * Get the actual type of a Binding.
-     *
-     * @return actual Type of the Binding.
-     * @throws UnrulyException if type isn't a Binding.
-     */
-    public Type getBindingType() {
+    public boolean isBindingType() {
         return bindingType;
     }
 
-    private void setBindingType(Type type) {
-        this.bindingType = deriveIsBinding(type) ? deriveBindingType(type) : null;
+    public boolean isOptionalType() {
+        return optionalType;
     }
 
-    private boolean deriveIsBinding(Type type) {
-        if (Binding.class.equals(type)) return true;
-        if (!(type instanceof ParameterizedType)) return false;
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-        return Binding.class.equals(parameterizedType.getRawType());
-    }
-
-
-    private Type deriveBindingType(Type type) {
-        if (Binding.class.equals(type)) return Object.class;
-        if (!(type instanceof ParameterizedType)) throw new UnrulyException("Not a Binding Type [" + type + "]");
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-
-        if (!Binding.class.equals(parameterizedType.getRawType())) {
-            throw new UnrulyException("Not a Binding Type [" + type + "]");
-        }
-
-        return parameterizedType.getActualTypeArguments()[0];
+    public Type getUnderlyingType() {
+        return underlyingType;
     }
 
     /**
@@ -364,7 +306,6 @@ public final class ParameterDefinition implements Definition {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", type=" + type +
-                ", required=" + required +
                 ", defaultValueText='" + defaultValueText + '\'' +
                 ", bindUsing=" + bindUsing +
                 ", annotations=" + Arrays.toString(annotations) +

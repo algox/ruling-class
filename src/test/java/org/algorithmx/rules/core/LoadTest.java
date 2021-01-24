@@ -70,13 +70,11 @@ public class LoadTest {
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getIndex() == 0);
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getName().equals("id"));
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].isRequired());
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[0].getAnnotations().length == 0);
 
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getIndex() == 1);
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getName().equals("birthDate"));
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getType().equals(Date.class));
-        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].isRequired() == true);
 
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[2].getIndex() == 2);
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[2].getName().equals("values"));
@@ -102,7 +100,6 @@ public class LoadTest {
         Assert.assertTrue(def[0].getDescription().equals("calculate"));
         Assert.assertTrue(def[0].getParameterDefinitions()[0].getName().equals("id"));
         Assert.assertTrue(def[0].getParameterDefinitions()[0].getType().equals(int.class));
-        Assert.assertTrue(def[0].getParameterDefinitions()[0].isRequired());
         Assert.assertTrue(def[0].getParameterDefinitions()[0].getAnnotations().length == 0);
 
         Assert.assertTrue(def[0].getParameterDefinitions()[1].getName().equals("birthDate"));
@@ -134,7 +131,6 @@ public class LoadTest {
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getIndex() == 1);
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getName().equals("text"));
         Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].getType().equals(String.class));
-        Assert.assertTrue(def.getConditionDefinition().getParameterDefinitions()[1].isRequired() == true);
     }
 
     @Test

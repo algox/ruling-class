@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
@@ -23,31 +23,29 @@ import org.algorithmx.rules.bind.convert.ConverterTemplate;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * Converts a String value to a LocalDate.
+ * Converts a String value to a Date.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToDateConverter extends ConverterTemplate<String, Date> {
+public class TextToDateConverter extends ConverterTemplate<CharSequence, Date> {
 
     private static final String DATE_ONLY_FORMAT        = "yyyy-MM-dd";
     private static final String DATE_TIME_FORMAT        = "yyyy-MM-dd'T'HH:mm:ss";
     private static final String DATE_TIME_ZONE_FORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-    private static final DateTimeFormatter DATE_FORMAT =  DateTimeFormatter.ISO_DATE;
-
-    public StringToDateConverter() {
+    public TextToDateConverter() {
         super();
     }
 
     @Override
-    public Date convert(String value, Type toType) throws ConversionException {
-        if (value == null) return null;
+    public Date convert(CharSequence text, Type toType) throws ConversionException {
+        if (text == null) return null;
 
+        String value = text.toString();
         try {
             int timeIndex = value.indexOf('T');
 

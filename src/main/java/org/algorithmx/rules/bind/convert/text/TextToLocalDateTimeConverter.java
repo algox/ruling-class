@@ -15,32 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 /**
- * Converts a String value to a Integer.
+ * Converts a String value to a LocalDateTime.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToIntegerConverter extends ConverterTemplate<String, Integer> {
+public class TextToLocalDateTimeConverter extends ConverterTemplate<CharSequence, LocalDateTime> {
 
-    public StringToIntegerConverter() {
+    public TextToLocalDateTimeConverter() {
         super();
     }
 
     @Override
-    public Integer convert(String value, Type toType) {
+    public LocalDateTime convert(CharSequence value, Type toType) throws ConversionException {
         if (value == null) return null;
 
         try {
-            return Integer.decode(value);
-        } catch (NumberFormatException e) {
+            return LocalDateTime.parse(value);
+        } catch (DateTimeParseException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
     }

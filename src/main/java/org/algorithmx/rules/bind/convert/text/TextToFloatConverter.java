@@ -15,32 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 
 /**
- * Converts a String value to a BigDecimal.
+ * Converts a String value to a Float.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToBigDecimalConverter extends ConverterTemplate<String, BigDecimal> {
+public class TextToFloatConverter extends ConverterTemplate<CharSequence, Float> {
 
-    public StringToBigDecimalConverter() {
+    public TextToFloatConverter() {
         super();
     }
 
     @Override
-    public BigDecimal convert(String value, Type toType) {
+    public Float convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return new BigDecimal(value);
+            return Float.valueOf(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

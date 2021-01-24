@@ -32,14 +32,12 @@ public class ParameterMatch {
 
     private final ParameterDefinition definition;
     private final Binding<Object> binding;
-    private final boolean isBinding;
 
-    public ParameterMatch(ParameterDefinition definition, Binding<Object> binding, boolean isBinding) {
+    public ParameterMatch(ParameterDefinition definition, Binding<Object> binding) {
         super();
         Assert.notNull(definition, "definition cannot be null.");
         this.definition = definition;
         this.binding = binding;
-        this.isBinding = isBinding;
     }
 
     public ParameterDefinition getDefinition() {
@@ -51,7 +49,11 @@ public class ParameterMatch {
     }
 
     public boolean isBinding() {
-        return isBinding;
+        return definition.isBindingType();
+    }
+
+    public boolean isOptional() {
+        return definition.isOptionalType();
     }
 
     @Override
@@ -59,7 +61,6 @@ public class ParameterMatch {
         return "ParameterMatch{" +
                 "definition=" + definition +
                 ", binding=" + binding +
-                ", isBinding=" + isBinding +
                 '}';
     }
 }

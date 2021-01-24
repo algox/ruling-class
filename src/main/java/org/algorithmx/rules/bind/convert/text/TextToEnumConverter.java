@@ -15,26 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
+import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a String.
+ * Converts a String value to a Enum.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToStringConverter extends ConverterTemplate<String, String> {
+public class TextToEnumConverter extends ConverterTemplate<CharSequence, Enum> {
 
-    public StringToStringConverter() {
+    public TextToEnumConverter() {
         super();
     }
 
     @Override
-    public String convert(String value, Type toType) {
-        return value;
+    public Enum convert(CharSequence value, Type toType) throws ConversionException {
+        if (value == null) return null;
+
+        try {
+            return Enum.valueOf((Class) toType, value.toString());
+        } catch (IllegalArgumentException e) {
+            throw new ConversionException(e, value, getSourceType(), getTargetType());
+        }
     }
 }

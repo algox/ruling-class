@@ -35,9 +35,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value={ElementType.PARAMETER})
-public @interface Optional {
+public @interface Default {
 
-    String NOT_APPLICABLE = "N/A";
-
-    String defaultValue() default NOT_APPLICABLE;
+    String value();
 }

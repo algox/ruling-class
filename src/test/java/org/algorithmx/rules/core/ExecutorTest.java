@@ -107,7 +107,7 @@ public class ExecutorTest {
 
         rule.run(RuleContextBuilder
                 .with(bindings)
-                .paramResolver(ParameterResolver.create(true))
+                .paramResolver(ParameterResolver.create())
                 .build());
         Assert.assertTrue(bindings.getValue("x", Integer.class) == 0);
     }

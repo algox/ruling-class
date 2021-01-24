@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
 import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
@@ -23,23 +23,23 @@ import org.algorithmx.rules.bind.convert.ConverterTemplate;
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Double.
+ * Converts a String value to a Long.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToDoubleConverter extends ConverterTemplate<String, Double> {
+public class TextToLongConverter extends ConverterTemplate<CharSequence, Long> {
 
-    public StringToDoubleConverter() {
+    public TextToLongConverter() {
         super();
     }
 
     @Override
-    public Double convert(String value, Type toType) {
+    public Long convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return Double.valueOf(value);
+            return Long.decode(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

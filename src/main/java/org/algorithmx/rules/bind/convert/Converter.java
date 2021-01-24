@@ -17,8 +17,6 @@
  */
 package org.algorithmx.rules.bind.convert;
 
-import org.algorithmx.rules.util.TypeReference;
-
 import java.lang.reflect.Type;
 
 /**
@@ -54,17 +52,6 @@ public interface Converter<T, R> {
      * @return true if this converter can convert the desired types; false otherwise.
      */
     boolean canConvert(Type fromType, Type toType);
-
-    /**
-     * Determines whether this converter can be used to convert the desire source and target types.
-     *
-     * @param fromType source type.
-     * @param toType target type.
-     * @return true if this converter can convert the desired types; false otherwise.
-     */
-    default boolean canConvert(Class<?> fromType, Class<?> toType) {
-        return canConvert(TypeReference.with(fromType).getType(), TypeReference.with(toType).getType());
-    }
 
     /**
      * Convert the source object of type T to target type R.

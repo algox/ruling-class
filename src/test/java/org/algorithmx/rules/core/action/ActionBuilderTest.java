@@ -19,7 +19,7 @@ package org.algorithmx.rules.core.action;
 
 import org.algorithmx.rules.annotation.Condition;
 import org.algorithmx.rules.annotation.Function;
-import org.algorithmx.rules.annotation.Optional;
+import org.algorithmx.rules.annotation.Default;
 import org.algorithmx.rules.bind.Binding;
 import org.algorithmx.rules.bind.Bindings;
 import org.algorithmx.rules.core.UnrulyException;
@@ -104,7 +104,7 @@ public class ActionBuilderTest {
     @Test
     public void test4Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d) -> {
+                .with((String x, BigDecimal value, Integer c, Float d) -> {
                     return;
                 })
                 .param("d")
@@ -115,20 +115,17 @@ public class ActionBuilderTest {
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 4);
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[3].getName().equals("d"));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[3].getType().equals(Float.class));
-        Assert.assertTrue(!action.getMethodDefinition().getParameterDefinitions()[3].isRequired());
     }
 
     @Test
     public void test5Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d, @Optional(defaultValue = "yes") Boolean flag) -> {
+                .with((String x, BigDecimal value, Integer c, Float d, @Default("yes") Boolean flag) -> {
                     return;
                 })
                 .param("d")
-                    .optional(true)
                     .build()
                 .param("flag")
-                    .optional(true)
                     .defaultValueText("yes")
                     .build()
                 .build();
@@ -142,24 +139,23 @@ public class ActionBuilderTest {
     @Test
     public void test6Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d,
-                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue) -> {
+                .with((String x, BigDecimal value, Integer c, Float d,
+                       @Default("yes") Boolean flag, Binding<String> bindingValue) -> {
                     bindingValue.setValue("Hello world!");
                 })
                 .build();
 
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions().length == 6);
-        Assert.assertTrue(!action.getMethodDefinition().getParameterDefinitions()[3].isRequired());
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].getName().equals("bindingValue"));
         Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].getType().equals(Binding.class));
-        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].isBinding());
+        Assert.assertTrue(action.getMethodDefinition().getParameterDefinitions()[5].isBindingType());
     }
 
     @Test
     public void test7Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d,
-                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg) -> {
+                .with((String x, BigDecimal value, Integer c, Float d,
+                       @Default("yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg) -> {
                     bindingValue.setValue("Hello world!");
                 })
                 .build();
@@ -173,8 +169,8 @@ public class ActionBuilderTest {
     @Test
     public void test8Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d,
-                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
+                .with((String x, BigDecimal value, Integer c, Float d,
+                       @Default("yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                        Map<String, Object> mapArg) -> {
                     mapArg.put("key", "Hello world!");
                 })
@@ -192,8 +188,8 @@ public class ActionBuilderTest {
     @Test
     public void test9Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d,
-                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
+                .with((String x, BigDecimal value, Integer c, Float d,
+                       @Default("yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                        Map<String, Object> mapArg, List<String> someList) -> {
                     mapArg.put("key", "Hello world!");
                 })
@@ -211,8 +207,8 @@ public class ActionBuilderTest {
     @Test
     public void test10Args() {
         Action action = ActionBuilder
-                .with((String x, BigDecimal value, Integer c, @Optional Float d,
-                       @Optional(defaultValue = "yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
+                .with((String x, BigDecimal value, Integer c, Float d,
+                       @Default("yes") Boolean flag, Binding<String> bindingValue, List<Integer> listArg,
                        Map<String, Object> mapArg, List<String> someList, String tenthArg) -> {
                     mapArg.put("key", "Hello world!");
                 })

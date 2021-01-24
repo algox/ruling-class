@@ -22,6 +22,7 @@ import org.algorithmx.rules.lib.spring.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * Parent Template class for Converts.
@@ -58,22 +59,44 @@ public abstract class ConverterTemplate<T, R> implements Converter<T, R> {
     }
 
     @Override
-    public final Type getSourceType() {
+    public Type getSourceType() {
         return sourceType;
     }
 
     @Override
-    public final Type getTargetType() {
+    public Type getTargetType() {
         return targetType;
     }
 
     @Override
-    public final boolean canConvert(Type sourceType, Type targetType) {
-        return this.sourceType.equals(sourceType) && TypeUtils.isAssignable(targetType, this.targetType);
+    public boolean canConvert(Type sourceType, Type targetType) {
+        return TypeUtils.isAssignable(sourceType, this.sourceType) && TypeUtils.isAssignable(targetType, this.targetType);
     }
 
     protected Type captureType(int index) {
         Type superClass = getClass().getGenericSuperclass();
         return ((ParameterizedType) superClass).getActualTypeArguments()[index];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConverterTemplate<?, ?> that = (ConverterTemplate<?, ?>) o;
+        return sourceType.equals(that.sourceType) &&
+                targetType.equals(that.targetType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sourceType, targetType);
+    }
+
+    @Override
+    public String toString() {
+        return "Converter{" + getClass().getSimpleName() +
+                "sourceType=" + sourceType +
+                ", targetType=" + targetType +
+                '}';
     }
 }

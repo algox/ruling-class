@@ -25,12 +25,14 @@ import org.algorithmx.rules.bind.convert.ConverterRegistry;
 import org.algorithmx.rules.core.UnrulyException;
 import org.algorithmx.rules.core.model.MethodDefinition;
 import org.algorithmx.rules.core.model.ParameterDefinition;
+import org.algorithmx.rules.lib.apache.reflect.TypeUtils;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.util.TypeReference;
 import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Default Parameter Resolver implementation.
@@ -40,19 +42,10 @@ import java.util.Map;
  */
 public class DefaultParameterResolver implements ParameterResolver {
 
-    private final boolean strict;
+    private boolean autoConvert = true;
 
     public DefaultParameterResolver() {
-        this(false);
-    }
-
-    public DefaultParameterResolver(boolean strict) {
         super();
-        this.strict = strict;
-    }
-
-    public boolean isStrict() {
-        return strict;
     }
 
     @Override
@@ -72,19 +65,16 @@ public class DefaultParameterResolver implements ParameterResolver {
                 matcher = objectFactory.create(parameterDefinition.getBindUsing());
             }
 
-            boolean isBinding = parameterDefinition.isBinding();
             // Find all the matching bindings
             Map<String, Binding<Object>> matches = matcher.match(bindings, parameterDefinition.getName(),
-                    TypeReference.with(isBinding
-                            ? parameterDefinition.getBindingType()
-                            : parameterDefinition.getType()));
+                    TypeReference.with(parameterDefinition.getUnderlyingType()));
             int matchesCount = matches.size();
 
             if (matchesCount == 0) {
-                result[index] = new ParameterMatch(parameterDefinition, null, isBinding);
+                result[index] = new ParameterMatch(parameterDefinition, null);
             } else if (matchesCount == 1) {
                 Binding<Object> binding = matches.values().stream().findFirst().get();
-                result[index] = new ParameterMatch(parameterDefinition, binding, isBinding);
+                result[index] = new ParameterMatch(parameterDefinition, binding);
             } else {
                 // More than one match found; let's see if there is a primary candidate
                 Binding<Object> primaryBinding = null;
@@ -97,7 +87,7 @@ public class DefaultParameterResolver implements ParameterResolver {
                 }
 
                 if (primaryBinding != null) {
-                    result[index] = new ParameterMatch(parameterDefinition, primaryBinding, isBinding);
+                    result[index] = new ParameterMatch(parameterDefinition, primaryBinding);
                 } else {
                     // Too many matches found; cannot proceed.
                     throw new BindingException("Multiple Bindings found using ("
@@ -123,34 +113,7 @@ public class DefaultParameterResolver implements ParameterResolver {
             // Make sure matches are passed
             if (matches[i] == null) throw new UnrulyException("Invalid state. You cannot have a null match");
             // Strict checks that the binding exists; non strict lets the consumer deal with the consequences.
-            result[i] = isStrict()
-                    ? getStrictValue(matches[i], definition, matchingStrategy, registry)
-                    : getValue(matches[i], definition, matchingStrategy, registry);
-        }
-
-        return result;
-    }
-
-    protected Object getStrictValue(ParameterMatch match, MethodDefinition definition,
-                              BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
-        Assert.notNull(match, "match cannot be null.");
-        Object result;
-
-        // There was no match; let's see if there is default value
-        if (match.getBinding() == null) {
-            if (match.getDefinition().getDefaultValueText() != null) {
-                result = getValueFromDefaultText(match, definition, matchingStrategy, registry);
-            } else if (!match.getDefinition().isRequired()) {
-                result = ReflectionUtils.getDefaultValue(match.getDefinition().getType());
-            } else {
-                throw new BindingException("No matching Binding found for (" + match.getDefinition().getTypeAndName()
-                        + ") using (" + matchingStrategy.getClass().getSimpleName()
-                        + ")", definition, match.getDefinition(), matchingStrategy, null);
-            }
-        } else {
-            result = match.isBinding()
-                    ? match.getBinding()
-                    : match.getBinding().getValue();
+            result[i] = getValue(matches[i], definition, matchingStrategy, registry);
         }
 
         return result;
@@ -159,7 +122,38 @@ public class DefaultParameterResolver implements ParameterResolver {
     protected Object getValue(ParameterMatch match, MethodDefinition definition,
                               BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
         Assert.notNull(match, "match cannot be null.");
-        Object result;
+
+        if (match.getDefinition().isBindingType()) {
+            return match.getBinding();
+        }
+
+        Object result = match.getBinding() == null
+                    ? getDefaultValue(match, definition, matchingStrategy, registry)
+                    : match.getBinding().getValue();
+
+        result = match.isOptional() && !(result instanceof Optional) ? Optional.of(result) : result;
+
+        if (result != null && isAutoConvert()) {
+            result = autoConvert(result, match, registry);
+        }
+
+        return result;
+    }
+
+    protected Object autoConvert(Object result, ParameterMatch match, ConverterRegistry registry) {
+        if (match.getBinding() == null) return result;
+
+        if (!TypeUtils.isAssignable(match.getDefinition().getType(), match.getBinding().getType())) {
+            Converter converter = registry.find(match.getBinding().getType(), match.getDefinition().getType());
+            if (converter != null) result = converter.convert(result, match.getDefinition().getType());
+        }
+
+        return result;
+    }
+
+    protected Object getDefaultValue(ParameterMatch match, MethodDefinition definition,
+                                     BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
+        Object result = null;
 
         // There was no match; let's see if there is default value
         if (match.getBinding() == null) {
@@ -168,10 +162,6 @@ public class DefaultParameterResolver implements ParameterResolver {
             if (match.getDefinition().getDefaultValueText() != null) {
                 result = getValueFromDefaultText(match, definition, matchingStrategy, registry);
             }
-        } else {
-            result = match.isBinding()
-                    ? match.getBinding()
-                    : match.getBinding().getValue();
         }
 
         return result;
@@ -194,5 +184,13 @@ public class DefaultParameterResolver implements ParameterResolver {
         }
 
         return result;
+    }
+
+    public boolean isAutoConvert() {
+        return autoConvert;
+    }
+
+    public void setAutoConvert(boolean autoConvert) {
+        this.autoConvert = autoConvert;
     }
 }

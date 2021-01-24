@@ -15,33 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rules.bind.convert.string;
+package org.algorithmx.rules.bind.convert.text;
 
-import org.algorithmx.rules.bind.convert.ConversionException;
 import org.algorithmx.rules.bind.convert.ConverterTemplate;
+import org.algorithmx.rules.lib.apache.BooleanUtils;
 
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Enum.
+ * Converts a String value to a Boolean. ("Y", "YES", "1", "TRUE") irrelevant of case is considered as True.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class StringToEnumConverter extends ConverterTemplate<String, Enum> {
+public class TextToBooleanConverter extends ConverterTemplate<CharSequence, Boolean> {
 
-    public StringToEnumConverter() {
+    public TextToBooleanConverter() {
         super();
     }
 
     @Override
-    public Enum convert(String value, Type toType) throws ConversionException {
+    public Boolean convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
-        try {
-            return Enum.valueOf((Class) toType, value);
-        } catch (IllegalArgumentException e) {
-            throw new ConversionException(e, value, getSourceType(), getTargetType());
-        }
+        Boolean result = BooleanUtils.toBooleanObject(value.toString());
+        return result != null ? result : false;
     }
 }
