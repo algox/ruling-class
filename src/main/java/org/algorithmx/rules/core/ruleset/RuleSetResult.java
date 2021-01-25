@@ -52,6 +52,34 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return bindings;
     }
 
+    public RuleResult getPreviousResult() {
+        int size = size();
+        return size > 0 ? results.get(size - 1) : null;
+    }
+
+    public RuleResult getRuleResult(String ruleName) {
+        return getRuleResult(ruleName, 0);
+    }
+
+    public RuleResult getRuleResult(String ruleName, int startIndex) {
+        Assert.notNull(ruleName, "ruleName cannot be null.");
+        int size = size();
+        Assert.isTrue(startIndex < size, "Invalid startIndex. Size [" + size
+                + " Given start Index [" + startIndex + "]");
+
+
+        RuleResult result = null;
+
+        for (int i = startIndex; i < size; i++) {
+            if (ruleName.equals(results.get(i).getRuleName())) {
+                result = results.get(i);
+                break;
+            }
+        }
+
+        return result;
+    }
+
     public String[] getPassedRuleNames() {
         return getRuleNames(RuleExecutionStatus.PASS);
     }
@@ -66,6 +94,10 @@ public class RuleSetResult implements Iterable<RuleResult> {
 
     public String[] getFailedOrSkippedRuleNames() {
         return getRuleNames(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED);
+    }
+
+    public String[] getSkippedRuleNames() {
+        return getRuleNames(RuleExecutionStatus.SKIPPED);
     }
 
     public RuleResult get(int index) {
