@@ -32,7 +32,6 @@ import org.algorithmx.rules.util.reflect.ObjectFactory;
 import org.algorithmx.rules.util.reflect.ReflectionUtils;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Default Parameter Resolver implementation.
@@ -127,11 +126,9 @@ public class DefaultParameterResolver implements ParameterResolver {
             return match.getBinding();
         }
 
-        Object result = match.getBinding() == null
-                    ? getDefaultValue(match, definition, matchingStrategy, registry)
-                    : match.getBinding().getValue();
+        if (match.getBinding() == null) return getDefaultValue(match, definition, matchingStrategy, registry);
 
-        result = match.isOptional() && !(result instanceof Optional) ? Optional.of(result) : result;
+        Object result = match.getBinding().getValue();
 
         if (result != null && isAutoConvert()) {
             result = autoConvert(result, match, registry);
@@ -153,15 +150,10 @@ public class DefaultParameterResolver implements ParameterResolver {
 
     protected Object getDefaultValue(ParameterMatch match, MethodDefinition definition,
                                      BindingMatchingStrategy matchingStrategy, ConverterRegistry registry) {
-        Object result = null;
+        Object result = ReflectionUtils.getDefaultValue(match.getDefinition().getType());
 
-        // There was no match; let's see if there is default value
-        if (match.getBinding() == null) {
-            result = ReflectionUtils.getDefaultValue(match.getDefinition().getType());
-
-            if (match.getDefinition().getDefaultValueText() != null) {
-                result = getValueFromDefaultText(match, definition, matchingStrategy, registry);
-            }
+        if (match.getDefinition().getDefaultValueText() != null) {
+            result = getValueFromDefaultText(match, definition, matchingStrategy, registry);
         }
 
         return result;

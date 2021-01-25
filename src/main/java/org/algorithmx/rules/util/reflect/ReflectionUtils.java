@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -314,14 +313,6 @@ public final class ReflectionUtils {
 
     public static Type getUnderlyingBindingType(Type type) {
         return getUnderlyingType(type, Binding.class);
-    }
-
-    public static boolean isOptional(Type type) {
-        return isWrapped(type, Optional.class);
-    }
-
-    public static Type getUnderlyingOptionalType(Type type) {
-        return getUnderlyingType(type, Optional.class);
     }
 
     private static boolean isWrapped(Type type, Class<?> wrapperClass) {

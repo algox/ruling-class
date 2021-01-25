@@ -53,7 +53,6 @@ public final class ParameterDefinition implements Definition {
     private Class<? extends BindingMatchingStrategy> bindUsing;
     private final Annotation[] annotations;
     private boolean bindingType;
-    private boolean optionalType;
     private Type underlyingType;
 
     private Object defaultValue = null;
@@ -75,7 +74,7 @@ public final class ParameterDefinition implements Definition {
 
     public void validate() {
 
-        if ((isBindingType() || isOptionalType()) && getDefaultValueText() != null) {
+        if (isBindingType() && getDefaultValueText() != null) {
             throw new UnrulyException("Bindable parameters Binding<?> cannot have default values. " +
                     "For example : @Optional(defaultValue = \"10\") Binding<Integer> value" + toString());
         }
@@ -181,9 +180,6 @@ public final class ParameterDefinition implements Definition {
         if (ReflectionUtils.isBinding(type)) {
             this.bindingType = true;
             this.underlyingType = ReflectionUtils.getUnderlyingBindingType(type);
-        } else if (ReflectionUtils.isOptional(type)) {
-            this.optionalType = true;
-            this.underlyingType = ReflectionUtils.getUnderlyingOptionalType(type);
         }
     }
 
@@ -280,10 +276,6 @@ public final class ParameterDefinition implements Definition {
      */
     public boolean isBindingType() {
         return bindingType;
-    }
-
-    public boolean isOptionalType() {
-        return optionalType;
     }
 
     public Type getUnderlyingType() {

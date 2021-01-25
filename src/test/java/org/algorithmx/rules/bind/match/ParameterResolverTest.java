@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -421,6 +422,24 @@ public class ParameterResolverTest {
                 BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ConverterRegistry.create());
     }
 
+    @Test
+    public void autoConvertTest() {
+        ParameterResolver resolver = ParameterResolver.create();
+        MethodDefinition[] definitions = MethodDefinition.load(TestClass.class, method -> method.getName().equals("testMethod6"));
+
+        Bindings bindings = Bindings.create()
+                            .bind(a -> "Hello")
+                            .bind("b", "12345")
+                            .bind(x -> new ArrayList<>());
+
+        ParameterMatch[] matches = resolver.match(definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ObjectFactory.create());
+        Object[] values = resolver.resolve(matches, definitions[0], bindings,
+                BindingMatchingStrategyType.MATCH_BY_NAME.getStrategy(), ConverterRegistry.create());
+        Assert.assertTrue(values[1].equals(12345));
+        Assert.assertTrue(values[3].equals(321l));
+    }
+
     private static class TestClass {
 
         public boolean testMethod1(String a, Set<Integer> b, Binding<List<Integer>> c, Map<?, Long> d) {
@@ -441,5 +460,8 @@ public class ParameterResolverTest {
             return true;
         }
 
+        public boolean testMethod6(String a, Integer b, Binding<List<Integer>> x, @Default("321") Long d) {
+            return true;
+        }
     }
 }

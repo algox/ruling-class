@@ -52,10 +52,6 @@ public class ParameterMatch {
         return definition.isBindingType();
     }
 
-    public boolean isOptional() {
-        return definition.isOptionalType();
-    }
-
     @Override
     public String toString() {
         return "ParameterMatch{" +
