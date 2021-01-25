@@ -84,6 +84,9 @@ public class RulingClass<T> implements Rule<T> {
     public RuleResult run(RuleContext context) throws UnrulyException {
         Assert.notNull(context, "context cannot be null");
 
+        if (!context.isActive()) throw new UnrulyException("RuleContext is not Active. Perhaps it was stopped earlier ? "
+                + "Create a new RuleContext and try again.");
+
         // Rule Start Event
         context.getEventProcessor().fireListeners(createEvent(EventType.RULE_START, null));
 
@@ -103,6 +106,8 @@ public class RulingClass<T> implements Rule<T> {
                 // Execute associated Actions.
                 for (Action action : getActions()) {
                     processAction(context, action, EventType.RULE_ACTION_START, EventType.RULE_ACTION_END);
+                    // Looks like stopExecution was called on the RuleContext
+                    if (!context.isActive()) break;
                 }
             } else {
                 // Execute otherwise Action.

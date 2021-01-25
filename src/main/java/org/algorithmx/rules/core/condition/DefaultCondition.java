@@ -52,6 +52,9 @@ public class DefaultCondition implements Condition {
     public boolean isTrue(RuleContext context) throws ConditionExecutionException {
         Assert.notNull(context, "context cannot be null.");
 
+        if (!context.isActive()) throw new UnrulyException("RuleContext is not Active. Perhaps it was stopped earlier ? "
+                + "Create a new RuleContext and try again.");
+
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<ConditionExecution> event = null;

@@ -60,6 +60,9 @@ public class DefaultAction implements Action {
     public Void run(RuleContext context) throws ActionExecutionException {
         Assert.notNull(context, "context cannot be null.");
 
+        if (!context.isActive()) throw new UnrulyException("RuleContext is not Active. Perhaps it was stopped earlier ? "
+                + "Create a new RuleContext and try again.");
+
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<ActionExecution> event = null;

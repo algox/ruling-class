@@ -63,6 +63,9 @@ public class DefaultRuleSet implements RuleSet {
     public RuleSetResult run(RuleContext context) throws UnrulyException {
         Assert.notNull(context, "context cannot be null");
 
+        if (!context.isActive()) throw new UnrulyException("RuleContext is not Active. Perhaps it was stopped earlier ? "
+                + "Create a new RuleContext and try again.");
+
         // RuleSet Start Event
         context.getEventProcessor().fireListeners(createEvent(EventType.RULE_SET_START, null));
 
@@ -95,6 +98,11 @@ public class DefaultRuleSet implements RuleSet {
                                     ? ((Identifiable) runnable).getName()
                                     : runnable.toString())
                                 + "] at Index [" + index + "/" + size() + "] on RuleSet [" + getName() + "]", e, this);
+                }
+
+                // Looks like stopExecution was called on the RuleContext
+                if (!context.isActive()) {
+                    break;
                 }
 
                 // Check to see if we need to stop the execution?

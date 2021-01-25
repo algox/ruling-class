@@ -23,6 +23,7 @@ import org.algorithmx.rules.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rules.bind.match.ParameterMatch;
 import org.algorithmx.rules.bind.match.ParameterResolver;
 import org.algorithmx.rules.core.model.MethodDefinition;
+import org.algorithmx.rules.core.model.RuleExecutionStatus;
 import org.algorithmx.rules.event.EventProcessor;
 import org.algorithmx.rules.lib.spring.util.Assert;
 import org.algorithmx.rules.script.ScriptProcessor;
@@ -55,6 +56,7 @@ public class RuleContext {
     private final ScriptProcessor scriptProcessor;
     private final EventProcessor eventProcessor;
     private final Clock clock;
+    private RuleExecutionStatus executionStatus = RuleExecutionStatus.ACTIVE;
 
     public RuleContext(ScopedBindings bindings) {
         this(bindings, Locale.getDefault(), BindingMatchingStrategy.create(),  ParameterResolver.create(),
@@ -176,6 +178,14 @@ public class RuleContext {
 
     public Date getCreationTime() {
         return creationTime;
+    }
+
+    public boolean isActive() {
+        return executionStatus.isActive();
+    }
+
+    public void stopExecution() {
+        this.executionStatus = RuleExecutionStatus.IN_ACTIVE;
     }
 
     @Override

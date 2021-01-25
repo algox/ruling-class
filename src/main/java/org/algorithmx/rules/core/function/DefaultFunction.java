@@ -58,6 +58,9 @@ public class DefaultFunction<T> implements Function<T> {
     public T apply(RuleContext context) throws FunctionExecutionException {
         Assert.notNull(context, "context cannot be null.");
 
+        if (!context.isActive()) throw new UnrulyException("RuleContext is not Active. Perhaps it was stopped earlier ? "
+                + "Create a new RuleContext and try again.");
+
         ParameterMatch[] matches = null;
         Object[] values = null;
         ExecutionEvent<FunctionExecution> event = null;
