@@ -116,8 +116,8 @@ public class LoadTest {
     @Test
     public void loadTest7() {
         Rule rule = RuleBuilder
-                .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .name("TestRule2")
+                .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction())
                 .build();
@@ -138,24 +138,24 @@ public class LoadTest {
     @Test
     public void loadTest8() {
         Rule rule1 = RuleBuilder
-                .given(ConditionBuilder.with((Integer a, Date date, String x) -> a != null).build())
                 .name("rule1")
+                .given(ConditionBuilder.with((Integer a, Date date, String x) -> a != null).build())
                 .build();
 
         Rule rule2 = RuleBuilder
+                .name("rule2")
                 .given(ConditionBuilder.with((Integer a, Date date, String x, String y) -> a != null).build())
                 .then(ActionBuilder.with((Integer y, String z) -> {}).build())
                 .then(ActionBuilder.with((Integer y, String z, Date date) -> {}).build())
-                .name("rule2")
                 .build();
     }
 
     @Test
     public void loadTest9() {
         Rule rule = RuleBuilder
+                .name("TestRule2")
                 .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
                 .preCondition(ConditionBuilder.with((Integer x) -> x > 10).build())
-                .name("TestRule2")
                 .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction())
                 .build();
@@ -191,9 +191,8 @@ public class LoadTest {
     @Test
     public void loadTest12() {
         Rule rule = RuleBuilder
+                .name("TestRule2", "Some rule for testing")
                 .given(ConditionBuilder.with((Integer i, String text) -> i > 100 && text != null).build())
-                .name("TestRule2")
-                .description("Some rule for testing")
                 .then(ActionBuilder.emptyAction())
                 .build();
         RuleDefinition def = rule.getRuleDefinition();

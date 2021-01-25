@@ -22,9 +22,16 @@ import org.algorithmx.rulii.core.condition.Condition;
 
 public class LambdaBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
 
-    public LambdaBasedRuleBuilder(Condition condition) {
+    public LambdaBasedRuleBuilder(String name, String description) {
         super();
+        name(name);
+        description(description);
+    }
+
+    @Override
+    public LambdaBasedRuleBuilder<T> given(Condition condition) {
+        super.given(condition);
         ruleClass((Class<T>) condition.getMethodDefinition().getMethod().getDeclaringClass());
-        given(condition);
+        return this;
     }
 }

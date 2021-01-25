@@ -53,27 +53,27 @@ public class RuleSetTest {
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
         Rule rule6 = RuleBuilder
+                .name("Rule6")
                 .given(ConditionBuilder.TRUE())
                 .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
-                .name("Rule6")
                 .build();
 
         RuleSet rules = RuleSetBuilder
                 .with("RuleSet1", "Test Rule Set")
                 .rule(RuleBuilder
+                        .name("Rule1")
                         .given(ConditionBuilder.build((String y) -> y.equals("")))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(0)))
-                        .name("Rule1")
                         .build())
                 .rule(RuleBuilder
+                        .name("Rule2")
                         .given(ConditionBuilder.build((String a, BigDecimal x) -> x != null))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
-                        .name("Rule2")
                         .build())
                 .rule(RuleBuilder
+                        .name("Rule3")
                         .given(ConditionBuilder.build((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
                         .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
-                        .name("Rule3")
                         .build())
                 .rule(rule6)
                 .build();

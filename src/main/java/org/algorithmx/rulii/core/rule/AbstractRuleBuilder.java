@@ -156,7 +156,12 @@ public class AbstractRuleBuilder<T> {
                 getOtherwiseAction() != null ? getOtherwiseAction().getMethodDefinition() : null);
     }
 
+    public void validate() {
+        Assert.notNull(getCondition(), "Rule must have a Condition.");
+    }
+
     public Rule<T> build() {
+        validate();
         RuleDefinition ruleDefinition = buildRuleDefinition();
 
         // Call back to set the RuleDefinition

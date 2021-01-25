@@ -18,7 +18,6 @@
 
 package org.algorithmx.rulii.core.rule;
 
-import org.algorithmx.rulii.core.condition.Condition;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 
@@ -58,8 +57,11 @@ public abstract class RuleBuilder {
         return with(ruleClass, objectFactory).build();
     }
 
-    public static LambdaBasedRuleBuilder<?> given(Condition condition) {
-        Assert.notNull(condition, "condition cannot be null.");
-        return new LambdaBasedRuleBuilder(condition);
+    public static LambdaBasedRuleBuilder<?> name(String ruleName) {
+        return new LambdaBasedRuleBuilder(ruleName, null);
+    }
+
+    public static LambdaBasedRuleBuilder<?> name(String ruleName, String description) {
+        return new LambdaBasedRuleBuilder(ruleName, description);
     }
 }

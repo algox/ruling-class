@@ -23,10 +23,10 @@ import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.core.action.ActionBuilder;
 import org.algorithmx.rulii.core.condition.Condition;
 import org.algorithmx.rulii.core.condition.ConditionBuilder;
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.context.RuleContextBuilder;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.junit.Assert;
 import org.junit.Test;
@@ -73,10 +73,10 @@ public class NashornScriptProcessorTest {
 
         RuleContext context = RuleContextBuilder.build(bindings);
         Rule rule = RuleBuilder
+                        .name("TestRule")
                         .given(ConditionBuilder.build("b >= 15"))
                         .then(ActionBuilder.build("bindings.setValue('b', 20);"))
                         .otherwise(ActionBuilder.build("print('oh no')"))
-                        .name("TestRule")
                         .build();
         rule.run(context);
         Assert.assertTrue(bindings.getValue("b").equals(20));
