@@ -64,6 +64,15 @@ public class RuleSetBuilder {
         return with(ruleSetClass, ObjectFactory.create());
     }
 
+    public static ClassBasedRuleSetBuilder withTarget(Object ruleSetTarget) {
+        Assert.notNull(ruleSetTarget, "ruleSetTarget be null");
+        return ClassBasedRuleSetBuilder.with(ruleSetTarget.getClass(), ruleSetTarget);
+    }
+
+    public static RuleSet build(Object ruleSetTarget) {
+        return withTarget(ruleSetTarget).build();
+    }
+
     public static RuleSet build(Class<?> ruleSetClass) {
         return with(ruleSetClass).build();
     }
@@ -71,7 +80,7 @@ public class RuleSetBuilder {
     public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass, ObjectFactory objectFactory) {
         Assert.notNull(ruleSetClass, "ruleSetClass cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
-        return ClassBasedRuleSetBuilder.with(ruleSetClass, objectFactory.createRule(ruleSetClass));
+        return ClassBasedRuleSetBuilder.with(ruleSetClass, objectFactory.create(ruleSetClass));
     }
 
     public static RuleSet build(Class<?> ruleSetClass, ObjectFactory objectFactory) {

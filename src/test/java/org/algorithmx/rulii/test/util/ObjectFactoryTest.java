@@ -43,12 +43,12 @@ public class ObjectFactoryTest {
     @Test
     public void strategyCreationTest() {
         ObjectFactory factory = ObjectFactory.create();
-        Assert.assertTrue(factory.createStrategy(MatchByNameMatchingStrategy.class) instanceof MatchByNameMatchingStrategy);
-        Assert.assertTrue(factory.createStrategy(MatchByNameAndTypeMatchingStrategy.class) instanceof MatchByNameAndTypeMatchingStrategy);
-        Assert.assertTrue(factory.createStrategy(MatchByTypeMatchingStrategy.class) instanceof MatchByTypeMatchingStrategy);
-        Assert.assertTrue(factory.createStrategy(MatchByTypeMatchingStrategy.class) instanceof MatchByTypeMatchingStrategy);
+        Assert.assertTrue(factory.create(MatchByNameMatchingStrategy.class) instanceof MatchByNameMatchingStrategy);
+        Assert.assertTrue(factory.create(MatchByNameAndTypeMatchingStrategy.class) instanceof MatchByNameAndTypeMatchingStrategy);
+        Assert.assertTrue(factory.create(MatchByTypeMatchingStrategy.class) instanceof MatchByTypeMatchingStrategy);
+        Assert.assertTrue(factory.create(MatchByTypeMatchingStrategy.class) instanceof MatchByTypeMatchingStrategy);
 
-        Assert.assertTrue(factory.createRule(TestRule.class) instanceof TestRule);
+        Assert.assertTrue(factory.create(TestRule.class) instanceof TestRule);
     }
 
     @Rule @Description("This is test rule")
