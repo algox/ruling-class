@@ -34,7 +34,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <commons.logging.version>1.1.1</commons.logging.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <version.velocity>1.7</version.velocity>
 
         <version.maven-compiler-plugin>3.6.0</version.maven-compiler-plugin>
