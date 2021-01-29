@@ -25,6 +25,10 @@ import org.algorithmx.rulii.core.rule.RuleDefinition;
 import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -85,6 +89,15 @@ public final class RuleUtils {
         result[0] = rule;
         System.arraycopy(others, 0, result, 1, others.length);
         return result;
+    }
+
+    public static Predicate<Rule> createPackageRuleFilter(String...packageNames) {
+        return r -> {
+            if (packageNames == null || packageNames.length == 0) return true;
+            Set<String> names = new HashSet<>(Arrays.asList(packageNames));
+            if (r.getTarget() == null) return false;
+            return names.contains(r.getTarget().getClass().getPackage().getName());
+        };
     }
 
     public static String getRuleSetDescription(RuleSet ruleSet, String prefix) {

@@ -25,7 +25,7 @@ import org.algorithmx.rulii.util.RuleUtils;
 
 import java.util.Arrays;
 
-public final class RuleSetDefinition implements Definition {
+public final class RuleSetDefinition implements Definition, Comparable<RuleSetDefinition> {
 
     // Name of the RuleSet
     private String name;
@@ -75,6 +75,11 @@ public final class RuleSetDefinition implements Definition {
         Assert.isTrue(RuleUtils.isValidName(name), "RuleSet name must match ["
                 + RuleUtils.NAME_REGEX + "] Given [" + name + "]");
         this.name = name;
+    }
+
+    @Override
+    public int compareTo(RuleSetDefinition other) {
+        return getName().compareTo(other.getName());
     }
 
     @Override

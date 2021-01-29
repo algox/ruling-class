@@ -32,7 +32,7 @@ import org.algorithmx.rulii.core.context.RuleContextBuilder;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface RuleSet extends Runnable<RuleSetResult>, Identifiable, Iterable<Runnable> {
+public interface RuleSet extends Runnable<RuleSetResult>, Identifiable, Iterable<Runnable>, Comparable<RuleSet> {
 
     RuleSetResult run(RuleContext context) throws RuleSetExecutionException;
 
@@ -87,5 +87,10 @@ public interface RuleSet extends Runnable<RuleSetResult>, Identifiable, Iterable
     <T extends Runnable> T get(int index, Class<T> type);
 
     <T extends Runnable> T get(String name, Class<T> type);
+
+    @Override
+    default int compareTo(RuleSet other) {
+        return getRuleSetDefinition().compareTo(other.getRuleSetDefinition());
+    }
 }
 

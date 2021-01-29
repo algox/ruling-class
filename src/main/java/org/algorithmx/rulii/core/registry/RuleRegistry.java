@@ -18,8 +18,11 @@
 
 package org.algorithmx.rulii.core.registry;
 
+import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.ruleset.RuleSet;
+
+import java.util.function.Predicate;
 
 public interface RuleRegistry {
 
@@ -33,11 +36,17 @@ public interface RuleRegistry {
 
     int getRuleSetCount();
 
-    Object get(String name);
+    Runnable get(String name);
 
     Rule[] getRules();
 
+    Rule[] getRules(boolean ordered);
+
+    Rule[] getRules(Predicate<Rule> filter, boolean ordered);
+
     RuleSet[] getRuleSets();
+
+    RuleSet[] getRuleSets(boolean ordered);
 
     <T> Rule<T> getRule(String name);
 
@@ -46,4 +55,5 @@ public interface RuleRegistry {
     void register(Rule rule);
 
     void register(RuleSet rules);
+
 }

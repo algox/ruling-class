@@ -35,12 +35,14 @@ import java.util.Objects;
  * @author Max Arulananthan
  * @since 1.0
  */
-public final class RuleDefinition implements Definition {
+public final class RuleDefinition implements Definition, Comparable<RuleDefinition> {
 
     // Name of the Rule
     private String name;
     // Description of the Rule
     private String description;
+    // Order of the Rule
+    private final Integer order;
 
     // Rule class
     private final Class<?> ruleClass;
@@ -53,22 +55,19 @@ public final class RuleDefinition implements Definition {
     // Otherwise action
     private MethodDefinition otherwiseActionDefinition;
 
-    public RuleDefinition(Class<?> ruleClass, String name, String description) {
-        this(ruleClass, name, description, null, null, null, null);
-    }
-
     /**
      * Creates a RuleDefinition taking in all the required parameters.
      *
      * @param ruleClass Rule implementation class.
      * @param name Rule name.
      * @param description Rule description.
+     * @param order rule order.
      * @param preConditionDefinition Pre-Condition meta information.
      * @param conditionDefinition Given condition meta information.
      * @param thenActionDefinitions Then Action(s) meta information.
      * @param otherwiseActionDefinition Otherwise Action meta information.
      */
-    public RuleDefinition(Class<?> ruleClass, String name, String description,
+    public RuleDefinition(Class<?> ruleClass, String name, String description, int order,
                           MethodDefinition preConditionDefinition,
                           MethodDefinition conditionDefinition,
                           MethodDefinition[] thenActionDefinitions,
@@ -78,6 +77,7 @@ public final class RuleDefinition implements Definition {
         setName(name);
         this.ruleClass = ruleClass;
         this.description = description;
+        this.order = order;
         this.preConditionDefinition = preConditionDefinition;
         this.conditionDefinition = conditionDefinition;
         this.thenActionDefinitions = thenActionDefinitions;
@@ -117,6 +117,10 @@ public final class RuleDefinition implements Definition {
         Assert.isTrue(RuleUtils.isValidName(name), "Rule name must match ["
                 + RuleUtils.NAME_REGEX + "] Given [" + name + "]");
         this.name = name;
+    }
+
+    public int getOrder() {
+        return order;
     }
 
     void setDescription(String description) {
@@ -174,6 +178,12 @@ public final class RuleDefinition implements Definition {
     @Override
     public int hashCode() {
         return Objects.hash(ruleClass);
+    }
+
+    @Override
+    public int compareTo(RuleDefinition other) {
+        int result = order.compareTo(other.getOrder());
+        return result != 0 ? result : getName().compareTo(other.getName());
     }
 
     @Override

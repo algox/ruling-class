@@ -42,7 +42,7 @@ import java.util.stream.IntStream;
 /**
  * Defines a method is to be isPass dynamically (such as "when" and "then")
  *
- * The definition stores the reflective method and its assocated parameter definitions.
+ * The definition stores the reflective method and its associated parameter definitions.
  *
  * @author Max Arulananthan
  * @since 1.0
@@ -109,7 +109,7 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
         Assert.notNull(method, "method cannot be null");
         Description descriptionAnnotation = method.getAnnotation(Description.class);
         Order orderAnnotation = method.getAnnotation(Order.class);
-        MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : 0,
+        MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : Order.LOWEST_PRECEDENCE,
                 descriptionAnnotation != null ? descriptionAnnotation.value() : null, ParameterDefinition.load(method));
         return result;
     }

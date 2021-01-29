@@ -43,7 +43,7 @@ import org.algorithmx.rulii.core.context.RuleContextBuilder;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Rule<T> extends Runnable<RuleResult>, Identifiable {
+public interface Rule<T> extends Runnable<RuleResult>, Identifiable, Comparable<Rule> {
 
     /**
      * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
@@ -108,4 +108,9 @@ public interface Rule<T> extends Runnable<RuleResult>, Identifiable {
      * @return otherwise Action for this Rule.
      */
     Action getOtherwiseAction();
+
+    @Override
+    default int compareTo(Rule other) {
+        return getRuleDefinition().compareTo(other.getRuleDefinition());
+    }
 }

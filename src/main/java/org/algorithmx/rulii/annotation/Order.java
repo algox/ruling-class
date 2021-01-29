@@ -34,5 +34,10 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.TYPE, ElementType.METHOD})
 @Documented
 public @interface Order {
-    int value();
+
+    int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
+
+    int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
+
+    int value() default LOWEST_PRECEDENCE;
 }

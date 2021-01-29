@@ -24,9 +24,12 @@ import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class DefaultRuleRegistry implements RuleRegistry {
 
@@ -54,27 +57,47 @@ public class DefaultRuleRegistry implements RuleRegistry {
 
     @Override
     public Rule[] getRules() {
+        return getRules(false);
+    }
+
+    @Override
+    public Rule[] getRules(boolean ordered) {
         List<Rule> result = new ArrayList<>();
 
         for (Runnable runnable : registry.values()) {
             if (runnable instanceof Rule) result.add((Rule) runnable);
         }
+
+        // Sort the Rules (if req)
+        if (ordered) Collections.sort(result);
         return result.toArray(new Rule[result.size()]);
     }
 
     @Override
+    public Rule[] getRules(Predicate<Rule> filter, boolean ordered) {
+        return Arrays.stream(getRules(ordered)).filter(filter).toArray(size -> new Rule[size]);
+    }
+
+    @Override
     public RuleSet[] getRuleSets() {
+        return getRuleSets(false);
+    }
+
+    @Override
+    public RuleSet[] getRuleSets(boolean ordered) {
         List<RuleSet> result = new ArrayList<>();
 
         for (Runnable runnable : registry.values()) {
             if (runnable instanceof RuleSet) result.add((RuleSet) runnable);
         }
+
+        // Sort the Rules (if req)
+        if (ordered) Collections.sort(result);
         return result.toArray(new RuleSet[result.size()]);
     }
 
-
     @Override
-    public Object get(String name) {
+    public Runnable get(String name) {
         Assert.notNull(name, "name cannot be null.");
         return registry.get(name);
     }
@@ -110,5 +133,6 @@ public class DefaultRuleRegistry implements RuleRegistry {
             throw new AlreadyRegisteredException(rules.getName(), rules);
         }
 
+        registry.put(rules.getName(), rules);
     }
 }

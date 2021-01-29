@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.core.rule;
 
+import org.algorithmx.rulii.annotation.Order;
 import org.algorithmx.rulii.core.action.Action;
 import org.algorithmx.rulii.core.condition.Condition;
 import org.algorithmx.rulii.core.model.MethodDefinition;
@@ -33,6 +34,7 @@ public class AbstractRuleBuilder<T> {
     private Class<T> ruleClass;
     private String name;
     private String description;
+    private Integer order = Order.LOWEST_PRECEDENCE;
     private Condition preCondition = null;
     private Condition condition;
     private Action otherwiseAction;
@@ -71,6 +73,11 @@ public class AbstractRuleBuilder<T> {
      */
     public AbstractRuleBuilder<T> description(String description) {
         this.description = description;
+        return this;
+    }
+
+    public AbstractRuleBuilder<T> order(int order) {
+        this.order = order;
         return this;
     }
 
@@ -117,6 +124,10 @@ public class AbstractRuleBuilder<T> {
         return description;
     }
 
+    public Integer getOrder() {
+        return order;
+    }
+
     public Condition getPreCondition() {
         return preCondition;
     }
@@ -149,7 +160,7 @@ public class AbstractRuleBuilder<T> {
             thenActionDefinitions.add(thenAction.getMethodDefinition());
         }
 
-        return new RuleDefinition(getRuleClass(), getName(), getDescription(),
+        return new RuleDefinition(getRuleClass(), getName(), getDescription(), getOrder(),
                 getPreCondition() != null ? getPreCondition().getMethodDefinition() : null,
                 getCondition().getMethodDefinition(),
                 thenActionDefinitions.toArray(new MethodDefinition[thenActionDefinitions.size()]),

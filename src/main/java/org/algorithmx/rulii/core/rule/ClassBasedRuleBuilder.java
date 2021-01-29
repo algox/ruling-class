@@ -20,6 +20,7 @@ package org.algorithmx.rulii.core.rule;
 
 import org.algorithmx.rulii.annotation.Description;
 import org.algorithmx.rulii.annotation.Given;
+import org.algorithmx.rulii.annotation.Order;
 import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.PreCondition;
 import org.algorithmx.rulii.annotation.Then;
@@ -63,6 +64,11 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
         return descriptionAnnotation != null ? descriptionAnnotation.value() : null;
     }
 
+    public static <T> Integer getRuleOrder(Class<T> ruleClass) {
+        Order orderAnnotation = ruleClass.getAnnotation(Order.class);
+        return orderAnnotation != null ? orderAnnotation.value() : Order.LOWEST_PRECEDENCE;
+    }
+
     /**
      * Loads the given Rule class. The Rule class must be annotated with @Rule and must define a single "given" method
      * which returns a boolean. The when method can take a arbitrary number of arguments.
@@ -79,6 +85,7 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
 
         name(getRuleName(ruleClass));
         description(getRuleDescription(ruleClass));
+        order(getRuleOrder(ruleClass));
         loadPreCondition(ruleClass, target);
         loadCondition(ruleClass, target);
         loadThenActions(target);
