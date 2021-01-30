@@ -20,6 +20,7 @@ package org.algorithmx.rulii.script;
 
 import org.algorithmx.rulii.bind.Bindings;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 public class NoOpScriptProcessor implements ScriptProcessor {
@@ -29,13 +30,26 @@ public class NoOpScriptProcessor implements ScriptProcessor {
     }
 
     @Override
+    public ScriptContext createContext(Bindings bindings) {
+        throw new IllegalStateException("ScriptProcessor was not detected. " +
+                "Please configure one and try again.");
+    }
+
+    @Override
+    public Object evaluate(String script, ScriptContext context) throws EvaluationException {
+        throw new IllegalStateException("ScriptProcessor was not detected. " +
+                "Please configure one and try again.");
+    }
+
+    @Override
     public Object evaluate(String script, Bindings bindings) throws EvaluationException {
         throw new IllegalStateException("ScriptProcessor was not detected. " +
-                "Please configure one to RuleContext.scriptProcessor(..) and try again.");
+                "Please configure one and try again.");
     }
 
     @Override
     public ScriptEngine getEngine() {
-        return null;
+        throw new IllegalStateException("ScriptProcessor was not detected. " +
+                "Please configure one and try again.");
     }
 }
