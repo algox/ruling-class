@@ -53,8 +53,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultConverterRegistry implements ConverterRegistry {
 
-    //private Map<Type, Map<Type, Converter>> converters = new LinkedHashMap<>();
-
     private List<Converter<?, ?>> converters = Collections.synchronizedList(new ArrayList<>());
     private Map<ConverterKey, Converter<?, ?>> converterCache = new ConcurrentHashMap();
     /**

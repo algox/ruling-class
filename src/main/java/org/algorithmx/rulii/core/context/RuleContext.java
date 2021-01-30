@@ -59,12 +59,6 @@ public class RuleContext {
     private final Clock clock;
     private RuleExecutionStatus executionStatus = RuleExecutionStatus.ACTIVE;
 
-    public RuleContext(ScopedBindings bindings) {
-        this(bindings, Locale.getDefault(), BindingMatchingStrategy.create(),  ParameterResolver.create(),
-                MessageResolver.create("rules"), MessageFormatter.create(), ObjectFactory.create(),
-                EventProcessor.create(), ConverterRegistry.create(), null, Clock.systemDefaultZone());
-    }
-
     public RuleContext(ScopedBindings bindings, Locale locale, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,

@@ -16,19 +16,15 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.text;
+package org.algorithmx.rulii.util.reflect;
 
-import java.util.Locale;
+import java.lang.reflect.Method;
 
-public interface MessageResolver {
+public interface MethodResolver {
 
-    static MessageResolver create(String...baseNames) {
-        return new CompositeResourceBundleMessageResolver(baseNames);
+    static MethodResolver create() {
+        return new DefaultMethodResolver();
     }
 
-    default String resolve(Locale locale, String code) {
-        return resolve(locale, code, null);
-    }
-
-    String resolve(Locale locale, String code, String defaultMessage);
+    Method getImplementationMethod(Class<?> c, Method candidate);
 }

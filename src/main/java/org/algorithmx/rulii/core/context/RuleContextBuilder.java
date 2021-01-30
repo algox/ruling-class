@@ -31,10 +31,11 @@ import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.event.EventProcessor;
 import org.algorithmx.rulii.event.ExecutionListener;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.script.NoOpScriptProcessor;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
+import org.algorithmx.rulii.util.SystemDefaults;
+import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 
 import java.time.Clock;
@@ -51,36 +52,38 @@ import java.util.Locale;
 public class RuleContextBuilder {
 
     private final Bindings bindings;
-    private BindingMatchingStrategy matchingStrategy = BindingMatchingStrategy.create();
-    private ParameterResolver parameterResolver = ParameterResolver.create();
-    private MessageResolver messageResolver = MessageResolver.create("rules");
-    private MessageFormatter messageFormatter = MessageFormatter.create();
-    private ObjectFactory objectFactory = ObjectFactory.create();
-    private EventProcessor eventProcessor = EventProcessor.create();
-    private ConverterRegistry registry = ConverterRegistry.create();
-    private ScriptProcessor scriptProcessor = null;
-    private Clock clock = Clock.systemDefaultZone();
-    private Locale locale = Locale.getDefault();
+    private final SystemDefaults defaults;
+
+    private BindingMatchingStrategy matchingStrategy;
+    private ParameterResolver parameterResolver;
+    private MessageResolver messageResolver;
+    private MessageFormatter messageFormatter;
+    private ObjectFactory objectFactory;
+    private EventProcessor eventProcessor;
+    private ConverterRegistry registry;
+    private ScriptProcessor scriptProcessor;
+    private Clock clock;
+    private Locale locale;
     private List<ExecutionListener> listeners = new ArrayList<>();
 
     private RuleContextBuilder(Bindings bindings) {
         super();
         this.bindings = bindings;
-        setScriptProcessor();
+        this.defaults = SystemDefaultsHolder.getInstance().getDefaults();
+        init();
     }
 
-    protected void setScriptProcessor() {
-        ScriptProcessor result = ScriptProcessor.create();
-        if (result == null) {
-            /**
-             * "Unsupported Scripting Language [" + language + "] Available ["
-             *                     + scriptEngineManager.getEngineFactories().stream().map(ScriptEngineFactory::getLanguageName)
-             *                     .collect(Collectors.joining(", ")) + "]"
-             */
-            result = new NoOpScriptProcessor();
-        }
-
-        this.scriptProcessor = result;
+    protected void init() {
+        this.matchingStrategy = defaults.createBindingMatchingStrategy();
+        this.parameterResolver = defaults.createParameterResolver();
+        this.messageResolver = defaults.createMessageResolver();
+        this.messageFormatter = defaults.createMessageFormatter();
+        this.objectFactory = defaults.createObjectFactory();
+        this.eventProcessor = defaults.createEventProcessor();
+        this.registry = defaults.createConverterRegistry();
+        this.scriptProcessor = defaults.createScriptProcessor();
+        this.clock = defaults.createClock();
+        this.locale = defaults.createDefaultLocale();
     }
 
     /**
@@ -119,15 +122,26 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder locale(Locale locale) {
-        Assert.notNull(locale, "locale cannot be null.");
-        this.locale = locale;
-        return this;
-    }
-
     public RuleContextBuilder paramResolver(ParameterResolver parameterResolver) {
         Assert.notNull(objectFactory, "parameterResolver cannot be null.");
         this.parameterResolver = parameterResolver;
+        return this;
+    }
+
+    public RuleContextBuilder messageResolver(MessageResolver messageResolver) {
+        Assert.notNull(messageResolver, "messageResolver cannot be null.");
+        this.messageResolver = messageResolver;
+        return this;
+    }
+
+    public RuleContextBuilder messageResolver(String...baseNames) {
+        this.messageResolver = defaults.createMessageResolver(baseNames);
+        return this;
+    }
+
+    public RuleContextBuilder messageFormatter(MessageFormatter messageFormatter) {
+        Assert.notNull(messageFormatter, "messageFormatter cannot be null.");
+        this.messageFormatter = messageFormatter;
         return this;
     }
 
@@ -143,15 +157,15 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder converterRegistry(ConverterRegistry registry) {
-        Assert.notNull(registry, "registry cannot be null.");
-        this.registry = registry;
-        return this;
-    }
-
     public RuleContextBuilder traceUsing(ExecutionListener listener) {
         Assert.notNull(listener, "listener cannot be null.");
         this.listeners.add(listener);
+        return this;
+    }
+
+    public RuleContextBuilder converterRegistry(ConverterRegistry registry) {
+        Assert.notNull(registry, "registry cannot be null.");
+        this.registry = registry;
         return this;
     }
 
@@ -164,6 +178,12 @@ public class RuleContextBuilder {
     public RuleContextBuilder scriptProcessor(ScriptProcessor scriptProcessor) {
         Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
         this.scriptProcessor = scriptProcessor;
+        return this;
+    }
+
+    public RuleContextBuilder locale(Locale locale) {
+        Assert.notNull(locale, "locale cannot be null.");
+        this.locale = locale;
         return this;
     }
 

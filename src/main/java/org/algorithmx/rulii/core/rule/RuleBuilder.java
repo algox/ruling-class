@@ -19,6 +19,7 @@
 package org.algorithmx.rulii.core.rule;
 
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 
 /**
@@ -31,7 +32,8 @@ public abstract class RuleBuilder {
 
     public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
-        return with(ruleClass, ObjectFactory.create());
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        return with(ruleClass, objectFactory);
     }
 
     public static <T> Rule<T> build(Class<T> ruleClass) {

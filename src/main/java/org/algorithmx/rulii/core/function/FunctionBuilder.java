@@ -24,6 +24,7 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
@@ -69,7 +70,9 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     public static Function[] build(Class<?> clazz) {
-        return build(clazz, ObjectFactory.create());
+        Assert.notNull(clazz, "clazz cannot be null.");
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        return build(clazz, objectFactory);
     }
 
     public static Function[] build(Class<?> clazz, ObjectFactory factory) {

@@ -59,6 +59,6 @@ public interface ScriptProcessor {
     Object evaluate(String script, Bindings bindings) throws EvaluationException;
 
     Object evaluate(String script, ScriptContext context) throws EvaluationException;
-    
+
     ScriptEngine getEngine();
 }

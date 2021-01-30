@@ -23,12 +23,10 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.LambdaUtils;
+import org.algorithmx.rulii.util.SystemDefaultsHolder;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class ExecutableBuilder {
 
@@ -119,36 +117,8 @@ public abstract class ExecutableBuilder {
     }
 
     private static Method getImplementationMethod(Class<?> c, Method candidate) {
-        // We found the one
-        if (!Modifier.isAbstract(candidate.getModifiers())) return candidate;
-
-        // Looks like we have an abstract method; let's find the implementation
-        List<Method> matches = new ArrayList<>();
-
-        for (Method method : c.getMethods()) {
-            if (candidate.equals(method)) continue;
-            if (Modifier.isAbstract(method.getModifiers())) continue;
-            if (method.isBridge() || method.isSynthetic()) continue;
-            if (!candidate.getReturnType().isAssignableFrom(method.getReturnType())) continue;
-            if (!candidate.getName().equals(method.getName())) continue;
-            if (method.getParameterCount() != candidate.getParameterCount()) continue;
-
-            boolean match = true;
-
-            for (int i = 0; i < method.getParameterTypes().length; i++) {
-                if (!candidate.getParameterTypes()[i].isAssignableFrom(method.getParameterTypes()[i]))
-                    match = false;
-                    break;
-            }
-
-            if (match) matches.add(method);
-        }
-
-        /**
-         * TODO : Currently this does not do an exact match of the implementation with the all generic types of the implementing
-         * TODO : interface. We should really match the generic types declared on the interface with the method.
-        **/
-        return matches.size() >= 1 ? matches.get(0) : null;
+        return SystemDefaultsHolder.getInstance().getDefaults()
+                .createMethodResolver().getImplementationMethod(c, candidate);
     }
 
     protected static class MethodInfo {

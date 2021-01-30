@@ -25,6 +25,7 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
@@ -73,7 +74,9 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action[] build(Class<?> clazz) {
-        return build(clazz, ObjectFactory.create());
+        Assert.notNull(clazz, "clazz cannot be null.");
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        return build(clazz, objectFactory);
     }
 
     public static Action[] build(Class<?> clazz, ObjectFactory factory) {
@@ -85,9 +88,9 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
-        if (target == null) return null;
-
+        Assert.notNull(target, "target cannot be null.");
         Assert.notNull(annotationClass, "annotationClass cannot be null.");
+
         Class<?> clazz = target.getClass();
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
 
