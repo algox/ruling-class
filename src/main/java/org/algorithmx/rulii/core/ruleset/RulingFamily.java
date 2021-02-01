@@ -40,21 +40,23 @@ import java.util.Iterator;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class DefaultRuleSet implements RuleSet {
+public class RulingFamily implements RuleSet {
 
     private final RuleSetDefinition ruleSetDefinition;
     private final Runnable[] ruleSetItems;
 
+    private final RuleSet parent;
     private final Condition preCondition;
     private final Condition stopCondition;
 
-    public DefaultRuleSet(RuleSetDefinition ruleSetDefinition,
-                          Condition preCondition, Condition stopCondition,
-                          Runnable...ruleSetItems) {
+    public RulingFamily(RuleSetDefinition ruleSetDefinition, RuleSet parent,
+                        Condition preCondition, Condition stopCondition,
+                        Runnable...ruleSetItems) {
         super();
         Assert.notNull(ruleSetDefinition, "ruleSetDefinition cannot be null");
         this.ruleSetDefinition = ruleSetDefinition;
         this.ruleSetItems = ruleSetItems != null ? ruleSetItems : new Runnable[0];
+        this.parent = parent;
         this.preCondition = preCondition;
         this.stopCondition = stopCondition;
         Assert.notNullArray(ruleSetItems, "ruleSetItems");
@@ -192,13 +194,20 @@ public class DefaultRuleSet implements RuleSet {
     }
 
     @Override
+    public RuleSet getParent() {
+        return parent;
+    }
+
+    @Override
     public Condition getPreCondition() {
-        return preCondition;
+        if (preCondition != null) return preCondition;
+        return getParent() != null ? getParent().getPreCondition() : null;
     }
 
     @Override
     public Condition getStopCondition() {
-        return stopCondition;
+        if (stopCondition != null) return stopCondition;
+        return getParent() != null ? getParent().getStopCondition() : null;
     }
 
     @Override
@@ -211,16 +220,23 @@ public class DefaultRuleSet implements RuleSet {
         return Arrays.stream(getRuleSetItems()).iterator();
     }
 
-    private Runnable[] getRuleSetItems() {
-        return ruleSetItems;
+    @Override
+    public Runnable[] getRuleSetItems() {
+        if (getParent() == null || getParent().getRuleSetItems().length == 0) return ruleSetItems;
+        Runnable[] result = new Runnable[getParent().getRuleSetItems().length + ruleSetItems.length];
+        System.arraycopy(getParent().getRuleSetItems(), 0, result, 0, getParent().getRuleSetItems().length);
+        System.arraycopy(ruleSetItems, 0, result, getParent().getRuleSetItems().length, ruleSetItems.length);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "DefaultRuleSet{" +
-                ", ruleSetItems=" + Arrays.toString(getRuleSetItems()) +
-                ", preCondition=" + getPreCondition() +
-                ", stopCondition=" + getStopCondition() +
+        return "RuleSet{" +
+                "ruleSetDefinition=" + ruleSetDefinition +
+                ", ruleSetItems=" + Arrays.toString(ruleSetItems) +
+                ", parent=" + parent +
+                ", preCondition=" + preCondition +
+                ", stopCondition=" + stopCondition +
                 '}';
     }
 }

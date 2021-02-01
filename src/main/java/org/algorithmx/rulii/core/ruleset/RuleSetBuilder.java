@@ -40,6 +40,7 @@ public class RuleSetBuilder {
     private String description;
     private final LinkedList<Runnable> ruleSetItems = new LinkedList<>();
 
+    private RuleSet parent;
     private Condition preCondition;
     private Condition stopCondition;
 
@@ -103,6 +104,12 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder description(String description) {
         this.description = description;
+        return this;
+    }
+
+    public RuleSetBuilder parent(RuleSet ruleSet) {
+        // Not possible to have a cyclical dependency as we are yet to create this ruleset
+        this.parent = ruleSet;
         return this;
     }
 
@@ -215,7 +222,7 @@ public class RuleSetBuilder {
     }
 
     public RuleSet build() {
-        return new DefaultRuleSet(buildRuleSetDefinition(),
+        return new RulingFamily(buildRuleSetDefinition(), getParent(),
                 getPreCondition(), getStopCondition(),
                 getRuleSetItems().toArray(new Runnable[getRuleSetItems().size()]));
     }
@@ -226,6 +233,10 @@ public class RuleSetBuilder {
 
     public String getDescription() {
         return description;
+    }
+
+    public RuleSet getParent() {
+        return parent;
     }
 
     public Condition getPreCondition() {

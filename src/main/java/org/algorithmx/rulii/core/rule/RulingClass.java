@@ -210,7 +210,7 @@ public class RulingClass<T> implements Rule<T> {
     @Override
     public String toString() {
         String result = getTarget() != null ? getTarget().toString() : null;
-        return result != null ? result : "RulingClass{" +
+        return result != null ? result : "Rule{" +
                 "ruleDefinition=" + ruleDefinition +
                 '}';
     }
