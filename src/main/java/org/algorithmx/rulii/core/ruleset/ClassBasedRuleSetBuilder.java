@@ -51,12 +51,12 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
 
     public static <T> String getRuleSetName(Class<T> ruleSetClass) {
         // Try and locate the RuleSet annotation on the class
-        org.algorithmx.rulii.annotation.RuleSet rule = ruleSetClass.getAnnotation(org.algorithmx.rulii.annotation.RuleSet.class);
+        org.algorithmx.rulii.annotation.RuleSet ruleSet = ruleSetClass.getAnnotation(org.algorithmx.rulii.annotation.RuleSet.class);
 
-        String ruleName = rule == null ? ruleSetClass.getSimpleName() :
-                org.algorithmx.rulii.annotation.RuleSet.NOT_APPLICABLE.equals(rule.name())
+        String ruleName = ruleSet == null ? ruleSetClass.getSimpleName() :
+                org.algorithmx.rulii.annotation.RuleSet.NOT_APPLICABLE.equals(ruleSet.name())
                         ? ruleSetClass.getSimpleName()
-                        : rule.name();
+                        : ruleSet.name();
 
         return ruleName;
     }
@@ -64,6 +64,11 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
     public static <T> String getRuleSetDescription(Class<T> ruleSetClass) {
         Description descriptionAnnotation = ruleSetClass.getAnnotation(Description.class);
         return descriptionAnnotation != null ? descriptionAnnotation.value() : null;
+    }
+
+    public static <T> Class<?> getParentClass(Class<T> ruleSetClass) {
+        org.algorithmx.rulii.annotation.RuleSet ruleSet = ruleSetClass.getAnnotation(org.algorithmx.rulii.annotation.RuleSet.class);
+        return ruleSet.parent();
     }
 
     /**
@@ -79,11 +84,17 @@ public class ClassBasedRuleSetBuilder extends RuleSetBuilder {
 
         name(getRuleSetName(ruleSetClass));
         description(getRuleSetDescription(ruleSetClass));
-
+        loadParent(getParentClass(ruleSetClass));
         // Load all rules
         loadRules(ruleSetClass, target);
         loadPreCondition(target);
         loadStopCondition(target);
+    }
+
+    protected void loadParent(Class<?> parentRuleSetClass) {
+        if (Object.class.equals(parentRuleSetClass)) return;
+        // Load the parent
+        parent(RuleSetBuilder.build(parentRuleSetClass));
     }
 
     protected void loadPreCondition(Object target) {

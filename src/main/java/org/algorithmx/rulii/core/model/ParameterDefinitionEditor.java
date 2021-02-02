@@ -70,8 +70,8 @@ public class ParameterDefinitionEditor<T> {
         return this;
     }
 
-    public ParameterDefinitionEditor<T> bindUsing(Class<? extends BindingMatchingStrategy> bindUsing) {
-        target.setBindUsing(bindUsing);
+    public ParameterDefinitionEditor<T> matchUsing(Class<? extends BindingMatchingStrategy> matchUsing) {
+        target.setMatchUsing(matchUsing);
         return this;
     }
 

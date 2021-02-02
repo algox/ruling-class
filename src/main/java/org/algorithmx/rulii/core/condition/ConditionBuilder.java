@@ -73,7 +73,7 @@ public class ConditionBuilder extends ExecutableBuilder {
     }
 
     public static Condition[] build(Class<?> clazz, ObjectFactory factory) {
-        return build(factory.create(clazz));
+        return build(factory.createCondition(clazz));
     }
 
     public static Condition[] build(Object target) {

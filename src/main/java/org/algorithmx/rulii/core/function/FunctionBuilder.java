@@ -76,7 +76,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     public static Function[] build(Class<?> clazz, ObjectFactory factory) {
-        return build(factory.create(clazz));
+        return build(factory.createFunction(clazz));
     }
 
     public static Function[] build(Object target) {

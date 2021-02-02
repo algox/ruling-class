@@ -18,11 +18,11 @@
 
 package org.algorithmx.rulii.bind.match;
 
-import org.algorithmx.rulii.bind.convert.Converter;
-import org.algorithmx.rulii.bind.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.Binding;
 import org.algorithmx.rulii.bind.BindingException;
 import org.algorithmx.rulii.bind.Bindings;
+import org.algorithmx.rulii.bind.convert.Converter;
+import org.algorithmx.rulii.bind.convert.ConverterRegistry;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
@@ -61,8 +61,8 @@ public class DefaultParameterResolver implements ParameterResolver {
             result[index] = null;
 
             // See if the parameter is overriding the matching strategy to be used.
-            if (parameterDefinition.isBindSpecified()) {
-                matcher = objectFactory.create(parameterDefinition.getBindUsing());
+            if (parameterDefinition.isMatchSpecified()) {
+                matcher = objectFactory.createBindingMatchingStrategy(parameterDefinition.getMatchUsing());
             }
 
             // Find all the matching bindings

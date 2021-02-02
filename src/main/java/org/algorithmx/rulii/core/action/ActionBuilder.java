@@ -80,7 +80,7 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action[] build(Class<?> clazz, ObjectFactory factory) {
-        return build(factory.create(clazz));
+        return build(factory.createAction(clazz));
     }
 
     public static Action[] build(Object target) {

@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.util.reflect;
 
+import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
@@ -34,37 +35,77 @@ import java.util.WeakHashMap;
 public class DefaultObjectFactory implements ObjectFactory {
 
     // Post Ctor cache by class.
-    private final Map<Class<?>, Method> postConstructorCache = new WeakHashMap<>();
+    private static final Map<Class<?>, Method> postConstructorCache = new WeakHashMap<>();
+    private static final Map<Class<?>, Object> objectCache          = new WeakHashMap<>();
 
     public DefaultObjectFactory() {
         super();
     }
 
     @Override
-    public <T> T create(Class<T> type) {
+    public <T extends BindingMatchingStrategy> T createBindingMatchingStrategy(Class<T> type) throws UnrulyException {
+        return create(type);
+    }
+
+    @Override
+    public <T> T createAction(Class<T> type) throws UnrulyException {
+        return create(type);
+    }
+
+    @Override
+    public <T> T createCondition(Class<T> type) throws UnrulyException {
+        return create(type);
+    }
+
+    @Override
+    public <T> T createFunction(Class<T> type) throws UnrulyException {
+        return create(type);
+    }
+
+    @Override
+    public <T> T createRule(Class<T> type) throws UnrulyException {
+        return create(type);
+    }
+
+    @Override
+    public <T> T createRuleSet(Class<T> type) throws UnrulyException {
+        return create(type);
+    }
+
+    protected <T> T create(Class<T> type) {
         Assert.notNull(type, "type cannot be null.");
 
+        if (objectCache.containsKey(type)) return (T) objectCache.get(type);
+
+        // Create the object
+        T result = createInternal(type);
+
+        Method postConstructor;
+
+        // Check if we cached the post constructor
+        if (postConstructorCache.containsKey(type)) {
+            postConstructor = postConstructorCache.get(type);
+        } else {
+            // Find the post constructor if one exists.
+            postConstructor = ReflectionUtils.getPostConstructMethods(type);
+            // Cache the post constructor
+            postConstructorCache.put(type, postConstructor);
+        }
+
+        if (postConstructor != null) {
+            // Call the Post Constructor
+            ReflectionUtils.invokePostConstruct(postConstructor, result);
+        }
+
+        // Cache it
+        objectCache.put(type, result);
+
+        return result;
+    }
+
+    protected <T> T createInternal(Class<T> type) throws UnrulyException {
         try {
-            // Call the default ctor
-            T result = type.newInstance();
-            Method postConstructor = null;
-
-            // Check if we cached the post constructor
-            if (postConstructorCache.containsKey(type)) {
-                postConstructor = postConstructorCache.get(type);
-            } else {
-                // Find the post constructor if one exists.
-                postConstructor = ReflectionUtils.getPostConstructMethods(type);
-                // Cache the post constructor
-                postConstructorCache.put(type, postConstructor);
-            }
-
-            if (postConstructor != null) {
-                // Call the Post Constructor
-                ReflectionUtils.invokePostConstruct(postConstructor, result);
-            }
-
-            return result;
+            return type.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new UnrulyException("Unable to instantiate type [" + type + "]. Does it have a default ctor ?", e);
         }

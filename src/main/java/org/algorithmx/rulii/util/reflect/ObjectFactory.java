@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.util.reflect;
 
+import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.core.UnrulyException;
 
 /**
@@ -38,6 +39,18 @@ public interface ObjectFactory {
         return new DefaultObjectFactory();
     }
 
+    <T extends BindingMatchingStrategy> T createBindingMatchingStrategy(Class<T> type) throws UnrulyException;
+
+    <T> T createAction(Class<T> type) throws UnrulyException;
+
+    <T> T createCondition(Class<T> type) throws UnrulyException;
+
+    <T> T createFunction(Class<T> type) throws UnrulyException;
+
+    <T> T createRule(Class<T> type) throws UnrulyException;
+
+    <T> T createRuleSet(Class<T> type) throws UnrulyException;
+
     /**
      * Creates a new instance of the desired Type.
      *
@@ -46,5 +59,5 @@ public interface ObjectFactory {
      * @return new instance of Type.
      * @throws UnrulyException thrown in case we are unable to defaultObjectFactory the type at runtime.
      */
-    <T> T create(Class<T> type) throws UnrulyException;
+    //<T> T create(Class<T> type) throws UnrulyException;
 }

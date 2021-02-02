@@ -52,7 +52,7 @@ public abstract class RuleBuilder {
     public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass, ObjectFactory objectFactory) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
-        return ClassBasedRuleBuilder.with(ruleClass, objectFactory.create(ruleClass));
+        return ClassBasedRuleBuilder.with(ruleClass, objectFactory.createRule(ruleClass));
     }
 
     public static <T> Rule<T> build(Class<T> ruleClass, ObjectFactory objectFactory) {

@@ -43,7 +43,7 @@ public class RulingClass<T> implements Rule<T> {
     private final Condition condition;
     private final List<Action> actions;
     private final Action otherwiseAction;
-    private T target;
+    private final T target;
 
     /**
      * Rule defined with all the given properties.
@@ -74,11 +74,6 @@ public class RulingClass<T> implements Rule<T> {
 
         // Otherwise action (Optional)
         this.otherwiseAction = otherwiseAction;
-    }
-
-    protected RulingClass(RuleDefinition ruleDefinition) {
-        this(ruleDefinition, null, null, null, null, null);
-        this.target = (T) this;
     }
 
     @Override

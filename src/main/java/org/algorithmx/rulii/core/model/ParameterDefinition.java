@@ -51,7 +51,7 @@ public final class ParameterDefinition implements Definition {
     private String description;
     private Type type;
     private String defaultValueText;
-    private Class<? extends BindingMatchingStrategy> bindUsing;
+    private Class<? extends BindingMatchingStrategy> matchUsing;
     private final Annotation[] annotations;
     private boolean bindingType;
     private Type underlyingType;
@@ -59,7 +59,7 @@ public final class ParameterDefinition implements Definition {
     private Object defaultValue = null;
 
     private ParameterDefinition(int index, String name, Type type, String description,
-                                String defaultValueText, Class<? extends BindingMatchingStrategy> bindUsing,
+                                String defaultValueText, Class<? extends BindingMatchingStrategy> matchUsing,
                                 Annotation...annotations) {
         super();
         Assert.isTrue(index >= 0, "Parameter index must be >= 0");
@@ -69,7 +69,7 @@ public final class ParameterDefinition implements Definition {
         this.index = index;
         this.annotations = annotations;
         this.defaultValueText = defaultValueText;
-        this.bindUsing = bindUsing;
+        this.matchUsing = matchUsing;
         validate();
     }
 
@@ -98,7 +98,7 @@ public final class ParameterDefinition implements Definition {
             Description descriptionAnnotation = method.getParameters()[i].getAnnotation(Description.class);
             result[i] = new ParameterDefinition(i, parameterNames[i], method.getGenericParameterTypes()[i],
                     descriptionAnnotation != null ? descriptionAnnotation.value() : null, defaultValueText,
-                    getBindUsing(method, i), method.getParameterAnnotations()[i]);
+                    getMatchUsing(method, i), method.getParameterAnnotations()[i]);
         }
 
         return result;
@@ -109,7 +109,7 @@ public final class ParameterDefinition implements Definition {
         return defaultAnnotation != null ? defaultAnnotation.value() : null;
     }
 
-    private static Class<? extends BindingMatchingStrategy> getBindUsing(Method method, int index) {
+    private static Class<? extends BindingMatchingStrategy> getMatchUsing(Method method, int index) {
         Match result = method.getParameters()[index].getAnnotation(Match.class);
         return result != null ? result.using() : null;
     }
@@ -253,8 +253,8 @@ public final class ParameterDefinition implements Definition {
      * @return true if it is using Match; false otherwise.
      * @see Match
      */
-    public boolean isBindSpecified() {
-        return bindUsing != null;
+    public boolean isMatchSpecified() {
+        return matchUsing != null;
     }
 
     /**
@@ -262,12 +262,12 @@ public final class ParameterDefinition implements Definition {
      *
      * @return BindingMatchingStrategy class is one is specified; null otherwise.
      */
-    public Class<? extends BindingMatchingStrategy> getBindUsing() {
-        return bindUsing;
+    public Class<? extends BindingMatchingStrategy> getMatchUsing() {
+        return matchUsing;
     }
 
-    public void setBindUsing(Class<? extends BindingMatchingStrategy> bindUsing) {
-        this.bindUsing = bindUsing;
+    public void setMatchUsing(Class<? extends BindingMatchingStrategy> matchUsing) {
+        this.matchUsing = matchUsing;
     }
 
     /**
@@ -300,7 +300,7 @@ public final class ParameterDefinition implements Definition {
                 ", description='" + description + '\'' +
                 ", type=" + type +
                 ", defaultValueText='" + defaultValueText + '\'' +
-                ", bindUsing=" + bindUsing +
+                ", matchUsing=" + matchUsing +
                 ", annotations=" + Arrays.toString(annotations) +
                 ", bindingType=" + bindingType +
                 ", defaultValue=" + defaultValue +
