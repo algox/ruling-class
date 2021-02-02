@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.core.condition;
 
+import org.algorithmx.rulii.bind.ScopedBindings;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.function.BiFunction;
@@ -36,6 +37,8 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.script.ScriptLanguageManager;
+import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
@@ -68,7 +71,7 @@ public class ConditionBuilder extends ExecutableBuilder {
 
     public static Condition[] build(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
         return build(clazz, objectFactory);
     }
 
@@ -153,17 +156,35 @@ public class ConditionBuilder extends ExecutableBuilder {
         return with(() -> false).build();
     }
 
+    public static Condition build(String script, String scriptingLanguage) {
+        return with((RuleContext context) -> processScriptCondition(script, scriptingLanguage,
+                context.getBindings()))
+                .build();
+    }
+
     public static Condition build(String script) {
-        return with((RuleContext context) -> {
-            Object result = context.getScriptProcessor().evaluate(script, context.getBindings());
+        return with((RuleContext context) -> processScriptCondition(script, context.getScriptingLanguage(),
+                context.getBindings()))
+                .build();
+    }
 
-            if (result == null) throw new UnrulyException("Script Condition excepts a boolean return type. " +
-                    "Actual [null]. Script [" + script + "]");
-            if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
-                    "Actual [" + result + "]. Script [" + script + "]");
+    private static Boolean processScriptCondition(String script, String language, ScopedBindings bindings) {
+        ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(language);
 
-            return (Boolean) result;
-        }).build();
+        if (scriptProcessor == null) {
+            throw new UnrulyException("Unable to execute script condition [" + script + "]. " +
+                    "Could not find a scripting language [" + language
+                    + "]. Trying registering in ScriptLanguageManager and try again.");
+        }
+
+        Object result = scriptProcessor.evaluate(script, bindings);
+
+        if (result == null) throw new UnrulyException("Script Condition excepts a boolean return type. " +
+                "Actual [null]. Script [" + script + "]");
+        if (!(result instanceof Boolean)) throw new UnrulyException("Condition excepts a boolean return type. " +
+                "Actual [" + result + "]. Script [" + script + "]");
+
+        return (Boolean) result;
     }
 
     /**

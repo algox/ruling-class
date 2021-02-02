@@ -21,8 +21,6 @@ package org.algorithmx.rulii.util;
 import org.algorithmx.rulii.bind.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
-import org.algorithmx.rulii.event.EventProcessor;
-import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
@@ -33,25 +31,23 @@ import java.util.Locale;
 
 public interface SystemDefaults {
 
-    BindingMatchingStrategy createBindingMatchingStrategy();
+    BindingMatchingStrategy getBindingMatchingStrategy();
 
-    ParameterResolver createParameterResolver();
+    ParameterResolver getParameterResolver();
 
-    MethodResolver createMethodResolver();
+    MethodResolver getMethodResolver();
 
-    MessageResolver createMessageResolver();
+    MessageResolver getMessageResolver();
 
-    MessageFormatter createMessageFormatter();
+    MessageFormatter getMessageFormatter();
 
-    ObjectFactory createObjectFactory();
+    ObjectFactory getObjectFactory();
 
-    EventProcessor createEventProcessor();
+    ConverterRegistry getConverterRegistry();
 
-    ConverterRegistry createConverterRegistry();
+    String getScriptingLanguage();
 
-    ScriptProcessor createScriptProcessor();
+    Locale getDefaultLocale();
 
-    Clock createClock();
-
-    Locale createDefaultLocale();
+    Clock getClock();
 }

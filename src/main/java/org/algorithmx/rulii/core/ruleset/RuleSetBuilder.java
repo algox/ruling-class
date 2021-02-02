@@ -64,7 +64,7 @@ public class RuleSetBuilder {
 
     public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass) {
         Assert.notNull(ruleSetClass, "ruleSetClass cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
         return with(ruleSetClass, objectFactory);
     }
 

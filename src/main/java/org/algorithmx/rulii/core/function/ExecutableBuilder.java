@@ -118,7 +118,7 @@ public abstract class ExecutableBuilder {
 
     private static Method getImplementationMethod(Class<?> c, Method candidate) {
         return SystemDefaultsHolder.getInstance().getDefaults()
-                .createMethodResolver().getImplementationMethod(c, candidate);
+                .getMethodResolver().getImplementationMethod(c, candidate);
     }
 
     protected static class MethodInfo {

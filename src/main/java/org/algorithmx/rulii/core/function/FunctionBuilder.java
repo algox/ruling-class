@@ -18,12 +18,15 @@
 
 package org.algorithmx.rulii.core.function;
 
+import org.algorithmx.rulii.bind.ScopedBindings;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.script.ScriptLanguageManager;
+import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
@@ -71,7 +74,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
 
     public static Function[] build(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
         return build(clazz, objectFactory);
     }
 
@@ -120,23 +123,39 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         return new DefaultFunction(getTarget(), getDefinition());
     }
 
-    public static <T> Function<T> build(String script) {
-        FunctionBuilder<T> builder = with((RuleContext context) -> {
-            Object value = context.getScriptProcessor().evaluate(script, context.getBindings());
-            T result;
-
-            try {
-                result = (T) value;
-            } catch (ClassCastException e) {
-                throw new UnrulyException("Function returned an invalid type. " +
-                        "Actual [" + value + "]. Script [" + script + "]");
-            }
-
-            return result;
-        });
+    public static <T> Function<T> build(String script, String scriptingLanguage) {
+        FunctionBuilder<T> builder = with((RuleContext context) -> processScriptFunction(script, scriptingLanguage,
+                context.getBindings()));
         return builder.build();
     }
 
+    public static <T> Function<T> build(String script) {
+        FunctionBuilder<T> builder = with((RuleContext context) -> processScriptFunction(script,
+                context.getScriptingLanguage(), context.getBindings()));
+        return builder.build();
+    }
+
+    private static <T> T processScriptFunction(String script, String language, ScopedBindings bindings) {
+        ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(language);
+
+        if (scriptProcessor == null) {
+            throw new UnrulyException("Unable to execute script function [" + script + "]. " +
+                    "Could not find a scripting language [" + language + "]. Trying registering in ScriptLanguageManager and try again.");
+        }
+
+        Object value = scriptProcessor.evaluate(script, bindings);
+
+        T result;
+
+        try {
+            result = (T) value;
+        } catch (ClassCastException e) {
+            throw new UnrulyException("Function returned an invalid type. " +
+                    "Actual [" + value + "]. Script [" + script + "]");
+        }
+
+        return result;
+    }
     /**
      * Creates a new function builder with no arguments.
      *

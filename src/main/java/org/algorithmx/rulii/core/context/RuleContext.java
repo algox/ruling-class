@@ -46,6 +46,8 @@ import java.util.Locale;
 public class RuleContext {
 
     private final Date creationTime = new Date();
+    private RuleExecutionStatus executionStatus = RuleExecutionStatus.ACTIVE;
+
     private final ScopedBindings bindings;
     private final Locale locale;
     private final BindingMatchingStrategy matchingStrategy;
@@ -54,16 +56,15 @@ public class RuleContext {
     private final MessageFormatter messageFormatter;
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
-    private final ScriptProcessor scriptProcessor;
+    private final String scriptingLanguage;
     private final EventProcessor eventProcessor;
     private final Clock clock;
-    private RuleExecutionStatus executionStatus = RuleExecutionStatus.ACTIVE;
 
     public RuleContext(ScopedBindings bindings, Locale locale, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,
                        EventProcessor eventProcessor, ConverterRegistry registry,
-                       ScriptProcessor scriptProcessor, Clock clock) {
+                       String scriptingLanguage, Clock clock) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(locale, "locale cannot be null.");
@@ -82,7 +83,7 @@ public class RuleContext {
         this.objectFactory = objectFactory;
         this.eventProcessor = eventProcessor;
         this.registry = registry;
-        this.scriptProcessor = scriptProcessor;
+        this.scriptingLanguage = scriptingLanguage;
         this.clock = clock;
     }
 
@@ -159,8 +160,8 @@ public class RuleContext {
         return locale;
     }
 
-    public ScriptProcessor getScriptProcessor() {
-        return scriptProcessor;
+    public String getScriptingLanguage() {
+        return scriptingLanguage;
     }
 
     public EventProcessor getEventProcessor() {

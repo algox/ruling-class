@@ -22,7 +22,6 @@ import org.algorithmx.rulii.bind.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.event.EventProcessor;
-import org.algorithmx.rulii.script.NoOpScriptProcessor;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
@@ -41,66 +40,55 @@ public class DefaultSystemDefaults implements SystemDefaults {
     private final MessageFormatter messageFormatter = MessageFormatter.create();
     private final ObjectFactory objectFactory = ObjectFactory.create();
     private final ConverterRegistry converterRegistry = ConverterRegistry.create();
-    private ScriptProcessor scriptProcessor = null;
+    private String scriptingLanguage = ScriptProcessor.JAVASCRIPT;
 
     public DefaultSystemDefaults() {
         super();
     }
 
     @Override
-    public BindingMatchingStrategy createBindingMatchingStrategy() {
+    public BindingMatchingStrategy getBindingMatchingStrategy() {
         return matchingStrategy;
     }
 
     @Override
-    public ParameterResolver createParameterResolver() {
+    public ParameterResolver getParameterResolver() {
         return parameterResolver;
     }
 
     @Override
-    public MethodResolver createMethodResolver() {
+    public MethodResolver getMethodResolver() {
         return methodResolver;
     }
 
     @Override
-    public MessageResolver createMessageResolver() { return messageResolver; }
+    public MessageResolver getMessageResolver() { return messageResolver; }
 
     @Override
-    public MessageFormatter createMessageFormatter() {
+    public MessageFormatter getMessageFormatter() {
         return messageFormatter;
     }
 
     @Override
-    public ObjectFactory createObjectFactory() {
+    public ObjectFactory getObjectFactory() {
         return objectFactory;
     }
 
     @Override
-    public EventProcessor createEventProcessor() {
-        return EventProcessor.create();
-    }
-
-    @Override
-    public ConverterRegistry createConverterRegistry() {
+    public ConverterRegistry getConverterRegistry() {
         return converterRegistry;
     }
 
     @Override
-    public ScriptProcessor createScriptProcessor() {
-        if (scriptProcessor == null) {
-            ScriptProcessor result = ScriptProcessor.create();
-            this.scriptProcessor = result != null ? result : new NoOpScriptProcessor();
-        }
-        return scriptProcessor;
-    }
+    public String getScriptingLanguage() { return scriptingLanguage; }
 
     @Override
-    public Clock createClock() {
+    public Clock getClock() {
         return Clock.systemDefaultZone();
     }
 
     @Override
-    public Locale createDefaultLocale() {
+    public Locale getDefaultLocale() {
         return Locale.getDefault();
     }
 }

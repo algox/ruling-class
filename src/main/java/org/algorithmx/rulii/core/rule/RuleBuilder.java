@@ -32,7 +32,7 @@ public abstract class RuleBuilder {
 
     public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass) {
         Assert.notNull(ruleClass, "ruleClass cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().createObjectFactory();
+        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
         return with(ruleClass, objectFactory);
     }
 

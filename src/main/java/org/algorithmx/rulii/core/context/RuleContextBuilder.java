@@ -31,7 +31,6 @@ import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.event.EventProcessor;
 import org.algorithmx.rulii.event.ExecutionListener;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.SystemDefaults;
@@ -61,7 +60,7 @@ public class RuleContextBuilder {
     private ObjectFactory objectFactory;
     private EventProcessor eventProcessor;
     private ConverterRegistry registry;
-    private ScriptProcessor scriptProcessor;
+    private String scriptingLanguage;
     private Clock clock;
     private Locale locale;
     private List<ExecutionListener> listeners = new ArrayList<>();
@@ -74,16 +73,16 @@ public class RuleContextBuilder {
     }
 
     protected void init() {
-        this.matchingStrategy = defaults.createBindingMatchingStrategy();
-        this.parameterResolver = defaults.createParameterResolver();
-        this.messageResolver = defaults.createMessageResolver();
-        this.messageFormatter = defaults.createMessageFormatter();
-        this.objectFactory = defaults.createObjectFactory();
-        this.eventProcessor = defaults.createEventProcessor();
-        this.registry = defaults.createConverterRegistry();
-        this.scriptProcessor = defaults.createScriptProcessor();
-        this.clock = defaults.createClock();
-        this.locale = defaults.createDefaultLocale();
+        this.matchingStrategy = defaults.getBindingMatchingStrategy();
+        this.parameterResolver = defaults.getParameterResolver();
+        this.messageResolver = defaults.getMessageResolver();
+        this.messageFormatter = defaults.getMessageFormatter();
+        this.objectFactory = defaults.getObjectFactory();
+        this.eventProcessor = EventProcessor.create();
+        this.registry = defaults.getConverterRegistry();
+        this.scriptingLanguage = defaults.getScriptingLanguage();
+        this.clock = defaults.getClock();
+        this.locale = defaults.getDefaultLocale();
     }
 
     /**
@@ -172,13 +171,7 @@ public class RuleContextBuilder {
 
     public RuleContextBuilder scriptProcessor(String language) {
         Assert.notNull(language, "language cannot be null.");
-        this.scriptProcessor = ScriptProcessor.create(language);
-        return this;
-    }
-
-    public RuleContextBuilder scriptProcessor(ScriptProcessor scriptProcessor) {
-        Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
-        this.scriptProcessor = scriptProcessor;
+        this.scriptingLanguage = language;
         return this;
     }
 
@@ -203,7 +196,7 @@ public class RuleContextBuilder {
         ScopedBindings scopedBindings = ScopedBindings.create();
 
         RuleContext result  = new RuleContext(scopedBindings, locale, matchingStrategy, parameterResolver, messageResolver,
-                messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor, clock);
+                messageFormatter, objectFactory, eventProcessor, registry, scriptingLanguage, clock);
         // Make the Context avail in the bindings.
         ((DefaultBindings) (scopedBindings.getRootScope())).promiscuousBind(BindingBuilder
                 .with(ReservedBindings.RULE_CONTEXT.getName())
