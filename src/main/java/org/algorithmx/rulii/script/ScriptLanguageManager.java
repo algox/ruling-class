@@ -24,12 +24,12 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public final class ScriptLanguageManager {
 
-    private static final Map<String, ScriptProcessor> registeredScriptProcessors = new HashMap<>();
+    private static final Map<String, ScriptProcessor> registeredScriptProcessors = new TreeMap<>();
 
     static {
         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
@@ -57,4 +57,13 @@ public final class ScriptLanguageManager {
     public static ScriptProcessor getScriptProcessor(String language) throws UnrulyException {
         return registeredScriptProcessors.get(language);
     }
+
+    public static ScriptProcessor[] getAvailableScriptProcessors() {
+        return registeredScriptProcessors.values().stream().toArray(size -> new ScriptProcessor[size]);
+    }
+
+    public static String[] getAvailableScriptingLanguages() {
+        return registeredScriptProcessors.keySet().stream().toArray(size -> new String[size]);
+    }
 }
+

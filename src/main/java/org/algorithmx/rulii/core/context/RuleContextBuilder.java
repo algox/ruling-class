@@ -31,6 +31,7 @@ import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.event.EventProcessor;
 import org.algorithmx.rulii.event.ExecutionListener;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.SystemDefaults;
@@ -80,9 +81,15 @@ public class RuleContextBuilder {
         this.objectFactory = defaults.getObjectFactory();
         this.eventProcessor = EventProcessor.create();
         this.registry = defaults.getConverterRegistry();
-        this.scriptingLanguage = defaults.getScriptingLanguage();
         this.clock = defaults.getClock();
         this.locale = defaults.getDefaultLocale();
+        this.scriptingLanguage = defaults.getScriptingLanguage();
+
+        // The default language not present; lets pick first one(alphabetically) that is avail.
+        if (ScriptLanguageManager.getScriptProcessor(defaults.getScriptingLanguage()) == null
+                && ScriptLanguageManager.getAvailableScriptingLanguages().length > 0) {
+            this.scriptingLanguage = ScriptLanguageManager.getAvailableScriptingLanguages()[0];
+        }
     }
 
     /**
