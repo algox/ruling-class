@@ -36,7 +36,7 @@ public final class ScriptLanguageManager {
 
         if (scriptEngineManager.getEngineFactories() != null) {
             for (ScriptEngineFactory factory : scriptEngineManager.getEngineFactories()) {
-                register(factory.getScriptEngine());
+                register(factory.getScriptEngine(), factory.getLanguageName());
             }
         }
     }
@@ -45,13 +45,14 @@ public final class ScriptLanguageManager {
         super();
     }
 
-    public static void register(ScriptEngine engine) {
-        register(new DefaultScriptProcessor(engine));
+    public static void register(ScriptEngine engine, String languageName) {
+        register(new DefaultScriptProcessor(engine), languageName);
     }
 
-    public static void register(ScriptProcessor processor) {
+    public static void register(ScriptProcessor processor, String languageName) {
+        Assert.notNull(languageName, "languageName cannot be null.");
         Assert.notNull(processor, "processor cannot be null.");
-        registeredScriptProcessors.put(processor.getEngine().getFactory().getLanguageName(), processor);
+        registeredScriptProcessors.put(languageName, processor);
     }
 
     public static ScriptProcessor getScriptProcessor(String language) throws UnrulyException {
