@@ -39,7 +39,7 @@ public interface SystemDefaults {
 
     MethodResolver createMethodResolver();
 
-    MessageResolver createMessageResolver(String...baseNames);
+    MessageResolver createMessageResolver();
 
     MessageFormatter createMessageFormatter();
 

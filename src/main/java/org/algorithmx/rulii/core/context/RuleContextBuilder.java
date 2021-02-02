@@ -135,7 +135,8 @@ public class RuleContextBuilder {
     }
 
     public RuleContextBuilder messageResolver(String...baseNames) {
-        this.messageResolver = defaults.createMessageResolver(baseNames);
+        Assert.notNull(baseNames, "baseNames cannot be null.");
+        this.messageResolver = MessageResolver.create(baseNames);
         return this;
     }
 

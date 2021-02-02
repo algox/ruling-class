@@ -63,10 +63,7 @@ public class DefaultSystemDefaults implements SystemDefaults {
     }
 
     @Override
-    public MessageResolver createMessageResolver(String...baseNames) {
-        if (baseNames == null || baseNames.length == 0) return messageResolver;
-        return MessageResolver.create(baseNames);
-    }
+    public MessageResolver createMessageResolver() { return messageResolver; }
 
     @Override
     public MessageFormatter createMessageFormatter() {

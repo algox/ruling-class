@@ -38,8 +38,15 @@ public class DefaultObjectFactory implements ObjectFactory {
     private static final Map<Class<?>, Method> postConstructorCache = new WeakHashMap<>();
     private static final Map<Class<?>, Object> objectCache          = new WeakHashMap<>();
 
+    private final boolean useCache;
+
     public DefaultObjectFactory() {
+        this(true);
+    }
+
+    public DefaultObjectFactory(boolean useCache) {
         super();
+        this.useCache = useCache;
     }
 
     @Override
@@ -75,7 +82,7 @@ public class DefaultObjectFactory implements ObjectFactory {
     protected <T> T create(Class<T> type) {
         Assert.notNull(type, "type cannot be null.");
 
-        if (objectCache.containsKey(type)) return (T) objectCache.get(type);
+        if (isUseCache() && objectCache.containsKey(type)) return (T) objectCache.get(type);
 
         // Create the object
         T result = createInternal(type);
@@ -98,9 +105,13 @@ public class DefaultObjectFactory implements ObjectFactory {
         }
 
         // Cache it
-        objectCache.put(type, result);
+        if (isUseCache()) objectCache.put(type, result);
 
         return result;
+    }
+
+    protected boolean isUseCache() {
+        return useCache;
     }
 
     protected <T> T createInternal(Class<T> type) throws UnrulyException {
