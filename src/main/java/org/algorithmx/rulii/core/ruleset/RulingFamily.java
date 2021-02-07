@@ -92,7 +92,13 @@ public class RulingFamily implements RuleSet {
                 try {
                     // Run the rule/action
                     Object executionResult = runnable.run(context);
-                    if (runnable instanceof Rule) result.add((RuleResult) executionResult);
+                    // Add the results for Rule/RuleSets
+                    if (runnable instanceof Rule) {
+                        result.add((RuleResult) executionResult);
+                    } else if (runnable instanceof RuleSet) {
+                        result.addAll((RuleSetResult) executionResult);
+                    }
+
                     index++;
                 } catch (Exception e) {
                     throw new RuleSetExecutionException("Unexpected error occurred trying to execute "

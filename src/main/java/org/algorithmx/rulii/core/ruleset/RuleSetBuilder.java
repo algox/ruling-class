@@ -141,34 +141,69 @@ public class RuleSetBuilder {
         return this;
     }
 
+    public RuleSetBuilder rules(int index, Rule...rules) {
+        Assert.notNullArray(rules, "rules");
+        return addAllInternal(index, Arrays.asList(rules));
+    }
+
     public RuleSetBuilder rules(Rule...rules) {
         Assert.notNullArray(rules, "rules");
-        return addAllInternal(Arrays.asList(rules), false);
+        return addAllInternal(Arrays.asList(rules));
+    }
+
+    public RuleSetBuilder rules(RuleSet rules) {
+        Assert.notNull(rules, "rules");
+        getRuleSetItems().add(rules);
+        return this;
+    }
+
+    public RuleSetBuilder rules(int index, RuleSet rules) {
+        Assert.notNull(rules, "rules");
+        getRuleSetItems().add(index, rules);
+        return this;
     }
 
     public RuleSetBuilder actions(Action...actions) {
         Assert.notNullArray(actions, "actions");
-        return addAllInternal(Arrays.asList(actions), false);
+        return addAllInternal(Arrays.asList(actions));
+    }
+
+    public RuleSetBuilder actions(int index, Action...actions) {
+        Assert.notNullArray(actions, "actions");
+        return addAllInternal(index, Arrays.asList(actions));
     }
 
     public RuleSetBuilder rules(Collection<? extends Rule> rules) {
-        return addAllInternal(rules, false);
+        return addAllInternal(rules);
+    }
+
+    public RuleSetBuilder rules(int index, Collection<? extends Rule> rules) {
+        return addAllInternal(index, rules);
     }
 
     public RuleSetBuilder actions(Collection<? extends Action> actions) {
-        return addAllInternal(actions, false);
+        return addAllInternal(actions);
     }
 
-    private RuleSetBuilder addAllInternal(Collection<? extends Runnable> runnables, boolean first) {
+    public RuleSetBuilder actions(int index, Collection<? extends Action> actions) {
+        return addAllInternal(index, actions);
+    }
+
+    private RuleSetBuilder addAllInternal(Collection<? extends Runnable> runnables) {
+        return addAllInternal(null, runnables);
+    }
+
+    private RuleSetBuilder addAllInternal(Integer index, Collection<? extends Runnable> runnables) {
         Assert.notNull(runnables, "runnables cannot be null.");
 
         // Make sure we dont add null values.
         for (Runnable runnable : runnables) {
            Assert.notNull(runnable, "RuleSet items cannot be null.");
-           if (first) {
-               getRuleSetItems().addFirst(runnable);
-           } else {
+
+           if (index == null) {
                getRuleSetItems().add(runnable);
+           } else {
+               getRuleSetItems().add(index, runnable);
            }
         }
 
@@ -203,6 +238,8 @@ public class RuleSetBuilder {
         getRuleSetItems().stream().forEach(r -> {
             if (r instanceof Rule) {
                 definitions.add(((Rule) r).getRuleDefinition());
+            } else if (r instanceof RuleSet) {
+                definitions.add(((RuleSet) r).getRuleSetDefinition());
             } else if (r instanceof Action) {
                 definitions.add(((Action) r).getMethodDefinition());
             }

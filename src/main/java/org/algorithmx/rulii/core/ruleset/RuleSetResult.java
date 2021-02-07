@@ -25,6 +25,8 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,6 +49,11 @@ public class RuleSetResult implements Iterable<RuleResult> {
     public void add(RuleResult result) {
         Assert.notNull(result, "result cannot be null.");
         results.add(result);
+    }
+
+    public void addAll(RuleSetResult ruleSetResult) {
+        Assert.notNull(ruleSetResult, "ruleSetResult cannot be null.");
+        this.results.addAll(ruleSetResult.getResults());
     }
 
     public Bindings getBindings() {
@@ -212,6 +219,10 @@ public class RuleSetResult implements Iterable<RuleResult> {
     @Override
     public Iterator<RuleResult> iterator() {
         return results.iterator();
+    }
+
+    public Collection<RuleResult> getResults() {
+        return Collections.unmodifiableList(results);
     }
 
     public int size() {
