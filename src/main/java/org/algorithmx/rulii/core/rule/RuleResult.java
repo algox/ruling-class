@@ -20,10 +20,12 @@ package org.algorithmx.rulii.core.rule;
 
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
-public class RuleResult {
+public class RuleResult implements RuleResultExtractor {
 
     private final String ruleName;
     private final RuleExecutionStatus status;
+
+    private String parentName;
 
     public RuleResult(String ruleName, RuleExecutionStatus status) {
         super();
@@ -41,11 +43,27 @@ public class RuleResult {
         return status;
     }
 
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    @Override
+    public RuleResult[] extract() {
+        RuleResult[] result = new RuleResult[1];
+        result[0] = this;
+        return result;
+    }
+
     @Override
     public String toString() {
         return "RuleResult{" +
                 "ruleName='" + ruleName + '\'' +
                 ", status=" + status +
+                ", parentName='" + parentName + '\'' +
                 '}';
     }
 }

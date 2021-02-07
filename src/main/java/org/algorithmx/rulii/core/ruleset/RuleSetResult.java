@@ -21,12 +21,11 @@ package org.algorithmx.rulii.core.ruleset;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.core.rule.RuleExecutionStatus;
 import org.algorithmx.rulii.core.rule.RuleResult;
+import org.algorithmx.rulii.core.rule.RuleResultExtractor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class RuleSetResult implements Iterable<RuleResult> {
+public class RuleSetResult implements Iterable<RuleResult>, RuleResultExtractor {
 
     private final List<RuleResult> results = new LinkedList<>();
     private final Bindings bindings;
@@ -53,59 +52,52 @@ public class RuleSetResult implements Iterable<RuleResult> {
 
     public void addAll(RuleSetResult ruleSetResult) {
         Assert.notNull(ruleSetResult, "ruleSetResult cannot be null.");
-        this.results.addAll(ruleSetResult.getResults());
+        this.results.addAll(Arrays.asList(ruleSetResult.extract()));
+    }
+
+    public void addAll(RuleResult...ruleResults) {
+        Assert.notNull(ruleResults, "ruleResults cannot be null.");
+        this.results.addAll(Arrays.asList(ruleResults));
     }
 
     public Bindings getBindings() {
         return bindings;
     }
 
-    public RuleResult getPreviousResult() {
+    public RuleResult getLastResult() {
         int size = size();
         return size > 0 ? results.get(size - 1) : null;
     }
 
-    public RuleResult getRuleResult(String ruleName) {
-        return getRuleResult(ruleName, 0);
-    }
-
-    public RuleResult getRuleResult(String ruleName, int startIndex) {
+    public RuleResult[] getRuleResult(String ruleName) {
         Assert.notNull(ruleName, "ruleName cannot be null.");
-        int size = size();
-        Assert.isTrue(startIndex < size, "Invalid startIndex. Size [" + size
-                + " Given start Index [" + startIndex + "]");
-
-
-        RuleResult result = null;
-
-        for (int i = startIndex; i < size; i++) {
-            if (ruleName.equals(results.get(i).getRuleName())) {
-                result = results.get(i);
-                break;
-            }
-        }
-
-        return result;
+        return getRuleResults(r -> ruleName.equals(r.getRuleName()));
     }
 
-    public String[] getPassedRuleNames() {
-        return getRuleNames(RuleExecutionStatus.PASS);
+    public RuleResult[] getRuleResult(String ruleName, String parentName) {
+        Assert.notNull(ruleName, "ruleName cannot be null.");
+        Assert.notNull(parentName, "parentName cannot be null.");
+        return getRuleResults(r -> ruleName.equals(r.getRuleName()) && parentName.equals(r.getParentName()));
     }
 
-    public String[] getPassedOrSkippedRuleNames() {
-        return getRuleNames(RuleExecutionStatus.PASS, RuleExecutionStatus.SKIPPED);
+    public RuleResult[] getPassed() {
+        return getRuleResults(RuleExecutionStatus.PASS);
     }
 
-    public String[] getFailedRuleNames() {
-        return getRuleNames(RuleExecutionStatus.FAIL);
+    public RuleResult[] getPassedOrSkipped() {
+        return getRuleResults(RuleExecutionStatus.PASS, RuleExecutionStatus.SKIPPED);
     }
 
-    public String[] getFailedOrSkippedRuleNames() {
-        return getRuleNames(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED);
+    public RuleResult[] getFailed() {
+        return getRuleResults(RuleExecutionStatus.FAIL);
     }
 
-    public String[] getSkippedRuleNames() {
-        return getRuleNames(RuleExecutionStatus.SKIPPED);
+    public RuleResult[] getFailedOrSkipped() {
+        return getRuleResults(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED);
+    }
+
+    public RuleResult[] getSkipped() {
+        return getRuleResults(RuleExecutionStatus.SKIPPED);
     }
 
     public RuleResult get(int index) {
@@ -116,16 +108,8 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return isTrue(r -> r.getStatus().isPass());
     }
 
-    public int getPassCount() {
-        return getCount(RuleExecutionStatus.PASS);
-    }
-
     public boolean isAllPassOrSkip() {
         return isTrue(r -> r.getStatus().isPass() || r.getStatus().isSkipped());
-    }
-
-    public int getPassOrSkipCount() {
-        return getCount(RuleExecutionStatus.PASS, RuleExecutionStatus.SKIPPED);
     }
 
     public boolean isAnyPass() {
@@ -140,10 +124,6 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return isTrue(r -> r.getStatus().isSkipped());
     }
 
-    public int getSkipCount() {
-        return getCount(RuleExecutionStatus.SKIPPED);
-    }
-
     public boolean isAllFail() {
         return isTrue(r -> r.getStatus().isFail());
     }
@@ -152,16 +132,8 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return isTrue(r -> !r.getStatus().isFail());
     }
 
-    public int getFailCount() {
-        return getCount(RuleExecutionStatus.FAIL);
-    }
-
     public boolean isAllFailOrSkip() {
         return isTrue(r -> r.getStatus().isFail() || r.getStatus().isSkipped());
-    }
-
-    public int getFailOrSkipCount() {
-        return getCount(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED);
     }
 
     public boolean isTrue(RuleExecutionStatus...statuses) {
@@ -182,38 +154,21 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return result;
     }
 
-    public int getCount(RuleExecutionStatus...statuses) {
+    public RuleResult[] getRuleResults(RuleExecutionStatus...statuses) {
         Set<RuleExecutionStatus> values = statuses != null ? new HashSet<>(Arrays.asList(statuses)) : new HashSet<>();
-        return getCount(r -> values.contains(r));
+        return getRuleResults(r -> values.contains(r));
     }
 
-    public int getCount(Predicate<RuleResult> predicate) {
-        int result = 0;
+    public RuleResult[] getRuleResults(Predicate<RuleResult> predicate) {
+        List<RuleResult> result = new ArrayList<>();
 
         for (RuleResult ruleResult : results) {
             if (predicate.test(ruleResult)) {
-                result++;
+                result.add(ruleResult);
             }
         }
 
-        return result;
-    }
-
-    public String[] getRuleNames(RuleExecutionStatus...statuses) {
-        Set<RuleExecutionStatus> values = statuses != null ? new HashSet<>(Arrays.asList(statuses)) : new HashSet<>();
-        return getRuleNames(r -> values.contains(r));
-    }
-
-    public String[] getRuleNames(Predicate<RuleResult> predicate) {
-        List<String> result = new ArrayList<>();
-
-        for (RuleResult ruleResult : results) {
-            if (predicate.test(ruleResult)) {
-                result.add(ruleResult.getRuleName());
-            }
-        }
-
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new RuleResult[result.size()]);
     }
 
     @Override
@@ -221,8 +176,9 @@ public class RuleSetResult implements Iterable<RuleResult> {
         return results.iterator();
     }
 
-    public Collection<RuleResult> getResults() {
-        return Collections.unmodifiableList(results);
+    @Override
+    public RuleResult[] extract() {
+        return results.toArray(new RuleResult[results.size()]);
     }
 
     public int size() {

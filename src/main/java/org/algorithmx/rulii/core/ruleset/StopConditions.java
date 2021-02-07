@@ -20,20 +20,16 @@ package org.algorithmx.rulii.core.ruleset;
 
 import org.algorithmx.rulii.core.condition.Condition;
 import org.algorithmx.rulii.core.condition.ConditionBuilder;
-import org.algorithmx.rulii.core.rule.RuleExecutionStatus;
 
 public final class StopConditions {
 
     // All Rules must PASS (no SKIP or FAIL)
     public static Condition ALL_PASS = ConditionBuilder.build((RuleSetResult result)
-            -> result.getCount(RuleExecutionStatus.FAIL, RuleExecutionStatus.SKIPPED) > 0);
+            -> result.isAllPass());
     // All Rules must either PASS or SKIP (no FAIL)
-    public static Condition ALL_PASS_OR_SKIP = ConditionBuilder.build((RuleSetResult result) -> result.isAnyFail());
+    public static Condition ALL_PASS_OR_SKIP = ConditionBuilder.build((RuleSetResult result) -> result.isAllPassOrSkip());
     // At least one PASS
     public static Condition ANY_PASS = ConditionBuilder.build((RuleSetResult result) -> result.isAnyPass());
-    // At least one PASS or SKIP
-    public static Condition ANY_PASS_OR_SKIP = ConditionBuilder.build((RuleSetResult result)
-            -> result.getCount(RuleExecutionStatus.PASS, RuleExecutionStatus.SKIPPED) > 0);
     // At least one SKIP
     public static Condition ANY_SKIP = ConditionBuilder.build((RuleSetResult result) -> result.isAnySkip());
     // At least one FAIL

@@ -24,8 +24,8 @@ import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.condition.Condition;
 import org.algorithmx.rulii.core.context.RuleContext;
-import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleResult;
+import org.algorithmx.rulii.core.rule.RuleResultExtractor;
 import org.algorithmx.rulii.event.EventType;
 import org.algorithmx.rulii.event.ExecutionEvent;
 import org.algorithmx.rulii.event.RuleSetExecution;
@@ -92,11 +92,15 @@ public class RulingFamily implements RuleSet {
                 try {
                     // Run the rule/action
                     Object executionResult = runnable.run(context);
-                    // Add the results for Rule/RuleSets
-                    if (runnable instanceof Rule) {
-                        result.add((RuleResult) executionResult);
-                    } else if (runnable instanceof RuleSet) {
-                        result.addAll((RuleSetResult) executionResult);
+
+                    if (executionResult instanceof RuleResult) {
+                        ((RuleResult) executionResult).setParentName(this.getName());
+                    }
+
+                    // Add the results if avail
+                    if (runnable instanceof RuleResultExtractor) {
+                        RuleResult[] results = ((RuleResultExtractor) executionResult).extract();
+                        if (results != null) result.addAll();
                     }
 
                     index++;
