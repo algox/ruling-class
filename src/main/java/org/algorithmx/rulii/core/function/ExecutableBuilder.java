@@ -18,12 +18,12 @@
 
 package org.algorithmx.rulii.core.function;
 
+import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.LambdaUtils;
-import org.algorithmx.rulii.util.SystemDefaultsHolder;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -117,8 +117,7 @@ public abstract class ExecutableBuilder {
     }
 
     private static Method getImplementationMethod(Class<?> c, Method candidate) {
-        return SystemDefaultsHolder.getInstance().getDefaults()
-                .getMethodResolver().getImplementationMethod(c, candidate);
+        return RuliiSystem.getInstance().getMethodResolver().getImplementationMethod(c, candidate);
     }
 
     protected static class MethodInfo {

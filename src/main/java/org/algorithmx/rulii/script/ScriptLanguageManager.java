@@ -29,6 +29,8 @@ import java.util.TreeMap;
 
 public final class ScriptLanguageManager {
 
+    public static final String JAVASCRIPT = "ECMAScript";
+
     private static final Map<String, ScriptProcessor> registeredScriptProcessors = new TreeMap<>();
 
     static {

@@ -19,6 +19,7 @@
 package org.algorithmx.rulii.core.condition;
 
 import org.algorithmx.rulii.bind.ScopedBindings;
+import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.function.BiFunction;
@@ -39,7 +40,6 @@ import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
-import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
@@ -71,7 +71,7 @@ public class ConditionBuilder extends ExecutableBuilder {
 
     public static Condition[] build(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
+        ObjectFactory objectFactory = RuliiSystem.getInstance().getObjectFactory();
         return build(clazz, objectFactory);
     }
 
@@ -157,26 +157,26 @@ public class ConditionBuilder extends ExecutableBuilder {
     }
 
     public static Condition build(String script, String scriptingLanguage) {
-        return with((RuleContext context) -> processScriptCondition(script, scriptingLanguage,
-                context.getBindings()))
-                .build();
+        return with((RuleContext context) -> {
+            ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(scriptingLanguage);
+
+            if (scriptProcessor == null) {
+                throw new UnrulyException("Unable to execute script condition [" + script + "]. " +
+                        "Could not find scripting language [" + scriptingLanguage
+                        + "]. Trying registering in ScriptLanguageManager and try again.");
+            }
+
+            return processScriptCondition(script, scriptProcessor, context.getBindings());
+        }).build();
     }
 
     public static Condition build(String script) {
-        return with((RuleContext context) -> processScriptCondition(script, context.getScriptingLanguage(),
+        return with((RuleContext context) -> processScriptCondition(script, context.getScriptingProcessor(),
                 context.getBindings()))
                 .build();
     }
 
-    private static Boolean processScriptCondition(String script, String language, ScopedBindings bindings) {
-        ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(language);
-
-        if (scriptProcessor == null) {
-            throw new UnrulyException("Unable to execute script condition [" + script + "]. " +
-                    "Could not find a scripting language [" + language
-                    + "]. Trying registering in ScriptLanguageManager and try again.");
-        }
-
+    private static Boolean processScriptCondition(String script, ScriptProcessor scriptProcessor, ScopedBindings bindings) {
         Object result = scriptProcessor.evaluate(script, bindings);
 
         if (result == null) throw new UnrulyException("Script Condition excepts a boolean return type. " +

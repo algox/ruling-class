@@ -18,7 +18,8 @@
 
 package org.algorithmx.rulii.core.action;
 
-import org.algorithmx.rulii.bind.ScopedBindings;
+import org.algorithmx.rulii.bind.Bindings;
+import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.function.ExecutableBuilder;
@@ -28,7 +29,6 @@ import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
-import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
@@ -67,22 +67,24 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action build(String script, String scriptLanguage) {
-        return with((RuleContext context) -> processScriptAction(script, scriptLanguage, context.getBindings())).build();
+        return with((RuleContext context) -> {
+            ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(scriptLanguage);
+
+            if (scriptProcessor == null) {
+                throw new UnrulyException("Unable to execute script action [" + script + "]. " +
+                        "Could not find scripting language [" + scriptLanguage
+                        + "]. Trying registering in ScriptLanguageManager and try again.");
+            }
+
+            processScriptAction(script, scriptProcessor, context.getBindings());
+        }).build();
     }
 
     public static Action build(String script) {
-        return with((RuleContext context) -> processScriptAction(script, context.getScriptingLanguage(), context.getBindings())).build();
+        return with((RuleContext context) -> processScriptAction(script, context.getScriptingProcessor(), context.getBindings())).build();
     }
 
-    private static void processScriptAction(String script, String language, ScopedBindings bindings) {
-        ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(language);
-
-        if (scriptProcessor == null) {
-            throw new UnrulyException("Unable to execute script action [" + script + "]. " +
-                    "Could not find a scripting language [" + language
-                    + "]. Trying registering in ScriptLanguageManager and try again.");
-        }
-
+    private static void processScriptAction(String script, ScriptProcessor scriptProcessor, Bindings bindings) {
         scriptProcessor.evaluate(script, bindings);
     }
 
@@ -92,7 +94,7 @@ public final class ActionBuilder extends ExecutableBuilder {
 
     public static Action[] build(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
+        ObjectFactory objectFactory = RuliiSystem.getInstance().getObjectFactory();
         return build(clazz, objectFactory);
     }
 

@@ -56,7 +56,7 @@ public class RuleContext {
     private final MessageFormatter messageFormatter;
     private final ObjectFactory objectFactory;
     private final ConverterRegistry registry;
-    private final String scriptingLanguage;
+    private final ScriptProcessor scriptProcessor;
     private final EventProcessor eventProcessor;
     private final Clock clock;
 
@@ -64,7 +64,7 @@ public class RuleContext {
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,
                        EventProcessor eventProcessor, ConverterRegistry registry,
-                       String scriptingLanguage, Clock clock) {
+                       ScriptProcessor scriptProcessor, Clock clock) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(locale, "locale cannot be null.");
@@ -74,6 +74,8 @@ public class RuleContext {
         Assert.notNull(messageResolver, "messageResolver cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         Assert.notNull(registry, "registry cannot be null.");
+        Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
+        Assert.notNull(clock, "clock cannot be null.");
         this.bindings = bindings;
         this.locale = locale;
         this.matchingStrategy = matchingStrategy;
@@ -83,7 +85,7 @@ public class RuleContext {
         this.objectFactory = objectFactory;
         this.eventProcessor = eventProcessor;
         this.registry = registry;
-        this.scriptingLanguage = scriptingLanguage;
+        this.scriptProcessor = scriptProcessor;
         this.clock = clock;
     }
 
@@ -160,8 +162,8 @@ public class RuleContext {
         return locale;
     }
 
-    public String getScriptingLanguage() {
-        return scriptingLanguage;
+    public ScriptProcessor getScriptingProcessor() {
+        return scriptProcessor;
     }
 
     public EventProcessor getEventProcessor() {

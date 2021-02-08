@@ -25,8 +25,6 @@ import javax.script.ScriptEngine;
 
 public interface ScriptProcessor {
 
-    String JAVASCRIPT = "ECMAScript";
-
     ScriptContext createContext(Bindings bindings);
 
     Object evaluate(String script, Bindings bindings) throws EvaluationException;

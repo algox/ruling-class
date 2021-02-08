@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.core.ruleset;
 
+import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.action.Action;
 import org.algorithmx.rulii.core.condition.Condition;
@@ -25,7 +26,6 @@ import org.algorithmx.rulii.core.model.Definition;
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.RuleUtils;
-import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class RuleSetBuilder {
 
     public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass) {
         Assert.notNull(ruleSetClass, "ruleSetClass cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
+        ObjectFactory objectFactory = RuliiSystem.getInstance().getObjectFactory();
         return with(ruleSetClass, objectFactory);
     }
 

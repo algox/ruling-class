@@ -42,7 +42,7 @@ public class NashornScriptProcessorTest {
 
     @Test
     public void test1() {
-        ScriptProcessor processor = ScriptLanguageManager.getScriptProcessor(ScriptProcessor.JAVASCRIPT);
+        ScriptProcessor processor = ScriptLanguageManager.getScriptProcessor(ScriptLanguageManager.JAVASCRIPT);
 
         Bindings bindings = Bindings.create()
                 .bind("a", "xxx")
@@ -75,7 +75,7 @@ public class NashornScriptProcessorTest {
         RuleContext context = RuleContextBuilder.build(bindings);
         Rule rule = RuleBuilder
                         .name("TestRule")
-                        .given(ConditionBuilder.build("b >= 15", ScriptProcessor.JAVASCRIPT))
+                        .given(ConditionBuilder.build("b >= 15", ScriptLanguageManager.JAVASCRIPT))
                         .then(ActionBuilder.build("bindings.setValue('b', 20);"))
                         .otherwise(ActionBuilder.build("print('oh no')"))
                         .build();

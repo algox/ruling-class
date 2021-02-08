@@ -18,7 +18,8 @@
 
 package org.algorithmx.rulii.core.function;
 
-import org.algorithmx.rulii.bind.ScopedBindings;
+import org.algorithmx.rulii.bind.Bindings;
+import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.model.MethodDefinition;
@@ -27,7 +28,6 @@ import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
-import org.algorithmx.rulii.util.SystemDefaultsHolder;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
@@ -74,7 +74,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
 
     public static Function[] build(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
-        ObjectFactory objectFactory = SystemDefaultsHolder.getInstance().getDefaults().getObjectFactory();
+        ObjectFactory objectFactory = RuliiSystem.getInstance().getObjectFactory();
         return build(clazz, objectFactory);
     }
 
@@ -124,25 +124,27 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     public static <T> Function<T> build(String script, String scriptingLanguage) {
-        FunctionBuilder<T> builder = with((RuleContext context) -> processScriptFunction(script, scriptingLanguage,
-                context.getBindings()));
+        FunctionBuilder<T> builder = with((RuleContext context) -> {
+            ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(scriptingLanguage);
+
+            if (scriptProcessor == null) {
+                throw new UnrulyException("Unable to execute script function [" + script + "]. " +
+                        "Could not find scripting language [" + scriptingLanguage
+                        + "]. Trying registering in ScriptLanguageManager and try again.");
+            }
+
+            return processScriptFunction(script, scriptProcessor, context.getBindings());
+        });
         return builder.build();
     }
 
     public static <T> Function<T> build(String script) {
         FunctionBuilder<T> builder = with((RuleContext context) -> processScriptFunction(script,
-                context.getScriptingLanguage(), context.getBindings()));
+                context.getScriptingProcessor(), context.getBindings()));
         return builder.build();
     }
 
-    private static <T> T processScriptFunction(String script, String language, ScopedBindings bindings) {
-        ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(language);
-
-        if (scriptProcessor == null) {
-            throw new UnrulyException("Unable to execute script function [" + script + "]. " +
-                    "Could not find a scripting language [" + language + "]. Trying registering in ScriptLanguageManager and try again.");
-        }
-
+    private static <T> T processScriptFunction(String script, ScriptProcessor scriptProcessor, Bindings bindings) {
         Object value = scriptProcessor.evaluate(script, bindings);
 
         T result;
