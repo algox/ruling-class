@@ -38,14 +38,29 @@ public class DefaultScriptProcessor implements ScriptProcessor {
 
     @Override
     public ScriptContext createContext(Bindings bindings) {
+        Assert.notNull(bindings, "bindings cannot be null.");
         javax.script.Bindings scriptEngineBindings = translate(bindings);
         return createContext(scriptEngineBindings);
     }
 
     @Override
     public Object evaluate(String script, Bindings bindings) throws EvaluationException {
+        Assert.notNull(script, "script cannot be null.");
+        Assert.notNull(bindings, "bindings cannot be null.");
         ScriptContext context = createContext(bindings);
         return evaluate(script, context);
+    }
+
+    @Override
+    public boolean evaluateCondition(String script, Bindings bindings) throws EvaluationException {
+        Object result = evaluate(script, bindings);
+
+        if (!(result instanceof Boolean)) {
+            throw new EvaluationException(script, "Invalid Condition Script. ["
+                    + script + "] Condition must return a boolean. Result [" + result + "]");
+        }
+
+        return (Boolean) result;
     }
 
     @Override

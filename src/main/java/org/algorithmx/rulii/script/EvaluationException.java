@@ -24,6 +24,11 @@ public class EvaluationException extends UnrulyException {
 
     private String script;
 
+    public EvaluationException(String script, String message) {
+        super(message);
+        this.script = script;
+    }
+
     public EvaluationException(String script, String message, Throwable cause) {
         super(message, cause);
         this.script = script;

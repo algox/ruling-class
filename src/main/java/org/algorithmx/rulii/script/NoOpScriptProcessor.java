@@ -41,6 +41,11 @@ public class NoOpScriptProcessor implements ScriptProcessor {
     }
 
     @Override
+    public boolean evaluateCondition(String script, Bindings bindings) throws EvaluationException {
+        throw new UnrulyException("Unable to execute script [" + script + "]. Please supply a ScriptProcessor and try again.");
+    }
+
+    @Override
     public Object evaluate(String script, ScriptContext context) throws EvaluationException {
         throw new UnrulyException("Unable to execute script [" + script + "]. Please supply a ScriptProcessor and try again.");
     }
