@@ -56,8 +56,9 @@ public interface ObjectFactory {
      *
      * @param type desired type.
      * @param <T> generic Type.
+     * @param isUseCache use object cache.
      * @return new instance of Type.
      * @throws UnrulyException thrown in case we are unable to defaultObjectFactory the type at runtime.
      */
-    //<T> T create(Class<T> type) throws UnrulyException;
+    <T> T create(Class<T> type, boolean isUseCache) throws UnrulyException;
 }

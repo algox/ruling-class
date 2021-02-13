@@ -51,38 +51,39 @@ public class DefaultObjectFactory implements ObjectFactory {
 
     @Override
     public <T extends BindingMatchingStrategy> T createBindingMatchingStrategy(Class<T> type) throws UnrulyException {
-        return create(type);
+        return create(type, isUseCache());
     }
 
     @Override
     public <T> T createAction(Class<T> type) throws UnrulyException {
-        return create(type);
+        return create(type, isUseCache());
     }
 
     @Override
     public <T> T createCondition(Class<T> type) throws UnrulyException {
-        return create(type);
+        return create(type, isUseCache());
     }
 
     @Override
     public <T> T createFunction(Class<T> type) throws UnrulyException {
-        return create(type);
+        return create(type, isUseCache());
     }
 
     @Override
     public <T> T createRule(Class<T> type) throws UnrulyException {
-        return create(type);
+        return create(type, isUseCache());
     }
 
     @Override
     public <T> T createRuleSet(Class<T> type) throws UnrulyException {
-        return create(type);
+        return create(type, isUseCache());
     }
 
-    protected <T> T create(Class<T> type) {
+    @Override
+    public <T> T create(Class<T> type, boolean isUseCache) {
         Assert.notNull(type, "type cannot be null.");
 
-        if (isUseCache() && objectCache.containsKey(type)) return (T) objectCache.get(type);
+        if (isUseCache && objectCache.containsKey(type)) return (T) objectCache.get(type);
 
         // Create the object
         T result = createInternal(type);
@@ -105,7 +106,7 @@ public class DefaultObjectFactory implements ObjectFactory {
         }
 
         // Cache it
-        if (isUseCache()) objectCache.put(type, result);
+        if (isUseCache) objectCache.put(type, result);
 
         return result;
     }
