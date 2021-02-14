@@ -156,6 +156,7 @@
                 <version>${version.maven-javadoc-plugin}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <excludePackageNames>org.algorithmx.rulii.lib.*</excludePackageNames>
                 </configuration>
                 <executions>
                     <execution>

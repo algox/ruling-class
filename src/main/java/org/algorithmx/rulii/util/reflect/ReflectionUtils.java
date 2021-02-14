@@ -22,6 +22,7 @@ import org.algorithmx.rulii.bind.Binding;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.apache.ClassUtils;
 import org.algorithmx.rulii.lib.spring.core.ParameterNameDiscoverer;
+import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -29,7 +30,6 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Executable;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -157,20 +157,7 @@ public final class ReflectionUtils {
     public static boolean isAnnotated(Method method, Class<? extends Annotation> annotationClass) {
         Assert.notNull(method, "method cannot be null");
         Assert.notNull(annotationClass, "annotationClass cannot be null");
-
-        if (method.getAnnotation(annotationClass) != null) return true;
-
-        Annotation[] declaredAnnotations =  method.getDeclaredAnnotations();
-        boolean result = false;
-
-        for (Annotation annotation : declaredAnnotations) {
-            if (annotation.annotationType().getAnnotation(annotationClass) != null) {
-                result = true;
-                break;
-            }
-        }
-
-        return result;
+        return AnnotationUtils.getAnnotation(method, annotationClass) != null;
     }
 
     /**
@@ -182,34 +169,6 @@ public final class ReflectionUtils {
      */
     public static Method[] getMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         return getMethods(clazz, m -> isAnnotated(m, annotationClass));
-    }
-
-    /**
-     * Finds all the declared fields that have meet the given matcher.
-     *
-     * @param clazz working class.
-     * @param filter function to determine whether the given field matches the desired criteria.
-     * @return all the matching fields.
-     */
-    public static Field[] getDeclaredFields(Class<?> clazz, Predicate<Field> filter) {
-        Assert.notNull(clazz, "clazz cannot be null");
-        Assert.notNull(filter, "filter cannot be null");
-
-        Class<?> targetClass = clazz;
-        List<Field> result = new ArrayList<>();
-
-        do {
-            for (Field field : targetClass.getDeclaredFields()) {
-                if (filter.test(field)) {
-                    result.add(field);
-                }
-            }
-
-            targetClass = targetClass.getSuperclass();
-
-        } while (targetClass != null && !Object.class.equals(targetClass));
-
-        return result.toArray(new Field[result.size()]);
     }
 
     /**
@@ -248,19 +207,11 @@ public final class ReflectionUtils {
         Assert.notNull(clazz, "clazz cannot be null.");
         Assert.notNull(clazz, "annotationClazz cannot be null.");
 
-        Class<?> targetClass = clazz;
         List<Method> result = new ArrayList<>();
 
-        do {
-            for (Method method : targetClass.getDeclaredMethods()) {
-                if (filter.test(method)) {
-                    result.add(method);
-                }
-            }
-
-            targetClass = targetClass.getSuperclass();
-
-        } while (targetClass != null && !Object.class.equals(targetClass));
+        org.algorithmx.rulii.lib.spring.util.ReflectionUtils.doWithMethods(clazz, m -> {
+            if (filter.test(m)) result.add(m);
+        });
 
         return result;
     }
