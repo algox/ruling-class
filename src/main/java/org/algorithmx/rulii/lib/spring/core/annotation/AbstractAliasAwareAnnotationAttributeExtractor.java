@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,14 +16,13 @@
 
 package org.algorithmx.rulii.lib.spring.core.annotation;
 
+import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.ObjectUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-
-import org.algorithmx.rulii.lib.spring.lang.Nullable;
-import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.lib.spring.util.ObjectUtils;
 
 /**
  * Abstract base class for {@link AnnotationAttributeExtractor} implementations
@@ -41,7 +40,6 @@ abstract class AbstractAliasAwareAnnotationAttributeExtractor<S> implements Anno
 
 	private final Class<? extends Annotation> annotationType;
 
-	@Nullable
 	private final Object annotatedElement;
 
 	private final S source;
@@ -49,8 +47,15 @@ abstract class AbstractAliasAwareAnnotationAttributeExtractor<S> implements Anno
 	private final Map<String, List<String>> attributeAliasMap;
 
 
+	/**
+	 * Construct a new {@code AbstractAliasAwareAnnotationAttributeExtractor}.
+	 * @param annotationType the annotation type to synthesize; never {@code null}
+	 * @param annotatedElement the element that is annotated with the annotation
+	 * of the supplied type; may be {@code null} if unknown
+	 * @param source the underlying source of annotation attributes; never {@code null}
+	 */
 	AbstractAliasAwareAnnotationAttributeExtractor(
-			Class<? extends Annotation> annotationType, @Nullable Object annotatedElement, S source) {
+			Class<? extends Annotation> annotationType, Object annotatedElement, S source) {
 
 		Assert.notNull(annotationType, "annotationType must not be null");
 		Assert.notNull(source, "source must not be null");
@@ -67,7 +72,6 @@ abstract class AbstractAliasAwareAnnotationAttributeExtractor<S> implements Anno
 	}
 
 	@Override
-	@Nullable
 	public final Object getAnnotatedElement() {
 		return this.annotatedElement;
 	}
@@ -78,7 +82,6 @@ abstract class AbstractAliasAwareAnnotationAttributeExtractor<S> implements Anno
 	}
 
 	@Override
-	@Nullable
 	public final Object getAttributeValue(Method attributeMethod) {
 		String attributeName = attributeMethod.getName();
 		Object attributeValue = getRawAttributeValue(attributeMethod);
@@ -112,10 +115,18 @@ abstract class AbstractAliasAwareAnnotationAttributeExtractor<S> implements Anno
 	}
 
 
-	@Nullable
+	/**
+	 * Get the raw, unmodified attribute value from the underlying
+	 * {@linkplain #getSource source} that corresponds to the supplied
+	 * attribute method.
+	 */
 	protected abstract Object getRawAttributeValue(Method attributeMethod);
 
-	@Nullable
+	/**
+	 * Get the raw, unmodified attribute value from the underlying
+	 * {@linkplain #getSource source} that corresponds to the supplied
+	 * attribute name.
+	 */
 	protected abstract Object getRawAttributeValue(String attributeName);
 
 }

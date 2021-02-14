@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -186,12 +186,27 @@ import java.lang.annotation.Target;
 @Documented
 public @interface AliasFor {
 
+	/**
+	 * Alias for {@link #attribute}.
+	 * <p>Intended to be used instead of {@link #attribute} when {@link #annotation}
+	 * is not declared &mdash; for example: {@code @AliasFor("value")} instead of
+	 * {@code @AliasFor(attribute = "value")}.
+	 */
 	@AliasFor("attribute")
 	String value() default "";
 
+	/**
+	 * The name of the attribute that <em>this</em> attribute is an alias for.
+	 * @see #value
+	 */
 	@AliasFor("value")
 	String attribute() default "";
 
+	/**
+	 * The type of annotation in which the aliased {@link #attribute} is declared.
+	 * <p>Defaults to {@link Annotation}, implying that the aliased attribute is
+	 * declared in the same annotation as <em>this</em> attribute.
+	 */
 	Class<? extends Annotation> annotation() default Annotation.class;
 
 }

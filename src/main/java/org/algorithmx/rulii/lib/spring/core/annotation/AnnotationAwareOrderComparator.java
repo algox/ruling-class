@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,20 +16,19 @@
 
 package org.algorithmx.rulii.lib.spring.core.annotation;
 
+import org.algorithmx.rulii.lib.spring.core.DecoratingProxy;
+import org.algorithmx.rulii.lib.spring.core.OrderComparator;
+
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import org.algorithmx.rulii.lib.spring.core.DecoratingProxy;
-import org.algorithmx.rulii.lib.spring.core.OrderComparator;
-import org.algorithmx.rulii.lib.spring.core.Ordered;
-import org.algorithmx.rulii.lib.spring.lang.Nullable;
 
 /**
  * {@code AnnotationAwareOrderComparator} is an extension of
  * {@link OrderComparator} that supports Spring's
- * {@link Ordered} interface as well as the
+ * {@link org.springframework.core.Ordered} interface as well as the
  * {@link Order @Order} and {@link javax.annotation.Priority @Priority}
  * annotations, with an order value provided by an {@code Ordered}
  * instance overriding a statically defined annotation value (if any).
@@ -41,8 +40,8 @@ import org.algorithmx.rulii.lib.spring.lang.Nullable;
  * @author Oliver Gierke
  * @author Stephane Nicoll
  * @since 2.0.1
- * @see Ordered
- * @see Order
+ * @see org.springframework.core.Ordered
+ * @see org.springframework.core.annotation.Order
  * @see javax.annotation.Priority
  */
 public class AnnotationAwareOrderComparator extends OrderComparator {
@@ -56,11 +55,10 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	/**
 	 * This implementation checks for {@link Order @Order} or
 	 * {@link javax.annotation.Priority @Priority} on various kinds of
-	 * elements, in addition to the {@link Ordered}
+	 * elements, in addition to the {@link org.springframework.core.Ordered}
 	 * check in the superclass.
 	 */
 	@Override
-	@Nullable
 	protected Integer findOrder(Object obj) {
 		// Check for regular Ordered interface
 		Integer order = super.findOrder(obj);
@@ -84,7 +82,7 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 				return ann.value();
 			}
 		}
-		else {
+		else if (obj != null) {
 			order = OrderUtils.getOrder(obj.getClass());
 			if (order == null && obj instanceof DecoratingProxy) {
 				order = OrderUtils.getOrder(((DecoratingProxy) obj).getDecoratedClass());
@@ -101,14 +99,16 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	 * multiple matches but only one object to be returned.
 	 */
 	@Override
-	@Nullable
 	public Integer getPriority(Object obj) {
+		Integer priority = null;
 		if (obj instanceof Class) {
-			return OrderUtils.getPriority((Class<?>) obj);
+			priority = OrderUtils.getPriority((Class<?>) obj);
 		}
-		Integer priority = OrderUtils.getPriority(obj.getClass());
-		if (priority == null && obj instanceof DecoratingProxy) {
-			priority = OrderUtils.getOrder(((DecoratingProxy) obj).getDecoratedClass());
+		else if (obj != null) {
+			priority = OrderUtils.getPriority(obj.getClass());
+			if (priority == null && obj instanceof DecoratingProxy) {
+				priority = OrderUtils.getPriority(((DecoratingProxy) obj).getDecoratedClass());
+			}
 		}
 		return priority;
 	}
@@ -119,11 +119,11 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	 * <p>Optimized to skip sorting for lists with size 0 or 1,
 	 * in order to avoid unnecessary array extraction.
 	 * @param list the List to sort
-	 * @see List#sort(java.util.Comparator)
+	 * @see Collections#sort(List, java.util.Comparator)
 	 */
 	public static void sort(List<?> list) {
 		if (list.size() > 1) {
-			list.sort(INSTANCE);
+			Collections.sort(list, INSTANCE);
 		}
 	}
 

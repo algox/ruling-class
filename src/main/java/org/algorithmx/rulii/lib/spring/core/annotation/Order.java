@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.algorithmx.rulii.lib.spring.core.OrderComparator;
 import org.algorithmx.rulii.lib.spring.core.Ordered;
 
 /**
@@ -43,20 +42,20 @@ import org.algorithmx.rulii.lib.spring.core.Ordered;
  *
  * <p>Since Spring 4.1, the standard {@link javax.annotation.Priority} annotation
  * can be used as a drop-in replacement for this annotation in ordering scenarios.
- * Note that {@code @Priority} may have additional semantics when a single element
+ * Note that {@code Priority} may have additional semantics when a single element
  * has to be picked (see {@link AnnotationAwareOrderComparator#getPriority}).
  *
  * <p>Alternatively, order values may also be determined on a per-instance basis
  * through the {@link Ordered} interface, allowing for configuration-determined
  * instance values instead of hard-coded values attached to a particular class.
  *
- * <p>Consult the javadoc for {@link OrderComparator
+ * <p>Consult the javadoc for {@link org.springframework.core.OrderComparator
  * OrderComparator} for details on the sort semantics for non-ordered objects.
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @since 2.0
- * @see Ordered
+ * @see org.springframework.core.Ordered
  * @see AnnotationAwareOrderComparator
  * @see OrderUtils
  * @see javax.annotation.Priority

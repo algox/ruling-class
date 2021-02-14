@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,9 @@
 
 package org.algorithmx.rulii.lib.spring.core.annotation;
 
-import java.lang.annotation.Annotation;
-
-import org.algorithmx.rulii.lib.spring.lang.Nullable;
 import org.algorithmx.rulii.lib.spring.util.ClassUtils;
+
+import java.lang.annotation.Annotation;
 
 /**
  * General utility for determining the order of an object based on its type declaration.
@@ -34,8 +33,7 @@ import org.algorithmx.rulii.lib.spring.util.ClassUtils;
 @SuppressWarnings("unchecked")
 public abstract class OrderUtils {
 
-	@Nullable
-	private static Class<? extends Annotation> priorityAnnotationType;
+	private static Class<? extends Annotation> priorityAnnotationType = null;
 
 	static {
 		try {
@@ -44,38 +42,9 @@ public abstract class OrderUtils {
 		}
 		catch (Throwable ex) {
 			// javax.annotation.Priority not available, or present but not loadable (on JDK 6)
-			priorityAnnotationType = null;
 		}
 	}
 
-
-	/**
-	 * Return the order on the specified {@code type}, or the specified
-	 * default value if none can be found.
-	 * <p>Takes care of {@link Order @Order} and {@code @javax.annotation.Priority}.
-	 * @param type the type to handle
-	 * @return the priority value, or the specified default order if none can be found
-	 * @since 5.0
-	 * @see #getPriority(Class)
-	 */
-	public static int getOrder(Class<?> type, int defaultOrder) {
-		Integer order = getOrder(type);
-		return (order != null ? order : defaultOrder);
-	}
-
-	/**
-	 * Return the order on the specified {@code type}, or the specified
-	 * default value if none can be found.
-	 * <p>Takes care of {@link Order @Order} and {@code @javax.annotation.Priority}.
-	 * @param type the type to handle
-	 * @return the priority value, or the specified default order if none can be found
-	 * @see #getPriority(Class)
-	 */
-	@Nullable
-	public static Integer getOrder(Class<?> type, @Nullable Integer defaultOrder) {
-		Integer order = getOrder(type);
-		return (order != null ? order : defaultOrder);
-	}
 
 	/**
 	 * Return the order on the specified {@code type}.
@@ -84,8 +53,19 @@ public abstract class OrderUtils {
 	 * @return the order value, or {@code null} if none can be found
 	 * @see #getPriority(Class)
 	 */
-	@Nullable
 	public static Integer getOrder(Class<?> type) {
+		return getOrder(type, null);
+	}
+
+	/**
+	 * Return the order on the specified {@code type}, or the specified
+	 * default value if none can be found.
+	 * <p>Takes care of {@link Order @Order} and {@code @javax.annotation.Priority}.
+	 * @param type the type to handle
+	 * @return the priority value, or the specified default order if none can be found
+	 * @see #getPriority(Class)
+	 */
+	public static Integer getOrder(Class<?> type, Integer defaultOrder) {
 		Order order = AnnotationUtils.findAnnotation(type, Order.class);
 		if (order != null) {
 			return order.value();
@@ -94,7 +74,7 @@ public abstract class OrderUtils {
 		if (priorityOrder != null) {
 			return priorityOrder;
 		}
-		return null;
+		return defaultOrder;
 	}
 
 	/**
@@ -103,7 +83,6 @@ public abstract class OrderUtils {
 	 * @param type the type to handle
 	 * @return the priority value if the annotation is declared, or {@code null} if none
 	 */
-	@Nullable
 	public static Integer getPriority(Class<?> type) {
 		if (priorityAnnotationType != null) {
 			Annotation priority = AnnotationUtils.findAnnotation(type, priorityAnnotationType);

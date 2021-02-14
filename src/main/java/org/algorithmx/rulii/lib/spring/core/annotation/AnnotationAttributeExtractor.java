@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,6 @@ package org.algorithmx.rulii.lib.spring.core.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-
-import org.algorithmx.rulii.lib.spring.lang.Nullable;
 
 /**
  * An {@code AnnotationAttributeExtractor} is responsible for
@@ -45,7 +43,6 @@ interface AnnotationAttributeExtractor<S> {
 	 * type supported by this extractor.
 	 * @return the annotated element, or {@code null} if unknown
 	 */
-	@Nullable
 	Object getAnnotatedElement();
 
 	/**
@@ -60,7 +57,6 @@ interface AnnotationAttributeExtractor<S> {
 	 * supported by this extractor
 	 * @return the value of the annotation attribute
 	 */
-	@Nullable
 	Object getAttributeValue(Method attributeMethod);
 
 }

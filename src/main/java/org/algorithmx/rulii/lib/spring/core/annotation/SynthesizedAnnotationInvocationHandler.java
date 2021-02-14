@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,11 @@
 
 package org.algorithmx.rulii.lib.spring.core.annotation;
 
+import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.ObjectUtils;
+import org.algorithmx.rulii.lib.spring.util.ReflectionUtils;
+import org.algorithmx.rulii.lib.spring.util.StringUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationHandler;
@@ -24,11 +29,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.lib.spring.util.ObjectUtils;
-import org.algorithmx.rulii.lib.spring.util.ReflectionUtils;
-import org.algorithmx.rulii.lib.spring.util.StringUtils;
 
 /**
  * {@link InvocationHandler} for an {@link Annotation} that Spring has
@@ -45,7 +45,7 @@ class SynthesizedAnnotationInvocationHandler implements InvocationHandler {
 
 	private final AnnotationAttributeExtractor<?> attributeExtractor;
 
-	private final Map<String, Object> valueCache = new ConcurrentHashMap<>(8);
+	private final Map<String, Object> valueCache = new ConcurrentHashMap<String, Object>(8);
 
 
 	/**

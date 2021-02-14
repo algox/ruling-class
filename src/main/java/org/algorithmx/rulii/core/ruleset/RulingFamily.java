@@ -30,6 +30,7 @@ import org.algorithmx.rulii.event.EventType;
 import org.algorithmx.rulii.event.ExecutionEvent;
 import org.algorithmx.rulii.event.RuleSetExecution;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.util.RuleUtils;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ public class RulingFamily implements RuleSet {
 
     private final RuleSetDefinition ruleSetDefinition;
     private final Runnable[] ruleSetItems;
-
+    private final Runnable[] combinedRuleSetItems;
     private final RuleSet parent;
     private final Condition preCondition;
     private final Condition stopCondition;
@@ -57,6 +58,7 @@ public class RulingFamily implements RuleSet {
         this.ruleSetDefinition = ruleSetDefinition;
         this.ruleSetItems = ruleSetItems != null ? ruleSetItems : new Runnable[0];
         this.parent = parent;
+        this.combinedRuleSetItems = combine(ruleSetItems, parent);
         this.preCondition = preCondition;
         this.stopCondition = stopCondition;
         Assert.notNullArray(ruleSetItems, "ruleSetItems");
@@ -232,21 +234,45 @@ public class RulingFamily implements RuleSet {
 
     @Override
     public Runnable[] getRuleSetItems() {
-        if (getParent() == null || getParent().getRuleSetItems().length == 0) return ruleSetItems;
-        Runnable[] result = new Runnable[getParent().getRuleSetItems().length + ruleSetItems.length];
-        System.arraycopy(getParent().getRuleSetItems(), 0, result, 0, getParent().getRuleSetItems().length);
-        System.arraycopy(ruleSetItems, 0, result, getParent().getRuleSetItems().length, ruleSetItems.length);
+        return combinedRuleSetItems;
+    }
+
+    private static Runnable[] combine(Runnable[] ruleSetItems, RuleSet parent) {
+        if (parent == null || parent.getRuleSetItems().length == 0) return ruleSetItems;
+        Runnable[] result = new Runnable[parent.getRuleSetItems().length + ruleSetItems.length];
+        System.arraycopy(parent.getRuleSetItems(), 0, result, 0, parent.getRuleSetItems().length);
+        System.arraycopy(ruleSetItems, 0, result, parent.getRuleSetItems().length, ruleSetItems.length);
         return result;
+    }
+
+    protected String prettyPrint() {
+        StringBuilder result = new StringBuilder();
+
+        result.append("RuleSet : " + getName());
+        result.append(System.lineSeparator());
+        result.append(RuleUtils.TAB);
+        result.append("Parent : " + (getParent() != null ? getParent().getName() : "none"));
+        result.append(System.lineSeparator());
+        result.append(RuleUtils.TAB);
+        result.append("PreCondition : " + (getPreCondition() != null ? "Y" : "N"));
+        result.append(System.lineSeparator());
+        result.append(RuleUtils.TAB);
+        result.append("StopCondition : " + (getStopCondition() != null ? "Y" : "N"));
+        result.append(System.lineSeparator());
+        result.append(RuleUtils.TAB);
+        result.append("Items");
+        result.append(System.lineSeparator());
+        for (Runnable runnable : getRuleSetItems()) {
+            result.append(RuleUtils.TAB);
+            result.append(RuleUtils.TAB);
+            result.append(runnable);
+            result.append(System.lineSeparator());
+        }
+        return result.toString();
     }
 
     @Override
     public String toString() {
-        return "RuleSet{" +
-                "ruleSetDefinition=" + ruleSetDefinition +
-                ", ruleSetItems=" + Arrays.toString(ruleSetItems) +
-                ", parent=" + parent +
-                ", preCondition=" + preCondition +
-                ", stopCondition=" + stopCondition +
-                '}';
+        return prettyPrint();
     }
 }
