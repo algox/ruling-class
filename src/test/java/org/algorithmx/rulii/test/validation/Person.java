@@ -19,6 +19,7 @@
 package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class Person implements Identifiable {
         return id;
     }
 
-    public String getFirstName() {
+    public @NotNull String getFirstName() {
         return firstName;
     }
 
@@ -91,6 +92,10 @@ public class Person implements Identifiable {
     public void add(@NotNull Car car) {
         if (this.cars == null) this.cars = new ArrayList<>();
         this.cars.add(car);
+    }
+
+    public void setAttributes(Map<@NotEmpty String, Object> attributes) {
+        this.attributes = attributes;
     }
 
     @Override

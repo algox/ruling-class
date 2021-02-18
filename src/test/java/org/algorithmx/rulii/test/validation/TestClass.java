@@ -38,7 +38,7 @@ public class TestClass extends BaseClass {
     }
 
     @Annotation5
-    public BigDecimal getField4() {
+    public @NotNull BigDecimal getField4() {
         return field4;
     }
 }

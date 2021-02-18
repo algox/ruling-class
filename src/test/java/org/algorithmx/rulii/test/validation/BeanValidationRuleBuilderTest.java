@@ -16,18 +16,10 @@ public class BeanValidationRuleBuilderTest {
 
     @Test
     public void test1() {
-        BeanValidationRules rules = BeanValidationRuleBuilder.with(Person.class).build();
+        BeanValidationRules rules = BeanValidationRuleBuilder.with(Person.class)
+                //.loadAnnotatedFields()
+                .loadAnnotatedMethods()
+                .build();
         System.err.println(rules);
-    }
-
-    @Test
-    public void test3() throws Exception {
-        Field field = TestClass.class.getField("field1");
-        ValidationRuleAnnotationTraverser traverser = new ValidationRuleAnnotationTraverser();
-        Annotation[] annotations = traverser.traverse(field);
-
-        for (Annotation annotation : annotations) {
-            System.err.println(annotation);
-        }
     }
 }

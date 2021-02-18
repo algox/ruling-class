@@ -22,7 +22,7 @@ public class ValidationRuleAnnotationTraverser {
         return traverse(element, AnnotationUtils.getAnnotations(element));
     }
 
-    public Annotation[] traverse(AnnotatedElement element, Annotation[] annotations) {
+    protected Annotation[] traverse(AnnotatedElement element, Annotation[] annotations) {
         try {
             return traverseInternal(element, annotations);
         } catch (ClassNotFoundException e) {
