@@ -91,8 +91,8 @@ public class DecimalMaxValidationRule extends BindingValidationRule {
     }
 
     @Otherwise
-    public void otherwise(RuleContext context, Object value,
-                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+        Object value = getBindingValue(context);
         RuleViolationBuilder builder = createRuleViolationBuilder()
                 .param("bindingName", getBindingName())
                 .param(getBindingName(), value)

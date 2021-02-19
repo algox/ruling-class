@@ -190,7 +190,7 @@ public class RuleViolations implements Iterable<RuleViolation> {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Violations [");
-        errors.stream().forEach(error -> result.append(error.toString()));
+        errors.stream().forEach(error -> result.append(error.toString() + System.lineSeparator()));
         result.append("]");
         return result.toString();
     }

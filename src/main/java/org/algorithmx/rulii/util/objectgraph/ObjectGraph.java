@@ -4,16 +4,10 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.ReflectionUtils;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -26,20 +20,11 @@ public class ObjectGraph {
                     || clazz.getPackage().getName().startsWith("javax.");
 
 
-    private final static Map<Class<?>, ClassFields> classCache = new HashMap<>();
-
     private final Map<Object, Class<?>> breadCrumbs = new IdentityHashMap<>();
     private final Deque<Object> candidates = new ArrayDeque<>();
 
-    private final boolean ordered;
-
     public ObjectGraph() {
-        this(false);
-    }
-
-    public ObjectGraph(boolean ordered) {
         super();
-        this.ordered = ordered;
     }
 
     public void traverse(Object target, ObjectVisitor visitor) throws ObjectGraphTraversalException {
@@ -64,16 +49,10 @@ public class ObjectGraph {
 
     private void traverseObject(Object target, ObjectVisitor visitor) throws IllegalAccessException {
         if (target == null) return;
+        boolean introspectObject = visitor.visitObjectStart(target);
+        if (introspectObject) processFields(target, visitor);
+        visitor.visitObjectEnd(target);
 
-        try {
-            boolean introspectObject = visitor.visitObjectStart(target);
-
-            if (introspectObject) {
-                processFields(target, visitor);
-            }
-        } finally {
-            visitor.visitObjectEnd(target);
-        }
     }
 
     private void addCandidate(Object candidate, ObjectVisitor visitor) {
@@ -152,25 +131,12 @@ public class ObjectGraph {
         }
     }
 
-    private void processFields(Object target, ObjectVisitor visitor) throws IllegalAccessException {
+    private void processFields(Object target, ObjectVisitor visitor) {
 
-        ClassFields classFields = classCache.get(target);
+        ReflectionUtils.doWithFields(target.getClass(), field -> {
+            // Check to see if we need to process this field.
+            if (!visitor.isCandidate(field)) return;
 
-        if (classFields == null) {
-            List<Field> candidateFields = new ArrayList<>();
-
-            ReflectionUtils.doWithFields(target.getClass(), field -> {
-                if (visitor.isCandidate(field)) {
-                    candidateFields.add(field);
-                }
-            });
-
-            classFields = new ClassFields(candidateFields.toArray(new Field[candidateFields.size()]), isOrdered());
-            classCache.put(target.getClass(), classFields);
-        }
-
-        for (Field field : classFields.fields) {
-            //field.setAccessible(true);
             ReflectionUtils.makeAccessible(field);
             Object value = field.get(target);
             boolean introspectField = false;
@@ -180,7 +146,18 @@ public class ObjectGraph {
             } else if (value instanceof Collection) {
                 introspectField = visitor.visitCollection(field, (Collection) value, target);
             } else if (value instanceof Map) {
-                introspectField = visitor.visitMap(field, (Map) value, target);
+                Map map = (Map) value;
+                introspectField = visitor.visitMap(field, map, target);
+
+                if (introspectField) {
+                    boolean introspectMapKeys = visitor.visitMapKeys(field, map.keySet(), target);
+                    if (introspectMapKeys) addCandidate(map.keySet(), visitor);
+                    boolean introspectMapValues = visitor.visitMapValues(field, map.values(), target);
+                    if (introspectMapValues) addCandidate(map.values(), visitor);
+                }
+
+                // So we dont add the map itself
+                introspectField = false;
             } else if (value.getClass().isArray()) {
                 introspectField = visitor.visitArray(field, value, target);
             } else {
@@ -188,20 +165,6 @@ public class ObjectGraph {
             }
 
             if (introspectField) addCandidate(value, visitor);
-        }
-    }
-
-    public boolean isOrdered() {
-        return ordered;
-    }
-
-    private static class ClassFields {
-        private Field[] fields;
-
-        private ClassFields(Field[] fields, boolean sorted) {
-            super();
-            if (fields != null && sorted) Arrays.sort(fields, Comparator.comparing(Field::getName));
-            this.fields = fields;
-        }
+        });
     }
 }

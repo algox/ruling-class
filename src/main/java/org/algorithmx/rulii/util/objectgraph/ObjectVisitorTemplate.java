@@ -1,6 +1,5 @@
 package org.algorithmx.rulii.util.objectgraph;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,30 +11,25 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
 
     private final Predicate<Class<?>> classFilter;
     private final Predicate<Field> fieldFilter;
-    private final Predicate<PropertyDescriptor> propertyFilter;
 
     public ObjectVisitorTemplate() {
         this.classFilter = null;
         this.fieldFilter = null;
-        this.propertyFilter = null;
     }
 
-    protected ObjectVisitorTemplate(Predicate<Field> fieldFilter, Predicate<PropertyDescriptor> propertyFilter,
-                                    Class<?>...ignoredClasses) {
+    protected ObjectVisitorTemplate(Predicate<Field> fieldFilter, Class<?>...ignoredClasses) {
         this(c -> {
             Set<Class<?>> ignoredClassSet = new HashSet<>(ignoredClasses != null
                     ? Arrays.asList(ignoredClasses)
                     : new ArrayList<>());
             return ignoredClassSet.contains(c);
-        }, fieldFilter, propertyFilter);
+        }, fieldFilter);
     }
 
-    protected ObjectVisitorTemplate(Predicate<Class<?>> classFilter, Predicate<Field> fieldFilter,
-                                    Predicate<PropertyDescriptor> propertyFilter) {
+    protected ObjectVisitorTemplate(Predicate<Class<?>> classFilter, Predicate<Field> fieldFilter) {
         super();
         this.classFilter = classFilter;
         this.fieldFilter = fieldFilter;
-        this.propertyFilter = propertyFilter;
     }
 
     @Override

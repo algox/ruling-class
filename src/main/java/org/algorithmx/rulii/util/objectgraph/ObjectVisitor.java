@@ -3,6 +3,7 @@ package org.algorithmx.rulii.util.objectgraph;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 public interface ObjectVisitor {
 
@@ -22,7 +23,11 @@ public interface ObjectVisitor {
 
     default boolean visitCollection(Field field, Collection<?> values, Object parent) { return true; }
 
-    default boolean visitMap(Field field, Map<?, ?> values, Object parent) { return true; }
+    default boolean visitMap(Field field, Map<?, ?> map, Object parent) { return true; }
+
+    default boolean visitMapKeys(Field field, Set<?> keys, Object parent) { return true; }
+
+    default boolean visitMapValues(Field field, Collection<?> keys, Object parent) { return true; }
 
     default void traversalComplete() {}
 }

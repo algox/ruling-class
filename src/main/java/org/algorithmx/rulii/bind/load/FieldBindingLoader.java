@@ -22,11 +22,13 @@ import org.algorithmx.rulii.bind.BindingBuilder;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -99,28 +101,27 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
         Assert.notNull(bean, "bean cannot be null.");
 
         Class<?> type = bean.getClass();
+        Set<String> names = new HashSet<>();
 
-        do {
-            Field[] fields = getDeclaredFields(type);
+        ReflectionUtils.doWithFields(type, field -> {
+            if (filter != null && !filter.test(field)) return;
+            String bindingName = nameGenerator != null ? nameGenerator.apply(field) : field.getName();
+            if (names.contains(bindingName)) return;
 
-            for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers())) continue;
-                if (filter != null && !filter.test(field)) continue;
-                try {
-                    Object value = field.get(bean);
-                    String bindingName = nameGenerator != null ? nameGenerator.apply(field) : field.getName();
-                    bindings.bind(BindingBuilder.with(bindingName)
-                            .type(field.getGenericType())
-                            .value(value).build());
-                } catch (IllegalAccessException e) {
-                    // Couldn't get the value
-                    throw new UnrulyException("Error trying to retrieve field [" + field.getName()
-                            + "] on Bean class [" + bean.getClass() + "]", e);
-                }
+            try {
+                ReflectionUtils.makeAccessible(field);
+                Object value = field.get(bean);
+                bindings.bind(BindingBuilder.with(bindingName)
+                        .type(field.getGenericType())
+                        .value(value)
+                        .build());
+                names.add(bindingName);
+            } catch (IllegalAccessException e) {
+                // Couldn't get the value
+                throw new UnrulyException("Error trying to retrieve field [" + field.getName()
+                        + "] on Bean class [" + bean.getClass() + "]", e);
             }
-
-            type = type.getSuperclass();
-        } while (type != null && !Object.class.equals(type));
+        });
     }
 
     private static Field[] getDeclaredFields(Class<?> type) {

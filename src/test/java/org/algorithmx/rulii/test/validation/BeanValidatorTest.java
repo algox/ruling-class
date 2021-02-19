@@ -16,21 +16,29 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.beans;
+package org.algorithmx.rulii.test.validation;
 
-import org.algorithmx.rulii.bind.Bindings;
-import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.validation.RuleViolations;
+import org.algorithmx.rulii.validation.beans.BeanValidator;
+import org.junit.Test;
 
-public interface BeanValidator {
+import java.math.BigDecimal;
 
-    static BeanValidator create() {
-        return new DefaultBeanValidator();
+public class BeanValidatorTest {
+
+    public BeanValidatorTest() {
+        super();
     }
 
-    default RuleViolations validate(Object bean) {
-        return validate(bean, null, true, null);
+    @Test
+    public void test1() {
+        BeanValidator validator = BeanValidator.create();
+        TestClass testClass = new TestClass();
+        testClass.setField1("Hello World!");
+        testClass.setField2("");
+        testClass.setField3(-100.00);
+        testClass.setField4(new BigDecimal("100000.00"));
+        RuleViolations violations = validator.validate(testClass);
+        System.err.println(violations);
     }
-
-    RuleViolations validate(Object bean, Bindings bindings, boolean includeAnnotatedRules, RuleSet ruleSet);
 }

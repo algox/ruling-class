@@ -23,7 +23,7 @@ public abstract class BindingValidationRule extends ValidationRule {
 
     @Given
     public boolean isValid(RuleContext context) {
-        Object result = context.getBindings().contains(bindingName) ? context.getBindings().getValue(bindingName) : null;
+        Object result = getBindingValue(context);
         return isValid(context, result);
     }
 
@@ -31,6 +31,10 @@ public abstract class BindingValidationRule extends ValidationRule {
 
     public String getBindingName() {
         return bindingName;
+    }
+
+    public Object getBindingValue(RuleContext context) {
+        return context.getBindings().contains(getBindingName()) ? context.getBindings().getValue(getBindingName()) : null;
     }
 
     public abstract Class<?>[] getSupportedTypes();
