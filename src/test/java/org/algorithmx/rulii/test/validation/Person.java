@@ -19,6 +19,7 @@
 package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.validation.annotation.Validate;
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
@@ -37,10 +38,11 @@ public class Person implements Identifiable {
     private String firstName;
     @Annotation5
     private String lastName;
+    @Validate
     private Address address;
     @Annotation3
     private List<Car> cars;
-    @Annotation1(integer = 4, fraction = 5)
+    @Annotation1(integer = 4, fraction = 5) @Validate
     private Employment[] jobs;
     private Map<String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;
 

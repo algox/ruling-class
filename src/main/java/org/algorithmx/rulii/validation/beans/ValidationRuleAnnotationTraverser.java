@@ -23,7 +23,7 @@ public class ValidationRuleAnnotationTraverser {
         return result.toArray(new Annotation[result.size()]);
     }
 
-    protected Annotation[] traverse(AnnotatedElement element, Annotation[] annotations) {
+    public Annotation[] traverse(AnnotatedElement element, Annotation[] annotations) {
         List<Annotation> result = new ArrayList<>();
         MergedAnnotations.from(element, annotations, RepeatableContainers.standardRepeatables())
                 .stream(ValidationRule.class)

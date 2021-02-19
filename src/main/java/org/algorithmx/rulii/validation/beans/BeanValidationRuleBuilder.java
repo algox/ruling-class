@@ -50,6 +50,12 @@ public class BeanValidationRuleBuilder {
         return this;
     }
 
+    public BeanValidationRuleBuilder loadAnnotatedConstructors() {
+        CtorHandler handler = new CtorHandler();
+        Arrays.stream(beanClass.getConstructors()).forEach(c -> handler.doWith(c));
+        return this;
+    }
+
     public BeanValidationRules build() {
         DefaultBeanValidationRules result = new DefaultBeanValidationRules(beanClass);
         rules.values().forEach(holder -> result.add(holder));
@@ -170,6 +176,7 @@ public class BeanValidationRuleBuilder {
     }
 
     private class MethodHandler implements ReflectionUtils.MethodCallback {
+        private final ValidationRuleAnnotationTraverser traverser = new ValidationRuleAnnotationTraverser();
 
         public MethodHandler() {
             super();
@@ -182,7 +189,6 @@ public class BeanValidationRuleBuilder {
         }
 
         private void buildMethodRules(Method method) {
-            ValidationRuleAnnotationTraverser traverser = new ValidationRuleAnnotationTraverser();
             Annotation[] annotations = traverser.traverse(method);
 
             for (Annotation annotation : annotations) {
@@ -198,7 +204,6 @@ public class BeanValidationRuleBuilder {
         private void buildMethodParameterRules(Method method) {
             if (method.getParameterCount() == 0) return;
 
-            ValidationRuleAnnotationTraverser traverser = new ValidationRuleAnnotationTraverser();
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             ParameterNameDiscoverer nameDiscoverer = ParameterNameDiscoverer.create();
             String[] parameterNames = nameDiscoverer.getParameterNames(method);
@@ -211,6 +216,53 @@ public class BeanValidationRuleBuilder {
                     if (rules != null) {
                         for (Rule rule : rules) {
                             param(method, i, rule);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private class CtorHandler {
+        private final ValidationRuleAnnotationTraverser traverser = new ValidationRuleAnnotationTraverser();
+
+        public CtorHandler() {
+            super();
+        }
+
+        public void doWith(Constructor ctor) {
+            buildCtorRules(ctor);
+            buildCtorParameterRules(ctor);
+        }
+
+        private void buildCtorRules(Constructor ctor) {
+            Annotation[] annotations = traverser.traverse(ctor);
+
+            for (Annotation annotation : annotations) {
+                Rule[] rules = buildRules(annotation, "ctor");
+                if (rules != null) {
+                    if (rules != null) {
+                        Arrays.stream(rules).forEach(r -> ctor(ctor, r));
+                    }
+                }
+            }
+        }
+
+        private void buildCtorParameterRules(Constructor ctor) {
+            if (ctor.getParameterCount() == 0) return;
+
+            Annotation[][] parameterAnnotations = ctor.getParameterAnnotations();
+            ParameterNameDiscoverer nameDiscoverer = ParameterNameDiscoverer.create();
+            String[] parameterNames = nameDiscoverer.getParameterNames(ctor);
+
+            for (int i = 0; i < parameterAnnotations.length; i++) {
+                Annotation[] annotations = traverser.traverse(ctor, parameterAnnotations[i]);
+
+                for (Annotation annotation : annotations) {
+                    Rule[] rules = buildRules(annotation, parameterNames[i]);
+                    if (rules != null) {
+                        for (Rule rule : rules) {
+                            param(ctor, i, rule);
                         }
                     }
                 }
