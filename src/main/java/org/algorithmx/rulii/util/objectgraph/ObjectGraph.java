@@ -70,7 +70,6 @@ public class ObjectGraph {
 
             if (introspectObject) {
                 processFields(target, visitor);
-                //processProperties(target, visitor);
             }
         } finally {
             visitor.visitObjectEnd(target);
@@ -191,31 +190,6 @@ public class ObjectGraph {
             if (introspectField) addCandidate(value, visitor);
         }
     }
-
-    /*private void processProperties(Object target, ObjectVisitor visitor) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-
-        for (PropertyDescriptor property : Introspector.getBeanInfo(target.getClass()).getPropertyDescriptors()) {
-            if (!visitor.isCandidate(property)) continue;
-            if (property.getReadMethod() == null) continue;
-
-            Object value = property.getReadMethod().invoke(target);
-            boolean introspectProperty = false;
-
-            if (value == null) {
-                visitor.visitNull(property, null, target);
-            } else if (value instanceof Collections) {
-                introspectProperty = visitor.visitCollection(property, (Collection) value, target);
-            } else if (value instanceof Map) {
-                introspectProperty = visitor.visitMap(property, (Map) value, target);
-            } else if (value.getClass().isArray()) {
-                introspectProperty = visitor.visitArray(property, value, target);
-            } else {
-                introspectProperty = visitor.visitProperty(property, value, target);
-            }
-
-            if (introspectProperty) addCandidate(value, visitor);
-        }
-    }*/
 
     public boolean isOrdered() {
         return ordered;

@@ -52,13 +52,6 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
                 : true;
     }
 
-    /*@Override
-    public boolean isCandidate(PropertyDescriptor property) {
-        return getPropertyFilter() != null
-                ? getPropertyFilter().test(property)
-                : true;
-    }*/
-
     public Predicate<Class<?>> getClassFilter() {
         return classFilter;
     }
@@ -66,8 +59,4 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
     public Predicate<Field> getFieldFilter() {
         return fieldFilter;
     }
-
-    /*public Predicate<PropertyDescriptor> getPropertyFilter() {
-        return propertyFilter;
-    }*/
 }
