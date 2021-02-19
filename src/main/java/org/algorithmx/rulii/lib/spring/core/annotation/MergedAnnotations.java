@@ -211,7 +211,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 */
 	<A extends Annotation> MergedAnnotation<A> get(Class<A> annotationType,
 			@Nullable Predicate<? super MergedAnnotation<A>> predicate,
-			@Nullable org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotationSelector<A> selector);
+			@Nullable MergedAnnotationSelector<A> selector);
 
 	/**
 	 * Get the {@linkplain MergedAnnotationSelectors#nearest() nearest} matching
@@ -326,7 +326,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * element annotations
 	 */
 	static MergedAnnotations from(AnnotatedElement element, SearchStrategy searchStrategy,
-			org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers repeatableContainers) {
+			RepeatableContainers repeatableContainers) {
 
 		return from(element, searchStrategy, repeatableContainers, AnnotationFilter.PLAIN);
 	}
@@ -345,11 +345,11 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * annotations for the supplied element
 	 */
 	static MergedAnnotations from(AnnotatedElement element, SearchStrategy searchStrategy,
-								  org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
+								  RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
 
 		Assert.notNull(repeatableContainers, "RepeatableContainers must not be null");
 		Assert.notNull(annotationFilter, "AnnotationFilter must not be null");
-		return org.algorithmx.rulii.lib.spring.core.annotation.TypeMappedAnnotations.from(element, searchStrategy, repeatableContainers, annotationFilter);
+		return TypeMappedAnnotations.from(element, searchStrategy, repeatableContainers, annotationFilter);
 	}
 
 	/**
@@ -375,7 +375,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * @see #from(AnnotatedElement)
 	 */
 	static MergedAnnotations from(Object source, Annotation... annotations) {
-		return from(source, annotations, org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers.standardRepeatables());
+		return from(source, annotations, RepeatableContainers.standardRepeatables());
 	}
 
 	/**
@@ -389,7 +389,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * meta-annotations
 	 * @return a {@link MergedAnnotations} instance containing the annotations
 	 */
-	static MergedAnnotations from(Object source, Annotation[] annotations, org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers repeatableContainers) {
+	static MergedAnnotations from(Object source, Annotation[] annotations, RepeatableContainers repeatableContainers) {
 		return from(source, annotations, repeatableContainers, AnnotationFilter.PLAIN);
 	}
 
@@ -407,11 +407,11 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * @return a {@link MergedAnnotations} instance containing the annotations
 	 */
 	static MergedAnnotations from(Object source, Annotation[] annotations,
-								  org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
+								  RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
 
 		Assert.notNull(repeatableContainers, "RepeatableContainers must not be null");
 		Assert.notNull(annotationFilter, "AnnotationFilter must not be null");
-		return org.algorithmx.rulii.lib.spring.core.annotation.TypeMappedAnnotations.from(source, annotations, repeatableContainers, annotationFilter);
+		return TypeMappedAnnotations.from(source, annotations, repeatableContainers, annotationFilter);
 	}
 
 	/**
@@ -430,7 +430,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * @see MergedAnnotation#of(ClassLoader, Object, Class, java.util.Map)
 	 */
 	static MergedAnnotations of(Collection<MergedAnnotation<?>> annotations) {
-		return org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotationsCollection.of(annotations);
+		return MergedAnnotationsCollection.of(annotations);
 	}
 
 
