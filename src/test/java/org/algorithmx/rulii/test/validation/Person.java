@@ -22,6 +22,7 @@ import org.algorithmx.rulii.core.Identifiable;
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
+import org.algorithmx.rulii.validation.rules.pattern.Pattern;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +91,7 @@ public class Person implements Identifiable {
         return attributes;
     }
 
-    public void add(@NotNull Car car) {
+    public void add(@NotNull @Annotation5 @Pattern(regex = "[*]") Car car) {
         if (this.cars == null) this.cars = new ArrayList<>();
         this.cars.add(car);
     }

@@ -1,8 +1,9 @@
 package org.algorithmx.rulii.test.validation;
 
-import org.algorithmx.rulii.lib.spring.core.annotation.AnnotatedElementUtils;
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotations;
+import org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers;
+import org.algorithmx.rulii.validation.annotation.ValidationRule;
 import org.algorithmx.rulii.validation.beans.BeanValidationRuleBuilder;
 import org.algorithmx.rulii.validation.beans.BeanValidationRules;
 import org.junit.Test;
@@ -11,7 +12,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,5 +53,25 @@ public class BeanValidationRuleBuilderTest {
         } else sb.append(type.getType().getTypeName());
 
         return sb.toString();
+    }
+
+    @Test
+    public void test3() throws NoSuchFieldException {
+        Field field = TestClass.class.getDeclaredField("field4");
+
+        MergedAnnotations.from(field, MergedAnnotations.SearchStrategy.DIRECT).stream(ValidationRule.class)
+                .forEach(a -> System.err.println(a.getMetaSource().synthesize()));
+    }
+
+    @Test
+    public void test4() throws NoSuchMethodException {
+        Method method = Person.class.getDeclaredMethod("add", Car.class);
+
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            MergedAnnotations.from(method, parameterAnnotations[i], RepeatableContainers.standardRepeatables())
+                    .stream(ValidationRule.class).forEach(a -> System.err.println(a.getMetaSource().synthesize()));
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
+import org.algorithmx.rulii.validation.rules.pattern.Pattern;
 
 import java.math.BigDecimal;
 
@@ -15,7 +16,7 @@ public class TestClass extends BaseClass {
     public String field2;
     @Annotation4
     public Double field3;
-    @Annotation5
+    @Annotation5 @Pattern(regex = "")
     public BigDecimal field4;
 
     public TestClass() {

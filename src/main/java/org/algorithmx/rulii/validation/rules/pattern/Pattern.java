@@ -40,7 +40,7 @@ public @interface Pattern {
     /**
      * @return the regular expression to match
      */
-    String pattern();
+    String regex();
 
     boolean caseSensitive() default true;
 
@@ -54,7 +54,7 @@ public @interface Pattern {
         public Rule[] build(Pattern pattern, String bindingName) {
             PatternValidationRule rule = new PatternValidationRule(bindingName, pattern.errorCode(), pattern.severity(),
                     !NOT_APPLICABLE.equals(pattern.message()) ? pattern.message() : null,
-                    pattern.caseSensitive(), pattern.pattern());
+                    pattern.caseSensitive(), pattern.regex());
             Rule[] result = {RuleBuilder.build(rule)};
             return result;
         }
