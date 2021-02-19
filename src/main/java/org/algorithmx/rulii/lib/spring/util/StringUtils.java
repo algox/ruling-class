@@ -1,15 +1,17 @@
 /*
- * Copyright 2002-2018 the original author or authors.
+ * Copyright 2002-2020 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.algorithmx.rulii.lib.spring.util;
@@ -190,4 +192,58 @@ public abstract class StringUtils {
     return sb.toString();
   }
 
+  /**
+   * Capitalize a {@code String}, changing the first letter to
+   * upper case as per {@link Character#toUpperCase(char)}.
+   * No other letters are changed.
+   * @param str the {@code String} to capitalize
+   * @return the capitalized {@code String}
+   */
+  public static String capitalize(String str) {
+    return changeFirstCharacterCase(str, true);
+  }
+
+  /**
+   * Uncapitalize a {@code String}, changing the first letter to
+   * lower case as per {@link Character#toLowerCase(char)}.
+   * No other letters are changed.
+   * @param str the {@code String} to uncapitalize
+   * @return the uncapitalized {@code String}
+   */
+  public static String uncapitalize(String str) {
+    return changeFirstCharacterCase(str, false);
+  }
+
+  private static String changeFirstCharacterCase(String str, boolean capitalize) {
+    if (!hasLength(str)) {
+      return str;
+    }
+
+    char baseChar = str.charAt(0);
+    char updatedChar;
+    if (capitalize) {
+      updatedChar = Character.toUpperCase(baseChar);
+    }
+    else {
+      updatedChar = Character.toLowerCase(baseChar);
+    }
+    if (baseChar == updatedChar) {
+      return str;
+    }
+
+    char[] chars = str.toCharArray();
+    chars[0] = updatedChar;
+    return new String(chars, 0, chars.length);
+  }
+
+  /**
+   * Convert a {@code String} array into a comma delimited {@code String}
+   * (i.e., CSV).
+   * <p>Useful for {@code toString()} implementations.
+   * @param arr the array to display (potentially {@code null} or empty)
+   * @return the delimited {@code String}
+   */
+  public static String arrayToCommaDelimitedString(@Nullable Object[] arr) {
+    return arrayToDelimitedString(arr, ",");
+  }
 }

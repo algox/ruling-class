@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.algorithmx.rulii.annotation;
 
 import java.lang.annotation.Documented;
@@ -30,14 +29,15 @@ import java.lang.annotation.Target;
  * @author Max Arulananthan
  * @since 1.0
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Documented
 public @interface Order {
 
-    int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
+	int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
 
-    int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
+	int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
 
-    int value() default LOWEST_PRECEDENCE;
+	int value() default LOWEST_PRECEDENCE;
+
 }

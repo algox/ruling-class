@@ -17,7 +17,7 @@
 package org.algorithmx.rulii.lib.spring.core;
 
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationAwareOrderComparator;
-import org.algorithmx.rulii.lib.spring.core.annotation.Order;
+import org.algorithmx.rulii.annotation.Order;
 
 /**
  * {@code Ordered} is an interface that can be implemented by objects that

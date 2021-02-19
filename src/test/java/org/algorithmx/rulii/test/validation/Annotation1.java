@@ -1,6 +1,6 @@
 package org.algorithmx.rulii.test.validation;
 
-import org.algorithmx.rulii.lib.spring.core.annotation.AliasFor;
+import org.algorithmx.rulii.annotation.AliasFor;
 import org.algorithmx.rulii.validation.rules.digits.Digits;
 
 import java.lang.annotation.Documented;

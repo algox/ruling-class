@@ -19,6 +19,7 @@
 package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 
@@ -40,7 +41,7 @@ public class Person implements Identifiable {
     private List<Car> cars;
     @Annotation1(integer = 4, fraction = 5)
     private Employment[] jobs;
-    private Map<String, Object> attributes;
+    private Map<String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;
 
     public Person(String firstName, String lastName) {
         super();
@@ -49,7 +50,7 @@ public class Person implements Identifiable {
     }
 
     public Person(String id, String firstName, String lastName, Address address, List<Car> cars,
-                  Employment[] jobs, Map<String, Object> attributes) {
+                  Employment[] jobs, Map<@NotEmpty String, Map<@NotNull String, List<@Min(5) Integer>>> attributes) {
         super();
         this.id = id;
         this.firstName = firstName;
@@ -85,7 +86,7 @@ public class Person implements Identifiable {
         return jobs;
     }
 
-    public Map<String, Object> getAttributes() {
+    public Map<@NotEmpty String, Map<@NotNull String, List<@Min(5) Integer>>> getAttributes() {
         return attributes;
     }
 
@@ -94,7 +95,7 @@ public class Person implements Identifiable {
         this.cars.add(car);
     }
 
-    public void setAttributes(Map<@NotEmpty String, Object> attributes) {
+    public void setAttributes(Map<@NotEmpty String, Map<@NotNull String, List<@Min(5) Integer>>> attributes) {
         this.attributes = attributes;
     }
 
