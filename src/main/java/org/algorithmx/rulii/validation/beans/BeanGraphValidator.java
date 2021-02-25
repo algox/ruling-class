@@ -85,8 +85,10 @@ public class BeanGraphValidator extends ObjectVisitorTemplate {
 
     @Override
     public boolean visitField(Field field, Object value, Object parent) {
+        int size1 = violations.size();
         run(getRules().getFieldRules(field), getContext());
-        return validateCheck.test(field);
+        int size2 = violations.size();
+        return size2 == size1 && validateCheck.test(field);
     }
 
     @Override
@@ -108,13 +110,13 @@ public class BeanGraphValidator extends ObjectVisitorTemplate {
     }
 
     @Override
-    public boolean visitMapKeys(Field field, Set<?> keys, Object parent) {
+    public boolean visitMapKeys(Field field, Map<?, ?> values, Object parent) {
         // TODO : Check to see if AnnotatedType is there for keys
         return validateCheck.test(field);
     }
 
     @Override
-    public boolean visitMapValues(Field field, Collection<?> keys, Object parent) {
+    public boolean visitMapValues(Field field, Map<?, ?> values, Object parent) {
         // TODO : Check to see if AnnotatedType is there for values
         return validateCheck.test(field);
     }

@@ -16,25 +16,32 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.annotation;
+package org.algorithmx.rulii.test.validation.objectgraph;
 
-import org.algorithmx.rulii.annotation.AliasFor;
+import org.algorithmx.rulii.validation.rules.min.Min;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Documented
-@Target(value={ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE})
+@Target({ANNOTATION_TYPE, FIELD, METHOD})
 @Retention(RUNTIME)
-public @interface Validate {
+@Inherited
+@Documented
+public @interface Expression {
 
-    @AliasFor(attribute = "using")
-    String value() default "N/A";
+    Or or() default @Or;
 
-    @AliasFor(attribute = "value")
-    String using() default "N/A";
+    And and() default @And;
+
+    Min min() default @Min(0);
+
+    Class<? extends Annotation> custom() default Min.class;
 }

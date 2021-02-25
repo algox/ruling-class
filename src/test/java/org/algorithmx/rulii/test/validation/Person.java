@@ -19,14 +19,18 @@
 package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.test.validation.objectgraph.Expression;
+import org.algorithmx.rulii.test.validation.objectgraph.Or;
 import org.algorithmx.rulii.validation.annotation.Validate;
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 import org.algorithmx.rulii.validation.rules.pattern.Pattern;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,12 +42,13 @@ public class Person implements Identifiable {
     private String firstName;
     @Annotation5
     private String lastName;
-    @Validate
+    @Expression(or = @Or)
     private Address address;
-    @Annotation3
+    @Annotation3 @Validate
     private List<Car> cars;
     @Annotation1(integer = 4, fraction = 5) @Validate
     private Employment[] jobs;
+    @Validate
     private Map<String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;
 
     public Person(String firstName, String lastName) {
@@ -62,6 +67,14 @@ public class Person implements Identifiable {
         this.cars = cars;
         this.jobs = jobs;
         this.attributes = attributes;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -100,6 +113,26 @@ public class Person implements Identifiable {
 
     public void setAttributes(Map<@NotEmpty String, Map<@NotNull String, List<@Min(5) Integer>>> attributes) {
         this.attributes = attributes;
+    }
+
+    public static Person createPerson1() {
+        Address address1 = new Address("address:1","1", "Jordan way", "Chicago", "IL", "USA");
+        Car car1 = new Car("car:1","Ferrari ", "275 GTB", 1964);
+        Car car2 = new Car("car:2","Tesla ", "Model S", 2020);
+        List<Car> cars = Arrays.asList(car1, car2);
+        Address address2 = new Address("address:2", "3431", "Somewhere in Charlotte", "Charlotte", "NC",
+                "USA");
+        Address address3 = new Address("address:3", "1", "Oregon Way", "Oregon", "OR",
+                "USA");
+        Employment[] jobs = new Employment[2];
+        jobs[0] = new Employment("employment:1", "Charlotte Hornets", new BigDecimal("50000000"), address2);
+        jobs[1] = new Employment("employment:2", "Jordan Brand", new BigDecimal("250000000"), address3);
+        Map<String, Map<String, List<Integer>>> attributes = new HashMap<>();
+        Map<String, List<Integer>> key1 = new HashMap<>();
+        key1.put("age", Arrays.asList(50));
+        attributes.put("age", key1);
+        Person result = new Person("person:1", "Michael", "Jordan", address1, cars, jobs, attributes);
+        return result;
     }
 
     @Override

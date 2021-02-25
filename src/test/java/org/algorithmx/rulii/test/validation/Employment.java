@@ -1,6 +1,7 @@
 package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.validation.annotation.Validate;
 
 import java.math.BigDecimal;
 
@@ -9,6 +10,7 @@ public class Employment implements Identifiable {
     private String id;
     private String company;
     private BigDecimal salary;
+    @Validate
     private Address address;
 
     public Employment(String id, String company, BigDecimal salary, Address address) {

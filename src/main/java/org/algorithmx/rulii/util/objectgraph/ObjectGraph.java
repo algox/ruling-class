@@ -150,9 +150,9 @@ public class ObjectGraph {
                 introspectField = visitor.visitMap(field, map, target);
 
                 if (introspectField) {
-                    boolean introspectMapKeys = visitor.visitMapKeys(field, map.keySet(), target);
+                    boolean introspectMapKeys = visitor.visitMapKeys(field, map, target);
                     if (introspectMapKeys) addCandidate(map.keySet(), visitor);
-                    boolean introspectMapValues = visitor.visitMapValues(field, map.values(), target);
+                    boolean introspectMapValues = visitor.visitMapValues(field, map, target);
                     if (introspectMapValues) addCandidate(map.values(), visitor);
                 }
 

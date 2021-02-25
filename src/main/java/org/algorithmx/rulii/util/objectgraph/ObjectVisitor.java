@@ -25,9 +25,9 @@ public interface ObjectVisitor {
 
     default boolean visitMap(Field field, Map<?, ?> map, Object parent) { return true; }
 
-    default boolean visitMapKeys(Field field, Set<?> keys, Object parent) { return true; }
+    default boolean visitMapKeys(Field field, Map<?, ?> map, Object parent) { return true; }
 
-    default boolean visitMapValues(Field field, Collection<?> keys, Object parent) { return true; }
+    default boolean visitMapValues(Field field, Map<?, ?> map, Object parent) { return true; }
 
     default void traversalComplete() {}
 }

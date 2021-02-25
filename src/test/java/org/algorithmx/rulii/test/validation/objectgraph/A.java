@@ -16,25 +16,7 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.annotation;
+package org.algorithmx.rulii.test.validation.objectgraph;
 
-import org.algorithmx.rulii.annotation.AliasFor;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-@Documented
-@Target(value={ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE})
-@Retention(RUNTIME)
-public @interface Validate {
-
-    @AliasFor(attribute = "using")
-    String value() default "N/A";
-
-    @AliasFor(attribute = "value")
-    String using() default "N/A";
+public interface A {
 }
