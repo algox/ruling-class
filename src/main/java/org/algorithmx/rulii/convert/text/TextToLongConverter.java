@@ -16,32 +16,31 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 
 /**
- * Converts a String value to a BigDecimal.
+ * Converts a String value to a Long.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToBigDecimalConverter extends ConverterTemplate<CharSequence, BigDecimal> {
+public class TextToLongConverter extends ConverterTemplate<CharSequence, Long> {
 
-    public TextToBigDecimalConverter() {
+    public TextToLongConverter() {
         super();
     }
 
     @Override
-    public BigDecimal convert(CharSequence value, Type toType) {
+    public Long convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return new BigDecimal(value.toString());
+            return Long.decode(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

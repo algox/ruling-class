@@ -18,7 +18,7 @@
 
 package org.algorithmx.rulii.bind.match;
 
-import org.algorithmx.rulii.bind.convert.ConverterRegistry;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.BindingException;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.core.UnrulyException;

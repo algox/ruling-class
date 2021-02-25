@@ -21,7 +21,7 @@ package org.algorithmx.rulii.core.model;
 import org.algorithmx.rulii.annotation.Default;
 import org.algorithmx.rulii.annotation.Description;
 import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.bind.convert.Converter;
+import org.algorithmx.rulii.convert.Converter;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;

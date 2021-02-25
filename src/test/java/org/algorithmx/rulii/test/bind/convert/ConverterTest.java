@@ -18,9 +18,9 @@
 
 package org.algorithmx.rulii.test.bind.convert;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.Converter;
-import org.algorithmx.rulii.bind.convert.ConverterRegistry;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.Converter;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 

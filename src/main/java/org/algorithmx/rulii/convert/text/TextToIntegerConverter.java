@@ -16,31 +16,31 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Double.
+ * Converts a String value to a Integer.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToDoubleConverter extends ConverterTemplate<CharSequence, Double> {
+public class TextToIntegerConverter extends ConverterTemplate<CharSequence, Integer> {
 
-    public TextToDoubleConverter() {
+    public TextToIntegerConverter() {
         super();
     }
 
     @Override
-    public Double convert(CharSequence value, Type toType) {
+    public Integer convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return Double.valueOf(value.toString());
+            return Integer.decode(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

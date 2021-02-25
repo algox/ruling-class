@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;

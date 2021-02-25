@@ -18,7 +18,7 @@
 
 package org.algorithmx.rulii.config;
 
-import org.algorithmx.rulii.bind.convert.ConverterRegistry;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.script.ScriptProcessor;

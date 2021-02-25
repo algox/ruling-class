@@ -16,35 +16,32 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
- * Converts a String value to a URL.
+ * Converts a String value to a Double.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToUrlConverter extends ConverterTemplate<CharSequence, URL> {
+public class TextToDoubleConverter extends ConverterTemplate<CharSequence, Double> {
 
-    public TextToUrlConverter() {
+    public TextToDoubleConverter() {
         super();
     }
 
     @Override
-    public URL convert(CharSequence value, Type toType) {
+    public Double convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
-
         try {
-            return new URL(value.toString());
-        } catch (MalformedURLException e) {
+            return Double.valueOf(value.toString());
+        } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
     }

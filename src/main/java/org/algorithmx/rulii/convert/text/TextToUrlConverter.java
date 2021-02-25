@@ -16,34 +16,35 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
-import org.algorithmx.rulii.lib.apache.math.NumberUtils;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
-import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
- * Converts a String value to a BigInteger.
+ * Converts a String value to a URL.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToBigIntegerConverter extends ConverterTemplate<CharSequence, BigInteger> {
+public class TextToUrlConverter extends ConverterTemplate<CharSequence, URL> {
 
-    public TextToBigIntegerConverter() {
+    public TextToUrlConverter() {
         super();
     }
 
     @Override
-    public BigInteger convert(CharSequence value, Type toType) {
+    public URL convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
+
         try {
-            return NumberUtils.createBigInteger(value.toString());
-        } catch (NumberFormatException e) {
+            return new URL(value.toString());
+        } catch (MalformedURLException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
     }

@@ -16,23 +16,33 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
-import java.util.Currency;
 
-public class TextToCurrencyConverter extends ConverterTemplate<CharSequence, Currency> {
+/**
+ * Converts a String value to a Float.
+ *
+ * @author Max Arulananthan.
+ * @since 1.0
+ */
+public class TextToFloatConverter extends ConverterTemplate<CharSequence, Float> {
 
-    public TextToCurrencyConverter() {
+    public TextToFloatConverter() {
         super();
     }
 
     @Override
-    public Currency convert(CharSequence value, Type toType) throws ConversionException {
+    public Float convert(CharSequence value, Type toType) {
         if (value == null) return null;
-        return Currency.getInstance(value.toString());
+
+        try {
+            return Float.valueOf(value.toString());
+        } catch (NumberFormatException e) {
+            throw new ConversionException(e, value, getSourceType(), getTargetType());
+        }
     }
 }

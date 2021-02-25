@@ -16,30 +16,37 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
-
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
-import org.algorithmx.rulii.lib.apache.BooleanUtils;
+package org.algorithmx.rulii.convert;
 
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Boolean. ("Y", "YES", "1", "TRUE") irrelevant of case is considered as True.
+ * Registry to hold all the Converters.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToBooleanConverter extends ConverterTemplate<CharSequence, Boolean> {
+public interface ConverterRegistry {
 
-    public TextToBooleanConverter() {
-        super();
+    static ConverterRegistry create() {
+        return new DefaultConverterRegistry(true);
     }
 
-    @Override
-    public Boolean convert(CharSequence value, Type toType) {
-        if (value == null) return null;
+    /**
+     * Register a new Converter. It will overwrite any existing converters that have the same source/target combo.
+     *
+     * @param converter new converter.
+     */
+    void register(Converter<?, ?> converter);
 
-        Boolean result = BooleanUtils.toBooleanObject(value.toString());
-        return result != null ? result : false;
-    }
+    /**
+     * Finds a Convert for the desired source/target types.
+     *
+     * @param source source type.
+     * @param target target type.
+     * @param <S> source generic type.
+     * @param <T> target generic type.
+     * @return converter if one is found; null otherwise.
+     */
+    <S, T> Converter<S, T> find(Type source, Type target);
 }

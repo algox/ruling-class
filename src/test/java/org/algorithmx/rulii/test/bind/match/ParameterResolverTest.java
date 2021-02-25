@@ -24,7 +24,7 @@ import org.algorithmx.rulii.bind.BindingBuilder;
 import org.algorithmx.rulii.bind.BindingException;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.bind.ScopedBindings;
-import org.algorithmx.rulii.bind.convert.ConverterRegistry;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rulii.bind.match.ParameterMatch;
 import org.algorithmx.rulii.bind.match.ParameterResolver;

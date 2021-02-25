@@ -16,32 +16,32 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Long.
+ * Converts a String value to a Enum.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToLongConverter extends ConverterTemplate<CharSequence, Long> {
+public class TextToEnumConverter extends ConverterTemplate<CharSequence, Enum> {
 
-    public TextToLongConverter() {
+    public TextToEnumConverter() {
         super();
     }
 
     @Override
-    public Long convert(CharSequence value, Type toType) {
+    public Enum convert(CharSequence value, Type toType) throws ConversionException {
         if (value == null) return null;
 
         try {
-            return Long.decode(value.toString());
-        } catch (NumberFormatException e) {
+            return Enum.valueOf((Class) toType, value.toString());
+        } catch (IllegalArgumentException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }
     }

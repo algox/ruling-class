@@ -16,31 +16,31 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
 
 import java.lang.reflect.Type;
 
 /**
- * Converts a String value to a Float.
+ * Converts a String value to a Byte.
  *
  * @author Max Arulananthan.
  * @since 1.0
  */
-public class TextToFloatConverter extends ConverterTemplate<CharSequence, Float> {
+public class TextToByteConverter extends ConverterTemplate<CharSequence, Byte> {
 
-    public TextToFloatConverter() {
+    public TextToByteConverter() {
         super();
     }
 
     @Override
-    public Float convert(CharSequence value, Type toType) {
+    public Byte convert(CharSequence value, Type toType) {
         if (value == null) return null;
 
         try {
-            return Float.valueOf(value.toString());
+            return Byte.valueOf(value.toString());
         } catch (NumberFormatException e) {
             throw new ConversionException(e, value, getSourceType(), getTargetType());
         }

@@ -16,25 +16,25 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert;
+package org.algorithmx.rulii.convert;
 
-import org.algorithmx.rulii.bind.convert.text.TextToLocalDateConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToBigDecimalConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToBigIntegerConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToBooleanConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToByteConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToCharsetConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToCurrencyConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToDateConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToDoubleConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToEnumConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToFloatConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToIntegerConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToLocalDateTimeConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToLongConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToShortConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToUUIDConverter;
-import org.algorithmx.rulii.bind.convert.text.TextToUrlConverter;
+import org.algorithmx.rulii.convert.text.TextToLocalDateConverter;
+import org.algorithmx.rulii.convert.text.TextToBigDecimalConverter;
+import org.algorithmx.rulii.convert.text.TextToBigIntegerConverter;
+import org.algorithmx.rulii.convert.text.TextToBooleanConverter;
+import org.algorithmx.rulii.convert.text.TextToByteConverter;
+import org.algorithmx.rulii.convert.text.TextToCharsetConverter;
+import org.algorithmx.rulii.convert.text.TextToCurrencyConverter;
+import org.algorithmx.rulii.convert.text.TextToDateConverter;
+import org.algorithmx.rulii.convert.text.TextToDoubleConverter;
+import org.algorithmx.rulii.convert.text.TextToEnumConverter;
+import org.algorithmx.rulii.convert.text.TextToFloatConverter;
+import org.algorithmx.rulii.convert.text.TextToIntegerConverter;
+import org.algorithmx.rulii.convert.text.TextToLocalDateTimeConverter;
+import org.algorithmx.rulii.convert.text.TextToLongConverter;
+import org.algorithmx.rulii.convert.text.TextToShortConverter;
+import org.algorithmx.rulii.convert.text.TextToUUIDConverter;
+import org.algorithmx.rulii.convert.text.TextToUrlConverter;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.lang.reflect.Type;

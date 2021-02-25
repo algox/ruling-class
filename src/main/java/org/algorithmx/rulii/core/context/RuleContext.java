@@ -19,7 +19,7 @@
 package org.algorithmx.rulii.core.context;
 
 import org.algorithmx.rulii.bind.ScopedBindings;
-import org.algorithmx.rulii.bind.convert.ConverterRegistry;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterMatch;
 import org.algorithmx.rulii.bind.match.ParameterResolver;

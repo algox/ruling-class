@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert;
+package org.algorithmx.rulii.convert;
 
 import org.algorithmx.rulii.core.UnrulyException;
 

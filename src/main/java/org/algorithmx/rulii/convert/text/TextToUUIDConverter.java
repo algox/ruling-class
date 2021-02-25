@@ -16,33 +16,24 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.bind.convert.text;
+package org.algorithmx.rulii.convert.text;
 
-import org.algorithmx.rulii.bind.convert.ConversionException;
-import org.algorithmx.rulii.bind.convert.ConverterTemplate;
+import org.algorithmx.rulii.convert.ConversionException;
+import org.algorithmx.rulii.convert.ConverterTemplate;
+import org.algorithmx.rulii.lib.apache.StringUtils;
 
 import java.lang.reflect.Type;
+import java.util.UUID;
 
-/**
- * Converts a String value to a Integer.
- *
- * @author Max Arulananthan.
- * @since 1.0
- */
-public class TextToIntegerConverter extends ConverterTemplate<CharSequence, Integer> {
+public class TextToUUIDConverter extends ConverterTemplate<CharSequence, UUID> {
 
-    public TextToIntegerConverter() {
+    public TextToUUIDConverter() {
         super();
     }
 
     @Override
-    public Integer convert(CharSequence value, Type toType) {
+    public UUID convert(CharSequence value, Type toType) throws ConversionException {
         if (value == null) return null;
-
-        try {
-            return Integer.decode(value.toString());
-        } catch (NumberFormatException e) {
-            throw new ConversionException(e, value, getSourceType(), getTargetType());
-        }
+        return StringUtils.isEmpty(value) ? null : UUID.fromString(value.toString().trim());
     }
 }
