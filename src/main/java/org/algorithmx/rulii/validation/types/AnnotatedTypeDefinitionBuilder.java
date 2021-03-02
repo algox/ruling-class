@@ -28,32 +28,46 @@ import java.lang.reflect.AnnotatedWildcardType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class AnnotatedTypeDefinitionBuilder {
+
+    // TODO : Check whether we could have a cyclical dependency ?
+    private final IdentityHashMap<AnnotatedType, AnnotatedTypeDefinition> breadCrumbs = new IdentityHashMap<>();
 
     public AnnotatedTypeDefinitionBuilder() {
         super();
     }
 
     public AnnotatedTypeDefinition build(AnnotatedType annotatedType) {
+        breadCrumbs.clear();
         return traverse(annotatedType);
     }
 
     private AnnotatedTypeDefinition traverse(AnnotatedType annotatedType) {
 
+        // TODO : Is this possible?
+        if (breadCrumbs.containsKey(annotatedType)) return breadCrumbs.get(annotatedType);
+
+        AnnotatedTypeDefinition result = null;
+
         if (annotatedType instanceof AnnotatedParameterizedType) {
-            return visit((AnnotatedParameterizedType) annotatedType);
+            result = visit((AnnotatedParameterizedType) annotatedType);
         } else if (annotatedType instanceof AnnotatedWildcardType) {
-            return visit((AnnotatedWildcardType) annotatedType);
+            result = visit((AnnotatedWildcardType) annotatedType);
         } else if (annotatedType instanceof AnnotatedTypeVariable) {
-           return visit((AnnotatedTypeVariable) annotatedType);
+            result = visit((AnnotatedTypeVariable) annotatedType);
         } else if (annotatedType instanceof AnnotatedArrayType) {
-            return visit((AnnotatedArrayType) annotatedType);
+            result = visit((AnnotatedArrayType) annotatedType);
         } else {
-            return visit(annotatedType);
+            result = visit(annotatedType);
         }
+
+        breadCrumbs.put(annotatedType, result);
+
+        return result;
     }
 
     private AnnotatedParameterizedTypeDefinition visit(AnnotatedParameterizedType annotatedType) {

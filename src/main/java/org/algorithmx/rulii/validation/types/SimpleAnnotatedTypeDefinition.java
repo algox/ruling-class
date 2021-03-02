@@ -45,6 +45,7 @@ public class SimpleAnnotatedTypeDefinition extends AbstractAnnotatedTypeDefiniti
     @Override
     public String toString() {
         return "SimpleTypeDefinition{" +
+                super.toString() +
                 "type=" + type +
                 '}';
     }

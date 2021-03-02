@@ -26,6 +26,7 @@ import org.algorithmx.rulii.validation.annotation.ValidationRule;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> implements AnnotatedTypeDefinition<T> {
@@ -91,5 +92,13 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
 
     protected static boolean isAnnotatedWithValid(AnnotatedType annotatedType) {
         return AnnotationUtils.getAnnotation(annotatedType, Validate.class) != null;
+    }
+
+    @Override
+    public String toString() {
+        return "kind=" + kind +
+                ", ruleAnnotations=" + Arrays.toString(ruleAnnotations) +
+                ", requiresValidation=" + requiresValidation +
+                ", requiresTraversal=" + requiresTraversal + " ";
     }
 }
