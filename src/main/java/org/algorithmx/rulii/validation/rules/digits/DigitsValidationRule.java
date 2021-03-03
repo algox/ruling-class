@@ -1,14 +1,10 @@
 package org.algorithmx.rulii.validation.rules.digits;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -73,15 +69,11 @@ public class DigitsValidationRule extends BindingValidationRule {
         return (maxIntegerLength >= integerLength && maxFractionLength >= fractionLength);
     }
 
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value)
+    @Override
+    protected void customizeViolation(RuleContext context, RuleViolationBuilder builder) {
+        builder
                 .param("maxIntegerLength", maxIntegerLength)
                 .param("maxFractionLength", maxFractionLength);
-        errors.add(builder.build(context));
     }
 
     public int getMaxIntegerLength() {

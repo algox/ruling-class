@@ -1,15 +1,10 @@
 package org.algorithmx.rulii.validation.rules.email;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.apache.validation.EmailValidator;
 import org.algorithmx.rulii.validation.BindingValidationRule;
-import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -53,15 +48,6 @@ public class EmailValidationRule extends BindingValidationRule {
                     + "Supplied Class [" + value.getClass() + "] value [" + value + "]");
 
         return validator.isValid(value.toString());
-    }
-
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value);
-        errors.add(builder.build(context));
     }
 
     public boolean isAllowLocal() {

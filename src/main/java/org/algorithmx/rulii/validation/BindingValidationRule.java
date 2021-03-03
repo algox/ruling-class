@@ -1,6 +1,9 @@
 package org.algorithmx.rulii.validation;
 
 import org.algorithmx.rulii.annotation.Given;
+import org.algorithmx.rulii.annotation.Match;
+import org.algorithmx.rulii.annotation.Otherwise;
+import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.apache.StringUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
@@ -27,7 +30,19 @@ public abstract class BindingValidationRule extends ValidationRule {
         return isValid(context, result);
     }
 
+    @Otherwise
+    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+        Object value = getBindingValue(context);
+        RuleViolationBuilder builder = createRuleViolationBuilder()
+                .param("bindingName", getBindingName())
+                .param(getBindingName(), value);
+        customizeViolation(context, builder);
+        errors.add(builder.build(context));
+    }
+
     protected abstract boolean isValid(RuleContext context, Object value);
+
+    protected void customizeViolation(RuleContext context, RuleViolationBuilder builder) {}
 
     public String getBindingName() {
         return bindingName;

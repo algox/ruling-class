@@ -71,6 +71,11 @@ public class FutureOrPresentValidationRule extends BindingValidationRule {
         return result >= 0;
     }
 
+    @Override
+    protected void customizeViolation(RuleContext context, RuleViolationBuilder builder) {
+        builder.param("clock", context.getClock());
+    }
+
     @Otherwise
     public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
         Object value = getBindingValue(context);

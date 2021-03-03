@@ -34,15 +34,6 @@ public class ScriptConditionRule extends BindingValidationRule {
         return context.getScriptingProcessor().evaluateCondition(scriptCondition, context.getBindings());
     }
 
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value);
-        errors.add(builder.build(context));
-    }
-
     @Override
     public Class<?>[] getSupportedTypes() {
         return SUPPORTED_TYPES;

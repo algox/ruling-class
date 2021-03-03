@@ -90,14 +90,9 @@ public class DecimalMinValidationRule extends BindingValidationRule {
                     : result > 0;
     }
 
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value)
-                .param("min", min);
-        errors.add(builder.build(context));
+    @Override
+    protected void customizeViolation(RuleContext context, RuleViolationBuilder builder) {
+        builder.param("min", min);
     }
 
     public BigDecimal getMin() {

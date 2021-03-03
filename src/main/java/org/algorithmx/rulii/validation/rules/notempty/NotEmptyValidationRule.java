@@ -1,14 +1,9 @@
 package org.algorithmx.rulii.validation.rules.notempty;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.validation.BindingValidationRule;
-import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -51,15 +46,6 @@ public class NotEmptyValidationRule extends BindingValidationRule {
 
         throw new ValidationRuleException("NotEmptyValidationRule only applies to Collections/Maps/Arrays and CharSequences."
                 + "Supplied Class [" + value.getClass() + "]");
-    }
-
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value);
-        errors.add(builder.build(context));
     }
 
     @Override

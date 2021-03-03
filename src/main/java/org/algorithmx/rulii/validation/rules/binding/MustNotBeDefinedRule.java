@@ -18,17 +18,10 @@
 package org.algorithmx.rulii.validation.rules.binding;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Given;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
-import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
+import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.validation.ValidationRule;
 
 /**
  * Validation Rule to make sure the the given BindingName is NOT defined.
@@ -38,45 +31,35 @@ import org.algorithmx.rulii.validation.ValidationRule;
  */
 @Rule
 @Description("Binding Name must NOT exist.")
-public class MustNotBeDefinedRule extends ValidationRule {
+public class MustNotBeDefinedRule extends BindingValidationRule {
+
+    public static Class<?>[] SUPPORTED_TYPES    = {String.class};
 
     private static final String ERROR_CODE      = "rulii.validation.rules.MustNotBeDefinedRule.errorCode";
     private static final String DEFAULT_MESSAGE = "Binding {0} must not be defined.";
 
-    private final String bindingName;
-
     public MustNotBeDefinedRule(String bindingName) {
-        super(ERROR_CODE, Severity.ERROR, DEFAULT_MESSAGE);
-        Assert.notNull(bindingName, "bindingName cannot be null.");
-        this.bindingName = bindingName;
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    @Given
-    public boolean isValid(RuleContext context) {
-        return !context.getBindings().contains(bindingName);
+    public MustNotBeDefinedRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value);
-        errors.add(builder.build(context));
+    @Override
+    protected boolean isValid(RuleContext context, Object value) {
+        return !context.getBindings().contains(getBindingName());
     }
 
-    public String getBindingName() {
-        return bindingName;
-    }
-
-    public Object getBindingValue(RuleContext context) {
-        return context.getBindings().contains(getBindingName()) ? context.getBindings().getValue(getBindingName()) : null;
+    @Override
+    public Class<?>[] getSupportedTypes() {
+        return SUPPORTED_TYPES;
     }
 
     @Override
     public String toString() {
         return "MustNotBeDefinedRule{" +
-                "bindingName=" + bindingName +
+                "bindingName=" + getBindingName() +
                 '}';
     }
 }
