@@ -1,4 +1,4 @@
-package org.algorithmx.rulii.validation.rules.notblank;
+package org.algorithmx.rulii.validation.rules.blank;
 
 import org.algorithmx.rulii.annotation.Description;
 import org.algorithmx.rulii.annotation.Rule;
@@ -9,25 +9,25 @@ import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
 /**
- * Validation Rule to make sure the value is not blank (ie. it has some text).
+ * Validation Rule to make sure the value is blank.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Value cannot be blank.")
-public class NotBlankValidationRule extends BindingValidationRule {
+@Description("Value must be blank.")
+public class BlankValidationRule extends BindingValidationRule {
 
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
-    public static final String ERROR_CODE       = "rulii.validation.rules.NotBlankValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} cannot be blank.";
+    public static final String ERROR_CODE       = "rulii.validation.rules.BlankValidationRule.errorCode";
+    public static final String DEFAULT_MESSAGE  = "{0} must be blank.";
 
-    public NotBlankValidationRule(String bindingName) {
+    public BlankValidationRule(String bindingName) {
         this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public NotBlankValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+    public BlankValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
         super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
@@ -36,11 +36,11 @@ public class NotBlankValidationRule extends BindingValidationRule {
         if (value == null) return true;
 
         if (!(value instanceof CharSequence))
-            throw new ValidationRuleException("NotBlankValidationRule only applies to CharSequences."
+            throw new ValidationRuleException("BlankValidationRule only applies to CharSequences."
                     + "Supplied Class [" + value.getClass() + "]");
 
         // Make sure there some text
-        return StringUtils.isNotBlank((CharSequence) value);
+        return StringUtils.isBlank((CharSequence) value);
     }
 
     @Override
@@ -50,6 +50,6 @@ public class NotBlankValidationRule extends BindingValidationRule {
 
     @Override
     public String toString() {
-        return "NotBlankValidationRule{" + ", bindingName=" + getBindingName() + "}";
+        return "BlankValidationRule{" + ", bindingName=" + getBindingName() + "}";
     }
 }
