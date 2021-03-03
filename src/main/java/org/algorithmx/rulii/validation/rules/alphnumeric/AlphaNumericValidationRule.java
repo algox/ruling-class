@@ -23,15 +23,15 @@ public class AlphaNumericValidationRule extends BindingValidationRule {
     public static final String ERROR_CODE       = "rulii.validation.rules.AlphaNumericValidationRule.errorCode";
     public static final String DEFAULT_MESSAGE  = "{0} must only contain alphanumeric letters. Given {1}.";
 
-    private final boolean includeSpace;
+    private final boolean allowSpace;
 
     public AlphaNumericValidationRule(String bindingName) {
         this(bindingName, ERROR_CODE, Severity.ERROR, null, true);
     }
 
-    public AlphaNumericValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, boolean includeSpace) {
+    public AlphaNumericValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, boolean allowSpace) {
         super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
-        this.includeSpace = includeSpace;
+        this.allowSpace = allowSpace;
     }
 
     @Override
@@ -42,11 +42,11 @@ public class AlphaNumericValidationRule extends BindingValidationRule {
             throw new ValidationRuleException("AlphaNumericValidationRule only applies to CharSequences."
                     + "Supplied Class [" + value.getClass() + "] value [" + value + "]");
 
-        return isIncludeSpace() ? StringUtils.isAlphanumericSpace((CharSequence) value) : StringUtils.isAlphanumeric((CharSequence) value);
+        return isAllowSpace() ? StringUtils.isAlphanumericSpace((CharSequence) value) : StringUtils.isAlphanumeric((CharSequence) value);
     }
 
-    public boolean isIncludeSpace() {
-        return includeSpace;
+    public boolean isAllowSpace() {
+        return allowSpace;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AlphaNumericValidationRule extends BindingValidationRule {
     public String toString() {
         return "AlphaNumericValidationRule{"
                 + "bindingName=" + getBindingName()
-                + "includeSpace=" + isIncludeSpace()
+                + "isAllowSpace=" + isAllowSpace()
                 + "}";
     }
 }

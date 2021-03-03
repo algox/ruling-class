@@ -49,6 +49,8 @@ public class AssertTrueValidationRule extends BindingValidationRule {
 
     @Override
     public String toString() {
-        return "AssertTrueValidationRule{" + "bindingName=" + getBindingName() + "}";
+        return "AssertTrueValidationRule{"
+                + "bindingName=" + getBindingName()
+                + "}";
     }
 }

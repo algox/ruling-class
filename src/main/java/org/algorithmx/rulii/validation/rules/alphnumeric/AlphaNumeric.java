@@ -37,7 +37,7 @@ public @interface AlphaNumeric {
 
     Severity severity() default Severity.ERROR;
 
-    boolean includeSpace() default true;
+    boolean allowSpace() default true;
 
     class AlphaNumericValidationRuleBuilder implements BindingValidationRuleBuilder<AlphaNumeric> {
 
@@ -48,7 +48,7 @@ public @interface AlphaNumeric {
         @Override
         public Rule[] build(AlphaNumeric alpha, String bindingName) {
             AlphaNumericValidationRule rule = new AlphaNumericValidationRule(bindingName, alpha.errorCode(), alpha.severity(),
-                    alpha.message(), alpha.includeSpace());
+                    !NOT_APPLICABLE.equals(alpha.message()) ? alpha.message() : null, alpha.allowSpace());
             Rule[] result = {RuleBuilder.build(rule)};
             return result;
         }

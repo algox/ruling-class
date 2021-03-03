@@ -5,11 +5,9 @@ import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.BindingValidationRuleBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.annotation.ValidationRule;
-import org.algorithmx.rulii.validation.annotation.ValidationRuleContainer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -25,7 +23,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Documented
-@Repeatable(StartsWith.StartsWithList.class)
 @ValidationRule(StartsWith.StartsWithValidationRuleBuilder.class)
 public @interface StartsWith {
 
@@ -48,17 +45,10 @@ public @interface StartsWith {
         @Override
         public Rule[] build(StartsWith startsWith, String bindingName) {
             StartsWithValidationRule rule = new StartsWithValidationRule(bindingName, startsWith.errorCode(),
-                    startsWith.severity(), startsWith.message(), startsWith.prefixes());
+                    startsWith.severity(), !NOT_APPLICABLE.equals(startsWith.message()) ? startsWith.message() : null,
+                    startsWith.prefixes());
             Rule[] result = {RuleBuilder.build(rule)};
             return result;
         }
-    }
-
-    @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
-    @Retention(RUNTIME)
-    @Inherited @Documented
-    @ValidationRuleContainer(StartsWith.class)
-    @interface StartsWithList {
-        StartsWith[] value();
     }
 }

@@ -1,4 +1,4 @@
-package org.algorithmx.rulii.validation.rules.alpha;
+package org.algorithmx.rulii.validation.rules.numeric;
 
 import org.algorithmx.rulii.annotation.Description;
 import org.algorithmx.rulii.annotation.Rule;
@@ -9,27 +9,27 @@ import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
 /**
- * Validation Rule to make sure the the value only contains unicode letters (or spaces).
+ * Validation Rule to make sure the the value is numeric.
  *
  * @author Max Arulananthan
  * @since 1.0
  */
 @Rule
-@Description("Value can only contain unicode letters/spaces.")
-public class AlphaValidationRule extends BindingValidationRule {
+@Description("Value must be numeric.")
+public class NumericValidationRule extends BindingValidationRule {
 
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
-    public static final String ERROR_CODE       = "rulii.validation.rules.AlphaValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must only contain unicode letters. Given {1}.";
+    public static final String ERROR_CODE       = "rulii.validation.rules.NumericValidationRule.errorCode";
+    public static final String DEFAULT_MESSAGE  = "{0} must be numeric. Given {1}.";
 
     private final boolean allowSpace;
 
-    public AlphaValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, true);
+    public NumericValidationRule(String bindingName) {
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, false);
     }
 
-    public AlphaValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, boolean allowSpace) {
+    public NumericValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, boolean allowSpace) {
         super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.allowSpace = allowSpace;
     }
@@ -39,14 +39,10 @@ public class AlphaValidationRule extends BindingValidationRule {
         if (value == null) return true;
 
         if (!(value instanceof CharSequence))
-            throw new ValidationRuleException("AlphaValidationRule only applies to CharSequences."
+            throw new ValidationRuleException("UpperCaseValidationRule only applies to CharSequences."
                     + "Supplied Class [" + value.getClass() + "] value [" + value + "]");
 
-        return isAllowSpace() ? StringUtils.isAlphaSpace((CharSequence) value) : StringUtils.isAlpha((CharSequence) value);
-    }
-
-    public boolean isAllowSpace() {
-        return allowSpace;
+        return isAllowSpace() ? StringUtils.isNumericSpace((CharSequence) value) : StringUtils.isNumeric((CharSequence) value);
     }
 
     @Override
@@ -54,9 +50,13 @@ public class AlphaValidationRule extends BindingValidationRule {
         return SUPPORTED_TYPES;
     }
 
+    public boolean isAllowSpace() {
+        return allowSpace;
+    }
+
     @Override
     public String toString() {
-        return "AlphaValidationRule{"
+        return "NumericValidationRule{"
                 + "bindingName=" + getBindingName()
                 + "allowSpace=" + isAllowSpace()
                 + "}";

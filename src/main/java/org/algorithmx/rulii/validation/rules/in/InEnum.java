@@ -1,4 +1,4 @@
-package org.algorithmx.rulii.validation.rules.ascii;
+package org.algorithmx.rulii.validation.rules.in;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
@@ -12,6 +12,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -25,28 +27,36 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Documented
-@Repeatable(Ascii.AsciiList.class)
-@ValidationRule(Ascii.AsciiValidationRuleBuilder.class)
-public @interface Ascii {
+@Repeatable(InEnum.InList.class)
+@ValidationRule(InEnum.InEnumValidationRuleBuilder.class)
+public @interface InEnum {
 
     String NOT_APPLICABLE = "N/A";
 
-    String errorCode() default AsciiValidationRule.ERROR_CODE;
+    String errorCode() default InValidationRule.ERROR_CODE;
 
     String message() default NOT_APPLICABLE;
 
     Severity severity() default Severity.ERROR;
 
-    class AsciiValidationRuleBuilder implements BindingValidationRuleBuilder<Ascii> {
+    Class<? extends Enum> value();
 
-        public AsciiValidationRuleBuilder() {
+    class InEnumValidationRuleBuilder implements BindingValidationRuleBuilder<InEnum> {
+
+        public InEnumValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public Rule[] build(Ascii ascii, String bindingName) {
-            AsciiValidationRule rule = new AsciiValidationRule(bindingName, ascii.errorCode(), ascii.severity(),
-                    !NOT_APPLICABLE.equals(ascii.message()) ? ascii.message() : null);
+        public Rule[] build(InEnum in, String bindingName) {
+            Set<String> values = new HashSet<>();
+
+            for (Enum e : in.value().getEnumConstants()) {
+                values.add(e.name());
+            }
+
+            InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
+                    in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
             Rule[] result = {RuleBuilder.build(rule)};
             return result;
         }
@@ -55,8 +65,8 @@ public @interface Ascii {
     @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
     @Retention(RUNTIME)
     @Inherited @Documented
-    @ValidationRuleContainer(Ascii.class)
-    @interface AsciiList {
-        Ascii[] value();
+    @ValidationRuleContainer(InEnum.class)
+    @interface InList {
+        InEnum[] value();
     }
 }

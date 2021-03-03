@@ -1,15 +1,13 @@
-package org.algorithmx.rulii.validation.rules.ascii;
+package org.algorithmx.rulii.validation.rules.numeric;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.BindingValidationRuleBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.annotation.ValidationRule;
-import org.algorithmx.rulii.validation.annotation.ValidationRuleContainer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -25,38 +23,32 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Documented
-@Repeatable(Ascii.AsciiList.class)
-@ValidationRule(Ascii.AsciiValidationRuleBuilder.class)
-public @interface Ascii {
+@ValidationRule(Numeric.NumericValidationRuleBuilder.class)
+public @interface Numeric {
 
     String NOT_APPLICABLE = "N/A";
 
-    String errorCode() default AsciiValidationRule.ERROR_CODE;
+    String errorCode() default NumericValidationRule.ERROR_CODE;
 
     String message() default NOT_APPLICABLE;
 
     Severity severity() default Severity.ERROR;
 
-    class AsciiValidationRuleBuilder implements BindingValidationRuleBuilder<Ascii> {
+    boolean allowSpace() default false;
 
-        public AsciiValidationRuleBuilder() {
+    class NumericValidationRuleBuilder implements BindingValidationRuleBuilder<Numeric> {
+
+        public NumericValidationRuleBuilder() {
             super();
         }
 
         @Override
-        public Rule[] build(Ascii ascii, String bindingName) {
-            AsciiValidationRule rule = new AsciiValidationRule(bindingName, ascii.errorCode(), ascii.severity(),
-                    !NOT_APPLICABLE.equals(ascii.message()) ? ascii.message() : null);
+        public Rule[] build(Numeric numeric, String bindingName) {
+            NumericValidationRule rule = new NumericValidationRule(bindingName, numeric.errorCode(),
+                    numeric.severity(), !NOT_APPLICABLE.equals(numeric.message()) ? numeric.message() : null,
+                    numeric.allowSpace());
             Rule[] result = {RuleBuilder.build(rule)};
             return result;
         }
-    }
-
-    @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
-    @Retention(RUNTIME)
-    @Inherited @Documented
-    @ValidationRuleContainer(Ascii.class)
-    @interface AsciiList {
-        Ascii[] value();
     }
 }
