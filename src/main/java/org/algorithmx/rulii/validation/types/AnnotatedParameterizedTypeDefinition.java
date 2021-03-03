@@ -65,7 +65,7 @@ public class AnnotatedParameterizedTypeDefinition extends AbstractAnnotatedTypeD
     @Override
     public String toString() {
         return "ParameterizedTypeDefinition{" +
-                "type=" + type +
+                super.toString() +
                 ", typeArguments=" + Arrays.toString(typeArguments) +
                 '}';
     }

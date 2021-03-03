@@ -18,7 +18,9 @@
 
 package org.algorithmx.rulii.validation.types;
 
-import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
+import org.algorithmx.rulii.extract.Extractor;
+import org.algorithmx.rulii.extract.TypedValueExtractor;
+import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotation;
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotations;
 import org.algorithmx.rulii.validation.annotation.Validate;
 import org.algorithmx.rulii.validation.annotation.ValidationRule;
@@ -33,6 +35,7 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
 
     protected final T annotatedType;
     protected final AnnotatedTypeKind kind;
+    protected final Class<? extends TypedValueExtractor> extractor;
     protected final Annotation[] ruleAnnotations;
     protected final boolean requiresValidation;
     protected final boolean requiresTraversal;
@@ -41,6 +44,7 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         super();
         this.annotatedType = annotatedType;
         this.kind = kind;
+        this.extractor = findExtractor(annotatedType);
         this.ruleAnnotations = findRuleAnnotations(annotatedType);
         this.requiresValidation = isAnnotatedWithValid(annotatedType);
         this.requiresTraversal = requiresTraversal;
@@ -54,6 +58,11 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     @Override
     public AnnotatedTypeKind getKind() {
         return kind;
+    }
+
+    @Override
+    public Class<? extends TypedValueExtractor> getCustomExtractor() {
+        return extractor;
     }
 
     @Override
@@ -71,11 +80,16 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         return requiresTraversal;
     }
 
+    protected static Class<? extends TypedValueExtractor> findExtractor(AnnotatedType annotatedType) {
+        Extractor result = annotatedType.getAnnotation(Extractor.class);
+        return result != null ? result.value() : null;
+    }
+
     protected static Annotation[] findRuleAnnotations(AnnotatedType annotatedType) {
         List<Annotation> result = new ArrayList<>();
         MergedAnnotations.from(annotatedType, MergedAnnotations.SearchStrategy.DIRECT)
                 .stream(ValidationRule.class)
-                .forEach(a -> result.add(a.getMetaSource().synthesize()));
+                .forEach(a -> result.add(a.synthesize()));
         return result.toArray(new Annotation[result.size()]);
     }
 
@@ -91,12 +105,15 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     }
 
     protected static boolean isAnnotatedWithValid(AnnotatedType annotatedType) {
-        return AnnotationUtils.getAnnotation(annotatedType, Validate.class) != null;
+        MergedAnnotation<Validate> mergedAnnotation = MergedAnnotations.from(annotatedType).get(Validate.class);
+        Validate result = mergedAnnotation != null && mergedAnnotation.isPresent() ? mergedAnnotation.synthesize() : null;
+        return result != null;
     }
 
     @Override
     public String toString() {
         return "kind=" + kind +
+                ", extractor=" + extractor +
                 ", ruleAnnotations=" + Arrays.toString(ruleAnnotations) +
                 ", requiresValidation=" + requiresValidation +
                 ", requiresTraversal=" + requiresTraversal + " ";

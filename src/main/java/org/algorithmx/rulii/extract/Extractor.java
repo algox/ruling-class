@@ -18,22 +18,16 @@
 
 package org.algorithmx.rulii.extract;
 
-import org.algorithmx.rulii.annotation.AliasFor;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE_USE)
+@Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Extract {
+public @interface Extractor {
 
-    @AliasFor("using")
     Class<? extends TypedValueExtractor> value();
-
-    @AliasFor("value")
-    Class<? extends TypedValueExtractor> using();
 }

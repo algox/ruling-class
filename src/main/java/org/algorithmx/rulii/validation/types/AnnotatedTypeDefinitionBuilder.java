@@ -51,7 +51,7 @@ public class AnnotatedTypeDefinitionBuilder {
         // TODO : Is this possible?
         if (breadCrumbs.containsKey(annotatedType)) return breadCrumbs.get(annotatedType);
 
-        AnnotatedTypeDefinition result = null;
+        AnnotatedTypeDefinition result;
 
         if (annotatedType instanceof AnnotatedParameterizedType) {
             result = visit((AnnotatedParameterizedType) annotatedType);

@@ -16,30 +16,18 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.types;
+package org.algorithmx.rulii.test.validation.types;
 
-import org.algorithmx.rulii.extract.TypedValueExtractor;
+public class TestClass<T> {
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedType;
+    private T value;
 
-public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
-
-    T getAnnotatedType();
-
-    AnnotatedTypeKind getKind();
-
-    Class<? extends TypedValueExtractor> getCustomExtractor();
-
-    boolean requiresTraversal();
-
-    boolean requiresValidation();
-
-    default boolean hasDeclaredRuleAnnotations() {
-        return getDeclaredRuleAnnotations() != null;
+    public TestClass(T value) {
+        super();
+        this.value = value;
     }
 
-    Annotation[] getDeclaredRuleAnnotations();
-
-    default String getSignature() { return "";}
+    public T getValue() {
+        return value;
+    }
 }
