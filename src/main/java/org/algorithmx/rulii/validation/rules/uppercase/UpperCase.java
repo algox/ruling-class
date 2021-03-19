@@ -2,9 +2,9 @@ package org.algorithmx.rulii.validation.rules.uppercase;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.BindingValidationRuleBuilder;
+import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.validation.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationRule;
 import org.algorithmx.rulii.validation.rules.lowercase.LowerCaseValidationRule;
 
 import java.lang.annotation.Documented;
@@ -35,7 +35,7 @@ public @interface UpperCase {
 
     Severity severity() default Severity.ERROR;
 
-    class UpperCaseValidationRuleBuilder implements BindingValidationRuleBuilder<UpperCase> {
+    class UpperCaseValidationRuleBuilder implements AnnotatedRuleBuilder<UpperCase> {
 
         public UpperCaseValidationRuleBuilder() {
             super();

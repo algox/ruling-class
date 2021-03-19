@@ -4,7 +4,7 @@ import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotations;
 import org.algorithmx.rulii.test.validation.Car;
 import org.algorithmx.rulii.test.validation.Person;
-import org.algorithmx.rulii.util.objectgraph.ObjectGraph;
+import org.algorithmx.rulii.traverse.objectgraph.ObjectGraph;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
@@ -24,7 +24,7 @@ public class ObjectGraphTest {
         TestObjectVisitor visitor = new TestObjectVisitor();
         // Set to be ordered fields so we have predictable traversal
         ObjectGraph graph = new ObjectGraph();
-        graph.traverse(create(), visitor);
+        graph.traverse(create(), null, visitor);
     }
 
     private static TestClass create() {

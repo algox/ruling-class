@@ -24,8 +24,8 @@ import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
-import org.algorithmx.rulii.validation.BindingValidationRuleBuilder;
-import org.algorithmx.rulii.validation.annotation.ValidationRule;
+import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.annotation.ValidationRule;
 
 import java.lang.annotation.Annotation;
 
@@ -40,7 +40,7 @@ public class AnnotatedValidationRuleBuilder {
         Assert.notNull(annotation, "annotation cannot be null.");
         ValidationRule validationRule = annotation.annotationType().getAnnotation(ValidationRule.class);
         if (validationRule == null) throw new UnrulyException("Could not find @ValidationRule on [" + annotation + "]");
-        BindingValidationRuleBuilder builder = objectFactory.create(validationRule.value(), true);
-        return builder.build(annotation, bindingName);
+        AnnotatedRuleBuilder builder = objectFactory.create(validationRule.value(), true);
+        return (Rule[]) builder.build(annotation, bindingName);
     }
 }

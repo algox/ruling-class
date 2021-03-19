@@ -23,7 +23,7 @@ import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.context.RuleContextBuilder;
 import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.util.objectgraph.ObjectGraph;
+import org.algorithmx.rulii.traverse.objectgraph.ObjectGraph;
 import org.algorithmx.rulii.validation.RuleViolations;
 
 public class DefaultBeanValidator implements BeanValidator {
@@ -38,7 +38,7 @@ public class DefaultBeanValidator implements BeanValidator {
         RuleContext context = createRuleContext(bindings);
         ObjectGraph graph = new ObjectGraph();
         BeanGraphValidator validator = new BeanGraphValidator(context);
-        graph.traverse(bean, validator);
+        graph.traverse(bean, null, validator);
         return validator.getViolations();
     }
 

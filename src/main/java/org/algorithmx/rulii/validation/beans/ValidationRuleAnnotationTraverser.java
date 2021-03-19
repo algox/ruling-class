@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.beans;
 
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotations;
 import org.algorithmx.rulii.lib.spring.core.annotation.RepeatableContainers;
-import org.algorithmx.rulii.validation.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationRule;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;

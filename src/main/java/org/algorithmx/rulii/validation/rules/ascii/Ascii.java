@@ -2,10 +2,10 @@ package org.algorithmx.rulii.validation.rules.ascii;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.BindingValidationRuleBuilder;
+import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.validation.annotation.ValidationRule;
-import org.algorithmx.rulii.validation.annotation.ValidationRuleContainer;
+import org.algorithmx.rulii.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationRuleContainer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -37,7 +37,7 @@ public @interface Ascii {
 
     Severity severity() default Severity.ERROR;
 
-    class AsciiValidationRuleBuilder implements BindingValidationRuleBuilder<Ascii> {
+    class AsciiValidationRuleBuilder implements AnnotatedRuleBuilder<Ascii> {
 
         public AsciiValidationRuleBuilder() {
             super();

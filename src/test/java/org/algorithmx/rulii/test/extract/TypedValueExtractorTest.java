@@ -18,10 +18,10 @@
 
 package org.algorithmx.rulii.test.extract;
 
-import org.algorithmx.rulii.extract.DefaultExtractorRegistry;
-import org.algorithmx.rulii.extract.ExtractorRegistry;
-import org.algorithmx.rulii.extract.TypedValueExtractor;
-import org.algorithmx.rulii.extract.TypedValueProcessor;
+import org.algorithmx.rulii.traverse.extract.DefaultExtractorRegistry;
+import org.algorithmx.rulii.traverse.extract.ExtractorRegistry;
+import org.algorithmx.rulii.traverse.extract.TypedValueExtractor;
+import org.algorithmx.rulii.traverse.extract.TypedValueProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 

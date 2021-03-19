@@ -19,20 +19,17 @@
 package org.algorithmx.rulii.validation.beans;
 
 import org.algorithmx.rulii.bind.Bindings;
-import org.algorithmx.rulii.bind.load.FieldBindingLoader;
 import org.algorithmx.rulii.core.context.RuleContext;
-import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.ConcurrentReferenceHashMap;
-import org.algorithmx.rulii.util.objectgraph.ObjectVisitorTemplate;
+import org.algorithmx.rulii.traverse.objectgraph.ObjectVisitorTemplate;
+import org.algorithmx.rulii.traverse.objectgraph.TraversalCandidate;
 import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.annotation.Validate;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public class BeanGraphValidator extends ObjectVisitorTemplate {
@@ -63,7 +60,17 @@ public class BeanGraphValidator extends ObjectVisitorTemplate {
         return violations;
     }
 
-    @Override
+    public boolean visitObjectStart(TraversalCandidate candidate) {
+        if (candidate.getTypeDefinition() == null) return false;
+
+        return candidate.getTypeDefinition().requiresIntrospection();
+    }
+
+    public void visitObjectEnd(TraversalCandidate candidate) {
+
+    }
+
+    /*@Override
     public boolean visitObjectStart(Object target) {
         Bindings bindings = buildBeanBindings(target);
         setRules(getBeanValidationRules(target.getClass()));
@@ -170,5 +177,5 @@ public class BeanGraphValidator extends ObjectVisitorTemplate {
                 .loadAnnotatedMethods()
                 .loadAnnotatedConstructors()
                 .build();
-    }
+    }*/
 }

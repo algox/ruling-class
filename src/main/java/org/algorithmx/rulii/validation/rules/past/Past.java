@@ -2,9 +2,9 @@ package org.algorithmx.rulii.validation.rules.past;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.BindingValidationRuleBuilder;
+import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.validation.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationRule;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -33,7 +33,7 @@ public @interface Past {
 
     Severity severity() default Severity.ERROR;
 
-    class PastValidationRuleBuilder implements BindingValidationRuleBuilder<Past> {
+    class PastValidationRuleBuilder implements AnnotatedRuleBuilder<Past> {
 
         public PastValidationRuleBuilder() {
             super();
