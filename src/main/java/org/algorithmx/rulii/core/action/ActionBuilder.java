@@ -81,7 +81,7 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action build(String script) {
-        return with((RuleContext context) -> processScriptAction(script, context.getScriptingProcessor(), context.getBindings())).build();
+        return with((RuleContext context) -> processScriptAction(script, context.getScriptProcessor(), context.getBindings())).build();
     }
 
     private static void processScriptAction(String script, ScriptProcessor scriptProcessor, Bindings bindings) {

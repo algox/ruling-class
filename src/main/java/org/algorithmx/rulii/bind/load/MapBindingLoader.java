@@ -25,7 +25,9 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +39,7 @@ import java.util.stream.Collectors;
  * @author Max Arulananthan
  * @since 1.0
  */
-public class MapBindingLoader implements BindingLoader<Map<String, ?>> {
+public class MapBindingLoader implements BindingLoader<Map<String, Object>> {
 
     private Function<String, Boolean> filter = null;
     private Function<String, String> nameGenerator = null;
@@ -87,13 +89,25 @@ public class MapBindingLoader implements BindingLoader<Map<String, ?>> {
     }
 
     @Override
-    public void load(Bindings bindings, Map<String, ?> map) {
+    public void load(Bindings bindings, Map<String, Object> map) {
         Assert.notNull(map, "map cannot be null.");
 
-        for (Map.Entry<String, ?> entry : map.entrySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (filter != null && !filter.apply(entry.getKey())) return;
             String bindingName = nameGenerator != null ? nameGenerator.apply(entry.getKey()) : entry.getKey();
-            bindings.bind(BindingBuilder.with(bindingName).value(entry.getValue()).build());
+
+            Supplier getter = () -> {
+                return map.get(entry.getKey());
+            };
+
+            Consumer setter = (value) -> {
+                map.put(entry.getKey(), value);
+            };
+
+            bindings.bind(BindingBuilder
+                    .with(bindingName)
+                    .delegate(getter, setter)
+                    .build());
         }
     }
 }

@@ -35,13 +35,14 @@ public final class TestData {
                 "USA");
         Address address3 = new Address("address:3", "1", "Oregon Way", "Oregon", "OR",
                 "USA");
-        Employment[] jobs = new Employment[2];
+        Employment[] jobs = new Employment[3];
         jobs[0] = new Employment("employment:1", "Charlotte Hornets", new BigDecimal("50000000"), address2);
         jobs[1] = new Employment("employment:2", "Jordan Brand", new BigDecimal("250000000"), address3);
+        jobs[2] = new Employment("employment:3", "Nascar", new BigDecimal("21000000"), address1);
         Map<String, Map<String, List<Integer>>> attributes = new HashMap<>();
         Map<String, List<Integer>> key1 = new HashMap<>();
         key1.put("age", Arrays.asList(50));
-        attributes.put("age", key1);
+        attributes.put("value", key1);
         Person result = new Person("person:1", "Michael", "Jordan", address1, cars, jobs, attributes);
         return result;
     }

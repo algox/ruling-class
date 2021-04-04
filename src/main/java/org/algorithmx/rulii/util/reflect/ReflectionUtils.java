@@ -26,6 +26,9 @@ import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import javax.annotation.PostConstruct;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -51,6 +54,15 @@ import java.util.stream.Collectors;
 public final class ReflectionUtils {
 
     private static final ParameterNameDiscoverer parameterNameDiscoverer = ParameterNameDiscoverer.create();
+
+    private static final Predicate<Class<?>> JAVA_CORE_CLASSES = (clazz) ->
+            clazz == null
+                    || clazz.isPrimitive()
+                    || clazz.isArray()
+                    || clazz.getPackage() == null
+                    || clazz.getClassLoader() == null
+                    || clazz.getPackage().getName().startsWith("java.")
+                    || clazz.getPackage().getName().startsWith("javax.");
 
     private static final Map<Type, Object> DEFAULT_VALUE_MAP = new HashMap<>();
     private static final Map<Class<?>, MethodHandles.Lookup> METHOD_HANDLE_CACHE = new HashMap<>();
@@ -249,6 +261,18 @@ public final class ReflectionUtils {
         return lookup.unreflect(method);
     }
 
+    public static BeanInfo loadBeanInfo(Class<?> type) {
+        BeanInfo result;
+
+        try {
+            result = Introspector.getBeanInfo(type);
+        } catch (IntrospectionException e) {
+            throw new UnrulyException("Unable to load BeanInfo for class [" + type + "]", e);
+        }
+
+        return result;
+    }
+
     /**
      * Makes the given executable accessible via reflection.
      *
@@ -256,6 +280,7 @@ public final class ReflectionUtils {
      */
     public static void makeAccessible(Executable executable) {
         Assert.notNull(executable, "executable cannot be null.");
+        // TODO : Java 9 check
         executable.setAccessible(true);
     }
 
@@ -285,5 +310,10 @@ public final class ReflectionUtils {
         }
 
         return parameterizedType.getActualTypeArguments()[0];
+    }
+
+    public static boolean isJavaCoreClass(Class<?> clazz) {
+        Assert.notNull(clazz, "clazz cannot be null.");
+        return JAVA_CORE_CLASSES.test(clazz);
     }
 }

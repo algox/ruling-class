@@ -18,14 +18,13 @@
 
 package org.algorithmx.rulii.test.validation;
 
+import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.core.Identifiable;
 import org.algorithmx.rulii.test.validation.objectgraph.Expression;
 import org.algorithmx.rulii.test.validation.objectgraph.Or;
-import org.algorithmx.rulii.validation.annotation.Validate;
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
-import org.algorithmx.rulii.validation.rules.pattern.Pattern;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,14 +41,14 @@ public class Person implements Identifiable {
     private String firstName;
     @Annotation5
     private String lastName;
-    @Expression(or = @Or)
+    @Expression(or = @Or) @Validate
     private Address address;
-    @Annotation3 @Validate
+    @Annotation3
     private List<Car> cars;
     @Annotation1(integer = 4, fraction = 5) @Validate
     private Employment[] jobs;
     @Validate
-    private Map<String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;
+    private Map<@NotNull String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;
 
     public Person(String firstName, String lastName) {
         super();
@@ -82,7 +81,7 @@ public class Person implements Identifiable {
         return id;
     }
 
-    public @NotNull String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
@@ -102,16 +101,16 @@ public class Person implements Identifiable {
         return jobs;
     }
 
-    public Map<@NotEmpty String, Map<@NotNull String, List<@Min(5) Integer>>> getAttributes() {
+    public Map<String, Map<String, List<Integer>>> getAttributes() {
         return attributes;
     }
 
-    public void add(@NotNull @Annotation5 @Pattern(regex = "[*]") Car car) {
+    public void add(Car car) {
         if (this.cars == null) this.cars = new ArrayList<>();
         this.cars.add(car);
     }
 
-    public void setAttributes(Map<@NotEmpty String, Map<@NotNull String, List<@Min(5) Integer>>> attributes) {
+    public void setAttributes(Map<String, Map<String, List<Integer>>> attributes) {
         this.attributes = attributes;
     }
 

@@ -37,6 +37,7 @@ import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -58,7 +59,8 @@ public class RuleContextBuilder {
     private MessageFormatter messageFormatter;
     private ObjectFactory objectFactory;
     private EventProcessor eventProcessor;
-    private ConverterRegistry registry;
+    private ConverterRegistry converterRegistry;
+    private ExtractorRegistry extractorRegistry;
     private ScriptProcessor scriptProcessor;
     private Clock clock;
     private Locale locale;
@@ -77,7 +79,8 @@ public class RuleContextBuilder {
         this.messageFormatter = configuration.getMessageFormatter();
         this.objectFactory = configuration.getObjectFactory();
         this.eventProcessor = EventProcessor.create();
-        this.registry = configuration.getConverterRegistry();
+        this.converterRegistry = configuration.getConverterRegistry();
+        this.extractorRegistry = configuration.getExtractorRegistry();
         this.clock = configuration.getClock();
         this.locale = configuration.getLocale();
         this.scriptProcessor = configuration.getScriptProcessor();
@@ -173,9 +176,9 @@ public class RuleContextBuilder {
         return this;
     }
 
-    public RuleContextBuilder converterRegistry(ConverterRegistry registry) {
-        Assert.notNull(registry, "registry cannot be null.");
-        this.registry = registry;
+    public RuleContextBuilder converterRegistry(ConverterRegistry converterRegistry) {
+        Assert.notNull(converterRegistry, "converterRegistry cannot be null.");
+        this.converterRegistry = converterRegistry;
         return this;
     }
 
@@ -206,7 +209,7 @@ public class RuleContextBuilder {
         ScopedBindings scopedBindings = ScopedBindings.create();
 
         RuleContext result  = new RuleContext(scopedBindings, locale, matchingStrategy, parameterResolver, messageResolver,
-                messageFormatter, objectFactory, eventProcessor, registry, scriptProcessor, clock);
+                messageFormatter, objectFactory, eventProcessor, converterRegistry, extractorRegistry, scriptProcessor, clock);
         // Make the Context avail in the bindings.
         ((DefaultBindings) (scopedBindings.getRootScope())).promiscuousBind(BindingBuilder
                 .with(ReservedBindings.RULE_CONTEXT.getName())

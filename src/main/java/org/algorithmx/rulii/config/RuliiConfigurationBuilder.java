@@ -18,9 +18,9 @@
 
 package org.algorithmx.rulii.config;
 
-import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.NoOpScriptProcessor;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
@@ -29,6 +29,7 @@ import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -40,6 +41,7 @@ public class RuliiConfigurationBuilder {
     private MethodResolver methodResolver = MethodResolver.create();
     private MessageFormatter messageFormatter = MessageFormatter.create();
     private ConverterRegistry converterRegistry = ConverterRegistry.create();
+    private ExtractorRegistry extractorRegistry = ExtractorRegistry.create();
     private ObjectFactory objectFactory = ObjectFactory.create();
     private Clock clock = Clock.systemDefaultZone();
     private Locale locale = Locale.getDefault();
@@ -129,6 +131,6 @@ public class RuliiConfigurationBuilder {
 
     public RuliiConfiguration build() {
         return new RuliiConfiguration(matchingStrategy, parameterResolver, methodResolver, messageResolver,
-                messageFormatter, converterRegistry, objectFactory, scriptProcessor, clock, locale);
+                messageFormatter, converterRegistry, extractorRegistry, objectFactory, scriptProcessor, clock, locale);
     }
 }

@@ -24,6 +24,7 @@ import org.algorithmx.rulii.util.TypeReference;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The interface that is used to store and find Bindings.
@@ -328,6 +329,13 @@ public interface Bindings extends Iterable<Binding<?>> {
         if (result == null) throw new NoSuchBindingException(name);
         result.setValue(value);
     }
+
+    /**
+     * Retrieves all the Binding Names (ie. keys).
+     *
+     * @return all the used keys.
+     */
+    Set<String> getNames();
 
     /**
      * Retrieves the Binding values as an Unmodifiable Map.

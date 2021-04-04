@@ -31,7 +31,7 @@ public class ScriptConditionRule extends BindingValidationRule {
 
     @Override
     protected boolean isValid(RuleContext context, Object value) {
-        return context.getScriptingProcessor().evaluateCondition(scriptCondition, context.getBindings());
+        return context.getScriptProcessor().evaluateCondition(scriptCondition, context.getBindings());
     }
 
     @Override

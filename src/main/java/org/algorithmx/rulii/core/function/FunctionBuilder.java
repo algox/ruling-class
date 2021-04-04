@@ -140,7 +140,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
 
     public static <T> Function<T> build(String script) {
         FunctionBuilder<T> builder = with((RuleContext context) -> processScriptFunction(script,
-                context.getScriptingProcessor(), context.getBindings()));
+                context.getScriptProcessor(), context.getBindings()));
         return builder.build();
     }
 

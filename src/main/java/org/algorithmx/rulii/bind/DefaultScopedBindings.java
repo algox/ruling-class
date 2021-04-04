@@ -22,7 +22,13 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.RuleUtils;
 import org.algorithmx.rulii.util.TypeReference;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.UUID;
 
 /**
  * Default implementation of the Scoped Bindings.
@@ -246,6 +252,11 @@ public class DefaultScopedBindings implements ScopedBindings {
         }
 
         return result;
+    }
+
+    @Override
+    public Set<String> getNames() {
+        return asMap().keySet();
     }
 
     /**

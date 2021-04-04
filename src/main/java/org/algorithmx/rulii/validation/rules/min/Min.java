@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.rules.min;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationRule;
 
@@ -36,7 +36,7 @@ public @interface Min {
 
     long value();
 
-    class MinValidationRuleBuilder implements AnnotatedRuleBuilder<Min> {
+    class MinValidationRuleBuilder implements AnnotatedRunnableBuilder<Min> {
 
         public MinValidationRuleBuilder() {
             super();

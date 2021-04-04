@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Immutable version of the Bindings. All functions that create Bindings will be disabled.
@@ -115,6 +116,11 @@ public class ImmutableBindings implements Bindings {
     @Override
     public Map<String, ?> asMap() {
         return getTarget().asMap();
+    }
+
+    @Override
+    public Set<String> getNames() {
+        return target.getNames();
     }
 
     @Override

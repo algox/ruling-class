@@ -18,15 +18,16 @@
 
 package org.algorithmx.rulii.config;
 
-import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -39,6 +40,7 @@ public class RuliiConfiguration {
     private MethodResolver methodResolver;
     private MessageFormatter messageFormatter;
     private ConverterRegistry converterRegistry;
+    private ExtractorRegistry extractorRegistry;
     private ScriptProcessor scriptProcessor;
     private ObjectFactory objectFactory;
     private Clock clock;
@@ -46,7 +48,8 @@ public class RuliiConfiguration {
 
     public RuliiConfiguration(BindingMatchingStrategy matchingStrategy, ParameterResolver parameterResolver,
                               MethodResolver methodResolver, MessageResolver messageResolver, MessageFormatter messageFormatter,
-                              ConverterRegistry converterRegistry, ObjectFactory objectFactory, ScriptProcessor scriptProcessor,
+                              ConverterRegistry converterRegistry, ExtractorRegistry extractorRegistry,
+                              ObjectFactory objectFactory, ScriptProcessor scriptProcessor,
                               Clock clock, Locale locale) {
         super();
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
@@ -55,6 +58,7 @@ public class RuliiConfiguration {
         Assert.notNull(messageResolver, "messageResolver cannot be null.");
         Assert.notNull(messageFormatter, "messageFormatter cannot be null.");
         Assert.notNull(converterRegistry, "converterRegistry cannot be null.");
+        Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
         Assert.notNull(clock, "clock cannot be null.");
@@ -65,6 +69,7 @@ public class RuliiConfiguration {
         this.messageResolver = messageResolver;
         this.messageFormatter = messageFormatter;
         this.converterRegistry = converterRegistry;
+        this.extractorRegistry = extractorRegistry;
         this.objectFactory = objectFactory;
         this.clock = clock;
         this.locale = locale;
@@ -89,6 +94,10 @@ public class RuliiConfiguration {
 
     public ConverterRegistry getConverterRegistry() {
         return converterRegistry;
+    }
+
+    public ExtractorRegistry getExtractorRegistry() {
+        return extractorRegistry;
     }
 
     public ObjectFactory getObjectFactory() {
@@ -146,6 +155,11 @@ public class RuliiConfiguration {
         this.converterRegistry = converterRegistry;
     }
 
+    void setExtractorRegistry(ExtractorRegistry extractorRegistry) {
+        Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
+        this.extractorRegistry = extractorRegistry;
+    }
+
     void setObjectFactory(ObjectFactory objectFactory) {
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         this.objectFactory = objectFactory;
@@ -166,14 +180,15 @@ public class RuliiConfiguration {
         return "RuliiConfiguration{" +
                 "matchingStrategy=" + matchingStrategy +
                 ", parameterResolver=" + parameterResolver +
+                ", messageResolver=" + messageResolver +
                 ", methodResolver=" + methodResolver +
                 ", messageFormatter=" + messageFormatter +
                 ", converterRegistry=" + converterRegistry +
+                ", extractorRegistry=" + extractorRegistry +
+                ", scriptProcessor=" + scriptProcessor +
                 ", objectFactory=" + objectFactory +
                 ", clock=" + clock +
                 ", locale=" + locale +
-                ", messageResolver=" + messageResolver +
-                ", scriptProcessor='" + scriptProcessor + '\'' +
                 '}';
     }
 }

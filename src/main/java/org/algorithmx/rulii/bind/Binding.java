@@ -34,8 +34,6 @@ import java.lang.reflect.Type;
  */
 public interface Binding<T> extends Identifiable {
 
-	String NAME_REGEX = "[a-zA-Z$_][a-zA-Z0-9$_]*";
-
 	/**
 	 * Name of the Binding.
      *

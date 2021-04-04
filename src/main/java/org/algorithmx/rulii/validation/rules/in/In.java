@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.rules.in;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationRule;
 import org.algorithmx.rulii.annotation.ValidationRuleContainer;
@@ -44,7 +44,7 @@ public @interface In {
 
     Class<?> type() default void.class;
 
-    class InValidationRuleBuilder implements AnnotatedRuleBuilder<In> {
+    class InValidationRuleBuilder implements AnnotatedRunnableBuilder<In> {
 
         public InValidationRuleBuilder() {
             super();

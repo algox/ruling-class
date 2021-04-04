@@ -18,7 +18,7 @@
 
 package org.algorithmx.rulii.annotation;
 
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -32,5 +32,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface ValidationRule {
 
-    Class<? extends AnnotatedRuleBuilder> value();
+    Class<? extends AnnotatedRunnableBuilder> value();
 }

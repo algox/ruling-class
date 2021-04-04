@@ -19,10 +19,10 @@
 package org.algorithmx.rulii.core.context;
 
 import org.algorithmx.rulii.bind.ScopedBindings;
-import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterMatch;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.RuleExecutionStatus;
 import org.algorithmx.rulii.event.EventProcessor;
@@ -31,6 +31,7 @@ import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 
 import java.time.Clock;
 import java.util.Date;
@@ -55,7 +56,8 @@ public class RuleContext {
     private final MessageResolver messageResolver;
     private final MessageFormatter messageFormatter;
     private final ObjectFactory objectFactory;
-    private final ConverterRegistry registry;
+    private final ConverterRegistry converterRegistry;
+    private final ExtractorRegistry extractorRegistry;
     private final ScriptProcessor scriptProcessor;
     private final EventProcessor eventProcessor;
     private final Clock clock;
@@ -63,8 +65,8 @@ public class RuleContext {
     public RuleContext(ScopedBindings bindings, Locale locale, BindingMatchingStrategy matchingStrategy,
                        ParameterResolver parameterResolver, MessageResolver messageResolver,
                        MessageFormatter messageFormatter, ObjectFactory objectFactory,
-                       EventProcessor eventProcessor, ConverterRegistry registry,
-                       ScriptProcessor scriptProcessor, Clock clock) {
+                       EventProcessor eventProcessor, ConverterRegistry converterRegistry,
+                       ExtractorRegistry extractorRegistry, ScriptProcessor scriptProcessor, Clock clock) {
         super();
         Assert.notNull(bindings, "bindings cannot be null.");
         Assert.notNull(locale, "locale cannot be null.");
@@ -73,7 +75,8 @@ public class RuleContext {
         Assert.notNull(messageFormatter, "messageFormatter cannot be null.");
         Assert.notNull(messageResolver, "messageResolver cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
-        Assert.notNull(registry, "registry cannot be null.");
+        Assert.notNull(converterRegistry, "converterRegistry cannot be null.");
+        Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
         Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
         Assert.notNull(clock, "clock cannot be null.");
         this.bindings = bindings;
@@ -84,7 +87,8 @@ public class RuleContext {
         this.messageResolver = messageResolver;
         this.objectFactory = objectFactory;
         this.eventProcessor = eventProcessor;
-        this.registry = registry;
+        this.converterRegistry = converterRegistry;
+        this.extractorRegistry = extractorRegistry;
         this.scriptProcessor = scriptProcessor;
         this.clock = clock;
     }
@@ -94,7 +98,7 @@ public class RuleContext {
     }
 
     public Object[] resolve(ParameterMatch[] matches, MethodDefinition definition) {
-        return getParameterResolver().resolve(matches, definition, getBindings(), matchingStrategy, getRegistry());
+        return getParameterResolver().resolve(matches, definition, getBindings(), matchingStrategy, getConverterRegistry());
     }
 
     public String resolveMessage(String code) {
@@ -154,15 +158,19 @@ public class RuleContext {
      *
      * @return Converter Registry. Cannot be null.
      */
-    public ConverterRegistry getRegistry() {
-        return registry;
+    public ConverterRegistry getConverterRegistry() {
+        return converterRegistry;
+    }
+
+    public ExtractorRegistry getExtractorRegistry() {
+        return extractorRegistry;
     }
 
     public Locale getLocale() {
         return locale;
     }
 
-    public ScriptProcessor getScriptingProcessor() {
+    public ScriptProcessor getScriptProcessor() {
         return scriptProcessor;
     }
 

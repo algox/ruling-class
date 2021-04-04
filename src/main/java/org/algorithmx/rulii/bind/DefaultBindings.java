@@ -144,6 +144,11 @@ public class DefaultBindings implements Bindings {
         return result;
     }
 
+    @Override
+    public Set<String> getNames() {
+        return bindings.keySet();
+    }
+
     /**
      * Creates the data structure to store all the Bindings.
      *

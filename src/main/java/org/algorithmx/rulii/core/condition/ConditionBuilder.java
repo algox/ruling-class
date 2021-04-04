@@ -171,7 +171,7 @@ public class ConditionBuilder extends ExecutableBuilder {
     }
 
     public static Condition build(String script) {
-        return with((RuleContext context) -> processScriptCondition(script, context.getScriptingProcessor(),
+        return with((RuleContext context) -> processScriptCondition(script, context.getScriptProcessor(),
                 context.getBindings()))
                 .build();
     }

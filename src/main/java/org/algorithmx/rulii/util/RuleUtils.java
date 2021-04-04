@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 public final class RuleUtils {
 
     public static final String TAB              = "\t";
-    public static final String NAME_REGEX       = "^[a-zA-Z][a-zA-Z0-9-_]*?$";
+    public static final String NAME_REGEX       = "[a-zA-Z$_][a-zA-Z0-9$_]*";
     private static final Pattern NAME_PATTERN   = Pattern.compile(NAME_REGEX);
 
     private RuleUtils() {

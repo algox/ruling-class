@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.rules.nulll;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationRule;
 
@@ -33,7 +33,7 @@ public @interface Null {
 
     Severity severity() default Severity.ERROR;
 
-    class NullValidationRuleBuilder implements AnnotatedRuleBuilder<Null> {
+    class NullValidationRuleBuilder implements AnnotatedRunnableBuilder<Null> {
 
         public NullValidationRuleBuilder() {
             super();

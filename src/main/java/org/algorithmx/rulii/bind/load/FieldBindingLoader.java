@@ -25,14 +25,13 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -46,8 +45,6 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 public class FieldBindingLoader<T> implements BindingLoader<T> {
-
-    private static final Map<Class<?>, Field[]> FIELD_CACHE = new HashMap<>();
 
     private Predicate<Field> filter = null;
     private Function<Field, String> nameGenerator = null;
@@ -75,14 +72,19 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
     }
 
     /**
-     * Array of field names that won't get Bindings.
+     * Array of field names that won't get added.
      *
      * @param names blacklisted field names.
      */
     public void setIgnoreFields(String...names) {
         Assert.notNull(names, "names cannot be null.");
         Set<String> nameSet = Arrays.stream(names).collect(Collectors.toSet());
-        this.filter = field -> !nameSet.contains(field.getName());
+        setIgnoreFields(nameSet);
+    }
+
+    public void setIgnoreFields(Set<String> names) {
+        Assert.notNull(names, "names cannot be null.");
+        this.filter = field -> !names.contains(field.getName());
     }
 
     /**
@@ -93,7 +95,17 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
     public void setIncludeFields(String...names) {
         Assert.notNull(names, "names cannot be null.");
         Set<String> nameSet = Arrays.stream(names).collect(Collectors.toSet());
-        this.filter = field -> nameSet.contains(field.getName());
+        setIncludeFields(nameSet);
+    }
+
+    /**
+     * Set of field names that will get added.
+     *
+     * @param names whitelisted field names.
+     */
+    public void setIncludeFields(Set<String> names) {
+        Assert.notNull(names, "names cannot be null.");
+        this.filter = field -> names.contains(field.getName());
     }
 
     @Override
@@ -108,41 +120,32 @@ public class FieldBindingLoader<T> implements BindingLoader<T> {
             String bindingName = nameGenerator != null ? nameGenerator.apply(field) : field.getName();
             if (names.contains(bindingName)) return;
 
-            try {
-                ReflectionUtils.makeAccessible(field);
-                Object value = field.get(bean);
-                bindings.bind(BindingBuilder.with(bindingName)
-                        .type(field.getGenericType())
-                        .value(value)
-                        .build());
-                names.add(bindingName);
-            } catch (IllegalAccessException e) {
-                // Couldn't get the value
-                throw new UnrulyException("Error trying to retrieve field [" + field.getName()
-                        + "] on Bean class [" + bean.getClass() + "]", e);
-            }
+            ReflectionUtils.makeAccessible(field);
+
+            Supplier getter = () -> {
+                try {
+                    return field.get(bean);
+                } catch (IllegalAccessException e) {
+                    throw new UnrulyException("Unable to get field value ["
+                            + field.getDeclaringClass().getSimpleName() + "." + field.getName() + "]", e);
+                }
+            };
+
+            Consumer setter = (value) -> {
+                try {
+                    field.set(bean, value);
+                } catch (IllegalAccessException e) {
+                    throw new UnrulyException("Unable to set field value ["
+                            + field.getDeclaringClass().getSimpleName() + "." + field.getName() + "]", e);
+                }
+            };
+
+            bindings.bind(BindingBuilder.with(bindingName)
+                    .type(field.getGenericType())
+                    .delegate(getter, setter)
+                    .build());
+            names.add(bindingName);
         });
-    }
-
-    private static Field[] getDeclaredFields(Class<?> type) {
-        Assert.notNull(type, "type cannot be null.");
-
-        Field[] result = FIELD_CACHE.get(type);
-        if (result != null) return result;
-
-        result = type.getDeclaredFields();
-
-        for (Field field : result) {
-            makePromiscuous(field);
-        }
-
-        FIELD_CACHE.put(type, result);
-        return result;
-    }
-
-    private static void makePromiscuous(Field field) {
-        if (Modifier.isPublic(field.getModifiers())) return;
-        field.setAccessible(true);
     }
 
 }

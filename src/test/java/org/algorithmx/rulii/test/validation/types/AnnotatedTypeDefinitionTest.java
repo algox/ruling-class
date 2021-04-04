@@ -18,9 +18,9 @@
 
 package org.algorithmx.rulii.test.validation.types;
 
-import org.algorithmx.rulii.traverse.extract.TypedValueExtractorTemplate;
-import org.algorithmx.rulii.traverse.extract.TypedValueProcessor;
-import org.algorithmx.rulii.validation.annotation.Validate;
+import org.algorithmx.rulii.annotation.Validate;
+import org.algorithmx.rulii.validation.extract.TypedValueExtractorTemplate;
+import org.algorithmx.rulii.validation.extract.TypedValueProcessor;
 import org.algorithmx.rulii.validation.rules.min.DecimalMin;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 

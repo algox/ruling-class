@@ -23,8 +23,6 @@ import org.algorithmx.rulii.util.RuleUtils;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 /**
  * Binding is a mapping between a name and a value.
@@ -37,15 +35,35 @@ import java.util.regex.Pattern;
  */
 public class DefaultBinding<T> implements Binding<T> {
 
-    private static final Pattern NAME_PATTERN = Pattern.compile(NAME_REGEX);
-
     private final String name;
     private final Type type;
-    private final AtomicReference<T> value = new AtomicReference<>();
+    private T value;
     private final boolean primary;
     // Cannot be final as change it to editable = false after we set the value in the ctor
     private boolean editable = true;
     private String description = null;
+
+    /**
+     * Creates a new DefaultBinding
+     *
+     * @param name name of the Binding.
+     * @param type Type of the Binding.
+     * @param editable determines whether this Binding is editable or not.
+     * @param primary determines whether this Binding is a Primary candidate or not.
+     */
+    DefaultBinding(String name, Type type, boolean editable, boolean primary, String description) {
+        super();
+        Assert.notNull(name, "name cannot be null");
+        Assert.notNull(type, "type cannot be null");
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        Assert.isTrue(RuleUtils.isValidName(name), "Binding name [" + name + "] must match [" + RuleUtils.NAME_REGEX + "]");
+        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
+        this.name = name;
+        this.type = type;
+        this.editable = editable;
+        this.primary = primary;
+        this.description = description;
+    }
 
     /**
      * Creates a new DefaultBinding
@@ -57,18 +75,8 @@ public class DefaultBinding<T> implements Binding<T> {
      * @param primary determines whether this Binding is a Primary candidate or not.
      */
     DefaultBinding(String name, Type type, T value, boolean editable, boolean primary, String description) {
-        super();
-        Assert.notNull(name, "name cannot be null");
-        Assert.notNull(type, "type cannot be null");
-        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        Assert.isTrue(NAME_PATTERN.matcher(name).matches(), "Binding name [" + name + "] must match [" + NAME_PATTERN + "]");
-        Assert.isTrue(name.trim().length() > 0, "name length must be > 0");
-        this.name = name;
-        this.type = type;
+        this(name, type, editable, primary, description);
         setValue(value);
-        this.editable = editable;
-        this.primary = primary;
-        this.description = description;
     }
 
     @Override
@@ -83,7 +91,7 @@ public class DefaultBinding<T> implements Binding<T> {
 
     @Override
     public T getValue() {
-        return value.get();
+        return value;
     }
 
     @Override
@@ -110,7 +118,11 @@ public class DefaultBinding<T> implements Binding<T> {
             throw new InvalidBindingException(name, type, value);
         }
 
-        this.value.set(value);
+        setValueInternal(value);
+    }
+
+    protected void setValueInternal(T value) {
+        this.value = value;
     }
 
     @Override

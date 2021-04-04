@@ -18,9 +18,9 @@
 
 package org.algorithmx.rulii.test.validation.objectgraph;
 
+import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.test.validation.Car;
 import org.algorithmx.rulii.test.validation.Person;
-import org.algorithmx.rulii.validation.annotation.Validate;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 

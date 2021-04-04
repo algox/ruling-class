@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.rules.decimal;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationRule;
 
@@ -36,7 +36,7 @@ public @interface Decimal {
 
     boolean allowSpace() default true;
 
-    class DecimalValidationRuleBuilder implements AnnotatedRuleBuilder<Decimal> {
+    class DecimalValidationRuleBuilder implements AnnotatedRunnableBuilder<Decimal> {
 
         public DecimalValidationRuleBuilder() {
             super();

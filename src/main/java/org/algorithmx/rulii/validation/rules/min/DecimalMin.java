@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.rules.min;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationRule;
 
@@ -38,7 +38,7 @@ public @interface DecimalMin {
 
     boolean inclusive() default true;
 
-    class DecimalMinValidationRuleBuilder implements AnnotatedRuleBuilder<DecimalMin> {
+    class DecimalMinValidationRuleBuilder implements AnnotatedRunnableBuilder<DecimalMin> {
 
         public DecimalMinValidationRuleBuilder() {
             super();

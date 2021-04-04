@@ -24,6 +24,7 @@ import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -40,6 +41,9 @@ public class BindingBuilder {
     private boolean editable = true;
     private boolean primary = false;
     private String description = null;
+
+    private Supplier<?> getter;
+    private Consumer<?> setter;
 
     /**
      * Private Ctor taking the Binding name.
@@ -134,6 +138,14 @@ public class BindingBuilder {
     public <T> BindingBuilder value(Supplier<T> supplier) {
         Assert.notNull(supplier, "supplier cannot be null");
         return value(supplier.get());
+    }
+
+    public <T> BindingBuilder delegate(Supplier<T> getter, Consumer<T> setter) {
+        Assert.notNull(getter, "getter cannot be null");
+        Assert.notNull(setter, "setter cannot be null");
+        this.getter = getter;
+        this.setter = setter;
+        return this;
     }
 
     /**
@@ -233,6 +245,8 @@ public class BindingBuilder {
             bindingValue = ReflectionUtils.getDefaultValue(bindingType);
         }
 
-        return new DefaultBinding(name, bindingType, bindingValue, editable, primary, description);
+        return (getter != null && setter != null)
+                ? new SupplierBinding(name, bindingType, getter, setter, editable, primary, description)
+                : new DefaultBinding(name, bindingType, bindingValue, editable, primary, description);
     }
 }

@@ -1,12 +1,14 @@
 package org.algorithmx.rulii.test.validation;
 
+import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.core.Identifiable;
-import org.algorithmx.rulii.validation.annotation.Validate;
+import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 
 import java.math.BigDecimal;
 
 public class Employment implements Identifiable {
 
+    @NotNull
     private String id;
     private String company;
     private BigDecimal salary;

@@ -2,7 +2,7 @@ package org.algorithmx.rulii.validation.rules.url;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.traverse.AnnotatedRuleBuilder;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationRule;
 import org.algorithmx.rulii.annotation.ValidationRuleContainer;
@@ -41,7 +41,7 @@ public @interface Url {
 
     String[] hostPatterns() default {};
 
-    class UrlValidationRuleBuilder implements AnnotatedRuleBuilder<Url> {
+    class UrlValidationRuleBuilder implements AnnotatedRunnableBuilder<Url> {
 
         public UrlValidationRuleBuilder() {
             super();

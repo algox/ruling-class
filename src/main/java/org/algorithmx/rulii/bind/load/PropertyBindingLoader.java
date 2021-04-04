@@ -28,10 +28,13 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -72,14 +75,30 @@ public class PropertyBindingLoader<T> implements BindingLoader<T> {
     }
 
     /**
-     * Array of property names that won't get Bindings.
+     * Array of property names that won't get added.
      *
      * @param names blacklisted property names.
      */
     public void setIgnoreProperties(String...names) {
         Assert.notNull(names, "names cannot be null.");
         Set<String> nameSet = Arrays.stream(names).collect(Collectors.toSet());
-        this.filter = propertyDescriptor -> !nameSet.contains(propertyDescriptor.getName());
+        setIgnoreProperties(nameSet);
+    }
+
+    public void setIgnoreProperties(Set<String> names) {
+        Assert.notNull(names, "names cannot be null.");
+        this.filter = propertyDescriptor -> !names.contains(propertyDescriptor.getName());
+    }
+
+    /**
+     * Array of property names that will get added.
+     *
+     * @param names whitelisted property names.
+     */
+    public void setIncludeProperties(String...names) {
+        Assert.notNull(names, "names cannot be null.");
+        Set<String> nameSet = Arrays.stream(names).collect(Collectors.toSet());
+        setIncludeProperties(nameSet);
     }
 
     /**
@@ -87,10 +106,9 @@ public class PropertyBindingLoader<T> implements BindingLoader<T> {
      *
      * @param names whitelisted property names.
      */
-    public void setIncludeProperties(String...names) {
+    public void setIncludeProperties(Set<String> names) {
         Assert.notNull(names, "names cannot be null.");
-        Set<String> nameSet = Arrays.stream(names).collect(Collectors.toSet());
-        this.filter = propertyDescriptor -> nameSet.contains(propertyDescriptor.getName());
+        this.filter = propertyDescriptor -> names.contains(propertyDescriptor.getName());
     }
 
     @Override
@@ -104,20 +122,38 @@ public class PropertyBindingLoader<T> implements BindingLoader<T> {
             // Go through all the properties
             for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
                 if (filter != null && !filter.test(propertyDescriptor)) continue;
-                try {
-                    // Get the value via the getter
-                    Object value = propertyDescriptor.getReadMethod().invoke(bean);
-                    String bindingName = nameGenerator != null ? nameGenerator.apply(propertyDescriptor) : propertyDescriptor.getName();
-                    // Bind the property
-                    bindings.bind(BindingBuilder.with(bindingName)
-                            .type(propertyDescriptor.getReadMethod().getGenericReturnType())
-                            .value(value).build());
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                    // Couldn't get the value
-                    throw new UnrulyException("Error trying to retrieve property [" + propertyDescriptor.getName()
-                            + "] on Bean class [" + bean.getClass() + "]", ex);
 
-                }
+                Method getterMethod = propertyDescriptor.getReadMethod();
+                Method setterMethod = propertyDescriptor.getWriteMethod();
+
+                if (getterMethod == null) continue;
+
+                Supplier getter = () -> {
+                    try {
+                        return getterMethod.invoke(bean);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new UnrulyException("Unable to get property value ["
+                                + getterMethod.getDeclaringClass().getSimpleName() + "." + propertyDescriptor.getName() + "]", e);
+                    }
+                };
+
+                Consumer setter = (value) -> {
+                    try {
+                        setterMethod.invoke(bean, value);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new UnrulyException("Unable to set property value ["
+                                + getterMethod.getDeclaringClass().getSimpleName() + "." + propertyDescriptor.getName() + "]", e);
+                    }
+                };
+
+
+                String bindingName = nameGenerator != null ? nameGenerator.apply(propertyDescriptor) : propertyDescriptor.getName();
+                // Bind the property
+                bindings.bind(BindingBuilder.with(bindingName)
+                        .type(propertyDescriptor.getReadMethod().getGenericReturnType())
+                        .delegate(getter, setter)
+                        .editable(setterMethod != null)
+                        .build());
             }
         } catch (IntrospectionException e) {
             throw new UnrulyException("Error trying to Introspect [" + bean.getClass() + "]", e);
