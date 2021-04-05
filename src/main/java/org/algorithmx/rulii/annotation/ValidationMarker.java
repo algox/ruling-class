@@ -30,7 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target({ ANNOTATION_TYPE })
 @Retention(RUNTIME)
-public @interface ValidationRule {
+public @interface ValidationMarker {
 
     Class<? extends AnnotatedRunnableBuilder> value();
 }

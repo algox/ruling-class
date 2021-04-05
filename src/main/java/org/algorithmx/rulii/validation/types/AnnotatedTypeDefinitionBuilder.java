@@ -19,7 +19,7 @@
 package org.algorithmx.rulii.validation.types;
 
 import org.algorithmx.rulii.annotation.Validate;
-import org.algorithmx.rulii.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotation;
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotations;
 import org.algorithmx.rulii.lib.spring.util.Assert;
@@ -163,7 +163,7 @@ public class AnnotatedTypeDefinitionBuilder {
     public static void main(String[] args) throws Exception {
         Field field = AnnotatedTypeDefinitionBuilder.class.getDeclaredField("field1");
         AnnotatedType annotatedType = field.getAnnotatedType();
-        AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(annotatedType, Validate.class, ValidationRule.class);
+        AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(annotatedType, Validate.class, ValidationMarker.class);
         AnnotatedTypeDefinition result = builder.build();
         System.err.println(result.getSignature());
     }

@@ -19,7 +19,7 @@
 package org.algorithmx.rulii.validation.types;
 
 import org.algorithmx.rulii.annotation.Validate;
-import org.algorithmx.rulii.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.validation.extract.DefaultExtractorRegistry;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
@@ -152,7 +152,7 @@ public class AnnotatedTypeValueExtractor {
     public static void main(String[] args) throws NoSuchFieldException {
         Field field = AnnotatedTypeValueExtractor.class.getDeclaredField("field1");
         AnnotatedType annotatedType = field.getAnnotatedType();
-        AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(annotatedType, Validate.class, ValidationRule.class);
+        AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(annotatedType, Validate.class, ValidationMarker.class);
         AnnotatedTypeDefinition definition = builder.build();
 
         AnnotatedTypeValueExtractor valueExtractor = new AnnotatedTypeValueExtractor();

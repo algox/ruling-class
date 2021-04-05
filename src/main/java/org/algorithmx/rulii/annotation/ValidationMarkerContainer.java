@@ -29,7 +29,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target({ ANNOTATION_TYPE })
 @Retention(RUNTIME)
-public @interface ValidationRuleContainer {
+public @interface ValidationMarkerContainer {
 
     Class<? extends Annotation> value();
 }

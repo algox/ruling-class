@@ -4,8 +4,8 @@ import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationRule;
-import org.algorithmx.rulii.annotation.ValidationRuleContainer;
+import org.algorithmx.rulii.annotation.ValidationMarker;
+import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -28,7 +28,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Inherited
 @Documented
 @Repeatable(InEnum.InList.class)
-@ValidationRule(InEnum.InEnumValidationRuleBuilder.class)
+@ValidationMarker(InEnum.InEnumValidationRuleBuilder.class)
 public @interface InEnum {
 
     String NOT_APPLICABLE = "N/A";
@@ -65,7 +65,7 @@ public @interface InEnum {
     @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
     @Retention(RUNTIME)
     @Inherited @Documented
-    @ValidationRuleContainer(InEnum.class)
+    @ValidationMarkerContainer(InEnum.class)
     @interface InList {
         InEnum[] value();
     }

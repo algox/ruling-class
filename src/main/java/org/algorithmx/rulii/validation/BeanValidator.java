@@ -19,7 +19,7 @@
 package org.algorithmx.rulii.validation;
 
 import org.algorithmx.rulii.annotation.Validate;
-import org.algorithmx.rulii.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.bind.load.FieldBindingLoader;
 import org.algorithmx.rulii.bind.load.PropertyBindingLoader;
@@ -159,7 +159,7 @@ public class BeanValidator extends ObjectVisitorTemplate {
         if (result != null) return result;
 
         AnnotatedBeanTypeDefinitionBuilder builder = AnnotatedBeanTypeDefinitionBuilder
-                .with(type, Validate.class, ValidationRule.class);
+                .with(type, Validate.class, ValidationMarker.class);
 
         builder.loadFields();
         builder.loadProperties();
@@ -177,7 +177,7 @@ public class BeanValidator extends ObjectVisitorTemplate {
         List<Runnable> result = new ArrayList<>();
 
         for (MarkedAnnotation marker : definition.getDeclaredRuleAnnotations()) {
-            ValidationRule validationRule = (ValidationRule) marker.getMarker();
+            ValidationMarker validationRule = (ValidationMarker) marker.getMarker();
 
             if (validationRule == null) {
                 // TODO : log it

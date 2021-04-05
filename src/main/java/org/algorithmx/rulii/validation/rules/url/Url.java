@@ -4,8 +4,8 @@ import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationRule;
-import org.algorithmx.rulii.annotation.ValidationRuleContainer;
+import org.algorithmx.rulii.annotation.ValidationMarker;
+import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -26,7 +26,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Inherited
 @Documented
 @Repeatable(Url.UrlList.class)
-@ValidationRule(Url.UrlValidationRuleBuilder.class)
+@ValidationMarker(Url.UrlValidationRuleBuilder.class)
 public @interface Url {
 
     String NOT_APPLICABLE = "N/A";
@@ -59,7 +59,7 @@ public @interface Url {
     @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
     @Retention(RUNTIME)
     @Inherited @Documented
-    @ValidationRuleContainer(Url.class)
+    @ValidationMarkerContainer(Url.class)
     @interface UrlList {
         Url[] value();
     }

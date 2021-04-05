@@ -4,7 +4,7 @@ import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationRule;
+import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -23,7 +23,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Documented
-@ValidationRule(LowerCase.LowerCaseValidationRuleBuilder.class)
+@ValidationMarker(LowerCase.LowerCaseValidationRuleBuilder.class)
 public @interface LowerCase {
 
     String NOT_APPLICABLE = "N/A";

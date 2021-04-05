@@ -4,8 +4,8 @@ import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationRule;
-import org.algorithmx.rulii.annotation.ValidationRuleContainer;
+import org.algorithmx.rulii.annotation.ValidationMarker;
+import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -26,7 +26,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Inherited
 @Documented
 @Repeatable(Size.SizeList.class)
-@ValidationRule(Size.SizeValidationRuleBuilder.class)
+@ValidationMarker(Size.SizeValidationRuleBuilder.class)
 public @interface Size {
 
     String NOT_APPLICABLE = "N/A";
@@ -60,7 +60,7 @@ public @interface Size {
     @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
     @Retention(RUNTIME)
     @Inherited @Documented
-    @ValidationRuleContainer(Size.class)
+    @ValidationMarkerContainer(Size.class)
     @interface SizeList {
         Size[] value();
     }
