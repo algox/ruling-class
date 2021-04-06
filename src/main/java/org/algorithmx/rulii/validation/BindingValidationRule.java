@@ -29,7 +29,10 @@ public abstract class BindingValidationRule extends ValidationRule {
     public boolean checkType(RuleContext context) {
         Object value = getBindingValue(context);
         boolean result = value == null || isSupported(value.getClass());
-        if (!result) {}// TODO : Log warning
+        if (!result) {
+            //System.err.println("XXX Rule [" + getClass().getSimpleName()
+            //        + "] Value [" + value.getClass() + "] [" + Arrays.toString(getSupportedTypes()) + "]");
+        }// TODO : Log warning
         return result;
     }
 

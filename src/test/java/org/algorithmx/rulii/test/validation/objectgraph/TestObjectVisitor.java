@@ -1,9 +1,9 @@
 package org.algorithmx.rulii.test.validation.objectgraph;
 
 import org.algorithmx.rulii.annotation.Validate;
+import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.validation.graph.ObjectVisitorTemplate;
 import org.algorithmx.rulii.validation.graph.TraversalCandidate;
-import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.Field;
 import java.util.function.Predicate;
@@ -17,9 +17,9 @@ public class TestObjectVisitor extends ObjectVisitorTemplate {
     }
 
     @Override
-    public TraversalCandidate[] visitObjectStart(TraversalCandidate candidate) {
+    public boolean visitCandidate(TraversalCandidate candidate) {
         System.err.println("XXX Object Start [" + candidate.getTarget() + "]");
-        return null;
+        return true;
     }
 
     @Override

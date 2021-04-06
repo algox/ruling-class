@@ -18,11 +18,8 @@
 
 package org.algorithmx.rulii.validation.graph;
 
-import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 import org.algorithmx.rulii.validation.beans.SourceHolder;
-
-import java.util.Collection;
-import java.util.Map;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
 public class TraversalCandidate {
 
@@ -59,23 +56,4 @@ public class TraversalCandidate {
         return getTarget() == null;
     }
 
-    public boolean isArray() {
-        if (isNull()) return false;
-        return getTarget().getClass().isArray();
-    }
-
-    public boolean isCollection() {
-        if (isNull()) return false;
-        return getTarget() instanceof Collection;
-    }
-
-    public boolean isMap() {
-        if (isNull()) return false;
-        return getTarget() instanceof Map;
-    }
-
-    public boolean isIterable() {
-        if (isNull()) return false;
-        return getTarget() instanceof Map;
-    }
 }

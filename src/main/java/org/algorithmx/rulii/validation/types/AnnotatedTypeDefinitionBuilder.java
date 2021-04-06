@@ -45,8 +45,8 @@ public class AnnotatedTypeDefinitionBuilder<T extends List, Set> {
     private Class<? extends Annotation> markerAnnotationType;
 
     private AnnotatedTypeDefinitionBuilder(AnnotatedType annotatedType,
-                                          Class<? extends Annotation> introspectionAnnotationType,
-                                          Class<? extends Annotation> markerAnnotationType) {
+                                           Class<? extends Annotation> markerAnnotationType,
+                                           Class<? extends Annotation> introspectionAnnotationType) {
         super();
         Assert.notNull(annotatedType, "annotatedType cannot be null.");
         Assert.notNull(markerAnnotationType, "markerAnnotationType cannot be null.");

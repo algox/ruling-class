@@ -42,7 +42,7 @@ public @interface Url {
     String[] hostPatterns() default {};
 
     String when() default NOT_APPLICABLE;
-    
+
     class UrlValidationRuleBuilder implements AnnotatedRunnableBuilder<Url> {
 
         public UrlValidationRuleBuilder() {

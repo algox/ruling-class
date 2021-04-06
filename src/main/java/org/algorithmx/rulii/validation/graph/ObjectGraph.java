@@ -1,36 +1,51 @@
 package org.algorithmx.rulii.validation.graph;
 
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.ConcurrentReferenceHashMap;
+import org.algorithmx.rulii.util.reflect.ReflectionUtils;
+import org.algorithmx.rulii.validation.beans.AnnotatedBeanTypeDefinition;
+import org.algorithmx.rulii.validation.beans.AnnotatedBeanTypeDefinitionBuilder;
+import org.algorithmx.rulii.validation.beans.SourceHolder;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeValueExtractor;
+import org.algorithmx.rulii.validation.types.ExtractedTypeValue;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Deque;
-import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public class ObjectGraph {
 
-    private static final Predicate<Class<?>> JAVA_CORE_CLASSES = (clazz) ->
-            clazz == null || clazz.isPrimitive() || clazz.getPackage() == null
-                    || clazz.getClassLoader() == null
-                    || clazz.getPackage().getName().startsWith("java.")
-                    || clazz.getPackage().getName().startsWith("javax.");
+    private static final Map<Class<?>, AnnotatedBeanTypeDefinition> definitionMap = new ConcurrentReferenceHashMap<>();
 
-
-    private final Map<Object, Class<?>> breadCrumbs = new IdentityHashMap<>();
     private final Deque<TraversalCandidate> candidates = new ArrayDeque<>();
+    private final ExtractorRegistry extractorRegistry;
+    private final Class<? extends Annotation> markerAnnotation;
+    private final Class<? extends Annotation> introspectionAnnotation;
 
-    public ObjectGraph() {
+    private Deque<TraversalCandidate> breadCrumbs = new LinkedList<>();
+
+    public ObjectGraph(Class<? extends Annotation> markerAnnotation,
+                       Class<? extends Annotation> introspectionAnnotation,
+                       ExtractorRegistry extractorRegistry) {
         super();
+        Assert.notNull(markerAnnotation, "markerAnnotation cannot be null.");
+        Assert.notNull(introspectionAnnotation, "introspectionAnnotation cannot be null.");
+        Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
+        this.markerAnnotation = markerAnnotation;
+        this.introspectionAnnotation = introspectionAnnotation;
+        this.extractorRegistry = extractorRegistry;
     }
 
     public void traverse(TraversalCandidate root, ObjectVisitor visitor) {
         Assert.notNull(visitor, "visitor cannot be null.");
-        candidates.clear();
         breadCrumbs.clear();
+        candidates.clear();
 
         // Add the root object(s)
         addCandidate(root);
@@ -49,177 +64,113 @@ public class ObjectGraph {
 
     }
 
-    private void traverseObject(TraversalCandidate candidate, ObjectVisitor visitor) throws IllegalAccessException {
+    private void traverseObject(TraversalCandidate candidate, ObjectVisitor visitor) {
         if (candidate.getTarget() == null) return;
-        TraversalCandidate[] candidates = visitor.visitObjectStart(candidate);
-        if (candidates != null) addCandidates(Arrays.asList(candidates));
-        //if (introspectObject) processFields(target, visitor);
+        boolean requiredIntrospection = visitor.visitCandidate(candidate);
+
+        if (requiredIntrospection) {
+            List<TraversalCandidate> candidates = introspectCandidate(candidate);
+            if (candidates != null) {
+                this.breadCrumbs.push(candidate);
+                addCandidates(candidates);
+            }
+        }
+
         visitor.visitObjectEnd(candidate);
     }
 
-    /*public void traverse(Object target, AnnotatedTypeDefinition typeDefinition,
-                         ObjectVisitor visitor, ExtractorRegistry extractorRegistry) throws ObjectGraphTraversalException {
-        Assert.notNull(visitor, "visitor cannot be null.");
-        candidates.clear();
-        breadCrumbs.clear();
-
-        List<TraversalCandidate> rootTypes = extractCandidates(target, typeDefinition, extractorRegistry);
-        // Add the root object(s)
-        addCandidates(rootTypes);
-
-        while (!candidates.isEmpty()) {
-            TraversalCandidate candidate = this.candidates.remove();
-
-            try {
-                traverseObject(candidate, visitor);
-            } catch (Exception e) {
-                throw new ObjectGraphTraversalException("Error trying to traverse [" + candidate + "]", e);
-            }
-        }
-
-        visitor.traversalComplete();
-    }*/
-
-    /*protected List<TraversalCandidate> extractCandidates(Object target, AnnotatedTypeDefinition typeDefinition,
-                                                         ExtractorRegistry extractorRegistry) {
-        AnnotatedTypeValueExtractor valueExtractor = new AnnotatedTypeValueExtractor();
-        List<ExtractedTypeValue> extractedValues = valueExtractor.extract(typeDefinition, target, extractorRegistry);
-        List<TraversalCandidate> result = new ArrayList<>();
-
-        if (typeDefinition.hasDeclaredRules()) result.add(new SimpleCandidate(target, typeDefinition));
-
-        for (ExtractedTypeValue extractedValue : extractedValues) {
-            if (extractedValue.getDefinition().hasDeclaredRules()) result.add(
-                    new SimpleCandidate(extractedValue.getObject(), extractedValue.getDefinition()));
-        }
-
-        Collections.reverse(extractedValues);
-
-        for (ExtractedTypeValue extractedValue : extractedValues) {
-            if (extractedValue.getDefinition().requiresIntrospection()) result.add(
-                    new IntrospectionCandidate(extractedValue.getObject(), extractedValue.getDefinition()));
-        }
-
-        return result;
-    }*/
-
-    /*private void processFields(Object target, ObjectVisitor visitor) {
-
-        ReflectionUtils.doWithFields(target.getClass(), field -> {
-            // Check to see if we need to process this field.
-            if (!visitor.isCandidate(field)) return;
-
-            ReflectionUtils.makeAccessible(field);
-            Object value = field.get(target);
-            boolean introspectField = false;
-
-            if (value == null) {
-                visitor.visitNull(field, null, target);
-            } else if (value instanceof Collection) {
-                introspectField = visitor.visitCollection(field, (Collection) value, target);
-            } else if (value instanceof Map) {
-                Map map = (Map) value;
-                introspectField = visitor.visitMap(field, map, target);
-
-                if (introspectField) {
-                    boolean introspectMapKeys = visitor.visitMapKeys(field, map, target);
-                    if (introspectMapKeys) addCandidate(map.keySet(), visitor);
-                    boolean introspectMapValues = visitor.visitMapValues(field, map, target);
-                    if (introspectMapValues) addCandidate(map.values(), visitor);
-                }
-
-                // So we dont add the map itself
-                introspectField = false;
-            } else if (value.getClass().isArray()) {
-                introspectField = visitor.visitArray(field, value, target);
-            } else {
-                introspectField = visitor.visitField(field, value, target);
-            }
-
-            if (introspectField) addCandidate(value, visitor);
-        });
-    }*/
-
     private void addCandidates(List<TraversalCandidate> candidates) {
         if (candidates == null) return;
-        candidates.stream().forEach(c -> addCandidate(c));
+
+        candidates.stream()
+                .filter(c -> c != null)
+                .forEach(c -> addCandidate(c));
     }
 
     private void addCandidate(TraversalCandidate candidate) {
         if (candidate == null) return;
-
-        try {
-            if (candidate.getClass().isArray()) {
-                //addArray(candidate, visitor);
-            } else if (candidate instanceof Collection) {
-                //addCollection(candidate, visitor);
-            } else if (candidate instanceof Map) {
-                //addMap(candidate, visitor);
-            } else {
-                // Nothing to traverse
-                if (candidate == null) return;
-                // It's a java core class; no need to traverse further.
-                if (JAVA_CORE_CLASSES.test(candidate.getClass())) return;
-                // Check to see if the visitor is interested in this Class
-                //if (!visitor.isCandidate(candidate.getClass())) return;
-                // Have have already visited this object?
-                if (breadCrumbs.containsKey(candidate)) return;
-                // Looks like we have a viable candidate
-                candidates.add(candidate);
-            }
-        } finally {
-            breadCrumbs.put(candidate.getTarget(), candidate.getTarget() != null ? candidate.getTarget().getClass() : void.class);
-        }
+        // It's a java core class; no need to traverse further.
+        if (ReflectionUtils.isJavaCoreClass(candidate.getClass())) return;
+        // Looks like we have a viable candidate
+        candidates.add(candidate);
     }
 
-    /*private void addArray(Object target, ObjectVisitor visitor) {
-        // Nothing to traverse
-        if (target == null) return;
-        // It's not an array
-        if (!target.getClass().isArray())
-            throw new IllegalStateException("Invalid type. It should be an Array. " +
-                    "Given [" + target.getClass() + "]");
-        // Looks like a primitive array. No need to traverse any further.
-        if (target.getClass().getComponentType().isPrimitive()) return;
+    protected List<TraversalCandidate> introspectCandidate(TraversalCandidate candidate) {
 
-        for (int i = 0; i < Array.getLength(target); i++) {
-            Object element = Array.get(target, i);
-            addCandidate(element, visitor);
-        }
+        /*System.err.println("XXX Object Start [" + candidate.getTarget().getClass().getSimpleName() + "] Field ["
+                + candidate.getName() + "] Value [" + candidate.getTarget() + "]  Introspect ["
+                + (candidate.getTypeDefinition() != null ? candidate.getTypeDefinition().requiresIntrospection() : false)
+                + "] Rules [" + (candidate.getTypeDefinition() != null ? candidate.getTypeDefinition().hasDeclaredRules() : false) + "]");*/
+
+        if (candidate.isNull()) return null;
+        if (candidate.getTypeDefinition() != null && !candidate.getTypeDefinition().requiresIntrospection()) return null;
+        // TODO : Handle @Validate for Collection/Arrays or any extractable type
+        if (ReflectionUtils.isJavaCoreClass(candidate.getTarget().getClass())) return null;
+
+        AnnotatedBeanTypeDefinition typeDefinition = getAnnotatedBeanTypeDefinition(candidate.getTarget().getClass());
+
+        List<TraversalCandidate> result = new ArrayList<>();
+
+        result.addAll(findCandidates(typeDefinition.getFields(), candidate.getTarget()));
+        result.addAll(findCandidates(typeDefinition.getProperties(), candidate.getTarget()));
+
+        return result;
     }
 
-    private void addCollection(Object target, ObjectVisitor visitor) {
-        // Nothing to traverse
-        if (target == null) return;
-        // It's not an Collection
-        if (!(target instanceof Collection))
-            throw new IllegalStateException("Invalid type. It should be an Collection. " +
-                    "Given [" + target.getClass() + "]");
+    protected List<TraversalCandidate> findCandidates(SourceHolder[] fields, Object target) {
+        List<TraversalCandidate> result = new ArrayList<>();
 
-        Collection collection = (Collection) target;
-
-        for (Object element : collection) {
-            addCandidate(element, visitor);
+        for (SourceHolder holder : fields) {
+            List<TraversalCandidate> candidates = extractCandidates(holder, holder.getValue(target), holder.getDefinition());
+            candidates.stream()
+                    .filter(c -> c.getTypeDefinition().requiresProcessing())
+                    .forEach(c -> result.add(c));
         }
+
+        return result;
     }
 
-    private void addMap(Object target, ObjectVisitor visitor) {
-        // Nothing to traverse
-        if (target == null) return;
-        // It's not an Map
-        if (!(target instanceof Map))
-            throw new IllegalStateException("Invalid type. It should be an Map. " +
-                    "Given [" + target.getClass() + "]");
+    protected List<TraversalCandidate> extractCandidates(SourceHolder sourceHolder, Object target,
+                                                         AnnotatedTypeDefinition typeDefinition) {
+        AnnotatedTypeValueExtractor valueExtractor = new AnnotatedTypeValueExtractor();
+        List<ExtractedTypeValue> extractedValues = valueExtractor.extract(typeDefinition, target, extractorRegistry);
+        List<TraversalCandidate> result = new ArrayList<>();
 
-        Map<?, ?> map = (Map) target;
-
-        for (Map.Entry<?, ?> e : map.entrySet()) {
-            // First visit the Key
-            addCandidate(e.getKey(), visitor);
-            // First visit the Value
-            addCandidate(e.getValue(), visitor);
+        for (ExtractedTypeValue extractedValue : extractedValues) {
+            if (extractedValue.getDefinition().hasDeclaredRules() || extractedValue.getDefinition().requiresIntrospection())
+                result.add(new TraversalCandidate(extractedValue.getObject(), sourceHolder.copy(extractedValue.getDefinition())));
         }
+
+        return result;
     }
 
-    */
+    protected AnnotatedBeanTypeDefinition getAnnotatedBeanTypeDefinition(Class<?> type) {
+        AnnotatedBeanTypeDefinition result = definitionMap.get(type);
+
+        if (result != null) return result;
+
+        AnnotatedBeanTypeDefinitionBuilder builder = AnnotatedBeanTypeDefinitionBuilder
+                .with(type, getMarkerAnnotation(), getIntrospectionAnnotation());
+
+        builder.loadFields();
+        builder.loadProperties();
+        builder.loadMethods();
+
+        result = builder.build();
+        definitionMap.putIfAbsent(type, result);
+
+        return result;
+    }
+
+    public ExtractorRegistry getExtractorRegistry() {
+        return extractorRegistry;
+    }
+
+    public Class<? extends Annotation> getMarkerAnnotation() {
+        return markerAnnotation;
+    }
+
+    public Class<? extends Annotation> getIntrospectionAnnotation() {
+        return introspectionAnnotation;
+    }
 }

@@ -1,5 +1,8 @@
 package org.algorithmx.rulii.test.validation.objectgraph;
 
+import org.algorithmx.rulii.annotation.Validate;
+import org.algorithmx.rulii.annotation.ValidationMarker;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 import org.algorithmx.rulii.validation.graph.ObjectGraph;
 import org.algorithmx.rulii.validation.graph.TraversalCandidate;
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
@@ -24,7 +27,7 @@ public class ObjectGraphTest {
     public void test2() {
         TestObjectVisitor visitor = new TestObjectVisitor();
         // Set to be ordered fields so we have predictable traversal
-        ObjectGraph graph = new ObjectGraph();
+        ObjectGraph graph = new ObjectGraph(ValidationMarker.class, Validate.class, ExtractorRegistry.create());
         graph.traverse(new TraversalCandidate(create(), null), visitor);
     }
 

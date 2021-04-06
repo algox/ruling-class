@@ -43,7 +43,7 @@ public class Person implements Identifiable {
     private String lastName;
     @Expression(or = @Or) @Validate
     private Address address;
-    @Annotation3
+    //@Annotation3
     private List<Car> cars;
     @Annotation1(integer = 4, fraction = 5) @Validate
     private Employment[] jobs;

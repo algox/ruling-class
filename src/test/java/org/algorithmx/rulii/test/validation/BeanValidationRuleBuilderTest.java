@@ -16,7 +16,7 @@ public class BeanValidationRuleBuilderTest {
         Person person = TestData.createPerson1();
         RuleContext context = RuleContextBuilder.empty();
         BeanValidator validator = new BeanValidator();
-        validator.validate(context, person);
+        validator.validateBean(context, person);
     }
 
     /*@Test
