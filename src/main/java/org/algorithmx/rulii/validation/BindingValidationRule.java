@@ -27,6 +27,12 @@ public abstract class BindingValidationRule extends ValidationRule {
     @Given
     public boolean isValid(RuleContext context) {
         Object result = getBindingValue(context);
+
+        if (result != null && !isSupported(result.getClass())) {
+            // TODO : Log warning
+            return false;
+        }
+
         return isValid(context, result);
     }
 

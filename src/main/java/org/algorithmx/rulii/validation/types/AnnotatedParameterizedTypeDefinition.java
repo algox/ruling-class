@@ -64,19 +64,6 @@ public class AnnotatedParameterizedTypeDefinition extends AbstractAnnotatedTypeD
         return result.toArray(new AnnotatedTypeDefinition[result.size()]);
     }
 
-    @Override
-    public String getSignature() {
-        StringBuilder result = new StringBuilder(type.getSimpleName() + "<");
-
-        for (int i = 0; i < typeArguments.length; i++) {
-            result.append(typeArguments[i].getSignature());
-            if (i < typeArguments.length - 1) result.append(",");
-        }
-        result.append(">");
-
-        return result.toString();
-    }
-
     private static Class<?> deriveType(AnnotatedParameterizedType annotatedType) {
         ParameterizedType parameterizedType = (ParameterizedType) annotatedType.getType();
         return (Class<?>) parameterizedType.getRawType();

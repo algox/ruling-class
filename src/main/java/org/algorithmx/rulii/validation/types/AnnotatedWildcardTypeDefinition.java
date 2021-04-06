@@ -73,23 +73,6 @@ public class AnnotatedWildcardTypeDefinition extends AbstractAnnotatedTypeDefini
         return result.toArray(new AnnotatedTypeDefinition[result.size()]);
     }
 
-    @Override
-    public String getSignature() {
-        StringBuilder result = new StringBuilder("<");
-
-        if (isUpperBound()) result.append("? extends ");
-
-        for (int i = 0; i < bounds.length; i++) {
-            result.append(bounds[i].getSignature());
-            if (i < bounds.length - 1) result.append(",");
-        }
-
-        if (isLowerBound()) result.append("extends ?");
-
-        result.append(">");
-        return result.toString();
-    }
-
     private static WildcardType deriveWildcardType(AnnotatedWildcardType annotatedType) {
         return annotatedType.getAnnotatedLowerBounds().length > 0
                 ? AnnotatedWildcardTypeDefinition.WildcardType.LOWER

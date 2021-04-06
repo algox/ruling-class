@@ -20,6 +20,7 @@ package org.algorithmx.rulii.validation.types;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
+import java.util.Arrays;
 
 public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
 
@@ -47,7 +48,19 @@ public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
 
     AnnotatedTypeDefinition[] getAllChildren();
 
-    default String getSignature() { return "";}
+    default String getSignature() {
+        StringBuilder result = new StringBuilder();
+
+        if (hasDeclaredRules()) {
+             for (MarkedAnnotation annotation : getDeclaredRuleAnnotations()) {
+                 result.append(annotation.getOwner() + System.lineSeparator());
+             }
+        }
+
+        result.append(getAnnotatedType().getType().toString());
+
+        return result.toString();
+    }
 
     default boolean requiresProcessing() {
         return hasDeclaredRules() || requiresIntrospection();

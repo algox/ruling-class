@@ -16,61 +16,61 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.types;
+package org.algorithmx.rulii.validation.beans;
 
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
-import java.lang.reflect.Field;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 
-public class FieldHolder implements SourceHolder<Field> {
+public class PropertyHolder implements SourceHolder<PropertyDescriptor> {
 
-    private final Field field;
+    private final PropertyDescriptor property;
     private final AnnotatedTypeDefinition definition;
 
-    public FieldHolder(Field field, AnnotatedTypeDefinition definition) {
+    public PropertyHolder(PropertyDescriptor property, AnnotatedTypeDefinition definition) {
         super();
-        Assert.notNull(field, "field cannot be null.");
+        Assert.notNull(property, "property cannot be null.");
+        Assert.notNull(property.getReadMethod(), "getter cannot be null.");
         Assert.notNull(definition, "definition cannot be null.");
-        this.field = field;
+        this.property = property;
         this.definition = definition;
-        field.setAccessible(true);
     }
 
     @Override
-    public Field getSource() {
-        return field;
+    public PropertyDescriptor getSource() {
+        return property;
     }
 
-    @Override
     public AnnotatedTypeDefinition getDefinition() {
         return definition;
     }
 
     @Override
     public String getName() {
-        return field.getDeclaringClass().getSimpleName() + "." + field.getName();
+        return property.getReadMethod().getDeclaringClass().getSimpleName() + "." + property.getName();
     }
 
     @Override
-    public SourceHolder<Field> copy(AnnotatedTypeDefinition definition) {
-        return new FieldHolder(field, definition);
+    public SourceHolder<PropertyDescriptor> copy(AnnotatedTypeDefinition definition) {
+        return new PropertyHolder(property, definition);
     }
 
     public Object getValue(Object parent) {
         try {
-            // TODO : setAccessible() ?
-            return field.get(parent);
-        } catch (IllegalAccessException e) {
-            throw new UnrulyException("Unable to get field value for field [" + field.getName()
-                    + "] on class [" + field.getDeclaringClass().getName() + "]", e);
+            return property.getReadMethod().invoke(parent);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new UnrulyException("Unable to get field value for field [" + property.getName()
+                    + "] on class [" + property.getReadMethod().getDeclaringClass().getName() + "]", e);
         }
     }
 
     @Override
     public String toString() {
-        return "FieldHolder{" +
-                "field=" + field +
+        return "PropertyHolder{" +
+                "property=" + property +
                 ", definition=" + definition +
                 '}';
     }

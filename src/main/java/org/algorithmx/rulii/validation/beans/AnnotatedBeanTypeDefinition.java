@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.types;
+package org.algorithmx.rulii.validation.beans;
 
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;

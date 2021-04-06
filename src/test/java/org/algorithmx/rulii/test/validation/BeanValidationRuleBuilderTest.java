@@ -2,7 +2,7 @@ package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.context.RuleContextBuilder;
-import org.algorithmx.rulii.validation.BeanValidator;
+import org.algorithmx.rulii.validation.beans.BeanValidator;
 import org.junit.Test;
 
 public class BeanValidationRuleBuilderTest {

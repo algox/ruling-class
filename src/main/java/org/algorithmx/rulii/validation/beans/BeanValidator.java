@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation;
+package org.algorithmx.rulii.validation.beans;
 
 import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.annotation.ValidationMarker;
@@ -28,16 +28,15 @@ import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.ConcurrentReferenceHashMap;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.graph.ObjectGraph;
 import org.algorithmx.rulii.validation.graph.ObjectVisitorTemplate;
 import org.algorithmx.rulii.validation.graph.TraversalCandidate;
-import org.algorithmx.rulii.validation.types.AnnotatedBeanTypeDefinition;
-import org.algorithmx.rulii.validation.types.AnnotatedBeanTypeDefinitionBuilder;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeValueExtractor;
 import org.algorithmx.rulii.validation.types.ExtractedTypeValue;
 import org.algorithmx.rulii.validation.types.MarkedAnnotation;
-import org.algorithmx.rulii.validation.types.SourceHolder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,20 +55,19 @@ public class BeanValidator extends ObjectVisitorTemplate {
         super();
     }
 
-    public void validate(RuleContext context, Object bean) {
+    public RuleViolations validate(RuleContext context, Object bean) {
         Assert.notNull(context, "context cannot be null.");
         Assert.notNull(bean, "bean cannot be null.");
 
         this.context = context;
         this.violations = new RuleViolations();
 
-        Bindings beanScope = createBeanBindings(bean);
-        context.getBindings().addScope("beanScope", beanScope);
         context.getBindings().bind("errors", violations);
 
         ObjectGraph graph = new ObjectGraph();
-        //graph.traverse(new TraversalCandidate(bean, null), this);
-        //System.err.println("XXX Violations [" + violations + "]");
+        graph.traverse(new TraversalCandidate(bean, null), this);
+        System.err.println("XXX Violations [" + violations + "]");
+        return violations;
     }
 
     public RuleViolations getViolations() {
@@ -77,13 +75,20 @@ public class BeanValidator extends ObjectVisitorTemplate {
     }
 
     public TraversalCandidate[] visitObjectStart(TraversalCandidate candidate) {
-        Bindings candidateScope = createCandidateBindings(candidate.getTarget(), "$value");
+        Bindings beanScope = createBeanBindings(candidate.getTarget());
+        beanScope.bind("$value", candidate.getTarget());
+        RuleViolations violations = new RuleViolations();
+        beanScope.bind("errors", violations);
 
         try {
-            context.getBindings().addScope("candidateScope", candidateScope);
+            context.getBindings().addScope("beanScope", beanScope);
             runRules(candidate.getTypeDefinition());
         } finally {
-            context.getBindings().removeScope(candidateScope);
+            context.getBindings().removeScope(beanScope);
+            if (violations.size() > 0) {
+                // TODO : Decorate the error
+                Arrays.stream(violations.getViolations()).forEach(v -> this.violations.add(v));
+            }
         }
 
         if (candidate.isNull()) return null;
@@ -192,7 +197,7 @@ public class BeanValidator extends ObjectVisitorTemplate {
     }
 
     protected Bindings createBeanBindings(Object bean) {
-        Assert.notNull(bean, "bean cannot be null.");
+        if (bean == null) return Bindings.create();
 
         Bindings result = Bindings.create();
         FieldBindingLoader fieldLoader = new FieldBindingLoader();
@@ -204,12 +209,6 @@ public class BeanValidator extends ObjectVisitorTemplate {
         propertyLoader.setIgnoreProperties(names);
         propertyLoader.load(result, bean);
 
-        return result;
-    }
-
-    protected Bindings createCandidateBindings(Object value, String bindingName) {
-        Bindings result = Bindings.create();
-        result.bind(bindingName, value);
         return result;
     }
 

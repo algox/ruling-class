@@ -19,7 +19,7 @@
 package org.algorithmx.rulii.validation.graph;
 
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
-import org.algorithmx.rulii.validation.types.SourceHolder;
+import org.algorithmx.rulii.validation.beans.SourceHolder;
 
 import java.util.Collection;
 import java.util.Map;

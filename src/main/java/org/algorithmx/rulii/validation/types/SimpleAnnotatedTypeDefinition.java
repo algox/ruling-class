@@ -37,11 +37,6 @@ public class SimpleAnnotatedTypeDefinition extends AbstractAnnotatedTypeDefiniti
         return type;
     }
 
-    @Override
-    public String getSignature() {
-        return type.getSimpleName();
-    }
-
     private static Class<?> deriveType(AnnotatedType annotatedType) {
         return (Class<?>) annotatedType.getType();
     }

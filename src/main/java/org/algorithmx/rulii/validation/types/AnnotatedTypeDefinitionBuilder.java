@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AnnotatedTypeDefinitionBuilder {
+public class AnnotatedTypeDefinitionBuilder<T extends List, Set> {
 
     private AnnotatedType annotatedType;
     private Class<? extends Annotation> introspectionAnnotationType;
@@ -156,7 +156,7 @@ public class AnnotatedTypeDefinitionBuilder {
 
     @Validate
     @Pattern(regex = "*")
-    private Map<@NotNull String, @NotNull Map<@NotNull @Validate ? extends List, @Validate @NotNull ?>> field1 = new HashMap<>();
+    private Map<@NotNull String, @NotNull Map<@NotNull @Validate ? extends List, @Validate @NotNull T>> field1 = new HashMap<>();
     //private Map<@NotNull String, @NotNull Map<@NotNull Integer, @NotNull BigDecimal>> field1 = new HashMap<>();
     //private Map<@NotNull ?, @NotBlank ?> field1 = new HashMap<>();
 

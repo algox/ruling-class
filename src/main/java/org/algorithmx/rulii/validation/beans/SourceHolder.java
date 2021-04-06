@@ -16,7 +16,9 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.types;
+package org.algorithmx.rulii.validation.beans;
+
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
 public interface SourceHolder<T> {
 

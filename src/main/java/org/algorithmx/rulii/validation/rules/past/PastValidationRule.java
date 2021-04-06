@@ -1,15 +1,11 @@
 package org.algorithmx.rulii.validation.rules.past;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.util.TimeComparator;
 import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -41,7 +37,7 @@ import java.util.Calendar;
 @Description("Value must be in the past.")
 public class PastValidationRule extends BindingValidationRule {
 
-    public static Class<?>[] SUPPORTED_TYPES    = {Calendar.class, Date.class, Date.class, Instant.class,
+    public static Class<?>[] SUPPORTED_TYPES    = {Calendar.class, Date.class, java.util.Date.class, Instant.class,
             LocalDate.class, LocalDateTime.class, LocalTime.class, MonthDay.class, OffsetDateTime.class,
             OffsetTime.class, Year.class, YearMonth.class, ZonedDateTime.class, HijrahDate.class, JapaneseDate.class,
             MinguoDate.class, ThaiBuddhistDate.class};
