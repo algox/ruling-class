@@ -35,6 +35,8 @@ public @interface Max {
 
     long value();
 
+    String when() default NOT_APPLICABLE;
+
     class MaxValidationRuleBuilder implements AnnotatedRunnableBuilder<Max> {
 
         public MaxValidationRuleBuilder() {
@@ -45,7 +47,7 @@ public @interface Max {
         public Rule[] build(Max max, String bindingName) {
             MaxValidationRule rule = new MaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null, max.value());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null)};
             return result;
         }
     }

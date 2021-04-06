@@ -33,6 +33,8 @@ public @interface Exists {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class AssertTrueValidationRuleBuilder implements AnnotatedRunnableBuilder<Exists> {
 
         public AssertTrueValidationRuleBuilder() {
@@ -43,7 +45,7 @@ public @interface Exists {
         public Rule[] build(Exists exists, String bindingName) {
             ExistsValidationRule rule = new ExistsValidationRule(bindingName, exists.errorCode(),
                     exists.severity(), !NOT_APPLICABLE.equals(exists.message()) ? exists.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null)};
             return result;
         }
     }

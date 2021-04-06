@@ -33,6 +33,8 @@ public @interface Negative {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class NegativeValidationRuleBuilder implements AnnotatedRunnableBuilder<Negative> {
 
         public NegativeValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface Negative {
             NegativeValidationRule rule = new NegativeValidationRule(bindingName, negative.errorCode(),
                     negative.severity(),
                     !NOT_APPLICABLE.equals(negative.message()) ? negative.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(negative.when()) ? negative.when() : null)};
             return result;
         }
     }

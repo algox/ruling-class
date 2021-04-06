@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.alpha;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -39,6 +38,8 @@ public @interface Alpha {
 
     boolean allowSpace() default true;
 
+    String when() default NOT_APPLICABLE;
+
     class AlphaValidationRuleBuilder implements AnnotatedRunnableBuilder<Alpha> {
 
         public AlphaValidationRuleBuilder() {
@@ -49,7 +50,7 @@ public @interface Alpha {
         public Rule[] build(Alpha alpha, String bindingName) {
             AlphaValidationRule rule = new AlphaValidationRule(bindingName, alpha.errorCode(), alpha.severity(),
                     !NOT_APPLICABLE.equals(alpha.message()) ? alpha.message() : null, alpha.allowSpace());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(alpha.when()) ? alpha.when() : null)};
             return result;
         }
     }

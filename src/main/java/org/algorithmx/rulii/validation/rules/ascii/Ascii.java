@@ -37,6 +37,8 @@ public @interface Ascii {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class AsciiValidationRuleBuilder implements AnnotatedRunnableBuilder<Ascii> {
 
         public AsciiValidationRuleBuilder() {
@@ -47,7 +49,7 @@ public @interface Ascii {
         public Rule[] build(Ascii ascii, String bindingName) {
             AsciiValidationRule rule = new AsciiValidationRule(bindingName, ascii.errorCode(), ascii.severity(),
                     !NOT_APPLICABLE.equals(ascii.message()) ? ascii.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(ascii.when()) ? ascii.when() : null)};
             return result;
         }
     }

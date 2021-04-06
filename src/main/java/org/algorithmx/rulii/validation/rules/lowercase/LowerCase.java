@@ -34,6 +34,8 @@ public @interface LowerCase {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class LowerCaseValidationRuleBuilder implements AnnotatedRunnableBuilder<LowerCase> {
 
         public LowerCaseValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface LowerCase {
         public Rule[] build(LowerCase lowerCase, String bindingName) {
             LowerCaseValidationRule rule = new LowerCaseValidationRule(bindingName, lowerCase.errorCode(),
                     lowerCase.severity(), !NOT_APPLICABLE.equals(lowerCase.message()) ? lowerCase.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(lowerCase.when()) ? lowerCase.when() : null)};
             return result;
         }
     }

@@ -33,6 +33,8 @@ public @interface FutureOrPresent {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class FutureOrPresentValidationRuleBuilder implements AnnotatedRunnableBuilder<FutureOrPresent> {
 
         public FutureOrPresentValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface FutureOrPresent {
             FutureOrPresentValidationRule rule = new FutureOrPresentValidationRule(bindingName, futureOrPresent.errorCode(),
                     futureOrPresent.severity(),
                     !NOT_APPLICABLE.equals(futureOrPresent.message()) ? futureOrPresent.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(futureOrPresent.when()) ? futureOrPresent.when() : null)};
             return result;
         }
     }

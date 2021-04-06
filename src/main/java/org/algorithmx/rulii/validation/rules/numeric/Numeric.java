@@ -36,6 +36,8 @@ public @interface Numeric {
 
     boolean allowSpace() default false;
 
+    String when() default NOT_APPLICABLE;
+
     class NumericValidationRuleBuilder implements AnnotatedRunnableBuilder<Numeric> {
 
         public NumericValidationRuleBuilder() {
@@ -47,7 +49,7 @@ public @interface Numeric {
             NumericValidationRule rule = new NumericValidationRule(bindingName, numeric.errorCode(),
                     numeric.severity(), !NOT_APPLICABLE.equals(numeric.message()) ? numeric.message() : null,
                     numeric.allowSpace());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null)};
             return result;
         }
     }

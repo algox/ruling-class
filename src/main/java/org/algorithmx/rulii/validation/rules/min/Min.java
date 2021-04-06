@@ -36,6 +36,8 @@ public @interface Min {
 
     long value();
 
+    String when() default NOT_APPLICABLE;
+
     class MinValidationRuleBuilder implements AnnotatedRunnableBuilder<Min> {
 
         public MinValidationRuleBuilder() {
@@ -46,7 +48,7 @@ public @interface Min {
         public Rule[] build(Min min, String bindingName) {
             MinValidationRule rule = new MinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null, min.value());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null)};
             return result;
         }
     }

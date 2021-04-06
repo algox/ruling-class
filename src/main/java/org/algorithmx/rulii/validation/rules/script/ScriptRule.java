@@ -40,6 +40,8 @@ public @interface ScriptRule {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class ScriptRuleRuleBuilder implements AnnotatedRunnableBuilder<ScriptRule> {
 
         public ScriptRuleRuleBuilder() {
@@ -51,7 +53,7 @@ public @interface ScriptRule {
             ScriptConditionRule rule = new ScriptConditionRule(bindingName, scriptRule.value(),
                     scriptRule.errorCode(), scriptRule.severity(),
                     !NOT_APPLICABLE.equals(scriptRule.message()) ? scriptRule.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(scriptRule.when()) ? scriptRule.when() : null)};
             return result;
         }
     }

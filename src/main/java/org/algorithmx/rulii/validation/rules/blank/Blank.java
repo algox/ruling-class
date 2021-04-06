@@ -33,6 +33,8 @@ public @interface Blank {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class BlankValidationRuleBuilder implements AnnotatedRunnableBuilder<Blank> {
 
         public BlankValidationRuleBuilder() {
@@ -40,11 +42,11 @@ public @interface Blank {
         }
 
         @Override
-        public Rule[] build(Blank notBlank, String bindingName) {
-            BlankValidationRule rule = new BlankValidationRule(bindingName, notBlank.errorCode(),
-                    notBlank.severity(),
-                    !NOT_APPLICABLE.equals(notBlank.message()) ? notBlank.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+        public Rule[] build(Blank blank, String bindingName) {
+            BlankValidationRule rule = new BlankValidationRule(bindingName, blank.errorCode(),
+                    blank.severity(),
+                    !NOT_APPLICABLE.equals(blank.message()) ? blank.message() : null);
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(blank.when()) ? blank.when() : null)};
             return result;
         }
     }

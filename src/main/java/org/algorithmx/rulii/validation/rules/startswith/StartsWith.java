@@ -36,6 +36,8 @@ public @interface StartsWith {
 
     String[] prefixes();
 
+    String when() default NOT_APPLICABLE;
+
     class StartsWithValidationRuleBuilder implements AnnotatedRunnableBuilder<StartsWith> {
 
         public StartsWithValidationRuleBuilder() {
@@ -47,7 +49,7 @@ public @interface StartsWith {
             StartsWithValidationRule rule = new StartsWithValidationRule(bindingName, startsWith.errorCode(),
                     startsWith.severity(), !NOT_APPLICABLE.equals(startsWith.message()) ? startsWith.message() : null,
                     startsWith.prefixes());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(startsWith.when()) ? startsWith.when() : null)};
             return result;
         }
     }

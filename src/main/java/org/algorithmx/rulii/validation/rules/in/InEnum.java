@@ -41,6 +41,8 @@ public @interface InEnum {
 
     Class<? extends Enum> value();
 
+    String when() default NOT_APPLICABLE;
+
     class InEnumValidationRuleBuilder implements AnnotatedRunnableBuilder<InEnum> {
 
         public InEnumValidationRuleBuilder() {
@@ -57,7 +59,7 @@ public @interface InEnum {
 
             InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null)};
             return result;
         }
     }

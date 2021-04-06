@@ -34,6 +34,8 @@ public @interface NotNull {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class NotNullValidationRuleBuilder implements AnnotatedRunnableBuilder<NotNull> {
 
         public NotNullValidationRuleBuilder() {
@@ -45,7 +47,7 @@ public @interface NotNull {
             NotNullValidationRule rule = new NotNullValidationRule(bindingName, notNull.errorCode(),
                     notNull.severity(),
                     !NOT_APPLICABLE.equals(notNull.message()) ? notNull.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notNull.when()) ? notNull.when() : null)};
             return result;
         }
     }

@@ -36,6 +36,8 @@ public @interface Decimal {
 
     boolean allowSpace() default true;
 
+    String when() default NOT_APPLICABLE;
+
     class DecimalValidationRuleBuilder implements AnnotatedRunnableBuilder<Decimal> {
 
         public DecimalValidationRuleBuilder() {
@@ -47,7 +49,7 @@ public @interface Decimal {
             DecimalValidationRule rule = new DecimalValidationRule(bindingName, decimal.errorCode(),
                     decimal.severity(), !NOT_APPLICABLE.equals(decimal.message()) ? decimal.message() : null,
                     decimal.allowSpace());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(decimal.when()) ? decimal.when() : null)};
             return result;
         }
     }

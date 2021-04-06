@@ -38,6 +38,8 @@ public @interface DecimalMax {
 
     boolean inclusive() default true;
 
+    String when() default NOT_APPLICABLE;
+
     class DecimalMaxValidationRuleBuilder implements AnnotatedRunnableBuilder<DecimalMax> {
 
         public DecimalMaxValidationRuleBuilder() {
@@ -49,7 +51,7 @@ public @interface DecimalMax {
             DecimalMaxValidationRule rule = new DecimalMaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null,
                     BigDecimal.valueOf(max.value()), max.inclusive());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null)};
             return result;
         }
     }

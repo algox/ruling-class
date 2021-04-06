@@ -72,10 +72,6 @@ public class BeanValidator extends ObjectVisitorTemplate {
         return violations;
     }
 
-    public RuleViolations getViolations() {
-        return violations;
-    }
-
     public TraversalCandidate[] visitObjectStart(TraversalCandidate candidate) {
         Bindings beanScope = createBeanBindings(candidate.getTarget());
         RuleViolations violations = new RuleViolations();

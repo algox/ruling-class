@@ -33,6 +33,8 @@ public @interface Positive {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class PositiveValidationRuleBuilder implements AnnotatedRunnableBuilder<Positive> {
 
         public PositiveValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface Positive {
             PositiveValidationRule rule = new PositiveValidationRule(bindingName, positive.errorCode(),
                     positive.severity(),
                     !NOT_APPLICABLE.equals(positive.message()) ? positive.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(positive.when()) ? positive.when() : null)};
             return result;
         }
     }

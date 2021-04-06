@@ -33,6 +33,8 @@ public @interface Future {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class FutureValidationRuleBuilder implements AnnotatedRunnableBuilder<Future> {
 
         public FutureValidationRuleBuilder() {
@@ -43,7 +45,7 @@ public @interface Future {
         public Rule[] build(Future future, String bindingName) {
             FutureValidationRule rule = new FutureValidationRule(bindingName, future.errorCode(), future.severity(),
                     !NOT_APPLICABLE.equals(future.message()) ? future.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(future.when()) ? future.when() : null)};
             return result;
         }
     }

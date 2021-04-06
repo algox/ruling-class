@@ -33,6 +33,8 @@ public @interface Past {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class PastValidationRuleBuilder implements AnnotatedRunnableBuilder<Past> {
 
         public PastValidationRuleBuilder() {
@@ -43,7 +45,7 @@ public @interface Past {
         public Rule[] build(Past past, String bindingName) {
             PastValidationRule rule = new PastValidationRule(bindingName, past.errorCode(), past.severity(),
                     !NOT_APPLICABLE.equals(past.message()) ? past.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(past.when()) ? past.when() : null)};
             return result;
         }
     }

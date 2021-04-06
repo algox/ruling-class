@@ -33,6 +33,8 @@ public @interface NotBlank {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class NotBlankValidationRuleBuilder implements AnnotatedRunnableBuilder<NotBlank> {
 
         public NotBlankValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface NotBlank {
             NotBlankValidationRule rule = new NotBlankValidationRule(bindingName, notBlank.errorCode(),
                     notBlank.severity(),
                     !NOT_APPLICABLE.equals(notBlank.message()) ? notBlank.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notBlank.when()) ? notBlank.when() : null)};
             return result;
         }
     }

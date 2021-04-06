@@ -33,6 +33,8 @@ public @interface Null {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class NullValidationRuleBuilder implements AnnotatedRunnableBuilder<Null> {
 
         public NullValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface Null {
             NullValidationRule rule = new NullValidationRule(bindingName, nullAnnotation.errorCode(),
                     nullAnnotation.severity(),
                     !NOT_APPLICABLE.equals(nullAnnotation.message()) ? nullAnnotation.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null)};
             return result;
         }
     }

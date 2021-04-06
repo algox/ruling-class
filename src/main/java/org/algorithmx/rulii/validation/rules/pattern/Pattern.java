@@ -44,6 +44,8 @@ public @interface Pattern {
 
     boolean caseSensitive() default true;
 
+    String when() default NOT_APPLICABLE;
+
     class PatternValidationRuleBuilder implements AnnotatedRunnableBuilder<Pattern> {
 
         public PatternValidationRuleBuilder() {
@@ -55,7 +57,7 @@ public @interface Pattern {
             PatternValidationRule rule = new PatternValidationRule(bindingName, pattern.errorCode(), pattern.severity(),
                     !NOT_APPLICABLE.equals(pattern.message()) ? pattern.message() : null,
                     pattern.caseSensitive(), pattern.regex());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pattern.when()) ? pattern.when() : null)};
             return result;
         }
     }

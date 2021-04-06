@@ -36,6 +36,8 @@ public @interface EndsWith {
 
     String[] suffixes();
 
+    String when() default NOT_APPLICABLE;
+
     class EndsWithValidationRuleBuilder implements AnnotatedRunnableBuilder<EndsWith> {
 
         public EndsWithValidationRuleBuilder() {
@@ -47,7 +49,7 @@ public @interface EndsWith {
             EndsWithValidationRule rule = new EndsWithValidationRule(bindingName, endsWith.errorCode(),
                     endsWith.severity(), !NOT_APPLICABLE.equals(endsWith.message()) ? endsWith.message() : null,
                     endsWith.suffixes());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(endsWith.when()) ? endsWith.when() : null)};
             return result;
         }
     }

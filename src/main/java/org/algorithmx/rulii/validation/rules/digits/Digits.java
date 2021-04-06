@@ -47,6 +47,8 @@ public @interface Digits {
      */
     int fraction();
 
+    String when() default NOT_APPLICABLE;
+
     class DigitsValidationRuleBuilder implements AnnotatedRunnableBuilder<Digits> {
 
         public DigitsValidationRuleBuilder() {
@@ -58,7 +60,7 @@ public @interface Digits {
             DigitsValidationRule rule = new DigitsValidationRule(bindingName, digits.errorCode(),
                     digits.severity(), !NOT_APPLICABLE.equals(digits.message()) ? digits.message() : null,
                     digits.integer(), digits.fraction());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(digits.when()) ? digits.when() : null)};
             return result;
         }
     }

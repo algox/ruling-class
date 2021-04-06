@@ -33,6 +33,8 @@ public @interface NotEmpty {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class NotEmptyValidationRuleBuilder implements AnnotatedRunnableBuilder<NotEmpty> {
 
         public NotEmptyValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface NotEmpty {
             NotEmptyValidationRule rule = new NotEmptyValidationRule(bindingName, notEmpty.errorCode(),
                     notEmpty.severity(),
                     !NOT_APPLICABLE.equals(notEmpty.message()) ? notEmpty.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notEmpty.when()) ? notEmpty.when() : null)};
             return result;
         }
     }

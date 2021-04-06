@@ -44,6 +44,8 @@ public @interface In {
 
     Class<?> type() default void.class;
 
+    String when() default NOT_APPLICABLE;
+
     class InValidationRuleBuilder implements AnnotatedRunnableBuilder<In> {
 
         public InValidationRuleBuilder() {
@@ -56,7 +58,7 @@ public @interface In {
             Set<String> values = new HashSet<>(Arrays.asList(in.values()));
             InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null)};
             return result;
         }
     }

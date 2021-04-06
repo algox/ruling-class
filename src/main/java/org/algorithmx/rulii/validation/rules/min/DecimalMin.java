@@ -38,6 +38,8 @@ public @interface DecimalMin {
 
     boolean inclusive() default true;
 
+    String when() default NOT_APPLICABLE;
+
     class DecimalMinValidationRuleBuilder implements AnnotatedRunnableBuilder<DecimalMin> {
 
         public DecimalMinValidationRuleBuilder() {
@@ -49,7 +51,7 @@ public @interface DecimalMin {
             DecimalMinValidationRule rule = new DecimalMinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null,
                     BigDecimal.valueOf(min.value()), min.inclusive());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null)};
             return result;
         }
     }

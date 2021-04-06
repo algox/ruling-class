@@ -35,6 +35,8 @@ public @interface UpperCase {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class UpperCaseValidationRuleBuilder implements AnnotatedRunnableBuilder<UpperCase> {
 
         public UpperCaseValidationRuleBuilder() {
@@ -45,7 +47,7 @@ public @interface UpperCase {
         public Rule[] build(UpperCase upperCase, String bindingName) {
             UpperCaseValidationRule rule = new UpperCaseValidationRule(bindingName, upperCase.errorCode(),
                     upperCase.severity(), !NOT_APPLICABLE.equals(upperCase.message()) ? upperCase.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(upperCase.when()) ? upperCase.when() : null)};
             return result;
         }
     }

@@ -41,6 +41,8 @@ public @interface Size {
 
     int max() default Integer.MAX_VALUE;
 
+    String when() default NOT_APPLICABLE;
+
     class SizeValidationRuleBuilder implements AnnotatedRunnableBuilder<Size> {
 
         public SizeValidationRuleBuilder() {
@@ -52,7 +54,7 @@ public @interface Size {
             SizeValidationRule rule = new SizeValidationRule(bindingName, size.errorCode(), size.severity(),
                     !NOT_APPLICABLE.equals(size.message()) ? size.message() : null,
                     size.min(), size.max());
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(size.when()) ? size.when() : null)};
             return result;
         }
     }

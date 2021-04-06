@@ -33,6 +33,8 @@ public @interface AssertTrue {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class AssertTrueValidationRuleBuilder implements AnnotatedRunnableBuilder<AssertTrue> {
 
         public AssertTrueValidationRuleBuilder() {
@@ -43,7 +45,7 @@ public @interface AssertTrue {
         public Rule[] build(AssertTrue assertTrue, String bindingName) {
             AssertTrueValidationRule rule = new AssertTrueValidationRule(bindingName, assertTrue.errorCode(),
                     assertTrue.severity(), !NOT_APPLICABLE.equals(assertTrue.message()) ? assertTrue.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(assertTrue.when()) ? assertTrue.when() : null)};
             return result;
         }
     }

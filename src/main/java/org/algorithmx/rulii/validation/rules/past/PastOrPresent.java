@@ -33,6 +33,8 @@ public @interface PastOrPresent {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class PastOrPresentValidationRuleBuilder implements AnnotatedRunnableBuilder<PastOrPresent> {
 
         public PastOrPresentValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface PastOrPresent {
             PastOrPresentValidationRule rule = new PastOrPresentValidationRule(bindingName, pastOrPresent.errorCode(),
                     pastOrPresent.severity(),
                     !NOT_APPLICABLE.equals(pastOrPresent.message()) ? pastOrPresent.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pastOrPresent.when()) ? pastOrPresent.when() : null)};
             return result;
         }
     }

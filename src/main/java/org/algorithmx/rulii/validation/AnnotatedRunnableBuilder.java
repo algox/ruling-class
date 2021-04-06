@@ -19,10 +19,25 @@
 package org.algorithmx.rulii.validation;
 
 import org.algorithmx.rulii.core.Runnable;
+import org.algorithmx.rulii.core.condition.ConditionBuilder;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.core.rule.RuleBuilder;
 
 import java.lang.annotation.Annotation;
 
 public interface AnnotatedRunnableBuilder<T extends Annotation> {
 
     Runnable[] build(T type, String bindingName);
+
+    default Rule buildRule(BindingValidationRule target, String when) {
+
+        if (when != null) {
+            return RuleBuilder
+                    .withTarget(target)
+                    .preCondition(ConditionBuilder.build(when))
+                    .build();
+        }
+
+        return RuleBuilder.build(target);
+    }
 }

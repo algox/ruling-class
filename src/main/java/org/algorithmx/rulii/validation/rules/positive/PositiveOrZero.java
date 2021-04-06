@@ -33,6 +33,8 @@ public @interface PositiveOrZero {
 
     Severity severity() default Severity.ERROR;
 
+    String when() default NOT_APPLICABLE;
+
     class PositiveOrZeroValidationRuleBuilder implements AnnotatedRunnableBuilder<PositiveOrZero> {
 
         public PositiveOrZeroValidationRuleBuilder() {
@@ -44,7 +46,7 @@ public @interface PositiveOrZero {
             PositiveOrZeroValidationRule rule = new PositiveOrZeroValidationRule(bindingName, positiveOrZero.errorCode(),
                     positiveOrZero.severity(),
                     !NOT_APPLICABLE.equals(positiveOrZero.message()) ? positiveOrZero.message() : null);
-            Rule[] result = {RuleBuilder.build(rule)};
+            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(positiveOrZero.when()) ? positiveOrZero.when() : null)};
             return result;
         }
     }
