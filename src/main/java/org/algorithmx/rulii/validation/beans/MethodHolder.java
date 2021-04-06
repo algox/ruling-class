@@ -48,7 +48,7 @@ public class MethodHolder implements SourceHolder<Method> {
 
     @Override
     public String getName() {
-        return method.getDeclaringClass().getSimpleName() + "." + method.getName();
+        return method.getDeclaringClass().getName() + "." + method.getName();
     }
 
     @Override

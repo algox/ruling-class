@@ -39,6 +39,10 @@ public class TraversalCandidate {
         return target;
     }
 
+    public SourceHolder getSourceHolder() {
+        return holder;
+    }
+
     public Object getSource() {
         return holder != null ? holder.getSource() : null;
     }

@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation;
 import org.algorithmx.rulii.annotation.Given;
 import org.algorithmx.rulii.annotation.Match;
 import org.algorithmx.rulii.annotation.Otherwise;
+import org.algorithmx.rulii.annotation.PreCondition;
 import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.apache.StringUtils;
@@ -24,16 +25,17 @@ public abstract class BindingValidationRule extends ValidationRule {
         this.bindingName = bindingName;
     }
 
+    @PreCondition
+    public boolean checkType(RuleContext context) {
+        Object value = getBindingValue(context);
+        boolean result = value == null || isSupported(value.getClass());
+        if (!result) {}// TODO : Log warning
+        return result;
+    }
+
     @Given
     public boolean isValid(RuleContext context) {
-        Object result = getBindingValue(context);
-
-        if (result != null && !isSupported(result.getClass())) {
-            // TODO : Log warning
-            return false;
-        }
-
-        return isValid(context, result);
+        return isValid(context, getBindingValue(context));
     }
 
     @Otherwise

@@ -33,7 +33,7 @@ import org.algorithmx.rulii.validation.Severity;
 @Description("Binding Name must NOT exist.")
 public class MustNotBeDefinedRule extends BindingValidationRule {
 
-    public static Class<?>[] SUPPORTED_TYPES    = {String.class};
+    public static Class<?>[] SUPPORTED_TYPES    = {Object.class};
 
     private static final String ERROR_CODE      = "rulii.validation.rules.MustNotBeDefinedRule.errorCode";
     private static final String DEFAULT_MESSAGE = "Binding {0} must not be defined.";

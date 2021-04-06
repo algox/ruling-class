@@ -46,10 +46,12 @@ import java.util.Set;
 
 public class BeanValidator extends ObjectVisitorTemplate {
 
+    private static final String DEFAULT_VALUE_BINDING_NAME = "$value";
     private static final Map<Class<?>, AnnotatedBeanTypeDefinition> definitionMap = new ConcurrentReferenceHashMap<>();
 
     private RuleContext context;
     private RuleViolations violations;
+    private String valueBindingName = DEFAULT_VALUE_BINDING_NAME;
 
     public BeanValidator() {
         super();
@@ -76,22 +78,21 @@ public class BeanValidator extends ObjectVisitorTemplate {
 
     public TraversalCandidate[] visitObjectStart(TraversalCandidate candidate) {
         Bindings beanScope = createBeanBindings(candidate.getTarget());
-        beanScope.bind("$value", candidate.getTarget());
         RuleViolations violations = new RuleViolations();
+
+        beanScope.bind(getValueBindingName(), candidate.getTarget());
         beanScope.bind("errors", violations);
 
         try {
             context.getBindings().addScope("beanScope", beanScope);
             runRules(candidate.getTypeDefinition());
+            decorateAndTransferViolations(violations, this.violations, candidate.getSourceHolder());
         } finally {
             context.getBindings().removeScope(beanScope);
-            if (violations.size() > 0) {
-                // TODO : Decorate the error
-                Arrays.stream(violations.getViolations()).forEach(v -> this.violations.add(v));
-            }
         }
 
         if (candidate.isNull()) return null;
+
         List<TraversalCandidate> result = introspectCandidate(candidate);
         return result != null ? result.toArray(new TraversalCandidate[result.size()]) : null;
     }
@@ -212,4 +213,22 @@ public class BeanValidator extends ObjectVisitorTemplate {
         return result;
     }
 
+    protected void decorateAndTransferViolations(RuleViolations source, RuleViolations target, SourceHolder holder) {
+        if (source != null && source.size() > 0) {
+            Arrays.stream(source.getViolations())
+                    .forEach(v -> {
+                        v.param("field", holder.getName());
+                        target.add(v);
+                    });
+        }
+    }
+
+    public String getValueBindingName() {
+        return valueBindingName;
+    }
+
+    public void setValueBindingName(String valueBindingName) {
+        Assert.notNull(valueBindingName, "valueBindingName cannot be null.");
+        this.valueBindingName = valueBindingName;
+    }
 }
