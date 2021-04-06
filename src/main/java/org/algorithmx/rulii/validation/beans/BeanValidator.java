@@ -37,6 +37,8 @@ import org.algorithmx.rulii.validation.types.MarkedAnnotation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +47,8 @@ public class BeanValidator extends ObjectVisitorTemplate {
 
     private static final String DEFAULT_VALUE_BINDING_NAME = "$value";
     private static final Map<Class<?>, AnnotatedBeanTypeDefinition> definitionMap = new ConcurrentReferenceHashMap<>();
+
+    private final Deque<TraversalCandidate> breadCrumbs = new LinkedList<>();
 
     private RuleContext context;
     private RuleViolations violations;
@@ -62,6 +66,7 @@ public class BeanValidator extends ObjectVisitorTemplate {
         Assert.notNull(context, "context cannot be null.");
         Assert.notNull(candidate, "candidate cannot be null.");
 
+        this.breadCrumbs.clear();
         this.context = context;
         this.violations = new RuleViolations();
 
@@ -90,7 +95,11 @@ public class BeanValidator extends ObjectVisitorTemplate {
 
         if (candidate.isNull()) return false;
 
-        return candidate.getTypeDefinition() == null || candidate.getTypeDefinition().requiresIntrospection();
+        boolean result = candidate.getTypeDefinition() == null || candidate.getTypeDefinition().requiresIntrospection();
+
+        if (result) breadCrumbs.push(candidate);
+
+        return result;
     }
 
     protected void runRules(AnnotatedTypeDefinition definition) {

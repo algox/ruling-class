@@ -24,12 +24,12 @@ import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.bind.DefaultBindings;
 import org.algorithmx.rulii.bind.ReservedBindings;
 import org.algorithmx.rulii.bind.ScopedBindings;
-import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategyType;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.config.RuliiConfiguration;
 import org.algorithmx.rulii.config.RuliiSystem;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.event.EventProcessor;
 import org.algorithmx.rulii.event.ExecutionListener;
 import org.algorithmx.rulii.lib.spring.util.Assert;
@@ -38,6 +38,7 @@ import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
+import org.algorithmx.rulii.validation.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class RuleContextBuilder {
     private EventProcessor eventProcessor;
     private ConverterRegistry converterRegistry;
     private ExtractorRegistry extractorRegistry;
+    private RuleRegistry ruleRegistry;
     private ScriptProcessor scriptProcessor;
     private Clock clock;
     private Locale locale;
@@ -81,6 +83,7 @@ public class RuleContextBuilder {
         this.eventProcessor = EventProcessor.create();
         this.converterRegistry = configuration.getConverterRegistry();
         this.extractorRegistry = configuration.getExtractorRegistry();
+        this.ruleRegistry = configuration.getRuleRegistry();
         this.clock = configuration.getClock();
         this.locale = configuration.getLocale();
         this.scriptProcessor = configuration.getScriptProcessor();
@@ -182,6 +185,18 @@ public class RuleContextBuilder {
         return this;
     }
 
+    public RuleContextBuilder extractorRegistry(ExtractorRegistry extractorRegistry) {
+        Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
+        this.extractorRegistry = extractorRegistry;
+        return this;
+    }
+
+    public RuleContextBuilder ruleRegistry(RuleRegistry ruleRegistry) {
+        Assert.notNull(ruleRegistry, "ruleRegistry cannot be null.");
+        this.ruleRegistry = ruleRegistry;
+        return this;
+    }
+
     public RuleContextBuilder scriptProcessor(ScriptProcessor scriptProcessor) {
         Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
         this.scriptProcessor = scriptProcessor;
@@ -209,7 +224,8 @@ public class RuleContextBuilder {
         ScopedBindings scopedBindings = ScopedBindings.create();
 
         RuleContext result  = new RuleContext(scopedBindings, locale, matchingStrategy, parameterResolver, messageResolver,
-                messageFormatter, objectFactory, eventProcessor, converterRegistry, extractorRegistry, scriptProcessor, clock);
+                messageFormatter, objectFactory, eventProcessor, converterRegistry, extractorRegistry,
+                ruleRegistry, scriptProcessor, clock);
         // Make the Context avail in the bindings.
         ((DefaultBindings) (scopedBindings.getRootScope())).promiscuousBind(BindingBuilder
                 .with(ReservedBindings.RULE_CONTEXT.getName())

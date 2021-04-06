@@ -18,14 +18,16 @@
 
 package org.algorithmx.rulii.config;
 
-import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
+import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
+import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
+import org.algorithmx.rulii.validation.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -95,6 +97,14 @@ public final class RuliiSystem {
 
     public void setConverterRegistry(ConverterRegistry converterRegistry) {
         getConfiguration().setConverterRegistry(converterRegistry);
+    }
+
+    public void setExtractorRegistry(ExtractorRegistry extractorRegistry) {
+        getConfiguration().setExtractorRegistry(extractorRegistry);
+    }
+
+    public void setRuleRegistry(RuleRegistry ruleRegistry) {
+        getConfiguration().setRuleRegistry(ruleRegistry);
     }
 
     public ObjectFactory getObjectFactory() {

@@ -28,6 +28,7 @@ import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
+import org.algorithmx.rulii.validation.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -41,14 +42,16 @@ public class RuliiConfiguration {
     private MessageFormatter messageFormatter;
     private ConverterRegistry converterRegistry;
     private ExtractorRegistry extractorRegistry;
+    private RuleRegistry ruleRegistry;
     private ScriptProcessor scriptProcessor;
     private ObjectFactory objectFactory;
     private Clock clock;
     private Locale locale;
 
     public RuliiConfiguration(BindingMatchingStrategy matchingStrategy, ParameterResolver parameterResolver,
-                              MethodResolver methodResolver, MessageResolver messageResolver, MessageFormatter messageFormatter,
-                              ConverterRegistry converterRegistry, ExtractorRegistry extractorRegistry,
+                              MethodResolver methodResolver, MessageResolver messageResolver,
+                              MessageFormatter messageFormatter, ConverterRegistry converterRegistry,
+                              ExtractorRegistry extractorRegistry, RuleRegistry ruleRegistry,
                               ObjectFactory objectFactory, ScriptProcessor scriptProcessor,
                               Clock clock, Locale locale) {
         super();
@@ -59,6 +62,7 @@ public class RuliiConfiguration {
         Assert.notNull(messageFormatter, "messageFormatter cannot be null.");
         Assert.notNull(converterRegistry, "converterRegistry cannot be null.");
         Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
+        Assert.notNull(ruleRegistry, "ruleRegistry cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
         Assert.notNull(clock, "clock cannot be null.");
@@ -70,6 +74,7 @@ public class RuliiConfiguration {
         this.messageFormatter = messageFormatter;
         this.converterRegistry = converterRegistry;
         this.extractorRegistry = extractorRegistry;
+        this.ruleRegistry = ruleRegistry;
         this.objectFactory = objectFactory;
         this.clock = clock;
         this.locale = locale;
@@ -98,6 +103,10 @@ public class RuliiConfiguration {
 
     public ExtractorRegistry getExtractorRegistry() {
         return extractorRegistry;
+    }
+
+    public RuleRegistry getRuleRegistry() {
+        return ruleRegistry;
     }
 
     public ObjectFactory getObjectFactory() {
@@ -158,6 +167,10 @@ public class RuliiConfiguration {
     void setExtractorRegistry(ExtractorRegistry extractorRegistry) {
         Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
         this.extractorRegistry = extractorRegistry;
+    }
+
+    void setRuleRegistry(RuleRegistry ruleRegistry) {
+        this.ruleRegistry = ruleRegistry;
     }
 
     void setObjectFactory(ObjectFactory objectFactory) {

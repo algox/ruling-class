@@ -30,6 +30,7 @@ import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
+import org.algorithmx.rulii.validation.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -42,6 +43,7 @@ public class RuliiConfigurationBuilder {
     private MessageFormatter messageFormatter = MessageFormatter.create();
     private ConverterRegistry converterRegistry = ConverterRegistry.create();
     private ExtractorRegistry extractorRegistry = ExtractorRegistry.create();
+    private RuleRegistry ruleRegistry = RuleRegistry.create();
     private ObjectFactory objectFactory = ObjectFactory.create();
     private Clock clock = Clock.systemDefaultZone();
     private Locale locale = Locale.getDefault();
@@ -94,6 +96,18 @@ public class RuliiConfigurationBuilder {
         return this;
     }
 
+    public RuliiConfigurationBuilder converterRegistry(ExtractorRegistry extractorRegistry) {
+        Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
+        this.extractorRegistry = extractorRegistry;
+        return this;
+    }
+
+    public RuliiConfigurationBuilder ruleRegistry(RuleRegistry ruleRegistry) {
+        Assert.notNull(ruleRegistry, "ruleRegistry cannot be null.");
+        this.ruleRegistry = ruleRegistry;
+        return this;
+    }
+
     public RuliiConfigurationBuilder objectFactory(ObjectFactory objectFactory) {
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
         this.objectFactory = objectFactory;
@@ -131,6 +145,7 @@ public class RuliiConfigurationBuilder {
 
     public RuliiConfiguration build() {
         return new RuliiConfiguration(matchingStrategy, parameterResolver, methodResolver, messageResolver,
-                messageFormatter, converterRegistry, extractorRegistry, objectFactory, scriptProcessor, clock, locale);
+                messageFormatter, converterRegistry, extractorRegistry, ruleRegistry,
+                objectFactory, scriptProcessor, clock, locale);
     }
 }

@@ -15,7 +15,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +26,6 @@ public class ObjectGraph {
     private final ExtractorRegistry extractorRegistry;
     private final Class<? extends Annotation> markerAnnotation;
     private final Class<? extends Annotation> introspectionAnnotation;
-
-    private Deque<TraversalCandidate> breadCrumbs = new LinkedList<>();
 
     public ObjectGraph(Class<? extends Annotation> markerAnnotation,
                        Class<? extends Annotation> introspectionAnnotation,
@@ -44,7 +41,6 @@ public class ObjectGraph {
 
     public void traverse(TraversalCandidate root, ObjectVisitor visitor) {
         Assert.notNull(visitor, "visitor cannot be null.");
-        breadCrumbs.clear();
         candidates.clear();
 
         // Add the root object(s)
@@ -70,10 +66,7 @@ public class ObjectGraph {
 
         if (requiredIntrospection) {
             List<TraversalCandidate> candidates = introspectCandidate(candidate);
-            if (candidates != null) {
-                this.breadCrumbs.push(candidate);
-                addCandidates(candidates);
-            }
+            if (candidates != null) addCandidates(candidates);
         }
 
         visitor.visitObjectEnd(candidate);
