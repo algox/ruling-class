@@ -30,9 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Validate {
 
-    @AliasFor(attribute = "using")
-    Class<?> value() default Object.class;
+    String using() default "";
 
-    @AliasFor(attribute = "value")
-    Class<?> using() default Object.class;
+    boolean includeAnnotatedRules() default true;
 }

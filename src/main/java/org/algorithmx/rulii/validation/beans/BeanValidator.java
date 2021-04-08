@@ -38,6 +38,7 @@ import org.algorithmx.rulii.validation.types.MarkedAnnotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class BeanValidator extends ObjectVisitorTemplate {
     private static final Map<Class<?>, AnnotatedBeanTypeDefinition> definitionMap = new ConcurrentReferenceHashMap<>();
 
     private final Deque<TraversalCandidate> breadCrumbs = new LinkedList<>();
+    private final IdentityHashMap identityMap = new IdentityHashMap();
 
     private RuleContext context;
     private RuleViolations violations;

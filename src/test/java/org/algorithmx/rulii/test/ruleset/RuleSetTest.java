@@ -97,7 +97,30 @@ public class RuleSetTest {
                 .bind("c", Integer.class, 20)
                 .bind("x", BigDecimal.class, new BigDecimal("100.00"));
 
-        RuleSet rules = RuleSetBuilder.build(TestRuleSet.class);
+        RuleSet rules = RuleSetBuilder.with("TestRuleSet", "Sample Test RuleSet using a Class")
+                .action(ActionBuilder.build(() -> System.err.println("XXX Better Pre Action")))
+                .rule(RuleBuilder
+                        .name("Rule1")
+                        .given(ConditionBuilder.build((String y) -> y.equals("")))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(0)))
+                        .build())
+                .rule(RuleBuilder
+                        .name("Rule2")
+                        .given(ConditionBuilder.build((String a, BigDecimal x) -> x != null))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .build())
+                .rule(RuleBuilder
+                        .name("Rule3")
+                        .given(ConditionBuilder.build((String a, String b, Integer c) -> c == 20 && "hello".equals(b)))
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .build())
+                .rule(RuleBuilder
+                        .name("Rule6")
+                        .given(ConditionBuilder.TRUE())
+                        .then(ActionBuilder.build((Binding<Integer> c) -> c.setValue(c.getValue() + 1)))
+                        .build())
+                .action(ActionBuilder.build(() -> System.err.println("XXX Better Post Action")))
+                .build();
 
         Rule rule2 = rules.get("Rule2", Rule.class);
         Rule rule3 = rules.get("Rule3", Rule.class);

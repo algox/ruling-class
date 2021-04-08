@@ -18,7 +18,6 @@
 
 package org.algorithmx.rulii.core.ruleset;
 
-import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.action.Action;
 import org.algorithmx.rulii.core.condition.Condition;
@@ -26,7 +25,6 @@ import org.algorithmx.rulii.core.model.Definition;
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.RuleUtils;
-import org.algorithmx.rulii.util.reflect.ObjectFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,35 +58,6 @@ public class RuleSetBuilder {
 
     public static RuleSetBuilder with(String name) {
         return new RuleSetBuilder(name);
-    }
-
-    public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass) {
-        Assert.notNull(ruleSetClass, "ruleSetClass cannot be null.");
-        ObjectFactory objectFactory = RuliiSystem.getInstance().getObjectFactory();
-        return with(ruleSetClass, objectFactory);
-    }
-
-    public static ClassBasedRuleSetBuilder withTarget(Object ruleSetTarget) {
-        Assert.notNull(ruleSetTarget, "ruleSetTarget be null");
-        return ClassBasedRuleSetBuilder.with(ruleSetTarget.getClass(), ruleSetTarget);
-    }
-
-    public static RuleSet build(Object ruleSetTarget) {
-        return withTarget(ruleSetTarget).build();
-    }
-
-    public static RuleSet build(Class<?> ruleSetClass) {
-        return with(ruleSetClass).build();
-    }
-
-    public static ClassBasedRuleSetBuilder with(Class<?> ruleSetClass, ObjectFactory objectFactory) {
-        Assert.notNull(ruleSetClass, "ruleSetClass cannot be null.");
-        Assert.notNull(objectFactory, "objectFactory cannot be null.");
-        return ClassBasedRuleSetBuilder.with(ruleSetClass, objectFactory.createRuleSet(ruleSetClass));
-    }
-
-    public static RuleSet build(Class<?> ruleSetClass, ObjectFactory objectFactory) {
-        return with(ruleSetClass, objectFactory).build();
     }
 
     public static RuleSetBuilder with(String name, String description) {
