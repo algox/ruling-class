@@ -42,6 +42,7 @@ public class AnnotatedParameterizedTypeDefinition extends AbstractAnnotatedTypeD
         Assert.notNull(typeArguments, "typeArguments cannot be null.");
         this.type = deriveType(annotatedType);
         this.typeArguments = typeArguments;
+        establishParent(this, typeArguments);
     }
 
     public Class<?> getType() {

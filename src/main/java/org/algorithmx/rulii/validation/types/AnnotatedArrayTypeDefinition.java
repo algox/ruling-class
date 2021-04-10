@@ -36,6 +36,7 @@ public class AnnotatedArrayTypeDefinition extends AbstractAnnotatedTypeDefinitio
                 childrenRequireIntrospection(componentType));
         Assert.notNull(componentType, "componentType cannot be null.");
         this.componentType = componentType;
+        establishParent(this, componentType);
     }
 
     public AnnotatedTypeDefinition getComponentType() {

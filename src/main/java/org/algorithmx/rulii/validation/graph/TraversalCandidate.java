@@ -25,6 +25,7 @@ public class TraversalCandidate {
 
     private final Object target;
     private final SourceHolder holder;
+    private TraversalCandidate parent;
 
     public TraversalCandidate(Object target, SourceHolder holder) {
         super();
@@ -56,4 +57,15 @@ public class TraversalCandidate {
         return getTarget() == null;
     }
 
+    public TraversalCandidate getParent() {
+        return parent;
+    }
+
+    public boolean hasParent() {
+        return parent != null;
+    }
+
+    void setParent(TraversalCandidate parent) {
+        this.parent = parent;
+    }
 }

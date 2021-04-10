@@ -2,9 +2,9 @@ package org.algorithmx.rulii.validation.graph;
 
 public interface ObjectVisitor {
 
-    boolean visitCandidate(TraversalCandidate candidate);
+    void visitCandidate(TraversalCandidate candidate);
 
-    default void visitObjectEnd(TraversalCandidate candidate) {}
+    boolean isIntrospectionRequired(TraversalCandidate candidate);
 
     default void traversalComplete() {}
 }

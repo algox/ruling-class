@@ -30,6 +30,7 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     private final Annotation introspectionAnnotation;
     private final boolean childrenHaveRules;
     private final boolean childrenRequireIntrospection;
+    private AnnotatedTypeDefinition parent;
 
     protected AbstractAnnotatedTypeDefinition(T annotatedType, AnnotatedTypeKind kind,
                                               MarkedAnnotation[] ruleAnnotations,
@@ -66,6 +67,15 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     }
 
     @Override
+    public AnnotatedTypeDefinition getParent() {
+        return parent;
+    }
+
+    void setParent(AnnotatedTypeDefinition parent) {
+        this.parent = parent;
+    }
+
+    @Override
     public boolean childrenHaveRules() {
         return childrenHaveRules;
     }
@@ -86,11 +96,20 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         return result;
     }
 
+    protected static void establishParent(AnnotatedTypeDefinition parent, AnnotatedTypeDefinition...types) {
+        if (types == null) return;
+
+        for (AnnotatedTypeDefinition typeDefinition : types) {
+            ((AbstractAnnotatedTypeDefinition) typeDefinition).setParent(parent);
+        }
+    }
+
+
     protected static boolean childrenRequireIntrospection(AnnotatedTypeDefinition...types) {
         boolean result = false;
 
         for (AnnotatedTypeDefinition typeArgument : types) {
-            result = typeArgument.requiresIntrospection() || typeArgument.childrenRequireIntrospection();
+            result = typeArgument.isIntrospectionRequired() || typeArgument.childrenRequireIntrospection();
             if (result) break;
         }
 

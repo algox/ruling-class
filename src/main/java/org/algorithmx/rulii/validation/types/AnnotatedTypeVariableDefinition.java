@@ -39,6 +39,7 @@ public class AnnotatedTypeVariableDefinition extends AbstractAnnotatedTypeDefini
                 childrenRequireIntrospection(bounds));
         Assert.notNull(bounds, "bounds cannot be null.");
         this.bounds = bounds;
+        establishParent(this, bounds);
     }
 
     public AnnotatedTypeDefinition[] getBounds() {

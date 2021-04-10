@@ -47,8 +47,10 @@ public class Person implements Identifiable {
     private List<Car> cars;
     @Annotation1(integer = 4, fraction = 5) @Validate
     private Employment[] jobs;
-    @Validate
+    @NotNull
     private Map<@NotNull String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;
+
+    //private Map<String, Map<String, List<Integer>>> attributes;
 
     public Person(String firstName, String lastName) {
         super();

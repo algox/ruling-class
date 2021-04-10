@@ -43,6 +43,7 @@ public class AnnotatedWildcardTypeDefinition extends AbstractAnnotatedTypeDefini
         Assert.notNull(bounds, "bounds cannot be null.");
         this.wildcardType = deriveWildcardType(annotatedType);
         this.bounds = bounds;
+        establishParent(this, bounds);
     }
 
     public WildcardType getWildcardType() {

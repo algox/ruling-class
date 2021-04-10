@@ -96,7 +96,7 @@ public class AnnotatedTypeValueExtractor {
 
     protected void addExtractedValue(AnnotatedTypeDefinition definition, Object value, List<ExtractedTypeValue> extractedValues) {
         // Add the candidate ?
-        if (definition.requiresIntrospection() || definition.hasDeclaredRules()) {
+        if (definition.isIntrospectionRequired() || definition.hasDeclaredRules()) {
             extractedValues.add(new ExtractedTypeValue(definition, value));
         }
     }

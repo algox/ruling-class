@@ -50,7 +50,7 @@ public class PropertyHolder implements SourceHolder<PropertyDescriptor> {
 
     @Override
     public String getName() {
-        return property.getReadMethod().getDeclaringClass().getName() + "." + property.getName();
+        return property.getName();
     }
 
     @Override

@@ -17,14 +17,13 @@ public class TestObjectVisitor extends ObjectVisitorTemplate {
     }
 
     @Override
-    public boolean visitCandidate(TraversalCandidate candidate) {
+    public void visitCandidate(TraversalCandidate candidate) {
         System.err.println("XXX Object Start [" + candidate.getTarget() + "]");
-        return true;
     }
 
     @Override
-    public void visitObjectEnd(TraversalCandidate candidate) {
-        System.err.println("XXX Object End [" + candidate.getTarget() + "]");
+    public boolean isIntrospectionRequired(TraversalCandidate candidate) {
+        return false;
     }
 
     /*@Override

@@ -1,12 +1,14 @@
 package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 
 public class Address implements Identifiable {
 
     @NotNull
     private String id;
+    @Min(50)
     private String streetNumber;
     private String streetName;
     private String city;

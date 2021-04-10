@@ -50,7 +50,7 @@ public class FieldHolder implements SourceHolder<Field> {
 
     @Override
     public String getName() {
-        return field.getDeclaringClass().getName() + "." + field.getName();
+        return field.getName();
     }
 
     @Override

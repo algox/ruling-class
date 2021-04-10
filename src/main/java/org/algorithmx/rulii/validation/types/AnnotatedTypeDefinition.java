@@ -20,7 +20,6 @@ package org.algorithmx.rulii.validation.types;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
-import java.util.Arrays;
 
 public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
 
@@ -36,7 +35,7 @@ public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
 
     Annotation getIntrospectionAnnotation();
 
-    default boolean requiresIntrospection() {
+    default boolean isIntrospectionRequired() {
         return getIntrospectionAnnotation() != null;
     }
 
@@ -44,7 +43,19 @@ public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
 
     default boolean hasDeclaredRules() {
          return getDeclaredRuleAnnotations() != null &&  getDeclaredRuleAnnotations().length > 0;
-     }
+    }
+
+    default AnnotatedTypeDefinition getRoot() {
+        AnnotatedTypeDefinition result = this;
+
+        while (result.getParent() != null) {
+            result = result.getParent();
+        }
+
+        return result;
+    }
+
+    AnnotatedTypeDefinition getParent();
 
     AnnotatedTypeDefinition[] getAllChildren();
 
@@ -63,6 +74,6 @@ public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
     }
 
     default boolean requiresProcessing() {
-        return hasDeclaredRules() || requiresIntrospection();
+        return hasDeclaredRules() || isIntrospectionRequired();
     }
 }
