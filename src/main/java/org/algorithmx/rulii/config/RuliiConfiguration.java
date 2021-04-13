@@ -28,7 +28,7 @@ import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
-import org.algorithmx.rulii.validation.registry.RuleRegistry;
+import org.algorithmx.rulii.core.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.registry;
+package org.algorithmx.rulii.core.registry;
 
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.rule.Rule;
