@@ -1,10 +1,10 @@
 package org.algorithmx.rulii.validation.graph;
 
+import java.util.Collection;
+
 public interface ObjectVisitor {
 
-    void visitCandidate(TraversalCandidate candidate);
-
-    boolean isIntrospectionRequired(TraversalCandidate candidate);
+    Collection<TraversalCandidate> visitCandidate(TraversalCandidate candidate);
 
     default void traversalComplete() {}
 }

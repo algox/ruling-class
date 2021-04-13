@@ -25,9 +25,11 @@ import org.algorithmx.rulii.bind.load.FieldBindingLoader;
 import org.algorithmx.rulii.bind.load.PropertyBindingLoader;
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.context.RuleContext;
+import org.algorithmx.rulii.core.ruleset.RuleSet;
+import org.algorithmx.rulii.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.lib.spring.util.ConcurrentReferenceHashMap;
 import org.algorithmx.rulii.lib.spring.util.StringUtils;
+import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.graph.ObjectGraph;
@@ -36,17 +38,26 @@ import org.algorithmx.rulii.validation.graph.TraversalCandidate;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 import org.algorithmx.rulii.validation.types.MarkedAnnotation;
 
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BeanValidator extends ObjectVisitorTemplate {
 
     private static final String DEFAULT_VALUE_BINDING_NAME = "$value";
-    private static final Map<Class<?>, AnnotatedBeanTypeDefinition> definitionMap = new ConcurrentReferenceHashMap<>();
+    private static final Map<AnnotatedTypeDefinition, RuleSet> RULE_CACHE = new ConcurrentHashMap<>();
 
     private RuleContext context;
     private RuleViolations violations;
@@ -56,33 +67,54 @@ public class BeanValidator extends ObjectVisitorTemplate {
         super();
     }
 
-    public RuleViolations validateBean(RuleContext context, Object bean) {
-        return validateBean(context, new TraversalCandidate(bean, null));
+    public RuleViolations validateBean(RuleContext context, Object bean, Class<?> type) {
+        return validateBean(context, bean, new BeanHolder(bean, type));
     }
 
-    public RuleViolations validateBean(RuleContext context, TraversalCandidate candidate) {
+    public RuleViolations validateBean(RuleContext context, Object bean, SourceHolder source) {
         Assert.notNull(context, "context cannot be null.");
-        Assert.notNull(candidate, "candidate cannot be null.");
+        Assert.notNull(source, "source cannot be null.");
 
         this.context = context;
         this.violations = new RuleViolations();
 
-        context.getBindings().bind("errors", violations);
+        Bindings rootBeanScope = createRootBeanScope(bean, violations);
+        context.getBindings().addScope("rootBeanScope", rootBeanScope);
 
-        ObjectGraph graph = new ObjectGraph(ValidationMarker.class, Validate.class, context.getExtractorRegistry());
-        graph.traverse(candidate, this);
+        try {
+            ObjectGraph graph = new ObjectGraph();
+            TraversalCandidate candidate = new TraversalCandidate(bean, source);
+            graph.traverse(candidate, this);
+        } finally {
+            context.getBindings().removeScope(rootBeanScope);
+        }
+
         System.err.println();
         System.err.println("XXX Violations [" + violations + "]");
         return violations;
     }
 
-    public void visitCandidate(TraversalCandidate candidate) {
+    @Override
+    protected Class<? extends Annotation> getIntrospectionAnnotation() {
+        return Validate.class;
+    }
+
+    public boolean isIntrospectionRequired(TraversalCandidate candidate) {
+        if (candidate.getTypeDefinition() == null) return true;
+        Validate validate = (Validate) candidate.getTypeDefinition().getIntrospectionAnnotation();
+        return validate != null && (validate.includeAnnotatedRules() || StringUtils.hasText(validate.using()));
+    }
+
+    @Override
+    public Collection<TraversalCandidate> visitCandidate(TraversalCandidate candidate) {
+        if (candidate.getTypeDefinition() != null && !candidate.getTypeDefinition().hasDeclaredRules()) return Collections.emptyList();
+
         System.err.println("XXX About to validate [" + candidate.getTarget() + "] Source [" + (candidate.getSourceHolder() != null ? candidate.getSourceHolder().getName() : "N/A") + "]");
-        Bindings beanScope = createBeanBindings(candidate.getTarget());
+        Bindings beanScope = createBeanScope(candidate.getTarget());
         RuleViolations violations = new RuleViolations();
 
         beanScope.bind(getValueBindingName(), candidate.getTarget());
-        beanScope.bind("errors", violations);
+        beanScope.bind("$violations", violations);
 
         try {
             context.getBindings().addScope("beanScope", beanScope);
@@ -91,32 +123,53 @@ public class BeanValidator extends ObjectVisitorTemplate {
         } finally {
             context.getBindings().removeScope(beanScope);
         }
-    }
 
-    @Override
-    public boolean isIntrospectionRequired(TraversalCandidate candidate) {
-        if (candidate.getTypeDefinition() == null) return true;
-        Validate validate = (Validate) candidate.getTypeDefinition().getIntrospectionAnnotation();
-        return validate != null && (validate.includeAnnotatedRules() || StringUtils.hasText(validate.using()));
+        List<TraversalCandidate> result = Collections.emptyList();
+
+        if (isIntrospectionRequired(candidate)) {
+            result = introspectCandidate(candidate, context.getExtractorRegistry());
+        }
+
+        return result;
     }
 
     protected void runRules(AnnotatedTypeDefinition definition) {
-        List<Runnable> rules = createRules(context, definition, "$value");
+        if (definition == null) return;
 
-        if (rules != null) {
-            //System.err.println();
+        Validate validate = (Validate) definition.getIntrospectionAnnotation();
 
-            for (Runnable runnable : rules) {
-                runnable.run(context);
-                //System.err.println(runnable);
+        if (validate == null || validate.includeAnnotatedRules()) {
+            RuleSet rules = getAnnotatedRules(context, definition, "$value");
+            if (rules != null) {
+                rules.run(context);
+            } else {
+                // TODO : Log
+            }
+        }
+
+        if (validate != null) {
+            if (!Validate.NOT_APPLICABLE.equals(validate.using())) {
+                Runnable rules = context.getRuleRegistry().get(validate.using());
+                if (rules != null) {
+                    rules.run(context);
+                } else {
+                    // TODO : Log
+                    System.err.println("XXX No rules named [" + validate.using() + "] found ! [" + definition + "]");
+                }
             }
         }
     }
 
-    protected List<Runnable> createRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
+    protected RuleSet getAnnotatedRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
+        return definition != null
+                ? RULE_CACHE.computeIfAbsent(definition, d -> createAnnotatedRules(context, d, bindingName))
+                : null;
+    }
+
+    protected RuleSet createAnnotatedRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
         if (definition == null || !definition.hasDeclaredRules()) return null;
 
-        List<Runnable> result = new ArrayList<>();
+        RuleSetBuilder result = RuleSetBuilder.with("validation_rules");
 
         for (MarkedAnnotation marker : definition.getDeclaredRuleAnnotations()) {
             ValidationMarker validationRule = (ValidationMarker) marker.getMarker();
@@ -127,13 +180,26 @@ public class BeanValidator extends ObjectVisitorTemplate {
             }
 
             AnnotatedRunnableBuilder builder = context.getObjectFactory().create(validationRule.value(), false);
-            result.addAll(Arrays.asList(builder.build(marker.getOwner(), bindingName)));
+            Runnable[] runnables = builder.build(marker.getOwner(), bindingName);
+
+            if (runnables != null) {
+                result.add(runnables);
+            }
         }
+
+        return result.size() > 0 ? result.build() : null;
+    }
+
+    protected Bindings createRootBeanScope(Object bean, RuleViolations violations) {
+        Bindings result = Bindings.create();
+
+        result.bind("$root", bean);
+        result.bind("$violations", violations);
 
         return result;
     }
 
-    protected Bindings createBeanBindings(Object bean) {
+    protected Bindings createBeanScope(Object bean) {
         Bindings result = Bindings.create();
 
         if (bean == null) return result;
@@ -185,5 +251,25 @@ public class BeanValidator extends ObjectVisitorTemplate {
     public void setValueBindingName(String valueBindingName) {
         Assert.notNull(valueBindingName, "valueBindingName cannot be null.");
         this.valueBindingName = valueBindingName;
+    }
+
+    @Override
+    protected Predicate<Class<?>> getClassFilter() {
+        return c -> !ReflectionUtils.isJavaCoreClass(c);
+    }
+
+    @Override
+    protected Predicate<Field> getFieldFilter() {
+        return f -> !Modifier.isStatic(f.getModifiers());
+    }
+
+    @Override
+    protected Predicate<PropertyDescriptor> getPropertyFilter() {
+        return null;
+    }
+
+    @Override
+    protected Predicate<Method> getMethodFilter() {
+        return m -> !Modifier.isStatic(m.getModifiers());
     }
 }

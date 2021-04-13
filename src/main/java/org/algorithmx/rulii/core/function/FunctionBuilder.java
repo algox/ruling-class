@@ -18,7 +18,9 @@
 
 package org.algorithmx.rulii.core.function;
 
+import org.algorithmx.rulii.annotation.Match;
 import org.algorithmx.rulii.bind.Bindings;
+import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
@@ -124,7 +126,7 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     public static <T> Function<T> build(String script, String scriptingLanguage) {
-        FunctionBuilder<T> builder = with((RuleContext context) -> {
+        FunctionBuilder<T> builder = with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context) -> {
             ScriptProcessor scriptProcessor = ScriptLanguageManager.getScriptProcessor(scriptingLanguage);
 
             if (scriptProcessor == null) {
@@ -139,8 +141,8 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     public static <T> Function<T> build(String script) {
-        FunctionBuilder<T> builder = with((RuleContext context) -> processScriptFunction(script,
-                context.getScriptProcessor(), context.getBindings()));
+        FunctionBuilder<T> builder = with((@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context)
+                -> processScriptFunction(script, context.getScriptProcessor(), context.getBindings()));
         return builder.build();
     }
 

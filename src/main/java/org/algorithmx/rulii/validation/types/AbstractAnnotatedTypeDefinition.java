@@ -18,9 +18,12 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.lib.spring.util.Assert;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.util.Arrays;
+import java.util.Objects;
 
 public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> implements AnnotatedTypeDefinition<T> {
 
@@ -38,6 +41,8 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
                                               boolean childrenHaveRules,
                                               boolean childrenRequireIntrospection) {
         super();
+        Assert.notNull(annotatedType, "annotatedType cannot be null.");
+        Assert.notNull(kind, "kind cannot be null.");
         this.annotatedType = annotatedType;
         this.kind = kind;
         this.ruleAnnotations = ruleAnnotations;
@@ -114,6 +119,20 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         }
 
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractAnnotatedTypeDefinition<?> that = (AbstractAnnotatedTypeDefinition<?>) o;
+        return annotatedType.equals(that.annotatedType) &&
+                kind == that.kind;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(annotatedType, kind);
     }
 
     @Override

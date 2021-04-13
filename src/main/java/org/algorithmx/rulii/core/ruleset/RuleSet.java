@@ -63,8 +63,6 @@ public interface RuleSet extends Runnable<RuleSetResult>, Identifiable, Iterable
      */
     String getDescription();
 
-    RuleSet getParent();
-
     /**
      * Returns the Condition (if one exists) to be met before the execution of the Rules.
      *

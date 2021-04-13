@@ -2,6 +2,7 @@ package org.algorithmx.rulii.test.validation;
 
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.context.RuleContextBuilder;
+import org.algorithmx.rulii.validation.beans.BeanHolder;
 import org.algorithmx.rulii.validation.beans.BeanValidator;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class BeanValidationRuleBuilderTest {
         Person person = TestData.createPerson1();
         RuleContext context = RuleContextBuilder.empty();
         BeanValidator validator = new BeanValidator();
-        validator.validateBean(context, person);
+        validator.validateBean(context, person, new BeanHolder(person, null));
     }
 
     /*@Test

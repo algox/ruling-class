@@ -24,7 +24,7 @@ import java.util.List;
 
 public enum ReservedBindings {
 
-    RULE_CONTEXT("context");
+    RULE_CONTEXT("$context");
 
     private String name;
 

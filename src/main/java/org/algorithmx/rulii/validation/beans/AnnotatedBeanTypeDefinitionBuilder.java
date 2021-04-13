@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public class AnnotatedBeanTypeDefinitionBuilder {
 
@@ -99,14 +100,15 @@ public class AnnotatedBeanTypeDefinitionBuilder {
         return this;
     }
 
-    public AnnotatedBeanTypeDefinitionBuilder loadFields() {
-        ReflectionUtils.doWithFields(type, new FieldHandler());
+    public AnnotatedBeanTypeDefinitionBuilder loadFields(Predicate<Field> filter) {
+        ReflectionUtils.doWithFields(type, new FieldHandler(), filter != null ? field -> filter.test(field) : null);
         return this;
     }
 
-    public AnnotatedBeanTypeDefinitionBuilder loadProperties() {
+    public AnnotatedBeanTypeDefinitionBuilder loadProperties(Predicate<PropertyDescriptor> filter) {
         Arrays.stream(beanInfo.getPropertyDescriptors())
                 .filter(d -> d.getReadMethod() != null)
+                .filter(d -> filter != null ? filter.test(d) : true)
                 .forEach(d -> {
                     AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder
                             .with(d.getReadMethod().getAnnotatedReturnType(),
@@ -117,14 +119,20 @@ public class AnnotatedBeanTypeDefinitionBuilder {
         return this;
     }
 
-    public AnnotatedBeanTypeDefinitionBuilder loadMethods() {
+    public AnnotatedBeanTypeDefinitionBuilder loadMethods(Predicate<Method> filter) {
         Set<Method> getters = new HashSet<>();
 
         Arrays.stream(beanInfo.getPropertyDescriptors())
                 .filter(d -> d.getReadMethod() != null)
                 .forEach(d -> getters.add(d.getReadMethod()));
 
-        ReflectionUtils.doWithMethods(type, new MethodHandler(getters));
+        ReflectionUtils.MethodFilter methodFilter = m -> !getters.contains(m);
+
+        if (filter != null) {
+            methodFilter = methodFilter.and(m -> filter.test(m));
+        }
+
+        ReflectionUtils.doWithMethods(type, new MethodHandler(), methodFilter);
 
         return this;
     }
@@ -150,20 +158,12 @@ public class AnnotatedBeanTypeDefinitionBuilder {
 
     private class MethodHandler implements ReflectionUtils.MethodCallback {
 
-        private Set<Method> ignoredMethods;
-
-        public MethodHandler(Set<Method> ignoredMethods) {
+        public MethodHandler() {
             super();
-            this.ignoredMethods = ignoredMethods;
         }
 
         @Override
         public void doWith(Method method) throws IllegalArgumentException {
-            if (ignoredMethods.contains(method)) return;
-            buildMethodDefinition(method);
-        }
-
-        private void buildMethodDefinition(Method method) {
             AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder
                     .with(method.getAnnotatedReturnType(), introspectionAnnotationType, markerAnnotationType);
 

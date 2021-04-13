@@ -38,7 +38,6 @@ public class RuleSetBuilder {
     private String description;
     private final LinkedList<Runnable> ruleSetItems = new LinkedList<>();
 
-    private RuleSet parent;
     private Condition preCondition;
     private Condition stopCondition;
 
@@ -64,6 +63,14 @@ public class RuleSetBuilder {
         return new RuleSetBuilder(name, description);
     }
 
+    public static RuleSetBuilder with(String name, RuleSet parent) {
+        return new RuleSetBuilder(name);
+    }
+
+    public static RuleSetBuilder with(String name, String description, RuleSet parent) {
+        return new RuleSetBuilder(name, description);
+    }
+
     public RuleSetBuilder name(String name) {
         Assert.isTrue(RuleUtils.isValidName(name), "RuleSet name [" + name + "] not valid. It must conform to ["
                 + RuleUtils.NAME_REGEX + "]");
@@ -76,10 +83,15 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder parent(RuleSet ruleSet) {
+    public int size() {
+        return ruleSetItems.size();
+    }
+
+    protected void assignParent(RuleSet parent) {
         // Not possible to have a cyclical dependency as we are yet to create this ruleset
-        this.parent = ruleSet;
-        return this;
+        preCondition(parent.getPreCondition());
+        stopCondition(parent.getStopCondition());
+        add(parent.getRuleSetItems());
     }
 
     protected LinkedList<Runnable> getRuleSetItems() {
@@ -88,25 +100,25 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder rule(int index, Rule rule) {
         Assert.notNull(rule, "rule cannot be null");
-        getRuleSetItems().add(index, rule);
+        add(index, rule);
         return this;
     }
 
     public RuleSetBuilder rule(Rule rule) {
         Assert.notNull(rule, "rule cannot be null");
-        getRuleSetItems().add(rule);
+        add(rule);
         return this;
     }
 
     public RuleSetBuilder action(Action action) {
         Assert.notNull(action, "action cannot be null");
-        getRuleSetItems().add(action);
+        add(action);
         return this;
     }
 
     public RuleSetBuilder action(int index, Action action) {
         Assert.notNull(action, "action cannot be null");
-        getRuleSetItems().add(index, action);
+        add(index, action);
         return this;
     }
 
@@ -122,13 +134,13 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder rules(RuleSet rules) {
         Assert.notNull(rules, "rules");
-        getRuleSetItems().add(rules);
+        add(rules);
         return this;
     }
 
     public RuleSetBuilder rules(int index, RuleSet rules) {
         Assert.notNull(rules, "rules");
-        getRuleSetItems().add(index, rules);
+        add(index, rules);
         return this;
     }
 
@@ -140,6 +152,32 @@ public class RuleSetBuilder {
     public RuleSetBuilder actions(int index, Action...actions) {
         Assert.notNullArray(actions, "actions");
         return addAllInternal(index, Arrays.asList(actions));
+    }
+
+    public RuleSetBuilder add(Runnable runnable) {
+        Assert.notNull(runnable, "runnable cannot be null");
+        getRuleSetItems().add(runnable);
+        return this;
+    }
+
+    public RuleSetBuilder add(int index, Runnable runnable) {
+        Assert.notNull(runnable, "runnable cannot be null");
+        getRuleSetItems().add(index, runnable);
+        return this;
+    }
+
+    public RuleSetBuilder add(Runnable...runnables) {
+        Assert.notNull(runnables, "runnables cannot be null");
+        addAllInternal(Arrays.asList(runnables));
+        return this;
+    }
+
+    public RuleSetBuilder add(Collection<? extends Runnable> runnables) {
+        return addAllInternal(runnables);
+    }
+
+    public RuleSetBuilder add(int index, Collection<? extends Runnable> runnables) {
+        return addAllInternal(index, runnables);
     }
 
     public RuleSetBuilder rules(Collection<? extends Rule> rules) {
@@ -196,7 +234,7 @@ public class RuleSetBuilder {
      * @param condition stopping condition.
      * @return this for fluency.
      */
-    public RuleSetBuilder stopWhen(Condition condition) {
+    public RuleSetBuilder stopCondition(Condition condition) {
         this.stopCondition = condition;
         return this;
     }
@@ -228,7 +266,7 @@ public class RuleSetBuilder {
     }
 
     public RuleSet build() {
-        return new RulingFamily(buildRuleSetDefinition(), getParent(),
+        return new RulingFamily(buildRuleSetDefinition(),
                 getPreCondition(), getStopCondition(),
                 getRuleSetItems().toArray(new Runnable[getRuleSetItems().size()]));
     }
@@ -239,10 +277,6 @@ public class RuleSetBuilder {
 
     public String getDescription() {
         return description;
-    }
-
-    public RuleSet getParent() {
-        return parent;
     }
 
     public Condition getPreCondition() {

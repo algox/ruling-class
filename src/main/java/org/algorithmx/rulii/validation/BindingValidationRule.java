@@ -26,7 +26,7 @@ public abstract class BindingValidationRule extends ValidationRule {
     }
 
     @PreCondition
-    public boolean checkType(RuleContext context) {
+    public boolean checkType(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context) {
         Object value = getBindingValue(context);
         boolean result = value == null || isSupported(value.getClass());
         if (!result) {
@@ -37,18 +37,19 @@ public abstract class BindingValidationRule extends ValidationRule {
     }
 
     @Given
-    public boolean isValid(RuleContext context) {
+    public boolean isValid(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context) {
         return isValid(context, getBindingValue(context));
     }
 
     @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
+    public void otherwise(@Match(using = MatchByTypeMatchingStrategy.class) RuleContext context,
+                          @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations violations) {
         Object value = getBindingValue(context);
         RuleViolationBuilder builder = createRuleViolationBuilder()
                 .param("bindingName", getBindingName())
                 .param(getBindingName(), value);
         customizeViolation(context, builder);
-        errors.add(builder.build(context));
+        violations.add(builder.build(context));
     }
 
     protected abstract boolean isValid(RuleContext context, Object value);

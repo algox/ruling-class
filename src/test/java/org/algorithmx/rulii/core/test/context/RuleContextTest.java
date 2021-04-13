@@ -19,6 +19,7 @@ package org.algorithmx.rulii.core.test.context;
 
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.bind.InvalidBindingException;
+import org.algorithmx.rulii.bind.ReservedBindings;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.context.RuleContextBuilder;
 import org.junit.Test;
@@ -32,6 +33,6 @@ public class RuleContextTest {
     @Test(expected = InvalidBindingException.class)
     public void test1() {
         RuleContext context = RuleContextBuilder.build(Bindings.create());
-        context.getBindings().bind("context", 25);
+        context.getBindings().bind(ReservedBindings.RULE_CONTEXT.getName(), 25);
     }
 }

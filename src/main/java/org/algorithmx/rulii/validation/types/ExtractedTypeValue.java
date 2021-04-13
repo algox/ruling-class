@@ -22,18 +22,18 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 
 public class ExtractedTypeValue {
 
-    private final Object object;
+    private final Object value;
     private final AnnotatedTypeDefinition definition;
 
-    public ExtractedTypeValue(AnnotatedTypeDefinition definition, Object object) {
+    public ExtractedTypeValue(AnnotatedTypeDefinition definition, Object value) {
         super();
         Assert.notNull(definition, "definition cannot be null.");
         this.definition = definition;
-        this.object = object;
+        this.value = value;
     }
 
-    public Object getObject() {
-        return object;
+    public Object getValue() {
+        return value;
     }
 
     public AnnotatedTypeDefinition getDefinition() {
@@ -43,7 +43,7 @@ public class ExtractedTypeValue {
     @Override
     public String toString() {
         return "ExtractedTypeValue{" +
-                "object=" + object +
+                "value=" + value +
                 ", definition=" + definition +
                 '}';
     }

@@ -41,11 +41,11 @@ public class Person implements Identifiable {
     private String firstName;
     @Annotation5
     private String lastName;
-    @Expression(or = @Or) @Validate
+    @Expression(or = @Or) @Validate(using = "addressRules")
     private Address address;
-    //@Annotation3
+    @Annotation3
     private List<Car> cars;
-    @Annotation1(integer = 4, fraction = 5) @Validate
+    @Annotation1(integer = 4, fraction = 5) //@Validate(using = "jobRules")
     private Employment[] jobs;
     @NotNull
     private Map<@NotNull String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;

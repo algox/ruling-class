@@ -171,7 +171,7 @@ public class AnnotatedTypeValueExtractor {
 
         System.err.println("XXX Extracted Values");
         for (ExtractedTypeValue value : extractedValues) {
-            System.err.println("Extracted ["+ value.getObject() + "] Defn [" + value.getObject().getClass() + "]");
+            System.err.println("Extracted ["+ value.getValue() + "] Defn [" + value.getValue().getClass() + "]");
         }
     }
 }
