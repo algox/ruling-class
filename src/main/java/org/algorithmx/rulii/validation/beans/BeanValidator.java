@@ -29,6 +29,7 @@ import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.StringUtils;
+import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.RuleViolations;
@@ -44,7 +45,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,23 +54,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class BeanValidator extends AbstractObjectVisitor {
 
-    private static final String DEFAULT_VALUE_BINDING_NAME = "$value";
     private static final Map<AnnotatedTypeDefinition, RuleSet> RULE_CACHE = new ConcurrentHashMap<>();
 
     private RuleContext context;
     private RuleViolations violations;
-    private String valueBindingName = DEFAULT_VALUE_BINDING_NAME;
 
     public BeanValidator() {
         super();
-    }
-
-    public RuleViolations validateBean(RuleContext context, Object bean, Class<?> type) {
-        return validateBean(context, bean, new BeanHolder(bean, type));
     }
 
     public RuleViolations validateBean(RuleContext context, Object bean, SourceHolder source) {
@@ -109,66 +102,74 @@ public class BeanValidator extends AbstractObjectVisitor {
 
     @Override
     public Collection<TraversalCandidate> visitCandidate(TraversalCandidate candidate) {
-        Bindings beanScope = createBeanScope(candidate.getTarget());
-        RuleViolations violations = new RuleViolations();
-
-        beanScope.bind(getValueBindingName(), candidate.getTarget());
-        beanScope.bind("$violations", violations);
+        List<TraversalCandidate> result = Collections.emptyList();
+        Bindings beanScope = null;
 
         try {
-            context.getBindings().addScope("beanScope", beanScope);
-            runRules(candidate.getTypeDefinition());
+            beanScope = createBeanScope(candidate.getTarget());
+            RuleViolations violations = new RuleViolations();
+
+            beanScope.bind("violations", violations);
+            beanScope.bind("$value", candidate.getTarget());
+
+            getContext().getBindings().addScope("beanScope", beanScope);
+            runRules(getContext(), candidate.getTypeDefinition(), "$value");
             decorateAndTransferViolations(violations, this.violations, candidate);
+
+            if (isIntrospectionRequired(candidate)) {
+                result = introspectCandidate(candidate, context.getExtractorRegistry());
+            }
+
+        } catch (Exception e) {
+            throw new BeanValidationException(candidate, violations, "Error trying to validate [" + candidate + "]", e);
         } finally {
-            context.getBindings().removeScope(beanScope);
-        }
-
-        List<TraversalCandidate> result = Collections.emptyList();
-
-        if (isIntrospectionRequired(candidate)) {
-            result = introspectCandidate(candidate, context.getExtractorRegistry());
+            if (beanScope != null) context.getBindings().removeScope(beanScope);
         }
 
         return result;
     }
 
-    protected void runRules(AnnotatedTypeDefinition definition) {
+    protected void runRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
         if (definition == null) return;
 
         Validate validate = (Validate) definition.getIntrospectionAnnotation();
 
         if (validate == null || validate.includeAnnotatedRules()) {
-            RuleSet rules = getAnnotatedRules(context, definition, "$value");
-            if (rules != null) {
-                rules.run(context);
-            } else {
+            RuleSet rules = getAnnotatedRules(context.getObjectFactory(), definition, bindingName);
+
+            if (rules == null) {
                 // TODO : Log
+            } else {
+                rules.run(context);
             }
         }
 
         if (validate != null) {
             if (!Validate.NOT_APPLICABLE.equals(validate.using())) {
                 Runnable rules = context.getRuleRegistry().get(validate.using());
-                if (rules != null) {
-                    rules.run(context);
-                } else {
+
+                if (rules == null) {
                     // TODO : Log
                     System.err.println("XXX No rules named [" + validate.using() + "] found ! [" + definition + "]");
+                } else {
+                    rules.run(context);
                 }
             }
         }
     }
 
-    protected RuleSet getAnnotatedRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
+    protected RuleSet getAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition, String bindingName) {
         return definition != null
-                ? RULE_CACHE.computeIfAbsent(definition, d -> createAnnotatedRules(context, d, bindingName))
+                ? createAnnotatedRules(objectFactory, definition, bindingName)
                 : null;
     }
 
-    protected RuleSet createAnnotatedRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
+    protected RuleSet createAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition, String bindingName) {
+        Assert.notNull(bindingName, "bindingName cannot be null.");
+
         if (definition == null || !definition.hasDeclaredRules()) return null;
 
-        RuleSetBuilder result = RuleSetBuilder.with("validation_rules");
+        RuleSetBuilder result = RuleSetBuilder.with(bindingName + "ValidationRules");
 
         for (MarkedAnnotation marker : definition.getDeclaredRuleAnnotations()) {
             ValidationMarker validationRule = (ValidationMarker) marker.getMarker();
@@ -178,7 +179,7 @@ public class BeanValidator extends AbstractObjectVisitor {
                 continue;
             }
 
-            AnnotatedRunnableBuilder builder = context.getObjectFactory().create(validationRule.value(), false);
+            AnnotatedRunnableBuilder builder = objectFactory.create(validationRule.value(), false);
             Runnable[] runnables = builder.build(marker.getOwner(), bindingName);
 
             if (runnables != null) {
@@ -192,8 +193,8 @@ public class BeanValidator extends AbstractObjectVisitor {
     protected Bindings createRootBeanScope(Object bean, RuleViolations violations) {
         Bindings result = Bindings.create();
 
-        result.bind("$root", bean);
-        result.bind("$violations", violations);
+        result.bind("root", bean);
+        result.bind("violations", violations);
 
         return result;
     }
@@ -219,37 +220,19 @@ public class BeanValidator extends AbstractObjectVisitor {
         if (source != null && source.size() > 0) {
             Arrays.stream(source.getViolations())
                     .forEach(v -> {
-                        v.param("field", getTraversedPath(candidate));
-                        //v.param("type", candidate.getTypeDefinition().getAnnotatedType().getType());
+                        v.param("field", candidate.getPath());
+                        //v.param("type", candidate.getTypeDefinition().getAnnotatedType().getType().toString());
                         target.add(v);
                     });
         }
     }
 
-    protected String getTraversedPath(TraversalCandidate candidate) {
-        List<String> result = new ArrayList<>();
-        TraversalCandidate parent = candidate;
-
-        while (parent != null) {
-            String nodeName = parent.getSourceHolder() != null
-                    ? parent.getSourceHolder().getName()
-                    :  parent.getTarget().getClass().getSimpleName();
-            //parent.getTypeDefinition().getAnnotatedType().getType().toString();
-            result.add(0, nodeName);
-
-            parent = parent.getParent();
-        }
-
-        return result.stream().collect(Collectors.joining("."));
+    protected RuleContext getContext() {
+        return context;
     }
 
-    public String getValueBindingName() {
-        return valueBindingName;
-    }
-
-    public void setValueBindingName(String valueBindingName) {
-        Assert.notNull(valueBindingName, "valueBindingName cannot be null.");
-        this.valueBindingName = valueBindingName;
+    protected RuleViolations getViolations() {
+        return violations;
     }
 
     @Override

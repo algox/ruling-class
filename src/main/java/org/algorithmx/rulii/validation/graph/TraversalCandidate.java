@@ -21,7 +21,10 @@ package org.algorithmx.rulii.validation.graph;
 import org.algorithmx.rulii.validation.beans.SourceHolder;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class TraversalCandidate {
 
@@ -79,12 +82,32 @@ public class TraversalCandidate {
         this.parent = parent;
     }
 
+    public String getPath() {
+        List<String> result = new ArrayList<>();
+        TraversalCandidate parent = this;
+
+        while (parent != null) {
+            String nodeName = parent.getSourceHolder() != null
+                    ? parent.getSourceHolder().getName()
+                    :  parent.getTarget().getClass().getSimpleName();
+            //parent.getTypeDefinition().getAnnotatedType().getType().toString();
+            /*if (this == parent && parent.getParent() != null) {
+                nodeName = nodeName + " " + parent.getTypeDefinition().getAnnotatedType().getType().toString();
+            }*/
+            result.add(0, nodeName);
+
+            parent = parent.getParent();
+        }
+
+        return result.stream().collect(Collectors.joining("."));
+    }
+
     @Override
     public String toString() {
         return "TraversalCandidate{" +
                 "id=" + id +
-                " Source [" + (getSourceHolder() != null ? getSourceHolder().getName() : "N/A") + "]" +
-                ", parent=" + (parent != null ? parent.getId() : "N/A") +
+                " Source [" + (getSourceHolder() != null ? getSourceHolder().getName() : "n/a") + "]" +
+                ", parent=" + (parent != null ? parent.getId() : "n/a") +
                 " target=" + target +
                 '}';
     }

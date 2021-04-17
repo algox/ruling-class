@@ -46,8 +46,8 @@ public abstract class BindingValidationRule extends ValidationRule {
                           @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations violations) {
         Object value = getBindingValue(context);
         RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value);
+                //.param("bindingName", getBindingName())
+                .param("value", value);
         customizeViolation(context, builder);
         violations.add(builder.build(context));
     }

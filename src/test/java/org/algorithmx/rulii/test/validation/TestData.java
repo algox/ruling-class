@@ -30,7 +30,7 @@ public final class TestData {
         Address address1 = new Address("address:1","1", "Jordan way", "Chicago", "IL", "USA");
         Car car1 = new Car("car:1","Ferrari ", "275 GTB", 1964);
         Car car2 = new Car("car:2","Tesla ", "Model S", 2020);
-        List<Car> cars = Arrays.asList(car1, car2);
+        List<Car> cars = Arrays.asList(car1, car2, null);
         Address address2 = new Address("address:2", "3431", "Somewhere in Charlotte", "Charlotte", "NC",
                 "USA");
         Address address3 = new Address("address:3", "1", "Oregon Way", "Oregon", "OR",
