@@ -49,15 +49,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 public class BeanValidator extends AbstractObjectVisitor {
 
-    private static final Map<AnnotatedTypeDefinition, RuleSet> RULE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<AnnotatedTypeDefinition, RuleSet> RULE_CACHE = Collections.synchronizedMap(new IdentityHashMap<>());
 
     private RuleContext context;
     private RuleViolations violations;
@@ -160,7 +160,7 @@ public class BeanValidator extends AbstractObjectVisitor {
 
     protected RuleSet getAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition, String bindingName) {
         return definition != null
-                ? createAnnotatedRules(objectFactory, definition, bindingName)
+                ? RULE_CACHE.computeIfAbsent(definition, d -> createAnnotatedRules(objectFactory, d, bindingName))
                 : null;
     }
 
