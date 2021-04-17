@@ -44,7 +44,7 @@ public class Person implements Identifiable {
     @Expression(or = @Or) @Validate(using = "addressRules")
     private Address address;
     @Annotation3
-    private List<Car> cars;
+    private List<@NotNull @Validate Car> cars;
     @Annotation1(integer = 4, fraction = 5) //@Validate(using = "jobRules")
     private Employment[] jobs;
     @NotNull

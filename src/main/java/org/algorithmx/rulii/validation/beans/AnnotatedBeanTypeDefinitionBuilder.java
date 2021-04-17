@@ -30,10 +30,12 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 
 public class AnnotatedBeanTypeDefinitionBuilder {
@@ -44,9 +46,9 @@ public class AnnotatedBeanTypeDefinitionBuilder {
     private final Class<? extends Annotation> introspectionAnnotationType;
     private final Class<? extends Annotation> markerAnnotationType;
 
-    private final Map<Field, FieldHolder> fieldDefinitions = new ConcurrentHashMap<>();
-    private final Map<PropertyDescriptor, PropertyHolder> propertyDefinitions = new ConcurrentHashMap<>();
-    private final Map<Method, MethodHolder> methodDefinitions = new ConcurrentHashMap<>();
+    private final Map<Field, FieldHolder> fieldDefinitions = new LinkedHashMap<>();
+    private final Map<PropertyDescriptor, PropertyHolder> propertyDefinitions = new LinkedHashMap<>();
+    private final Map<Method, MethodHolder> methodDefinitions = new LinkedHashMap<>();
 
     private AnnotatedBeanTypeDefinitionBuilder(Class<?> type, Class<? extends Annotation> introspectionAnnotationType,
                                                Class<? extends Annotation> markerAnnotationType) {
@@ -100,14 +102,35 @@ public class AnnotatedBeanTypeDefinitionBuilder {
         return this;
     }
 
-    public AnnotatedBeanTypeDefinitionBuilder loadFields(Predicate<Field> filter) {
-        ReflectionUtils.doWithFields(type, new FieldHandler(), filter != null ? field -> filter.test(field) : null);
+    public AnnotatedBeanTypeDefinitionBuilder loadFields(Predicate<Field> filter, Comparator<Field> comparator) {
+        Set<Field> fields = comparator != null ? new TreeSet<>(comparator) : new HashSet<>();
+
+        ReflectionUtils.doWithFields(type,
+                field -> {
+                        boolean add = filter != null ? filter.test(field) : true;
+                        if (add) fields.add(field);
+                });
+
+        fields.stream().forEach(
+                field -> {
+                    //System.err.println("XXX Field [" + field.getName() + "]");
+                    AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(field.getAnnotatedType(),
+                    introspectionAnnotationType, markerAnnotationType);
+                    field(field, builder.build());
+                });
+
         return this;
     }
 
-    public AnnotatedBeanTypeDefinitionBuilder loadProperties(Predicate<PropertyDescriptor> filter) {
-        Arrays.stream(beanInfo.getPropertyDescriptors())
-                .filter(d -> d.getReadMethod() != null)
+    public AnnotatedBeanTypeDefinitionBuilder loadProperties(Predicate<PropertyDescriptor> filter,
+                                                             Comparator<PropertyDescriptor> comparator) {
+        Set<PropertyDescriptor> properties = comparator != null
+                ? new TreeSet<>(comparator)
+                : new HashSet<>();
+
+        properties.addAll(Arrays.asList(beanInfo.getPropertyDescriptors()));
+
+        properties.stream()
                 .filter(d -> filter != null ? filter.test(d) : true)
                 .forEach(d -> {
                     AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder
@@ -119,20 +142,36 @@ public class AnnotatedBeanTypeDefinitionBuilder {
         return this;
     }
 
-    public AnnotatedBeanTypeDefinitionBuilder loadMethods(Predicate<Method> filter) {
+    public AnnotatedBeanTypeDefinitionBuilder loadMethods(Predicate<Method> filter, Comparator<Method> comparator) {
         Set<Method> getters = new HashSet<>();
 
         Arrays.stream(beanInfo.getPropertyDescriptors())
                 .filter(d -> d.getReadMethod() != null)
                 .forEach(d -> getters.add(d.getReadMethod()));
 
-        ReflectionUtils.MethodFilter methodFilter = m -> !getters.contains(m);
+        Set<Method> methods = comparator != null ? new TreeSet<>(comparator) : new HashSet<>();
 
-        if (filter != null) {
-            methodFilter = methodFilter.and(m -> filter.test(m));
-        }
+        ReflectionUtils.doWithMethods(type,
+                method -> {
+                    boolean add = !getters.contains(method) && (filter != null ? filter.test(method) : true);
+                    if (add) methods.add(method);
+                });
 
-        ReflectionUtils.doWithMethods(type, new MethodHandler(), methodFilter);
+        methods.stream()
+                .forEach(method -> {
+                    AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder
+                            .with(method.getAnnotatedReturnType(), introspectionAnnotationType, markerAnnotationType);
+
+                    method(method, builder.build());
+
+                    AnnotatedType[] annotatedTypes = method.getAnnotatedParameterTypes();
+
+                    for (int i = 0; i < annotatedTypes.length; i++) {
+                        AnnotatedTypeDefinitionBuilder parameterDefinitionBuilder = AnnotatedTypeDefinitionBuilder
+                                .with(annotatedTypes[i], introspectionAnnotationType, markerAnnotationType);
+                        methodParameter(method, i, parameterDefinitionBuilder.build());
+                    }
+                });
 
         return this;
     }
@@ -140,42 +179,5 @@ public class AnnotatedBeanTypeDefinitionBuilder {
     public AnnotatedBeanTypeDefinition build() {
         return new AnnotatedBeanTypeDefinition(type, beanInfo, introspectionAnnotationType,
                 markerAnnotationType, fieldDefinitions, propertyDefinitions, methodDefinitions);
-    }
-
-    private class FieldHandler implements ReflectionUtils.FieldCallback {
-
-        public FieldHandler() {
-            super();
-        }
-
-        @Override
-        public void doWith(Field field) throws IllegalArgumentException {
-            AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(field.getAnnotatedType(),
-                    introspectionAnnotationType, markerAnnotationType);
-            field(field, builder.build());
-        }
-    }
-
-    private class MethodHandler implements ReflectionUtils.MethodCallback {
-
-        public MethodHandler() {
-            super();
-        }
-
-        @Override
-        public void doWith(Method method) throws IllegalArgumentException {
-            AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder
-                    .with(method.getAnnotatedReturnType(), introspectionAnnotationType, markerAnnotationType);
-
-            method(method, builder.build());
-
-            AnnotatedType[] annotatedTypes = method.getAnnotatedParameterTypes();
-
-            for (int i = 0; i < annotatedTypes.length; i++) {
-                AnnotatedTypeDefinitionBuilder parameterDefinitionBuilder = AnnotatedTypeDefinitionBuilder
-                        .with(annotatedTypes[i], introspectionAnnotationType, markerAnnotationType);
-                methodParameter(method, i, parameterDefinitionBuilder.build());
-            }
-        }
     }
 }

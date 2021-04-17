@@ -16,32 +16,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class ObjectVisitorTemplate implements ObjectVisitor {
+public abstract class AbstractObjectVisitor implements ObjectVisitor {
 
     private static final Map<Class<?>, AnnotatedBeanTypeDefinition> definitionMap = new ConcurrentReferenceHashMap<>();
 
-    public ObjectVisitorTemplate() {
+    public AbstractObjectVisitor() {
         super();
     }
-
-    /*protected ObjectVisitorTemplate(Predicate<Field> fieldFilter, Class<?>...ignoredClasses) {
-        this(c -> {
-            Set<Class<?>> ignoredClassSet = new HashSet<>(ignoredClasses != null
-                    ? Arrays.asList(ignoredClasses)
-                    : new ArrayList<>());
-            return ignoredClassSet.contains(c);
-        }, fieldFilter);
-    }
-
-    protected ObjectVisitorTemplate(Predicate<Class<?>> classFilter, Predicate<Field> fieldFilter) {
-        super();
-        this.classFilter = classFilter;
-        this.fieldFilter = fieldFilter;
-    }*/
 
     protected List<TraversalCandidate> introspectCandidate(TraversalCandidate candidate, ExtractorRegistry extractorRegistry) {
 
@@ -100,7 +86,7 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
                 Object value = extractedValue.getValue();
                 Predicate<Class<?>> classFilter = getClassFilter();
 
-                if (value != null && (classFilter == null || !classFilter.test(value.getClass()))) {
+                if (value != null && (classFilter == null || classFilter.test(value.getClass()))) {
                     result.add(new TraversalCandidate(value, sourceHolder.copy(extractedValue.getDefinition())));
                 }
             }
@@ -117,9 +103,9 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
         AnnotatedBeanTypeDefinitionBuilder result = AnnotatedBeanTypeDefinitionBuilder
                 .with(type, getMarkerAnnotation(), getIntrospectionAnnotation());
 
-        result.loadFields(getFieldFilter());
-        result.loadProperties(getPropertyFilter());
-        result.loadMethods(getMethodFilter());
+        result.loadFields(getFieldFilter(), getFieldComparator());
+        result.loadProperties(getPropertyFilter(), getPropertyComparator());
+        result.loadMethods(getMethodFilter(), getMethodComparator());
 
         return result.build();
     }
@@ -143,6 +129,18 @@ public abstract class ObjectVisitorTemplate implements ObjectVisitor {
     }
 
     protected Predicate<Method> getMethodFilter() {
+        return null;
+    }
+
+    protected Comparator<Field> getFieldComparator() {
+        return null;
+    }
+
+    protected Comparator<PropertyDescriptor> getPropertyComparator() {
+        return null;
+    }
+
+    protected Comparator<Method> getMethodComparator() {
         return null;
     }
 }

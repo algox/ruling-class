@@ -1,5 +1,6 @@
 package org.algorithmx.rulii.test.validation;
 
+import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.core.Identifiable;
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
@@ -13,6 +14,7 @@ public class Address implements Identifiable {
     private String streetName;
     private String city;
     private String state;
+    @Validate
     private String country;
 
     public Address(String id, String streetNumber, String streetName, String city, String state, String country) {

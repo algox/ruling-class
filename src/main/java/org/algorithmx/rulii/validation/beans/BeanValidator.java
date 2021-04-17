@@ -32,12 +32,13 @@ import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.RuleViolations;
+import org.algorithmx.rulii.validation.graph.AbstractObjectVisitor;
 import org.algorithmx.rulii.validation.graph.ObjectGraph;
-import org.algorithmx.rulii.validation.graph.ObjectVisitorTemplate;
 import org.algorithmx.rulii.validation.graph.TraversalCandidate;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 import org.algorithmx.rulii.validation.types.MarkedAnnotation;
 
+import java.beans.FeatureDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BeanValidator extends ObjectVisitorTemplate {
+public class BeanValidator extends AbstractObjectVisitor {
 
     private static final String DEFAULT_VALUE_BINDING_NAME = "$value";
     private static final Map<AnnotatedTypeDefinition, RuleSet> RULE_CACHE = new ConcurrentHashMap<>();
@@ -107,9 +109,6 @@ public class BeanValidator extends ObjectVisitorTemplate {
 
     @Override
     public Collection<TraversalCandidate> visitCandidate(TraversalCandidate candidate) {
-        if (candidate.getTypeDefinition() != null && !candidate.getTypeDefinition().hasDeclaredRules()) return Collections.emptyList();
-
-        System.err.println("XXX About to validate [" + candidate.getTarget() + "] Source [" + (candidate.getSourceHolder() != null ? candidate.getSourceHolder().getName() : "N/A") + "]");
         Bindings beanScope = createBeanScope(candidate.getTarget());
         RuleViolations violations = new RuleViolations();
 
@@ -264,12 +263,25 @@ public class BeanValidator extends ObjectVisitorTemplate {
     }
 
     @Override
-    protected Predicate<PropertyDescriptor> getPropertyFilter() {
-        return null;
+    protected Comparator<Field> getFieldComparator() {
+        return Comparator.comparing(Field::getName);
+    }
+
+    @Override
+    protected Predicate<PropertyDescriptor> getPropertyFilter() { return p -> p.getReadMethod() != null; }
+
+    @Override
+    protected Comparator<PropertyDescriptor> getPropertyComparator() {
+        return Comparator.comparing(FeatureDescriptor::getName);
     }
 
     @Override
     protected Predicate<Method> getMethodFilter() {
         return m -> !Modifier.isStatic(m.getModifiers());
+    }
+
+    @Override
+    protected Comparator<Method> getMethodComparator() {
+        return Comparator.comparing(Method::getName);
     }
 }

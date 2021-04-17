@@ -21,14 +21,20 @@ package org.algorithmx.rulii.validation.graph;
 import org.algorithmx.rulii.validation.beans.SourceHolder;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class TraversalCandidate {
 
+    private static final AtomicInteger count = new AtomicInteger();
+
+    private final int id;
     private final Object target;
     private final SourceHolder holder;
     private TraversalCandidate parent;
 
     public TraversalCandidate(Object target, SourceHolder holder) {
         super();
+        this.id = count.addAndGet(1);
         this.target = target;
         this.holder = holder;
     }
@@ -49,6 +55,10 @@ public class TraversalCandidate {
         return holder != null ? holder.getDefinition() : null;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return holder != null ? holder.getName() : null;
     }
@@ -67,5 +77,15 @@ public class TraversalCandidate {
 
     void setParent(TraversalCandidate parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public String toString() {
+        return "TraversalCandidate{" +
+                "id=" + id +
+                " Source [" + (getSourceHolder() != null ? getSourceHolder().getName() : "N/A") + "]" +
+                ", parent=" + (parent != null ? parent.getId() : "N/A") +
+                " target=" + target +
+                '}';
     }
 }
