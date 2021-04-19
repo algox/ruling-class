@@ -41,7 +41,7 @@ public final class TestData {
         jobs[2] = new Employment("employment:3", "Nascar", new BigDecimal("21000000"), address1);
         Map<String, Map<String, List<Integer>>> attributes = new HashMap<>();
         Map<String, List<Integer>> key1 = new HashMap<>();
-        key1.put("age", Arrays.asList(50));
+        key1.put("age", Arrays.asList(3));
         attributes.put("value", key1);
         Person result = new Person("person:1", "Michael", "Jordan", address1, cars, jobs, attributes);
         return result;

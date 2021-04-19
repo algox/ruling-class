@@ -20,6 +20,7 @@ package org.algorithmx.rulii.validation.graph;
 
 import org.algorithmx.rulii.validation.beans.SourceHolder;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,23 +84,26 @@ public class TraversalCandidate {
     }
 
     public String getPath() {
-        List<String> result = new ArrayList<>();
+        List<String> path = new ArrayList<>();
         TraversalCandidate parent = this;
 
         while (parent != null) {
             String nodeName = parent.getSourceHolder() != null
                     ? parent.getSourceHolder().getName()
                     :  parent.getTarget().getClass().getSimpleName();
-            //parent.getTypeDefinition().getAnnotatedType().getType().toString();
-            /*if (this == parent && parent.getParent() != null) {
-                nodeName = nodeName + " " + parent.getTypeDefinition().getAnnotatedType().getType().toString();
-            }*/
-            result.add(0, nodeName);
+            path.add(0, nodeName);
 
             parent = parent.getParent();
         }
 
-        return result.stream().collect(Collectors.joining("."));
+        String result = path.stream().collect(Collectors.joining("."));
+
+        // TODO : Fix me
+        if (getTypeDefinition() != null && getTypeDefinition().getParent() != null) {
+            result = result + "<" + getTypeDefinition().getParent().getAnnotatedType().getType().getTypeName() + ">";
+        }
+
+        return result;
     }
 
     @Override
