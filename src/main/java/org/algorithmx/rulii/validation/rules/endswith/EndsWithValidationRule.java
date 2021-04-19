@@ -29,11 +29,15 @@ public class EndsWithValidationRule extends BindingValidationRule {
     private String[] suffixes;
 
     public EndsWithValidationRule(String bindingName, String...suffixes) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, suffixes);
+        this(bindingName, bindingName, suffixes);
     }
 
-    public EndsWithValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, String...suffixes) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public EndsWithValidationRule(String bindingName, String path, String...suffixes) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, suffixes);
+    }
+
+    public EndsWithValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage, String...suffixes) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(suffixes, "suffixes cannot be null.");
         this.suffixes = suffixes;
     }

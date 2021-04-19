@@ -28,12 +28,16 @@ public class InValidationRule extends BindingValidationRule {
     private final Set<?> values;
 
     public InValidationRule(String bindingName, Set<?> values) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, values);
+        this(bindingName, bindingName, values);
     }
 
-    public InValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
+    public InValidationRule(String bindingName, String path, Set<?> values) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, values);
+    }
+
+    public InValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
                             Set<?> values) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(values, "values cannot be null.");
         this.values = values;
     }
@@ -42,23 +46,6 @@ public class InValidationRule extends BindingValidationRule {
     protected boolean isValid(RuleContext context, Object value) {
         return values.contains(value);
     }
-
-    /*protected Set<Object> convertValues(String[] values, Class<?> type, ConverterRegistry registry) {
-        Set<Object> result = new HashSet<>();
-
-        Converter converter = registry.find(String.class, type);
-
-        if (converter == null)
-            throw new ValidationRuleException("Could not convert [" + Arrays.toString(values) + "] to an array of ["
-                    + type + "]. ConverterRegistry does not have a converter that can convert from String to ["
-                    + type + "]. Register a converter and try again.");
-
-        for (String value : values) {
-            result.add(converter.convert(value, type));
-        }
-
-        return result;
-    }*/
 
     @Override
     protected void customizeViolation(RuleContext context, RuleViolationBuilder builder) {

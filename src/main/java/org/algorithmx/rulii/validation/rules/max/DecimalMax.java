@@ -47,8 +47,8 @@ public @interface DecimalMax {
         }
 
         @Override
-        public Rule[] build(DecimalMax max, String bindingName) {
-            DecimalMaxValidationRule rule = new DecimalMaxValidationRule(bindingName, max.errorCode(), max.severity(),
+        public Rule[] build(DecimalMax max, String bindingName, String path) {
+            DecimalMaxValidationRule rule = new DecimalMaxValidationRule(bindingName, path, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null,
                     BigDecimal.valueOf(max.value()), max.inclusive());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null)};

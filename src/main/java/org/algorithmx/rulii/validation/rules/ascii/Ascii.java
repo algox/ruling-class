@@ -46,8 +46,8 @@ public @interface Ascii {
         }
 
         @Override
-        public Rule[] build(Ascii ascii, String bindingName) {
-            AsciiValidationRule rule = new AsciiValidationRule(bindingName, ascii.errorCode(), ascii.severity(),
+        public Rule[] build(Ascii ascii, String bindingName, String path) {
+            AsciiValidationRule rule = new AsciiValidationRule(bindingName, path, ascii.errorCode(), ascii.severity(),
                     !NOT_APPLICABLE.equals(ascii.message()) ? ascii.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(ascii.when()) ? ascii.when() : null)};
             return result;

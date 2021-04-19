@@ -26,11 +26,15 @@ public class PositiveValidationRule extends BindingValidationRule {
     public static final String DEFAULT_MESSAGE = "{0} must be greater than 0. Given {0}.";
 
     public PositiveValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public PositiveValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public PositiveValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public PositiveValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

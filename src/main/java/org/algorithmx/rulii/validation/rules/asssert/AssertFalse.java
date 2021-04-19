@@ -42,8 +42,8 @@ public @interface AssertFalse {
         }
 
         @Override
-        public Rule[] build(AssertFalse assertFalse, String bindingName) {
-            AssertFalseValidationRule rule = new AssertFalseValidationRule(bindingName, assertFalse.errorCode(),
+        public Rule[] build(AssertFalse assertFalse, String bindingName, String path) {
+            AssertFalseValidationRule rule = new AssertFalseValidationRule(bindingName, path, assertFalse.errorCode(),
                     assertFalse.severity(), !NOT_APPLICABLE.equals(assertFalse.message()) ? assertFalse.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(assertFalse.when()) ? assertFalse.when() : null)};
             return result;

@@ -36,12 +36,16 @@ public class UrlValidationRule extends BindingValidationRule {
     private UrlValidator validator;
 
     public UrlValidationRule(String bindingName, String[] schemes, String...patterns) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, schemes, patterns);
+        this(bindingName, bindingName, schemes, patterns);
     }
 
-    public UrlValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
+    public UrlValidationRule(String bindingName, String path, String[] schemes, String...patterns) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, schemes, patterns);
+    }
+
+    public UrlValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
                              String[] schemes, String...patterns) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.schemes = schemes;
         this.patterns = patterns;
         this.validator = new UrlValidator(schemes, patterns != null ? new RegexValidator(patterns) : null, 0L);

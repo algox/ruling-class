@@ -42,8 +42,8 @@ public @interface Null {
         }
 
         @Override
-        public Rule[] build(Null nullAnnotation, String bindingName) {
-            NullValidationRule rule = new NullValidationRule(bindingName, nullAnnotation.errorCode(),
+        public Rule[] build(Null nullAnnotation, String bindingName, String path) {
+            NullValidationRule rule = new NullValidationRule(bindingName, path, nullAnnotation.errorCode(),
                     nullAnnotation.severity(),
                     !NOT_APPLICABLE.equals(nullAnnotation.message()) ? nullAnnotation.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null)};

@@ -66,7 +66,7 @@ public class BeanValidator extends AbstractObjectVisitor {
         super();
     }
 
-    public RuleViolations validateBean(RuleContext context, Object bean, SourceHolder source) {
+    public RuleViolations validateBean(RuleContext context, Object bean, SourceHolder source) throws BeanValidationException {
         Assert.notNull(context, "context cannot be null.");
         Assert.notNull(source, "source cannot be null.");
 
@@ -75,11 +75,15 @@ public class BeanValidator extends AbstractObjectVisitor {
 
         Bindings rootBeanScope = createRootBeanScope(bean, violations);
         context.getBindings().addScope("rootBeanScope", rootBeanScope);
+        TraversalCandidate candidate = new TraversalCandidate(bean, source);
 
         try {
             ObjectGraph graph = new ObjectGraph();
-            TraversalCandidate candidate = new TraversalCandidate(bean, source);
             graph.traverse(candidate, this);
+        } catch (BeanValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BeanValidationException(candidate, violations, "Error trying to validate [" + candidate + "]", e);
         } finally {
             context.getBindings().removeScope(rootBeanScope);
         }
@@ -110,10 +114,10 @@ public class BeanValidator extends AbstractObjectVisitor {
             RuleViolations violations = new RuleViolations();
 
             beanScope.bind("violations", violations);
-            beanScope.bind("$value", candidate.getTarget());
+            beanScope.bind(candidate.getName(), candidate.getTarget());
 
             getContext().getBindings().addScope("beanScope", beanScope);
-            runRules(getContext(), candidate.getTypeDefinition(), "$value");
+            runRules(getContext(), candidate.getTypeDefinition(), candidate.getName(), candidate.getPath());
             decorateAndTransferViolations(violations, this.violations, candidate);
 
             if (isIntrospectionRequired(candidate)) {
@@ -129,13 +133,13 @@ public class BeanValidator extends AbstractObjectVisitor {
         return result;
     }
 
-    protected void runRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
+    protected void runRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName, String path) {
         if (definition == null) return;
 
         Validate validate = (Validate) definition.getIntrospectionAnnotation();
 
         if (validate == null || validate.includeAnnotatedRules()) {
-            RuleSet rules = getAnnotatedRules(context.getObjectFactory(), definition, bindingName);
+            RuleSet rules = getAnnotatedRules(context.getObjectFactory(), definition, bindingName, path);
 
             if (rules == null) {
                 // TODO : Log
@@ -158,13 +162,15 @@ public class BeanValidator extends AbstractObjectVisitor {
         }
     }
 
-    protected RuleSet getAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition, String bindingName) {
+    protected RuleSet getAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition,
+                                        String bindingName, String path) {
         return definition != null
-                ? RULE_CACHE.computeIfAbsent(definition, d -> createAnnotatedRules(objectFactory, d, bindingName))
+                ? RULE_CACHE.computeIfAbsent(definition, d -> createAnnotatedRules(objectFactory, d, bindingName, path))
                 : null;
     }
 
-    protected RuleSet createAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition, String bindingName) {
+    protected RuleSet createAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition,
+                                           String bindingName, String path) {
         Assert.notNull(bindingName, "bindingName cannot be null.");
 
         if (definition == null || !definition.hasDeclaredRules()) return null;
@@ -180,7 +186,7 @@ public class BeanValidator extends AbstractObjectVisitor {
             }
 
             AnnotatedRunnableBuilder builder = objectFactory.create(validationRule.value(), false);
-            Runnable[] runnables = builder.build(marker.getOwner(), bindingName);
+            Runnable[] runnables = builder.build(marker.getOwner(), bindingName, path);
 
             if (runnables != null) {
                 result.add(runnables);

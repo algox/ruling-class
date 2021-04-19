@@ -32,6 +32,7 @@ import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  * Validation Rule to make sure the the value is less the desired Max.
@@ -52,12 +53,16 @@ public class DecimalMaxValidationRule extends BindingValidationRule {
     private final boolean inclusive;
 
     public DecimalMaxValidationRule(String bindingName, BigDecimal max, boolean inclusive) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, max, inclusive);
+        this(bindingName, bindingName, max, inclusive);
     }
 
-    public DecimalMaxValidationRule(String bindingName, String errorCode, Severity severity,
+    public DecimalMaxValidationRule(String bindingName, String path, BigDecimal max, boolean inclusive) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, max, inclusive);
+    }
+
+    public DecimalMaxValidationRule(String bindingName, String path, String errorCode, Severity severity,
                                     String errorMessage, BigDecimal max, boolean inclusive) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(max, "max cannot be null.");
         this.max = max;
         this.inclusive = inclusive;

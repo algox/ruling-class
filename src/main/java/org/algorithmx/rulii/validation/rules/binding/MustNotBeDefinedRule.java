@@ -39,11 +39,15 @@ public class MustNotBeDefinedRule extends BindingValidationRule {
     private static final String DEFAULT_MESSAGE = "Binding {0} must not be defined.";
 
     public MustNotBeDefinedRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public MustNotBeDefinedRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public MustNotBeDefinedRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public MustNotBeDefinedRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

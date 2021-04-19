@@ -46,11 +46,15 @@ public class PastValidationRule extends BindingValidationRule {
     public static final String DEFAULT_MESSAGE  = "{0} must be in the past. Given {1}. Current clock {2}.";
 
     public PastValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public PastValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public PastValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public PastValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

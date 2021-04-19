@@ -1,15 +1,10 @@
 package org.algorithmx.rulii.validation.rules.negative;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.util.NumberComparator;
 import org.algorithmx.rulii.validation.BindingValidationRule;
-import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -31,11 +26,16 @@ public class NegativeOrZeroValidationRule extends BindingValidationRule {
     public static final String DEFAULT_MESSAGE = "{0} must be less than or equal to 0. Given {1}.";
 
     public NegativeOrZeroValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public NegativeOrZeroValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public NegativeOrZeroValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public NegativeOrZeroValidationRule(String bindingName, String path, String errorCode,
+                                        Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

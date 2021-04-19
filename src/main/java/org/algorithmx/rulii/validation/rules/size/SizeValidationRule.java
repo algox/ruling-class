@@ -33,11 +33,16 @@ public class SizeValidationRule extends BindingValidationRule {
     private final int max;
 
     public SizeValidationRule(String bindingName, int min, int max) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, min, max);
+        this(bindingName, bindingName, min, max);
     }
 
-    public SizeValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, int min, int max) {
-        super(bindingName, errorCode, severity, errorMessage);
+    public SizeValidationRule(String bindingName, String path, int min, int max) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, min, max);
+    }
+
+    public SizeValidationRule(String bindingName, String path, String errorCode, Severity severity,
+                              String errorMessage, int min, int max) {
+        super(bindingName, path, errorCode, severity, errorMessage);
         Assert.isTrue(min >= 0, "min >= 0");
         Assert.isTrue(max >= 0, "max >= 0");
         Assert.isTrue(max >= min, "max >= min");

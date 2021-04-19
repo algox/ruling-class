@@ -42,8 +42,9 @@ public @interface Future {
         }
 
         @Override
-        public Rule[] build(Future future, String bindingName) {
-            FutureValidationRule rule = new FutureValidationRule(bindingName, future.errorCode(), future.severity(),
+        public Rule[] build(Future future, String bindingName, String path) {
+            FutureValidationRule rule = new FutureValidationRule(bindingName, path,
+                    future.errorCode(), future.severity(),
                     !NOT_APPLICABLE.equals(future.message()) ? future.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(future.when()) ? future.when() : null)};
             return result;

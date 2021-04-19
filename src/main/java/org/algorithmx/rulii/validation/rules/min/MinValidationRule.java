@@ -50,11 +50,16 @@ public class MinValidationRule extends BindingValidationRule {
     private final long min;
 
     public MinValidationRule(String bindingName, long min) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, min);
+        this(bindingName, bindingName, min);
     }
 
-    public MinValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, long min) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public MinValidationRule(String bindingName, String path, long min) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, min);
+    }
+
+    public MinValidationRule(String bindingName, String path, String errorCode, Severity severity,
+                             String errorMessage, long min) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.min = min;
     }
 

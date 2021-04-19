@@ -24,11 +24,15 @@ public class AsciiValidationRule extends BindingValidationRule {
     public static final String DEFAULT_MESSAGE  = "{0} must only contain ASCII printable characters. Given {1}.";
 
     public AsciiValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public AsciiValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public AsciiValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public AsciiValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

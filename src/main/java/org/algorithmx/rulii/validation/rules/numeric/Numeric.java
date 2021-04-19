@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.numeric;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -45,8 +44,8 @@ public @interface Numeric {
         }
 
         @Override
-        public Rule[] build(Numeric numeric, String bindingName) {
-            NumericValidationRule rule = new NumericValidationRule(bindingName, numeric.errorCode(),
+        public Rule[] build(Numeric numeric, String bindingName, String path) {
+            NumericValidationRule rule = new NumericValidationRule(bindingName, path, numeric.errorCode(),
                     numeric.severity(), !NOT_APPLICABLE.equals(numeric.message()) ? numeric.message() : null,
                     numeric.allowSpace());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null)};

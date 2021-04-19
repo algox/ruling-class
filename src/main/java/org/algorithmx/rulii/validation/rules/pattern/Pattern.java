@@ -53,8 +53,8 @@ public @interface Pattern {
         }
 
         @Override
-        public Rule[] build(Pattern pattern, String bindingName) {
-            PatternValidationRule rule = new PatternValidationRule(bindingName, pattern.errorCode(), pattern.severity(),
+        public Rule[] build(Pattern pattern, String bindingName, String path) {
+            PatternValidationRule rule = new PatternValidationRule(bindingName, path, pattern.errorCode(), pattern.severity(),
                     !NOT_APPLICABLE.equals(pattern.message()) ? pattern.message() : null,
                     pattern.caseSensitive(), pattern.regex());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pattern.when()) ? pattern.when() : null)};

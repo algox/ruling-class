@@ -42,8 +42,8 @@ public @interface Exists {
         }
 
         @Override
-        public Rule[] build(Exists exists, String bindingName) {
-            ExistsValidationRule rule = new ExistsValidationRule(bindingName, exists.errorCode(),
+        public Rule[] build(Exists exists, String bindingName, String path) {
+            ExistsValidationRule rule = new ExistsValidationRule(bindingName, path, exists.errorCode(),
                     exists.severity(), !NOT_APPLICABLE.equals(exists.message()) ? exists.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null)};
             return result;

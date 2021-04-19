@@ -1,11 +1,14 @@
 package org.algorithmx.rulii.validation.rules.in;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.config.RuliiSystem;
+import org.algorithmx.rulii.convert.Converter;
+import org.algorithmx.rulii.convert.ConverterRegistry;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
+import org.algorithmx.rulii.validation.ValidationRuleException;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -53,12 +56,30 @@ public @interface In {
         }
 
         @Override
-        public Rule[] build(In in, String bindingName) {
-            // TODO : Pass in ConverterRegistry and convert string to desired type.
-            Set<String> values = new HashSet<>(Arrays.asList(in.values()));
-            InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
+        public Rule[] build(In in, String bindingName, String path) {
+            Set<Object> values = void.class.equals(in.type()) ?
+                    new HashSet<>(Arrays.asList(in.values()))
+                    : convertValues(in.values(), in.type(), RuliiSystem.getInstance().getConverterRegistry());
+            InValidationRule rule = new InValidationRule(bindingName, path, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null)};
+            return result;
+        }
+
+        protected Set<Object> convertValues(String[] values, Class<?> type, ConverterRegistry registry) {
+            Set<Object> result = new HashSet<>();
+
+            Converter converter = registry.find(String.class, type);
+
+            if (converter == null)
+                throw new ValidationRuleException("Could not convert [" + Arrays.toString(values) + "] to an array of ["
+                        + type + "]. ConverterRegistry does not have a converter that can convert from String to ["
+                        + type + "]. Register a converter and try again.");
+
+            for (String value : values) {
+                result.add(converter.convert(value, type));
+            }
+
             return result;
         }
     }

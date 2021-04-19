@@ -28,12 +28,16 @@ public class EmailValidationRule extends BindingValidationRule {
     private final EmailValidator validator;
 
     public EmailValidationRule(String bindingName, boolean allowLocal, boolean allowTopLevelDomain) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, allowLocal, allowTopLevelDomain);
+        this(bindingName, bindingName, allowLocal, allowTopLevelDomain);
     }
 
-    public EmailValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
+    public EmailValidationRule(String bindingName, String path, boolean allowLocal, boolean allowTopLevelDomain) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, allowLocal, allowTopLevelDomain);
+    }
+
+    public EmailValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
                                boolean allowLocal, boolean allowTopLevelDomain) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.allowLocal = allowLocal;
         this.allowTopLevelDomain = allowTopLevelDomain;
         this.validator = EmailValidator.getInstance(allowLocal, allowTopLevelDomain);

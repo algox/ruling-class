@@ -27,11 +27,15 @@ public class DecimalValidationRule extends BindingValidationRule {
     private final boolean allowSpace;
 
     public DecimalValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, true);
+        this(bindingName, bindingName);
     }
 
-    public DecimalValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, boolean allowSpace) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public DecimalValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, true);
+    }
+
+    public DecimalValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage, boolean allowSpace) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.allowSpace = allowSpace;
     }
 

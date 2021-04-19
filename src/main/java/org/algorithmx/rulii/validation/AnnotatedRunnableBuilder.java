@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
 
 public interface AnnotatedRunnableBuilder<T extends Annotation> {
 
-    Runnable[] build(T type, String bindingName);
+    Runnable[] build(T type, String bindingName, String path);
 
     default Rule buildRule(BindingValidationRule target, String when) {
 

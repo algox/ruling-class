@@ -46,11 +46,16 @@ public class MaxValidationRule extends BindingValidationRule {
     private final long max;
 
     public MaxValidationRule(String bindingName, long max) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, max);
+        this(bindingName, bindingName, max);
     }
 
-    public MaxValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, long max) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public MaxValidationRule(String bindingName, String path, long max) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, max);
+    }
+
+    public MaxValidationRule(String bindingName, String path, String errorCode, Severity severity,
+                             String errorMessage, long max) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.max = max;
     }
 

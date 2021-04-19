@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.notnull;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -43,10 +42,9 @@ public @interface NotNull {
         }
 
         @Override
-        public Rule[] build(NotNull notNull, String bindingName) {
-            NotNullValidationRule rule = new NotNullValidationRule(bindingName, notNull.errorCode(),
-                    notNull.severity(),
-                    !NOT_APPLICABLE.equals(notNull.message()) ? notNull.message() : null);
+        public Rule[] build(NotNull notNull, String bindingName, String path) {
+            NotNullValidationRule rule = new NotNullValidationRule(bindingName, path, notNull.errorCode(),
+                    notNull.severity(), !NOT_APPLICABLE.equals(notNull.message()) ? notNull.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notNull.when()) ? notNull.when() : null)};
             return result;
         }

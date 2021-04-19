@@ -44,8 +44,8 @@ public @interface UpperCase {
         }
 
         @Override
-        public Rule[] build(UpperCase upperCase, String bindingName) {
-            UpperCaseValidationRule rule = new UpperCaseValidationRule(bindingName, upperCase.errorCode(),
+        public Rule[] build(UpperCase upperCase, String bindingName, String path) {
+            UpperCaseValidationRule rule = new UpperCaseValidationRule(bindingName, path, upperCase.errorCode(),
                     upperCase.severity(), !NOT_APPLICABLE.equals(upperCase.message()) ? upperCase.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(upperCase.when()) ? upperCase.when() : null)};
             return result;

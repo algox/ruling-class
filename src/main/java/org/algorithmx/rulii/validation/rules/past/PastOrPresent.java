@@ -42,10 +42,9 @@ public @interface PastOrPresent {
         }
 
         @Override
-        public Rule[] build(PastOrPresent pastOrPresent, String bindingName) {
-            PastOrPresentValidationRule rule = new PastOrPresentValidationRule(bindingName, pastOrPresent.errorCode(),
-                    pastOrPresent.severity(),
-                    !NOT_APPLICABLE.equals(pastOrPresent.message()) ? pastOrPresent.message() : null);
+        public Rule[] build(PastOrPresent pastOrPresent, String bindingName, String path) {
+            PastOrPresentValidationRule rule = new PastOrPresentValidationRule(bindingName, path, pastOrPresent.errorCode(),
+                    pastOrPresent.severity(), !NOT_APPLICABLE.equals(pastOrPresent.message()) ? pastOrPresent.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pastOrPresent.when()) ? pastOrPresent.when() : null)};
             return result;
         }

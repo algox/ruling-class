@@ -12,17 +12,22 @@ import org.algorithmx.rulii.lib.spring.util.Assert;
 public abstract class BindingValidationRule extends ValidationRule {
 
     private final String bindingName;
+    private final String path;
 
-    public BindingValidationRule(String bindingName, String errorCode, Severity severity, String defaultMessage) {
+    public BindingValidationRule(String bindingName, String path, String errorCode, Severity severity, String defaultMessage) {
         super(errorCode, severity, defaultMessage);
         Assert.isTrue(StringUtils.isNotEmpty(bindingName), "bindingName must have text.");
+        Assert.isTrue(StringUtils.isNotEmpty(path), "path must have text.");
         this.bindingName = bindingName;
+        this.path = path;
     }
 
-    public BindingValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, String defaultMessage) {
+    public BindingValidationRule(String bindingName, String path, String errorCode, Severity severity,
+                                 String errorMessage, String defaultMessage) {
         super(errorCode, severity, errorMessage, defaultMessage);
         Assert.isTrue(StringUtils.isNotEmpty(bindingName), "bindingName must have text.");
         this.bindingName = bindingName;
+        this.path = path;
     }
 
     @PreCondition
@@ -46,7 +51,7 @@ public abstract class BindingValidationRule extends ValidationRule {
                           @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations violations) {
         Object value = getBindingValue(context);
         RuleViolationBuilder builder = createRuleViolationBuilder()
-                //.param("bindingName", getBindingName())
+                .param("path", getPath())
                 .param("value", value);
         customizeViolation(context, builder);
         violations.add(builder.build(context));
@@ -58,6 +63,10 @@ public abstract class BindingValidationRule extends ValidationRule {
 
     public String getBindingName() {
         return bindingName;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public Object getBindingValue(RuleContext context) {

@@ -23,11 +23,16 @@ public class AssertFalseValidationRule extends BindingValidationRule {
     public static final String DEFAULT_MESSAGE  = "{0} must be false.";
 
     public AssertFalseValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public AssertFalseValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public AssertFalseValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public AssertFalseValidationRule(String bindingName, String path, String errorCode,
+                                     Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

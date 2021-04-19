@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.email;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -46,8 +45,8 @@ public @interface Email {
         }
 
         @Override
-        public Rule[] build(Email email, String bindingName) {
-            EmailValidationRule rule = new EmailValidationRule(bindingName, email.errorCode(),
+        public Rule[] build(Email email, String bindingName, String path) {
+            EmailValidationRule rule = new EmailValidationRule(bindingName, path, email.errorCode(),
                     email.severity(), !NOT_APPLICABLE.equals(email.message()) ? email.message() : null,
                     email.allowLocal(), email.allowTopLevelDomain());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(email.when()) ? email.when() : null)};

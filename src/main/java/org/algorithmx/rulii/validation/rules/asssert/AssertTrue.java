@@ -42,8 +42,8 @@ public @interface AssertTrue {
         }
 
         @Override
-        public Rule[] build(AssertTrue assertTrue, String bindingName) {
-            AssertTrueValidationRule rule = new AssertTrueValidationRule(bindingName, assertTrue.errorCode(),
+        public Rule[] build(AssertTrue assertTrue, String bindingName, String path) {
+            AssertTrueValidationRule rule = new AssertTrueValidationRule(bindingName, path, assertTrue.errorCode(),
                     assertTrue.severity(), !NOT_APPLICABLE.equals(assertTrue.message()) ? assertTrue.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(assertTrue.when()) ? assertTrue.when() : null)};
             return result;

@@ -52,12 +52,16 @@ public class DecimalMinValidationRule extends BindingValidationRule {
     private final boolean inclusive;
 
     public DecimalMinValidationRule(String bindingName, BigDecimal min, boolean inclusive) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, min, inclusive);
+        this(bindingName, bindingName, min, inclusive);
     }
 
-    public DecimalMinValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
+    public DecimalMinValidationRule(String bindingName, String path, BigDecimal min, boolean inclusive) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, min, inclusive);
+    }
+
+    public DecimalMinValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
                                     BigDecimal min, boolean inclusive) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(min, "min cannot be null.");
         this.min = min;
         this.inclusive = inclusive;

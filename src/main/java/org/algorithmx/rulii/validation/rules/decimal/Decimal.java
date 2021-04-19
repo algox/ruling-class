@@ -45,8 +45,8 @@ public @interface Decimal {
         }
 
         @Override
-        public Rule[] build(Decimal decimal, String bindingName) {
-            DecimalValidationRule rule = new DecimalValidationRule(bindingName, decimal.errorCode(),
+        public Rule[] build(Decimal decimal, String bindingName, String path) {
+            DecimalValidationRule rule = new DecimalValidationRule(bindingName, path, decimal.errorCode(),
                     decimal.severity(), !NOT_APPLICABLE.equals(decimal.message()) ? decimal.message() : null,
                     decimal.allowSpace());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(decimal.when()) ? decimal.when() : null)};

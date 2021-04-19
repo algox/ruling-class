@@ -1,16 +1,12 @@
 package org.algorithmx.rulii.validation.rules.pattern;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.apache.validation.RegexValidator;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -34,16 +30,20 @@ public class PatternValidationRule extends BindingValidationRule {
     private final RegexValidator validator;
 
     public PatternValidationRule(String bindingName, String pattern) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, true, pattern);
+        this(bindingName, bindingName, pattern);
     }
 
-    public PatternValidationRule(String bindingName, boolean caseSensitive, String pattern) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, caseSensitive, pattern);
+    public PatternValidationRule(String bindingName, String path, String pattern) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, true, pattern);
     }
 
-    public PatternValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
-                                 boolean caseSensitive, String pattern) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public PatternValidationRule(String bindingName, String path, boolean caseSensitive, String pattern) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, caseSensitive, pattern);
+    }
+
+    public PatternValidationRule(String bindingName, String path, String errorCode, Severity severity,
+                                 String errorMessage, boolean caseSensitive, String pattern) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(pattern, "pattern cannot be null.");
         this.pattern = pattern;
         this.caseSensitive = caseSensitive;

@@ -30,12 +30,16 @@ public class DigitsValidationRule extends BindingValidationRule {
     private final int maxFractionLength;
 
     public DigitsValidationRule(String bindingName, int maxIntegerLength, int maxFractionLength) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, maxIntegerLength, maxFractionLength);
+        this(bindingName, bindingName, maxIntegerLength, maxFractionLength);
     }
 
-    public DigitsValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
+    public DigitsValidationRule(String bindingName, String path, int maxIntegerLength, int maxFractionLength) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, maxIntegerLength, maxFractionLength);
+    }
+
+    public DigitsValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
                                 int maxIntegerLength, int maxFractionLength) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.maxIntegerLength = maxIntegerLength;
         this.maxFractionLength = maxFractionLength;
     }

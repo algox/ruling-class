@@ -29,11 +29,16 @@ public class StartsWithValidationRule extends BindingValidationRule {
     private String[] prefixes;
 
     public StartsWithValidationRule(String bindingName, String...prefixes) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, prefixes);
+        this(bindingName, bindingName, prefixes);
     }
 
-    public StartsWithValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, String...prefixes) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public StartsWithValidationRule(String bindingName, String path, String...prefixes) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, prefixes);
+    }
+
+    public StartsWithValidationRule(String bindingName, String path, String errorCode,
+                                    Severity severity, String errorMessage, String...prefixes) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(prefixes, "prefixes cannot be null.");
         this.prefixes = prefixes;
     }

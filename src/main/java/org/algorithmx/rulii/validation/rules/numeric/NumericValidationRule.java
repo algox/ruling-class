@@ -26,11 +26,16 @@ public class NumericValidationRule extends BindingValidationRule {
     private final boolean allowSpace;
 
     public NumericValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null, false);
+        this(bindingName, bindingName);
     }
 
-    public NumericValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, boolean allowSpace) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public NumericValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, false);
+    }
+
+    public NumericValidationRule(String bindingName, String path, String errorCode, Severity severity,
+                                 String errorMessage, boolean allowSpace) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.allowSpace = allowSpace;
     }
 

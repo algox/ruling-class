@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.notblank;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,10 +41,9 @@ public @interface NotBlank {
         }
 
         @Override
-        public Rule[] build(NotBlank notBlank, String bindingName) {
-            NotBlankValidationRule rule = new NotBlankValidationRule(bindingName, notBlank.errorCode(),
-                    notBlank.severity(),
-                    !NOT_APPLICABLE.equals(notBlank.message()) ? notBlank.message() : null);
+        public Rule[] build(NotBlank notBlank, String bindingName, String path) {
+            NotBlankValidationRule rule = new NotBlankValidationRule(bindingName, path, notBlank.errorCode(),
+                    notBlank.severity(), !NOT_APPLICABLE.equals(notBlank.message()) ? notBlank.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notBlank.when()) ? notBlank.when() : null)};
             return result;
         }

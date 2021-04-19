@@ -26,11 +26,16 @@ public class NegativeValidationRule extends BindingValidationRule {
     public static final String DEFAULT_MESSAGE  = "{0} must be less than 0. Given {1}.";
 
     public NegativeValidationRule(String bindingName) {
-        this(bindingName, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, bindingName);
     }
 
-    public NegativeValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public NegativeValidationRule(String bindingName, String path) {
+        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+    }
+
+    public NegativeValidationRule(String bindingName, String path, String errorCode,
+                                  Severity severity, String errorMessage) {
+        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override
