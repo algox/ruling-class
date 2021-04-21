@@ -56,11 +56,11 @@ public @interface In {
         }
 
         @Override
-        public Rule[] build(In in, String bindingName, String path) {
+        public Rule[] build(In in, String bindingName) {
             Set<Object> values = void.class.equals(in.type()) ?
                     new HashSet<>(Arrays.asList(in.values()))
                     : convertValues(in.values(), in.type(), RuliiSystem.getInstance().getConverterRegistry());
-            InValidationRule rule = new InValidationRule(bindingName, path, in.errorCode(),
+            InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null)};
             return result;

@@ -18,16 +18,12 @@
 package org.algorithmx.rulii.validation.rules.min;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.NumberComparator;
 import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -46,22 +42,18 @@ public class DecimalMinValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Number.class, CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.DecimalMinValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be greater than or equal to {2}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be greater than or equal to {1}. Given {0}.";
 
     private final BigDecimal min;
     private final boolean inclusive;
 
     public DecimalMinValidationRule(String bindingName, BigDecimal min, boolean inclusive) {
-        this(bindingName, bindingName, min, inclusive);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, min, inclusive);
     }
 
-    public DecimalMinValidationRule(String bindingName, String path, BigDecimal min, boolean inclusive) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, min, inclusive);
-    }
-
-    public DecimalMinValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
+    public DecimalMinValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
                                     BigDecimal min, boolean inclusive) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(min, "min cannot be null.");
         this.min = min;
         this.inclusive = inclusive;

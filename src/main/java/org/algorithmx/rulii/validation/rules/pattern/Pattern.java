@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.pattern;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -53,8 +52,8 @@ public @interface Pattern {
         }
 
         @Override
-        public Rule[] build(Pattern pattern, String bindingName, String path) {
-            PatternValidationRule rule = new PatternValidationRule(bindingName, path, pattern.errorCode(), pattern.severity(),
+        public Rule[] build(Pattern pattern, String bindingName) {
+            PatternValidationRule rule = new PatternValidationRule(bindingName, pattern.errorCode(), pattern.severity(),
                     !NOT_APPLICABLE.equals(pattern.message()) ? pattern.message() : null,
                     pattern.caseSensitive(), pattern.regex());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pattern.when()) ? pattern.when() : null)};

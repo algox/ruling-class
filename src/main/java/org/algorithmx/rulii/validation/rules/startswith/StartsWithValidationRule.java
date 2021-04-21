@@ -24,21 +24,17 @@ public class StartsWithValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.StartsWithValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must start with one of the given prefixes {2}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must start with one of the given prefixes {1}. Given {0}.";
 
     private String[] prefixes;
 
     public StartsWithValidationRule(String bindingName, String...prefixes) {
-        this(bindingName, bindingName, prefixes);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, prefixes);
     }
 
-    public StartsWithValidationRule(String bindingName, String path, String...prefixes) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, prefixes);
-    }
-
-    public StartsWithValidationRule(String bindingName, String path, String errorCode,
+    public StartsWithValidationRule(String bindingName, String errorCode,
                                     Severity severity, String errorMessage, String...prefixes) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(prefixes, "prefixes cannot be null.");
         this.prefixes = prefixes;
     }

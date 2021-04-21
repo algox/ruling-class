@@ -20,19 +20,15 @@ public class AssertTrueValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {boolean.class, Boolean.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.AssertTrueValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be true.";
+    public static final String DEFAULT_MESSAGE  = "Value must be true.";
 
     public AssertTrueValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public AssertTrueValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public AssertTrueValidationRule(String bindingName, String path, String errorCode,
+    public AssertTrueValidationRule(String bindingName, String errorCode,
                                     Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

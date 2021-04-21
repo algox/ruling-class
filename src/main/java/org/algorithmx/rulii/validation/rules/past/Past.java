@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.past;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,8 +41,8 @@ public @interface Past {
         }
 
         @Override
-        public Rule[] build(Past past, String bindingName, String path) {
-            PastValidationRule rule = new PastValidationRule(bindingName, path, past.errorCode(), past.severity(),
+        public Rule[] build(Past past, String bindingName) {
+            PastValidationRule rule = new PastValidationRule(bindingName, past.errorCode(), past.severity(),
                     !NOT_APPLICABLE.equals(past.message()) ? past.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(past.when()) ? past.when() : null)};
             return result;

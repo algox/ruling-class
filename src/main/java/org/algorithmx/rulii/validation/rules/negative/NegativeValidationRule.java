@@ -23,19 +23,15 @@ public class NegativeValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Number.class, CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.NegativeValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be less than 0. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be less than 0. Given {0}.";
 
     public NegativeValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public NegativeValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public NegativeValidationRule(String bindingName, String path, String errorCode,
+    public NegativeValidationRule(String bindingName, String errorCode,
                                   Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

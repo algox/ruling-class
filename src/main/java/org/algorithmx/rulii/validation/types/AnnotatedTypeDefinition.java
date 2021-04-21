@@ -59,19 +59,7 @@ public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
 
     AnnotatedTypeDefinition[] getAllChildren();
 
-    default String getSignature() {
-        StringBuilder result = new StringBuilder();
-
-        if (hasDeclaredRules()) {
-             for (MarkedAnnotation annotation : getDeclaredRuleAnnotations()) {
-                 result.append(annotation.getOwner() + System.lineSeparator());
-             }
-        }
-
-        result.append(getAnnotatedType().getType().toString());
-
-        return result.toString();
-    }
+    String getSignature();
 
     default boolean requiresProcessing() {
         return hasDeclaredRules() || isIntrospectionRequired();

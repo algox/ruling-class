@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.ascii;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -46,8 +45,8 @@ public @interface Ascii {
         }
 
         @Override
-        public Rule[] build(Ascii ascii, String bindingName, String path) {
-            AsciiValidationRule rule = new AsciiValidationRule(bindingName, path, ascii.errorCode(), ascii.severity(),
+        public Rule[] build(Ascii ascii, String bindingName) {
+            AsciiValidationRule rule = new AsciiValidationRule(bindingName, ascii.errorCode(), ascii.severity(),
                     !NOT_APPLICABLE.equals(ascii.message()) ? ascii.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(ascii.when()) ? ascii.when() : null)};
             return result;

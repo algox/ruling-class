@@ -21,21 +21,17 @@ public class AlphaValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.AlphaValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must only contain unicode letters. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must only contain unicode letters. Given {0}.";
 
     private final boolean allowSpace;
 
     public AlphaValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, true);
     }
 
-    public AlphaValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, true);
-    }
-
-    public AlphaValidationRule(String bindingName, String path, String errorCode, Severity severity,
+    public AlphaValidationRule(String bindingName, String errorCode, Severity severity,
                                String errorMessage, boolean allowSpace) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.allowSpace = allowSpace;
     }
 

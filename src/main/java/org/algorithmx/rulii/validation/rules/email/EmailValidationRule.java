@@ -21,23 +21,19 @@ public class EmailValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.EmailValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} not a valid email address. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value not a valid email address. Given {0}.";
 
     private final boolean allowLocal;
     private final boolean allowTopLevelDomain;
     private final EmailValidator validator;
 
     public EmailValidationRule(String bindingName, boolean allowLocal, boolean allowTopLevelDomain) {
-        this(bindingName, bindingName, allowLocal, allowTopLevelDomain);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, allowLocal, allowTopLevelDomain);
     }
 
-    public EmailValidationRule(String bindingName, String path, boolean allowLocal, boolean allowTopLevelDomain) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, allowLocal, allowTopLevelDomain);
-    }
-
-    public EmailValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
+    public EmailValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
                                boolean allowLocal, boolean allowTopLevelDomain) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.allowLocal = allowLocal;
         this.allowTopLevelDomain = allowTopLevelDomain;
         this.validator = EmailValidator.getInstance(allowLocal, allowTopLevelDomain);

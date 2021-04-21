@@ -1,15 +1,11 @@
 package org.algorithmx.rulii.validation.rules.future;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.util.TimeComparator;
 import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -47,18 +43,14 @@ public class FutureValidationRule extends BindingValidationRule {
             MinguoDate.class, ThaiBuddhistDate.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.FutureValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be in the future. Given {1}. Current clock {2}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be in the future. Given {0}. Current clock {1}.";
 
     public FutureValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public FutureValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public FutureValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public FutureValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

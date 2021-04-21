@@ -41,8 +41,8 @@ public @interface NotEmpty {
         }
 
         @Override
-        public Rule[] build(NotEmpty notEmpty, String bindingName, String path) {
-            NotEmptyValidationRule rule = new NotEmptyValidationRule(bindingName, path, notEmpty.errorCode(),
+        public Rule[] build(NotEmpty notEmpty, String bindingName) {
+            NotEmptyValidationRule rule = new NotEmptyValidationRule(bindingName, notEmpty.errorCode(),
                     notEmpty.severity(), !NOT_APPLICABLE.equals(notEmpty.message()) ? notEmpty.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notEmpty.when()) ? notEmpty.when() : null)};
             return result;

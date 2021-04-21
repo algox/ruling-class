@@ -23,18 +23,14 @@ public class PositiveValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Number.class, CharSequence.class};
 
     public static final String ERROR_CODE      = "rulii.validation.rules.PositiveValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE = "{0} must be greater than 0. Given {0}.";
+    public static final String DEFAULT_MESSAGE = "Value must be greater than 0. Given {0}.";
 
     public PositiveValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public PositiveValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public PositiveValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public PositiveValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

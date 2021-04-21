@@ -29,23 +29,19 @@ public class UrlValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.UrlValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} not a valid Url. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value not a valid Url. Given {0}.";
 
     private String[] schemes;
     private String[] patterns;
     private UrlValidator validator;
 
     public UrlValidationRule(String bindingName, String[] schemes, String...patterns) {
-        this(bindingName, bindingName, schemes, patterns);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, schemes, patterns);
     }
 
-    public UrlValidationRule(String bindingName, String path, String[] schemes, String...patterns) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, schemes, patterns);
-    }
-
-    public UrlValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
+    public UrlValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
                              String[] schemes, String...patterns) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.schemes = schemes;
         this.patterns = patterns;
         this.validator = new UrlValidator(schemes, patterns != null ? new RegexValidator(patterns) : null, 0L);

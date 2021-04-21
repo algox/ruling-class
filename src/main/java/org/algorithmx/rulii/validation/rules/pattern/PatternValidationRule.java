@@ -23,27 +23,23 @@ public class PatternValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.PatternValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must match regex pattern {2}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must match regex pattern {1}. Given {0}.";
 
     private final String pattern;
     private final boolean caseSensitive;
     private final RegexValidator validator;
 
     public PatternValidationRule(String bindingName, String pattern) {
-        this(bindingName, bindingName, pattern);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, true, pattern);
     }
 
-    public PatternValidationRule(String bindingName, String path, String pattern) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, true, pattern);
+    public PatternValidationRule(String bindingName, boolean caseSensitive, String pattern) {
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, caseSensitive, pattern);
     }
 
-    public PatternValidationRule(String bindingName, String path, boolean caseSensitive, String pattern) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, caseSensitive, pattern);
-    }
-
-    public PatternValidationRule(String bindingName, String path, String errorCode, Severity severity,
+    public PatternValidationRule(String bindingName, String errorCode, Severity severity,
                                  String errorMessage, boolean caseSensitive, String pattern) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(pattern, "pattern cannot be null.");
         this.pattern = pattern;
         this.caseSensitive = caseSensitive;

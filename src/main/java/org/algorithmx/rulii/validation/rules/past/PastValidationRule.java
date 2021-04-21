@@ -43,18 +43,14 @@ public class PastValidationRule extends BindingValidationRule {
             MinguoDate.class, ThaiBuddhistDate.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.PastValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be in the past. Given {1}. Current clock {2}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be in the past. Given {0}. Current clock {1}.";
 
     public PastValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public PastValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public PastValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public PastValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

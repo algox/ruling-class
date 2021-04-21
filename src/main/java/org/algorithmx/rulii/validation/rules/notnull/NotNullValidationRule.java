@@ -19,19 +19,15 @@ public class NotNullValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Object.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.NotNullValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} cannot be null.";
+    public static final String DEFAULT_MESSAGE  = "Value cannot be null.";
 
     public NotNullValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public NotNullValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public NotNullValidationRule(String bindingName, String path, String errorCode,
+    public NotNullValidationRule(String bindingName, String errorCode,
                                  Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

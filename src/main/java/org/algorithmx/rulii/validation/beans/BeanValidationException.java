@@ -20,20 +20,20 @@ package org.algorithmx.rulii.validation.beans;
 
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.validation.RuleViolations;
-import org.algorithmx.rulii.validation.graph.TraversalCandidate;
+import org.algorithmx.rulii.validation.graph.GraphNode;
 
 public class BeanValidationException extends UnrulyException {
 
-    private TraversalCandidate candidate;
+    private GraphNode candidate;
     private RuleViolations violations;
 
-    public BeanValidationException(TraversalCandidate candidate, RuleViolations violations, String message, Throwable cause) {
+    public BeanValidationException(GraphNode candidate, RuleViolations violations, String message, Throwable cause) {
         super(message, cause);
         this.candidate = candidate;
         this.violations = violations;
     }
 
-    public TraversalCandidate getCandidate() {
+    public GraphNode getCandidate() {
         return candidate;
     }
 

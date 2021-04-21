@@ -47,8 +47,8 @@ public @interface DecimalMin {
         }
 
         @Override
-        public Rule[] build(DecimalMin min, String bindingName, String path) {
-            DecimalMinValidationRule rule = new DecimalMinValidationRule(bindingName, path, min.errorCode(), min.severity(),
+        public Rule[] build(DecimalMin min, String bindingName) {
+            DecimalMinValidationRule rule = new DecimalMinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null,
                     BigDecimal.valueOf(min.value()), min.inclusive());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null)};

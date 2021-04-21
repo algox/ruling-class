@@ -47,8 +47,8 @@ public @interface AlphaNumeric {
         }
 
         @Override
-        public Rule[] build(AlphaNumeric alpha, String bindingName, String path) {
-            AlphaNumericValidationRule rule = new AlphaNumericValidationRule(bindingName, path, alpha.errorCode(),
+        public Rule[] build(AlphaNumeric alpha, String bindingName) {
+            AlphaNumericValidationRule rule = new AlphaNumericValidationRule(bindingName, alpha.errorCode(),
                     alpha.severity(), !NOT_APPLICABLE.equals(alpha.message()) ? alpha.message() : null,
                     alpha.allowSpace());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(alpha.when()) ? alpha.when() : null)};

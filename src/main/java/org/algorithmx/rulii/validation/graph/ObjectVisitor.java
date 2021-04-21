@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface ObjectVisitor {
 
-    Collection<TraversalCandidate> visitCandidate(TraversalCandidate candidate);
+    Collection<GraphNode> visitCandidate(GraphNode candidate);
 
     default void traversalComplete() {}
 }

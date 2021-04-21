@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.nulll;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,8 +41,8 @@ public @interface Null {
         }
 
         @Override
-        public Rule[] build(Null nullAnnotation, String bindingName, String path) {
-            NullValidationRule rule = new NullValidationRule(bindingName, path, nullAnnotation.errorCode(),
+        public Rule[] build(Null nullAnnotation, String bindingName) {
+            NullValidationRule rule = new NullValidationRule(bindingName, nullAnnotation.errorCode(),
                     nullAnnotation.severity(),
                     !NOT_APPLICABLE.equals(nullAnnotation.message()) ? nullAnnotation.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null)};

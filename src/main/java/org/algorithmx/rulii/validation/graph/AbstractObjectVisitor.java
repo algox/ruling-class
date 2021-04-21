@@ -29,7 +29,7 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
         super();
     }
 
-    protected List<TraversalCandidate> introspectCandidate(TraversalCandidate candidate, ExtractorRegistry extractorRegistry) {
+    protected List<GraphNode> introspectCandidate(GraphNode candidate, ExtractorRegistry extractorRegistry) {
 
         if (candidate.isNull()) return Collections.emptyList();
         if (candidate.getTypeDefinition() != null
@@ -41,7 +41,7 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
         if (classFilter != null && !classFilter.test(candidate.getTarget().getClass())) return Collections.emptyList();
 
         AnnotatedBeanTypeDefinition typeDefinition = getAnnotatedBeanTypeDefinition(candidate.getTarget().getClass());
-        List<TraversalCandidate> result = new ArrayList<>();
+        List<GraphNode> result = new ArrayList<>();
 
         result.addAll(findCandidates(typeDefinition.getFields(), candidate, extractorRegistry));
         result.addAll(findCandidates(typeDefinition.getProperties(), candidate, extractorRegistry));
@@ -50,12 +50,12 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
     }
 
 
-    protected List<TraversalCandidate> findCandidates(SourceHolder[] fields, TraversalCandidate candidate,
-                                                      ExtractorRegistry extractorRegistry) {
-        List<TraversalCandidate> result = new ArrayList<>();
+    protected List<GraphNode> findCandidates(SourceHolder[] fields, GraphNode candidate,
+                                             ExtractorRegistry extractorRegistry) {
+        List<GraphNode> result = new ArrayList<>();
 
         for (SourceHolder holder : fields) {
-            List<TraversalCandidate> candidates = extractCandidates(holder,
+            List<GraphNode> candidates = extractCandidates(holder,
                     holder.getValue(candidate.getTarget()),
                     holder.getDefinition(),
                     extractorRegistry);
@@ -71,23 +71,23 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
         return result;
     }
 
-    protected List<TraversalCandidate> extractCandidates(SourceHolder sourceHolder, Object target,
-                                                         AnnotatedTypeDefinition typeDefinition,
-                                                         ExtractorRegistry extractorRegistry) {
+    protected List<GraphNode> extractCandidates(SourceHolder sourceHolder, Object target,
+                                                AnnotatedTypeDefinition typeDefinition,
+                                                ExtractorRegistry extractorRegistry) {
         AnnotatedTypeValueExtractor valueExtractor = new AnnotatedTypeValueExtractor();
         List<ExtractedTypeValue> extractedValues = valueExtractor.extract(typeDefinition, target, extractorRegistry);
-        List<TraversalCandidate> result = new ArrayList<>();
+        List<GraphNode> result = new ArrayList<>();
 
         for (ExtractedTypeValue extractedValue : extractedValues) {
 
             if (extractedValue.getDefinition().hasDeclaredRules()) {
-                result.add(new TraversalCandidate(extractedValue.getValue(), sourceHolder.copy(extractedValue.getDefinition())));
+                result.add(new GraphNode(extractedValue.getValue(), sourceHolder.copy(extractedValue.getDefinition())));
             } else if (extractedValue.getDefinition().isIntrospectionRequired()) {
                 Object value = extractedValue.getValue();
                 Predicate<Class<?>> classFilter = getClassFilter();
 
                 if (value != null && (classFilter == null || classFilter.test(value.getClass()))) {
-                    result.add(new TraversalCandidate(value, sourceHolder.copy(extractedValue.getDefinition())));
+                    result.add(new GraphNode(value, sourceHolder.copy(extractedValue.getDefinition())));
                 }
             }
         }

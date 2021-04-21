@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.script;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.rules.size.SizeValidationRule;
 
 import java.lang.annotation.Documented;
@@ -49,8 +48,8 @@ public @interface ScriptRule {
         }
 
         @Override
-        public Rule[] build(ScriptRule scriptRule, String bindingName, String path) {
-            ScriptConditionRule rule = new ScriptConditionRule(bindingName, path, scriptRule.value(),
+        public Rule[] build(ScriptRule scriptRule, String bindingName) {
+            ScriptConditionRule rule = new ScriptConditionRule(bindingName, scriptRule.value(),
                     scriptRule.errorCode(), scriptRule.severity(),
                     !NOT_APPLICABLE.equals(scriptRule.message()) ? scriptRule.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(scriptRule.when()) ? scriptRule.when() : null)};

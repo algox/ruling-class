@@ -44,8 +44,8 @@ public @interface Numeric {
         }
 
         @Override
-        public Rule[] build(Numeric numeric, String bindingName, String path) {
-            NumericValidationRule rule = new NumericValidationRule(bindingName, path, numeric.errorCode(),
+        public Rule[] build(Numeric numeric, String bindingName) {
+            NumericValidationRule rule = new NumericValidationRule(bindingName, numeric.errorCode(),
                     numeric.severity(), !NOT_APPLICABLE.equals(numeric.message()) ? numeric.message() : null,
                     numeric.allowSpace());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null)};

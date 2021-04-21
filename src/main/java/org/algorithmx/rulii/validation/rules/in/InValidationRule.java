@@ -23,21 +23,17 @@ public class InValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Object.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.InValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be in one of the given values {2}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be in one of the given values {1}. Given {0}.";
 
     private final Set<?> values;
 
-    public InValidationRule(String bindingName, Set<?> values) {
-        this(bindingName, bindingName, values);
-    }
-
     public InValidationRule(String bindingName, String path, Set<?> values) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, values);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, values);
     }
 
-    public InValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
+    public InValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
                             Set<?> values) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(values, "values cannot be null.");
         this.values = values;
     }

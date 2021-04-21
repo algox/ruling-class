@@ -45,8 +45,8 @@ public @interface Min {
         }
 
         @Override
-        public Rule[] build(Min min, String bindingName, String path) {
-            MinValidationRule rule = new MinValidationRule(bindingName, path, min.errorCode(), min.severity(),
+        public Rule[] build(Min min, String bindingName) {
+            MinValidationRule rule = new MinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null, min.value());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null)};
             return result;

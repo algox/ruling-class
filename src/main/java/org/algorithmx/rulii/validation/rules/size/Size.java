@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.size;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -50,8 +49,8 @@ public @interface Size {
         }
 
         @Override
-        public Rule[] build(Size size, String bindingName, String path) {
-            SizeValidationRule rule = new SizeValidationRule(bindingName, path, size.errorCode(), size.severity(),
+        public Rule[] build(Size size, String bindingName) {
+            SizeValidationRule rule = new SizeValidationRule(bindingName, size.errorCode(), size.severity(),
                     !NOT_APPLICABLE.equals(size.message()) ? size.message() : null,
                     size.min(), size.max());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(size.when()) ? size.when() : null)};

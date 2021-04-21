@@ -21,18 +21,14 @@ public class BlankValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.BlankValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be blank.";
+    public static final String DEFAULT_MESSAGE  = "Value must be blank.";
 
     public BlankValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public BlankValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public BlankValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public BlankValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

@@ -21,18 +21,14 @@ public class UpperCaseValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.UpperCaseValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be all in uppercase. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be all in uppercase. Given {0}.";
 
     public UpperCaseValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public UpperCaseValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public UpperCaseValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public UpperCaseValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

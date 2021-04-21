@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.negative;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,9 +41,9 @@ public @interface Negative {
         }
 
         @Override
-        public Rule[] build(Negative negative, String bindingName, String path) {
-            NegativeValidationRule rule = new NegativeValidationRule(bindingName, path, negative.errorCode(),
-                    negative.severity(),
+        public Rule[] build(Negative negative, String bindingName) {
+            NegativeValidationRule rule = new NegativeValidationRule(bindingName,
+                    negative.errorCode(), negative.severity(),
                     !NOT_APPLICABLE.equals(negative.message()) ? negative.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(negative.when()) ? negative.when() : null)};
             return result;

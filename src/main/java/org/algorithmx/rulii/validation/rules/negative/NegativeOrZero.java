@@ -41,8 +41,8 @@ public @interface NegativeOrZero {
         }
 
         @Override
-        public Rule[] build(NegativeOrZero negativeOrZero, String bindingName, String path) {
-            NegativeOrZeroValidationRule rule = new NegativeOrZeroValidationRule(bindingName, path,
+        public Rule[] build(NegativeOrZero negativeOrZero, String bindingName) {
+            NegativeOrZeroValidationRule rule = new NegativeOrZeroValidationRule(bindingName,
                     negativeOrZero.errorCode(), negativeOrZero.severity(),
                     !NOT_APPLICABLE.equals(negativeOrZero.message()) ? negativeOrZero.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(negativeOrZero.when()) ? negativeOrZero.when() : null)};

@@ -22,8 +22,10 @@ import org.algorithmx.rulii.bind.Binding;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.apache.ClassUtils;
 import org.algorithmx.rulii.lib.spring.core.ParameterNameDiscoverer;
+import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationAttributes;
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.beans.BeanInfo;
@@ -42,6 +44,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -315,5 +318,38 @@ public final class ReflectionUtils {
     public static boolean isJavaCoreClass(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
         return JAVA_CORE_CLASSES.test(clazz);
+    }
+
+    public static String getAnnotationText(Annotation annotation) {
+        Assert.notNull(annotation, "annotation cannot be null.");
+        StringBuilder result = new StringBuilder(annotation.annotationType().getSimpleName() + "(");
+
+        AnnotationAttributes attributes = AnnotationUtils.getAnnotationAttributes(annotation, true, false);
+
+        boolean written = false;
+
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            Object defaultValue = AnnotationUtils.getDefaultValue(annotation, entry.getKey());
+
+            if (!Objects.equals(defaultValue, entry.getValue())) {
+                result.append(written ? ", " : "");
+                result.append(entry.getKey());
+                result.append('=');
+                result.append(valueToString(entry.getValue()));
+                written = true;
+
+            }
+        }
+
+        result.append(")");
+
+        return result.toString();
+    }
+
+    private static String valueToString(Object value) {
+        if (value instanceof Object[]) {
+            return "[" + StringUtils.arrayToDelimitedString((Object[]) value, ", ") + "]";
+        }
+        return String.valueOf(value);
     }
 }

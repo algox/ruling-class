@@ -45,8 +45,8 @@ public @interface StartsWith {
         }
 
         @Override
-        public Rule[] build(StartsWith startsWith, String bindingName, String path) {
-            StartsWithValidationRule rule = new StartsWithValidationRule(bindingName, path, startsWith.errorCode(),
+        public Rule[] build(StartsWith startsWith, String bindingName) {
+            StartsWithValidationRule rule = new StartsWithValidationRule(bindingName, startsWith.errorCode(),
                     startsWith.severity(), !NOT_APPLICABLE.equals(startsWith.message()) ? startsWith.message() : null,
                     startsWith.prefixes());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(startsWith.when()) ? startsWith.when() : null)};

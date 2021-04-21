@@ -20,23 +20,22 @@ package org.algorithmx.rulii.validation.graph;
 
 import org.algorithmx.rulii.validation.beans.SourceHolder;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
-import org.algorithmx.rulii.validation.types.AnnotatedTypeKind;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class TraversalCandidate {
+public class GraphNode {
 
     private static final AtomicInteger count = new AtomicInteger();
 
     private final int id;
     private final Object target;
     private final SourceHolder holder;
-    private TraversalCandidate parent;
+    private GraphNode parent;
 
-    public TraversalCandidate(Object target, SourceHolder holder) {
+    public GraphNode(Object target, SourceHolder holder) {
         super();
         this.id = count.addAndGet(1);
         this.target = target;
@@ -71,7 +70,7 @@ public class TraversalCandidate {
         return getTarget() == null;
     }
 
-    public TraversalCandidate getParent() {
+    public GraphNode getParent() {
         return parent;
     }
 
@@ -79,13 +78,13 @@ public class TraversalCandidate {
         return parent != null;
     }
 
-    void setParent(TraversalCandidate parent) {
+    void setParent(GraphNode parent) {
         this.parent = parent;
     }
 
     public String getPath() {
         List<String> path = new ArrayList<>();
-        TraversalCandidate parent = this;
+        GraphNode parent = this;
 
         while (parent != null) {
             String nodeName = parent.getSourceHolder() != null
@@ -97,12 +96,6 @@ public class TraversalCandidate {
         }
 
         String result = path.stream().collect(Collectors.joining("."));
-
-        // TODO : Fix me
-        if (getTypeDefinition() != null && getTypeDefinition().getParent() != null) {
-            result = result + "<" + getTypeDefinition().getParent().getAnnotatedType().getType().getTypeName() + ">";
-        }
-
         return result;
     }
 

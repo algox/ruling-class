@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.in;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -50,14 +49,14 @@ public @interface InEnum {
         }
 
         @Override
-        public Rule[] build(InEnum in, String bindingName, String path) {
+        public Rule[] build(InEnum in, String bindingName) {
             Set<String> values = new HashSet<>();
 
             for (Enum e : in.value().getEnumConstants()) {
                 values.add(e.name());
             }
 
-            InValidationRule rule = new InValidationRule(bindingName, path, in.errorCode(),
+            InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null)};
             return result;

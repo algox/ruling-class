@@ -97,20 +97,22 @@ public class AnnotatedTypeDefinitionBuilder<T extends List, Set> {
     }
 
     protected AnnotatedWildcardTypeDefinition visit(AnnotatedWildcardType annotatedWildcardType) {
-        List<AnnotatedTypeDefinition> bounds = new ArrayList<>();
+        List<AnnotatedTypeDefinition> lowerbounds = new ArrayList<>();
+        List<AnnotatedTypeDefinition> upperbounds = new ArrayList<>();
 
         for (AnnotatedType type : annotatedWildcardType.getAnnotatedLowerBounds()) {
-            bounds.add(traverseInternal(type));
+            lowerbounds.add(traverseInternal(type));
         }
 
         for (AnnotatedType type : annotatedWildcardType.getAnnotatedUpperBounds()) {
-            bounds.add(traverseInternal(type));
+            upperbounds.add(traverseInternal(type));
         }
 
         return new AnnotatedWildcardTypeDefinition(annotatedWildcardType,
                 extractMarkedAnnotations(annotatedWildcardType),
                 extractIntrospectionAnnotation(annotatedWildcardType),
-                bounds.toArray(new AnnotatedTypeDefinition[bounds.size()]));
+                lowerbounds.toArray(new AnnotatedTypeDefinition[lowerbounds.size()]),
+                upperbounds.toArray(new AnnotatedTypeDefinition[lowerbounds.size()]));
     }
 
     protected AnnotatedTypeVariableDefinition visit(AnnotatedTypeVariable annotatedTypeVariable) {

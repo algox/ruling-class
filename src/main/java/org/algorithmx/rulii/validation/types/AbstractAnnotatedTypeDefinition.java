@@ -19,6 +19,7 @@
 package org.algorithmx.rulii.validation.types;
 
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
@@ -91,6 +92,8 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     }
 
     protected static boolean childrenHaveRuleAnnotations(AnnotatedTypeDefinition...types) {
+        if (types == null) return false;
+
         boolean result = false;
 
         for (AnnotatedTypeDefinition typeArgument : types) {
@@ -111,6 +114,8 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
 
 
     protected static boolean childrenRequireIntrospection(AnnotatedTypeDefinition...types) {
+        if (types == null) return false;
+
         boolean result = false;
 
         for (AnnotatedTypeDefinition typeArgument : types) {
@@ -133,6 +138,25 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     @Override
     public int hashCode() {
         return Objects.hash(annotatedType, kind);
+    }
+
+    @Override
+    public final String getSignature() {
+        return getDeclaredRuleSignature() + getAnnotatedType().getType().toString();
+    }
+
+    protected String getDeclaredRuleSignature() {
+        StringBuilder result = new StringBuilder();
+
+        if (hasDeclaredRules()) {
+            for (MarkedAnnotation annotation : getDeclaredRuleAnnotations()) {
+                if (annotation.getOwner() != null) {
+                    result.append("@" + ReflectionUtils.getAnnotationText(annotation.getOwner()) + " ");
+                }
+            }
+        }
+
+        return result.toString();
     }
 
     @Override

@@ -18,73 +18,90 @@
 
 package org.algorithmx.rulii.validation.types;
 
-import org.algorithmx.rulii.lib.spring.util.Assert;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedWildcardType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class AnnotatedWildcardTypeDefinition extends AbstractAnnotatedTypeDefinition<AnnotatedWildcardType> {
 
-    public enum WildcardType {LOWER, UPPER}
-
-    private final AnnotatedTypeDefinition[] bounds;
-    private final WildcardType wildcardType;
+    private final AnnotatedTypeDefinition[] lowerbounds;
+    private final AnnotatedTypeDefinition[] upperbounds;
 
     public AnnotatedWildcardTypeDefinition(AnnotatedWildcardType annotatedType,
                                            MarkedAnnotation[] ruleAnnotations,
                                            Annotation traversalAnnotation,
-                                           AnnotatedTypeDefinition...bounds) {
+                                           AnnotatedTypeDefinition[] lowerbounds,
+                                           AnnotatedTypeDefinition[] upperbounds) {
         super(annotatedType, AnnotatedTypeKind.WILDCARD_TYPE, ruleAnnotations,
-                traversalAnnotation, childrenHaveRuleAnnotations(bounds),
-                childrenRequireIntrospection(bounds));
-        Assert.notNull(bounds, "bounds cannot be null.");
-        this.wildcardType = deriveWildcardType(annotatedType);
-        this.bounds = bounds;
-        establishParent(this, bounds);
+                traversalAnnotation, childrenHaveRuleAnnotations(lowerbounds)
+                        || childrenHaveRuleAnnotations(upperbounds),
+                childrenRequireIntrospection(lowerbounds)
+                        || childrenRequireIntrospection(upperbounds));
+        this.lowerbounds = lowerbounds != null ? lowerbounds : new AnnotatedTypeDefinition[0];
+        this.upperbounds = upperbounds != null ? upperbounds : new AnnotatedTypeDefinition[0];
+        establishParent(this, this.lowerbounds);
+        establishParent(this, this.upperbounds);
     }
 
-    public WildcardType getWildcardType() {
-        return wildcardType;
+    public AnnotatedTypeDefinition[] getLowerBounds() {
+        return lowerbounds;
     }
 
-    public boolean isLowerBound() {
-        return wildcardType == WildcardType.LOWER;
-    }
-
-    public boolean isUpperBound() {
-        return wildcardType == WildcardType.UPPER;
-    }
-
-    public AnnotatedTypeDefinition[] getBounds() {
-        return bounds;
+    public AnnotatedTypeDefinition[] getUpperBounds() {
+        return upperbounds;
     }
 
     @Override
     public AnnotatedTypeDefinition[] getAllChildren() {
         List<AnnotatedTypeDefinition> result = new ArrayList<>();
-        result.addAll(Arrays.asList(bounds));
+        result.addAll(Arrays.asList(lowerbounds));
+        result.addAll(Arrays.asList(upperbounds));
 
-        Arrays.stream(bounds)
+        result.stream()
                 .filter(b -> b != null)
                 .forEach(b -> result.addAll(Arrays.asList(b.getAllChildren())));
 
         return result.toArray(new AnnotatedTypeDefinition[result.size()]);
     }
 
-    private static WildcardType deriveWildcardType(AnnotatedWildcardType annotatedType) {
-        return annotatedType.getAnnotatedLowerBounds().length > 0
-                ? AnnotatedWildcardTypeDefinition.WildcardType.LOWER
-                : WildcardType.UPPER;
+    private Type[] getBounds(AnnotatedTypeDefinition[] bounds) {
+        return Arrays.stream(bounds)
+                .filter(def -> def != null && def.getAnnotatedType() != null)
+                .map(def -> def.getAnnotatedType().getType())
+                .toArray(Type[]::new);
     }
 
-    @Override
-    public String toString() {
-        return "WildcardTypeDefinition{" +
-                "bounds=" + Arrays.toString(bounds) +
-                ", wildcardType=" + wildcardType +
-                '}';
+    public String getSignatureX() {
+        Type[] lowerBounds = getBounds(getLowerBounds());
+        Type[] bounds = lowerBounds;
+        StringBuilder sb = new StringBuilder();
+
+        if (lowerBounds.length > 0)
+            sb.append("? super ");
+        else {
+            Type[] upperBounds = getBounds(getUpperBounds());
+
+            if (upperBounds.length > 0 && !upperBounds[0].equals(Object.class) ) {
+                bounds = upperBounds;
+                sb.append("? extends ");
+            } else
+                return "?";
+        }
+
+        StringJoiner sj = new StringJoiner(" & ");
+
+        for (Type bound: bounds) {
+            sj.add(bound.getTypeName());
+        }
+
+        sb.append(sj.toString());
+
+        return sb.toString();
     }
+
 }
+

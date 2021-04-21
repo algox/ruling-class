@@ -8,8 +8,6 @@ import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
-import java.util.Set;
-
 /**
  * Validation Rule to make sure the the value must be all in lowercase.
  *
@@ -23,18 +21,14 @@ public class LowerCaseValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.LowerCaseValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be all in lowercase. Given {1}.";
-
-    public LowerCaseValidationRule(String bindingName, Set<?> values) {
-        this(bindingName, bindingName);
-    }
+    public static final String DEFAULT_MESSAGE  = "Value must be all in lowercase. Given {0}.";
 
     public LowerCaseValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public LowerCaseValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public LowerCaseValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

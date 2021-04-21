@@ -47,18 +47,14 @@ public class FutureOrPresentValidationRule extends BindingValidationRule {
             MinguoDate.class, ThaiBuddhistDate.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.FutureOrPresentValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be in the present or in the future. Given {1}. Current clock {2}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be in the present or in the future. Given {0}. Current clock {1}.";
 
     public FutureOrPresentValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public FutureOrPresentValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public FutureOrPresentValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public FutureOrPresentValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

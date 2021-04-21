@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.url;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -50,8 +49,8 @@ public @interface Url {
         }
 
         @Override
-        public Rule[] build(Url url, String bindingName, String path) {
-            UrlValidationRule rule = new UrlValidationRule(bindingName, path, url.errorCode(), url.severity(),
+        public Rule[] build(Url url, String bindingName) {
+            UrlValidationRule rule = new UrlValidationRule(bindingName, url.errorCode(), url.severity(),
                     !NOT_APPLICABLE.equals(url.message()) ? url.message() : null, url.schemes(), url.hostPatterns());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(url.when()) ? url.when() : null)};
             return result;

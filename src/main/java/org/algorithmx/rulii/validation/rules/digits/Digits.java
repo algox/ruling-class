@@ -1,11 +1,10 @@
 package org.algorithmx.rulii.validation.rules.digits;
 
-import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
-import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
-import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
+import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
+import org.algorithmx.rulii.validation.Severity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -56,8 +55,8 @@ public @interface Digits {
         }
 
         @Override
-        public Rule[] build(Digits digits, String bindingName, String path) {
-            DigitsValidationRule rule = new DigitsValidationRule(bindingName, path, digits.errorCode(),
+        public Rule[] build(Digits digits, String bindingName) {
+            DigitsValidationRule rule = new DigitsValidationRule(bindingName, digits.errorCode(),
                     digits.severity(), !NOT_APPLICABLE.equals(digits.message()) ? digits.message() : null,
                     digits.integer(), digits.fraction());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(digits.when()) ? digits.when() : null)};

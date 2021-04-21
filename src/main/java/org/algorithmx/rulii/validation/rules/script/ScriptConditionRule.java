@@ -10,21 +10,17 @@ public class ScriptConditionRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Object.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.ScriptRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "Given Condition {2} on {0} not met. Given value {1}.";
+    public static final String DEFAULT_MESSAGE  = "Script Condition not met. Script {0}.";
 
-    private String scriptCondition;
+    private final String scriptCondition;
 
     public ScriptConditionRule(String bindingName, String scriptCondition) {
-        this(bindingName, bindingName, scriptCondition);
+        this(bindingName, scriptCondition, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public ScriptConditionRule(String bindingName, String path, String scriptCondition) {
-        this(bindingName, path, scriptCondition, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public ScriptConditionRule(String bindingName, String path, String scriptCondition, String errorCode,
+    public ScriptConditionRule(String bindingName, String scriptCondition, String errorCode,
                                Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(scriptCondition, "scriptCondition cannot be null.");
         this.scriptCondition = scriptCondition;
     }
@@ -32,6 +28,11 @@ public class ScriptConditionRule extends BindingValidationRule {
     @Override
     protected boolean isValid(RuleContext context, Object value) {
         return context.getScriptProcessor().evaluateCondition(scriptCondition, context.getBindings());
+    }
+
+    @Override
+    public Object getBindingValue(RuleContext context) {
+        return scriptCondition;
     }
 
     @Override

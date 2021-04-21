@@ -27,22 +27,18 @@ public class SizeValidationRule extends BindingValidationRule {
             int[].class, long[].class, short[].class, Object[].class, Collection.class, Map.class, CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.SizeValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be between {2} and {3}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be between {1} and {2}. Given {0}.";
 
     private final int min;
     private final int max;
 
     public SizeValidationRule(String bindingName, int min, int max) {
-        this(bindingName, bindingName, min, max);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, min, max);
     }
 
-    public SizeValidationRule(String bindingName, String path, int min, int max) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, min, max);
-    }
-
-    public SizeValidationRule(String bindingName, String path, String errorCode, Severity severity,
+    public SizeValidationRule(String bindingName, String errorCode, Severity severity,
                               String errorMessage, int min, int max) {
-        super(bindingName, path, errorCode, severity, errorMessage);
+        super(bindingName, errorCode, severity, errorMessage);
         Assert.isTrue(min >= 0, "min >= 0");
         Assert.isTrue(max >= 0, "max >= 0");
         Assert.isTrue(max >= min, "max >= min");

@@ -22,18 +22,14 @@ public class ExistsValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {File.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.ExistsValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} file must exist.";
+    public static final String DEFAULT_MESSAGE  = "File must exist.";
 
     public ExistsValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public ExistsValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public ExistsValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public ExistsValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

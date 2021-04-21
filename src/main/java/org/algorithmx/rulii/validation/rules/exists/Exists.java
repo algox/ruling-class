@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.exists;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,8 +41,8 @@ public @interface Exists {
         }
 
         @Override
-        public Rule[] build(Exists exists, String bindingName, String path) {
-            ExistsValidationRule rule = new ExistsValidationRule(bindingName, path, exists.errorCode(),
+        public Rule[] build(Exists exists, String bindingName) {
+            ExistsValidationRule rule = new ExistsValidationRule(bindingName, exists.errorCode(),
                     exists.severity(), !NOT_APPLICABLE.equals(exists.message()) ? exists.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null)};
             return result;

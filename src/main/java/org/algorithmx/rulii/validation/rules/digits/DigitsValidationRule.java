@@ -24,22 +24,18 @@ public class DigitsValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Number.class, CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.DigitsValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must have at most {2} integral digits and {3} fraction digits. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must have at most {1} integral digits and {2} fraction digits. Given {0}.";
 
     private final int maxIntegerLength;
     private final int maxFractionLength;
 
     public DigitsValidationRule(String bindingName, int maxIntegerLength, int maxFractionLength) {
-        this(bindingName, bindingName, maxIntegerLength, maxFractionLength);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, maxIntegerLength, maxFractionLength);
     }
 
-    public DigitsValidationRule(String bindingName, String path, int maxIntegerLength, int maxFractionLength) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, maxIntegerLength, maxFractionLength);
-    }
-
-    public DigitsValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage,
+    public DigitsValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage,
                                 int maxIntegerLength, int maxFractionLength) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.maxIntegerLength = maxIntegerLength;
         this.maxFractionLength = maxFractionLength;
     }

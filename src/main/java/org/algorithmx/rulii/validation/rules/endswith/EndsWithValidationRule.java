@@ -24,20 +24,16 @@ public class EndsWithValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.EndsWithValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must end with one of the given suffixes {2}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must end with one of the given suffixes {1}. Given {0}.";
 
     private String[] suffixes;
 
     public EndsWithValidationRule(String bindingName, String...suffixes) {
-        this(bindingName, bindingName, suffixes);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, suffixes);
     }
 
-    public EndsWithValidationRule(String bindingName, String path, String...suffixes) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, suffixes);
-    }
-
-    public EndsWithValidationRule(String bindingName, String path, String errorCode, Severity severity, String errorMessage, String...suffixes) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+    public EndsWithValidationRule(String bindingName, String errorCode, Severity severity, String errorMessage, String...suffixes) {
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         Assert.notNull(suffixes, "suffixes cannot be null.");
         this.suffixes = suffixes;
     }

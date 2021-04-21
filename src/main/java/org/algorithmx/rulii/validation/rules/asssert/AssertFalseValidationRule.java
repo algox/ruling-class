@@ -20,19 +20,15 @@ public class AssertFalseValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {boolean.class, Boolean.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.AssertFalseValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be false.";
-
-    public AssertFalseValidationRule(String bindingName) {
-        this(bindingName, bindingName);
-    }
+    public static final String DEFAULT_MESSAGE  = "Value must be false.";
 
     public AssertFalseValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public AssertFalseValidationRule(String bindingName, String path, String errorCode,
+    public AssertFalseValidationRule(String bindingName, String errorCode,
                                      Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

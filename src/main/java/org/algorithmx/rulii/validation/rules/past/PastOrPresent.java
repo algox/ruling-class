@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.past;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,8 +41,8 @@ public @interface PastOrPresent {
         }
 
         @Override
-        public Rule[] build(PastOrPresent pastOrPresent, String bindingName, String path) {
-            PastOrPresentValidationRule rule = new PastOrPresentValidationRule(bindingName, path, pastOrPresent.errorCode(),
+        public Rule[] build(PastOrPresent pastOrPresent, String bindingName) {
+            PastOrPresentValidationRule rule = new PastOrPresentValidationRule(bindingName, pastOrPresent.errorCode(),
                     pastOrPresent.severity(), !NOT_APPLICABLE.equals(pastOrPresent.message()) ? pastOrPresent.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pastOrPresent.when()) ? pastOrPresent.when() : null)};
             return result;

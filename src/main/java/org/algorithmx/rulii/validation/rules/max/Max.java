@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.max;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -44,8 +43,8 @@ public @interface Max {
         }
 
         @Override
-        public Rule[] build(Max max, String bindingName, String path) {
-            MaxValidationRule rule = new MaxValidationRule(bindingName, path, max.errorCode(), max.severity(),
+        public Rule[] build(Max max, String bindingName) {
+            MaxValidationRule rule = new MaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null, max.value());
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null)};
             return result;

@@ -1,15 +1,11 @@
 package org.algorithmx.rulii.validation.rules.past;
 
 import org.algorithmx.rulii.annotation.Description;
-import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.Rule;
-import org.algorithmx.rulii.bind.match.MatchByTypeMatchingStrategy;
 import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.util.TimeComparator;
 import org.algorithmx.rulii.validation.BindingValidationRule;
 import org.algorithmx.rulii.validation.RuleViolationBuilder;
-import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
 
@@ -47,19 +43,15 @@ public class PastOrPresentValidationRule extends BindingValidationRule {
             MinguoDate.class, ThaiBuddhistDate.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.PastOrPresentValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be in the present or in the past. Given {1}. Current clock {2}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be in the present or in the past. Given {0}. Current clock {1}.";
 
     public PastOrPresentValidationRule(String bindingName) {
-        this(bindingName, bindingName);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null);
     }
 
-    public PastOrPresentValidationRule(String bindingName, String path) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null);
-    }
-
-    public PastOrPresentValidationRule(String bindingName, String path, String errorCode,
+    public PastOrPresentValidationRule(String bindingName, String errorCode,
                                        Severity severity, String errorMessage) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
     }
 
     @Override

@@ -77,8 +77,12 @@ public class AnnotatedTypeValueExtractor {
 
     public void visit(AnnotatedWildcardTypeDefinition definition, Object object, ExtractorRegistry extractorRegistry,
                       List<ExtractedTypeValue> extractedValues) {
-        for (int i = 0; i < definition.getBounds().length; i++) {
-            extractAndProcess(object, i, definition.getBounds()[i], extractorRegistry, extractedValues);
+        for (int i = 0; i < definition.getLowerBounds().length; i++) {
+            extractAndProcess(object, i, definition.getLowerBounds()[i], extractorRegistry, extractedValues);
+        }
+
+        for (int i = 0; i < definition.getUpperBounds().length; i++) {
+            extractAndProcess(object, i, definition.getUpperBounds()[i], extractorRegistry, extractedValues);
         }
     }
 

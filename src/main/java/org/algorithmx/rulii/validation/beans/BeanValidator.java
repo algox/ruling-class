@@ -34,8 +34,8 @@ import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.RuleViolations;
 import org.algorithmx.rulii.validation.graph.AbstractObjectVisitor;
+import org.algorithmx.rulii.validation.graph.GraphNode;
 import org.algorithmx.rulii.validation.graph.ObjectGraph;
-import org.algorithmx.rulii.validation.graph.TraversalCandidate;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 import org.algorithmx.rulii.validation.types.MarkedAnnotation;
 
@@ -75,7 +75,7 @@ public class BeanValidator extends AbstractObjectVisitor {
 
         Bindings rootBeanScope = createRootBeanScope(bean, violations);
         context.getBindings().addScope("rootBeanScope", rootBeanScope);
-        TraversalCandidate candidate = new TraversalCandidate(bean, source);
+        GraphNode candidate = new GraphNode(bean, source);
 
         try {
             ObjectGraph graph = new ObjectGraph();
@@ -98,15 +98,15 @@ public class BeanValidator extends AbstractObjectVisitor {
         return Validate.class;
     }
 
-    public boolean isIntrospectionRequired(TraversalCandidate candidate) {
+    public boolean isIntrospectionRequired(GraphNode candidate) {
         if (candidate.getTypeDefinition() == null) return true;
         Validate validate = (Validate) candidate.getTypeDefinition().getIntrospectionAnnotation();
         return validate != null && (validate.includeAnnotatedRules() || StringUtils.hasText(validate.using()));
     }
 
     @Override
-    public Collection<TraversalCandidate> visitCandidate(TraversalCandidate candidate) {
-        List<TraversalCandidate> result = Collections.emptyList();
+    public Collection<GraphNode> visitCandidate(GraphNode candidate) {
+        List<GraphNode> result = Collections.emptyList();
         Bindings beanScope = null;
 
         try {
@@ -186,7 +186,7 @@ public class BeanValidator extends AbstractObjectVisitor {
             }
 
             AnnotatedRunnableBuilder builder = objectFactory.create(validationRule.value(), false);
-            Runnable[] runnables = builder.build(marker.getOwner(), bindingName, path);
+            Runnable[] runnables = builder.build(marker.getOwner(), bindingName);
 
             if (runnables != null) {
                 result.add(runnables);
@@ -222,12 +222,12 @@ public class BeanValidator extends AbstractObjectVisitor {
         return result;
     }
 
-    protected void decorateAndTransferViolations(RuleViolations source, RuleViolations target, TraversalCandidate candidate) {
+    protected void decorateAndTransferViolations(RuleViolations source, RuleViolations target, GraphNode candidate) {
         if (source != null && source.size() > 0) {
             Arrays.stream(source.getViolations())
                     .forEach(v -> {
                         v.param("field", candidate.getPath());
-                        //v.param("type", candidate.getTypeDefinition().getAnnotatedType().getType().toString());
+                        v.param("description", candidate.getTypeDefinition().getSignature());
                         target.add(v);
                     });
         }

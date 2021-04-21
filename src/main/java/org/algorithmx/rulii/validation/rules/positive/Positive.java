@@ -1,10 +1,9 @@
 package org.algorithmx.rulii.validation.rules.positive;
 
+import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
-import org.algorithmx.rulii.core.rule.RuleBuilder;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
-import org.algorithmx.rulii.annotation.ValidationMarker;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,8 +41,8 @@ public @interface Positive {
         }
 
         @Override
-        public Rule[] build(Positive positive, String bindingName, String path) {
-            PositiveValidationRule rule = new PositiveValidationRule(bindingName, path, positive.errorCode(),
+        public Rule[] build(Positive positive, String bindingName) {
+            PositiveValidationRule rule = new PositiveValidationRule(bindingName, positive.errorCode(),
                     positive.severity(), !NOT_APPLICABLE.equals(positive.message()) ? positive.message() : null);
             Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(positive.when()) ? positive.when() : null)};
             return result;

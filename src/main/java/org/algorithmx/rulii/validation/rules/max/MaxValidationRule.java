@@ -41,21 +41,17 @@ public class MaxValidationRule extends BindingValidationRule {
     public static Class<?>[] SUPPORTED_TYPES    = {Number.class, CharSequence.class};
 
     public static final String ERROR_CODE       = "rulii.validation.rules.MaxValidationRule.errorCode";
-    public static final String DEFAULT_MESSAGE  = "{0} must be less than or equal to {2}. Given {1}.";
+    public static final String DEFAULT_MESSAGE  = "Value must be less than or equal to {1}. Given {0}.";
 
     private final long max;
 
     public MaxValidationRule(String bindingName, long max) {
-        this(bindingName, bindingName, max);
+        this(bindingName, ERROR_CODE, Severity.ERROR, null, max);
     }
 
-    public MaxValidationRule(String bindingName, String path, long max) {
-        this(bindingName, path, ERROR_CODE, Severity.ERROR, null, max);
-    }
-
-    public MaxValidationRule(String bindingName, String path, String errorCode, Severity severity,
+    public MaxValidationRule(String bindingName, String errorCode, Severity severity,
                              String errorMessage, long max) {
-        super(bindingName, path, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
+        super(bindingName, errorCode, severity, errorMessage, DEFAULT_MESSAGE);
         this.max = max;
     }
 
