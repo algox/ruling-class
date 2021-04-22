@@ -41,11 +41,10 @@ public @interface Exists {
         }
 
         @Override
-        public Rule[] build(Exists exists, String bindingName) {
+        public Rule build(Exists exists, String bindingName) {
             ExistsValidationRule rule = new ExistsValidationRule(bindingName, exists.errorCode(),
                     exists.severity(), !NOT_APPLICABLE.equals(exists.message()) ? exists.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null);
         }
     }
 }

@@ -48,12 +48,11 @@ public @interface ScriptRule {
         }
 
         @Override
-        public Rule[] build(ScriptRule scriptRule, String bindingName) {
+        public Rule build(ScriptRule scriptRule, String bindingName) {
             ScriptConditionRule rule = new ScriptConditionRule(bindingName, scriptRule.value(),
                     scriptRule.errorCode(), scriptRule.severity(),
                     !NOT_APPLICABLE.equals(scriptRule.message()) ? scriptRule.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(scriptRule.when()) ? scriptRule.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(scriptRule.when()) ? scriptRule.when() : null);
         }
     }
 

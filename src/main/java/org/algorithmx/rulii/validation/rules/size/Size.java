@@ -49,12 +49,11 @@ public @interface Size {
         }
 
         @Override
-        public Rule[] build(Size size, String bindingName) {
+        public Rule build(Size size, String bindingName) {
             SizeValidationRule rule = new SizeValidationRule(bindingName, size.errorCode(), size.severity(),
                     !NOT_APPLICABLE.equals(size.message()) ? size.message() : null,
                     size.min(), size.max());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(size.when()) ? size.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(size.when()) ? size.when() : null);
         }
     }
 

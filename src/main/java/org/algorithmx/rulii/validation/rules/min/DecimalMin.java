@@ -47,12 +47,11 @@ public @interface DecimalMin {
         }
 
         @Override
-        public Rule[] build(DecimalMin min, String bindingName) {
+        public Rule build(DecimalMin min, String bindingName) {
             DecimalMinValidationRule rule = new DecimalMinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null,
                     BigDecimal.valueOf(min.value()), min.inclusive());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null);
         }
     }
 }

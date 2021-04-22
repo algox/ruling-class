@@ -44,12 +44,11 @@ public @interface EndsWith {
         }
 
         @Override
-        public Rule[] build(EndsWith endsWith, String bindingName) {
+        public Rule build(EndsWith endsWith, String bindingName) {
             EndsWithValidationRule rule = new EndsWithValidationRule(bindingName, endsWith.errorCode(),
                     endsWith.severity(), !NOT_APPLICABLE.equals(endsWith.message()) ? endsWith.message() : null,
                     endsWith.suffixes());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(endsWith.when()) ? endsWith.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(endsWith.when()) ? endsWith.when() : null);
         }
     }
 }

@@ -42,11 +42,10 @@ public @interface NotNull {
         }
 
         @Override
-        public Rule[] build(NotNull notNull, String bindingName) {
+        public Rule build(NotNull notNull, String bindingName) {
             NotNullValidationRule rule = new NotNullValidationRule(bindingName, notNull.errorCode(),
                     notNull.severity(), !NOT_APPLICABLE.equals(notNull.message()) ? notNull.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notNull.when()) ? notNull.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(notNull.when()) ? notNull.when() : null);
         }
     }
 }

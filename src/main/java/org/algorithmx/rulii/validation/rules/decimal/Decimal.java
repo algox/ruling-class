@@ -44,12 +44,11 @@ public @interface Decimal {
         }
 
         @Override
-        public Rule[] build(Decimal decimal, String bindingName) {
+        public Rule build(Decimal decimal, String bindingName) {
             DecimalValidationRule rule = new DecimalValidationRule(bindingName, decimal.errorCode(),
                     decimal.severity(), !NOT_APPLICABLE.equals(decimal.message()) ? decimal.message() : null,
                     decimal.allowSpace());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(decimal.when()) ? decimal.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(decimal.when()) ? decimal.when() : null);
         }
     }
 }

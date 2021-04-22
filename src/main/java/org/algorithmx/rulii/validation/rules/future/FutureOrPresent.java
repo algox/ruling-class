@@ -41,12 +41,11 @@ public @interface FutureOrPresent {
         }
 
         @Override
-        public Rule[] build(FutureOrPresent futureOrPresent, String bindingName) {
+        public Rule build(FutureOrPresent futureOrPresent, String bindingName) {
             FutureOrPresentValidationRule rule = new FutureOrPresentValidationRule(bindingName,
                     futureOrPresent.errorCode(), futureOrPresent.severity(),
                     !NOT_APPLICABLE.equals(futureOrPresent.message()) ? futureOrPresent.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(futureOrPresent.when()) ? futureOrPresent.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(futureOrPresent.when()) ? futureOrPresent.when() : null);
         }
     }
 }

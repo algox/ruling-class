@@ -142,7 +142,7 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
 
     @Override
     public final String getSignature() {
-        return getDeclaredRuleSignature() + getAnnotatedType().getType().toString();
+        return "<" + getDeclaredRuleSignature() + getAnnotatedType().getType().toString() + ">";
     }
 
     protected String getDeclaredRuleSignature() {

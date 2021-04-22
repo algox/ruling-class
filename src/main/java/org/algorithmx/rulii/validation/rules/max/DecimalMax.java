@@ -47,12 +47,11 @@ public @interface DecimalMax {
         }
 
         @Override
-        public Rule[] build(DecimalMax max, String bindingName) {
+        public Rule build(DecimalMax max, String bindingName) {
             DecimalMaxValidationRule rule = new DecimalMaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null,
                     BigDecimal.valueOf(max.value()), max.inclusive());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null);
         }
     }
 }

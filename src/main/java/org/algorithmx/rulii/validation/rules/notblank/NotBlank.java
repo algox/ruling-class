@@ -41,11 +41,10 @@ public @interface NotBlank {
         }
 
         @Override
-        public Rule[] build(NotBlank notBlank, String bindingName) {
+        public Rule build(NotBlank notBlank, String bindingName) {
             NotBlankValidationRule rule = new NotBlankValidationRule(bindingName, notBlank.errorCode(),
                     notBlank.severity(), !NOT_APPLICABLE.equals(notBlank.message()) ? notBlank.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(notBlank.when()) ? notBlank.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(notBlank.when()) ? notBlank.when() : null);
         }
     }
 }

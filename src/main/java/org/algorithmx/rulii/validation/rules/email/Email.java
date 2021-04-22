@@ -45,12 +45,11 @@ public @interface Email {
         }
 
         @Override
-        public Rule[] build(Email email, String bindingName) {
+        public Rule build(Email email, String bindingName) {
             EmailValidationRule rule = new EmailValidationRule(bindingName, email.errorCode(),
                     email.severity(), !NOT_APPLICABLE.equals(email.message()) ? email.message() : null,
                     email.allowLocal(), email.allowTopLevelDomain());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(email.when()) ? email.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(email.when()) ? email.when() : null);
         }
     }
 }

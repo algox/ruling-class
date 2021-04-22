@@ -49,11 +49,10 @@ public @interface Url {
         }
 
         @Override
-        public Rule[] build(Url url, String bindingName) {
+        public Rule build(Url url, String bindingName) {
             UrlValidationRule rule = new UrlValidationRule(bindingName, url.errorCode(), url.severity(),
                     !NOT_APPLICABLE.equals(url.message()) ? url.message() : null, url.schemes(), url.hostPatterns());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(url.when()) ? url.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(url.when()) ? url.when() : null);
         }
     }
 

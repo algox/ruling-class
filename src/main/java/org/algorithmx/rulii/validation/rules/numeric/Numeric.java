@@ -44,12 +44,11 @@ public @interface Numeric {
         }
 
         @Override
-        public Rule[] build(Numeric numeric, String bindingName) {
+        public Rule build(Numeric numeric, String bindingName) {
             NumericValidationRule rule = new NumericValidationRule(bindingName, numeric.errorCode(),
                     numeric.severity(), !NOT_APPLICABLE.equals(numeric.message()) ? numeric.message() : null,
                     numeric.allowSpace());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null);
         }
     }
 }

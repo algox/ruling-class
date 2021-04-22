@@ -43,11 +43,10 @@ public @interface Max {
         }
 
         @Override
-        public Rule[] build(Max max, String bindingName) {
+        public Rule build(Max max, String bindingName) {
             MaxValidationRule rule = new MaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null, max.value());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null);
         }
     }
 }

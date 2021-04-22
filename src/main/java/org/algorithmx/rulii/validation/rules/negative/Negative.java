@@ -41,12 +41,11 @@ public @interface Negative {
         }
 
         @Override
-        public Rule[] build(Negative negative, String bindingName) {
+        public Rule build(Negative negative, String bindingName) {
             NegativeValidationRule rule = new NegativeValidationRule(bindingName,
                     negative.errorCode(), negative.severity(),
                     !NOT_APPLICABLE.equals(negative.message()) ? negative.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(negative.when()) ? negative.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(negative.when()) ? negative.when() : null);
         }
     }
 }

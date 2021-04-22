@@ -41,11 +41,10 @@ public @interface Past {
         }
 
         @Override
-        public Rule[] build(Past past, String bindingName) {
+        public Rule build(Past past, String bindingName) {
             PastValidationRule rule = new PastValidationRule(bindingName, past.errorCode(), past.severity(),
                     !NOT_APPLICABLE.equals(past.message()) ? past.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(past.when()) ? past.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(past.when()) ? past.when() : null);
         }
     }
 }

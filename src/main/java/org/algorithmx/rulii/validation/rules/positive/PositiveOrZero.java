@@ -41,12 +41,11 @@ public @interface PositiveOrZero {
         }
 
         @Override
-        public Rule[] build(PositiveOrZero positiveOrZero, String bindingName) {
+        public Rule build(PositiveOrZero positiveOrZero, String bindingName) {
             PositiveOrZeroValidationRule rule = new PositiveOrZeroValidationRule(bindingName,
                     positiveOrZero.errorCode(), positiveOrZero.severity(),
                     !NOT_APPLICABLE.equals(positiveOrZero.message()) ? positiveOrZero.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(positiveOrZero.when()) ? positiveOrZero.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(positiveOrZero.when()) ? positiveOrZero.when() : null);
         }
     }
 }

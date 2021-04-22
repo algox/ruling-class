@@ -52,12 +52,11 @@ public @interface Pattern {
         }
 
         @Override
-        public Rule[] build(Pattern pattern, String bindingName) {
+        public Rule build(Pattern pattern, String bindingName) {
             PatternValidationRule rule = new PatternValidationRule(bindingName, pattern.errorCode(), pattern.severity(),
                     !NOT_APPLICABLE.equals(pattern.message()) ? pattern.message() : null,
                     pattern.caseSensitive(), pattern.regex());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(pattern.when()) ? pattern.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(pattern.when()) ? pattern.when() : null);
         }
     }
 

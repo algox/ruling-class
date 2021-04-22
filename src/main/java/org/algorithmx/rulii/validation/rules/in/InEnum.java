@@ -49,7 +49,7 @@ public @interface InEnum {
         }
 
         @Override
-        public Rule[] build(InEnum in, String bindingName) {
+        public Rule build(InEnum in, String bindingName) {
             Set<String> values = new HashSet<>();
 
             for (Enum e : in.value().getEnumConstants()) {
@@ -58,8 +58,7 @@ public @interface InEnum {
 
             InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null);
         }
     }
 

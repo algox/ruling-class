@@ -41,11 +41,10 @@ public @interface Positive {
         }
 
         @Override
-        public Rule[] build(Positive positive, String bindingName) {
+        public Rule build(Positive positive, String bindingName) {
             PositiveValidationRule rule = new PositiveValidationRule(bindingName, positive.errorCode(),
                     positive.severity(), !NOT_APPLICABLE.equals(positive.message()) ? positive.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(positive.when()) ? positive.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(positive.when()) ? positive.when() : null);
         }
     }
 }

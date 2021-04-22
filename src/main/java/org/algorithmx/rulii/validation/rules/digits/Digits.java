@@ -55,12 +55,11 @@ public @interface Digits {
         }
 
         @Override
-        public Rule[] build(Digits digits, String bindingName) {
+        public Rule build(Digits digits, String bindingName) {
             DigitsValidationRule rule = new DigitsValidationRule(bindingName, digits.errorCode(),
                     digits.severity(), !NOT_APPLICABLE.equals(digits.message()) ? digits.message() : null,
                     digits.integer(), digits.fraction());
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(digits.when()) ? digits.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(digits.when()) ? digits.when() : null);
         }
     }
 

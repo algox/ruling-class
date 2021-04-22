@@ -41,12 +41,11 @@ public @interface Null {
         }
 
         @Override
-        public Rule[] build(Null nullAnnotation, String bindingName) {
+        public Rule build(Null nullAnnotation, String bindingName) {
             NullValidationRule rule = new NullValidationRule(bindingName, nullAnnotation.errorCode(),
                     nullAnnotation.severity(),
                     !NOT_APPLICABLE.equals(nullAnnotation.message()) ? nullAnnotation.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null);
         }
     }
 }

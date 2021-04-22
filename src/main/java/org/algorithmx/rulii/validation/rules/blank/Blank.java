@@ -41,11 +41,10 @@ public @interface Blank {
         }
 
         @Override
-        public Rule[] build(Blank blank, String bindingName) {
+        public Rule build(Blank blank, String bindingName) {
             BlankValidationRule rule = new BlankValidationRule(bindingName, blank.errorCode(),
                     blank.severity(), !NOT_APPLICABLE.equals(blank.message()) ? blank.message() : null);
-            Rule[] result = {buildRule(rule, !NOT_APPLICABLE.equals(blank.when()) ? blank.when() : null)};
-            return result;
+            return buildRule(rule, !NOT_APPLICABLE.equals(blank.when()) ? blank.when() : null);
         }
     }
 }
