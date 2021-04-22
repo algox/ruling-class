@@ -33,7 +33,7 @@ public interface AnnotatedRunnableBuilder<T extends Annotation> {
 
         if (when != null) {
             return RuleBuilder
-                    .withTarget(target)
+                    .with(target)
                     .preCondition(ConditionBuilder.build(when))
                     .build();
         }

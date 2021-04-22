@@ -17,11 +17,9 @@
  */
 package org.algorithmx.rulii.validation;
 
-import org.algorithmx.rulii.bind.Binding;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -73,38 +71,6 @@ public class RuleViolations implements Iterable<RuleViolation> {
     public RuleViolation add(String ruleName, String errorCode, Severity severity, String errorMessage) {
         RuleViolation result = new RuleViolation(ruleName, errorCode, severity, errorMessage);
         errors.add(result);
-        return result;
-    }
-
-    /**
-     * Adds a new violation with the given name, error code and the parameters.
-     *
-     * @param ruleName rule name.
-     * @param errorCode error code.
-     * @param params rule parameters.
-     * @return newly created violation.
-     */
-    public RuleViolation add(String ruleName, String errorCode, Binding<Object>...params) {
-        return add(ruleName, errorCode, Severity.ERROR, null, params);
-    }
-
-    /**
-     * Adds a new violation with the given name, error code, error message and the parameters.
-     *
-     * @param ruleName rule name.
-     * @param errorCode error code.
-     * @param severity severity of the error.
-     * @param errorMessage error message.
-     * @param params rule parameters.
-     * @return newly created violation.
-     */
-    public RuleViolation add(String ruleName, String errorCode, Severity severity, String errorMessage, Binding<Object>...params) {
-        RuleViolation result = add(ruleName, errorCode, severity, errorMessage);
-
-        if (params != null) {
-            Arrays.stream(params).forEach(binding -> result.param(binding.getName(), binding.getTextValue()));
-        }
-
         return result;
     }
 

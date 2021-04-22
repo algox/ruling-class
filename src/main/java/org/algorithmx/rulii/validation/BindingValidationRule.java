@@ -49,7 +49,7 @@ public abstract class BindingValidationRule extends ValidationRule {
         RuleViolationBuilder builder = createRuleViolationBuilder()
                 .param("value", value);
         customizeViolation(context, builder);
-        violations.add(builder.build(context));
+        violations.add(builder.build(context.getMessageResolver(), context.getMessageFormatter(), context.getLocale()));
     }
 
     protected abstract boolean isValid(RuleContext context, Object value);

@@ -40,13 +40,13 @@ public abstract class RuleBuilder {
         return with(ruleClass).build();
     }
 
-    public static <T> ClassBasedRuleBuilder<T> withTarget(T ruleTarget) {
+    public static <T> ClassBasedRuleBuilder<T> with(T ruleTarget) {
         Assert.notNull(ruleTarget, "ruleTargetCannot be null");
         return ClassBasedRuleBuilder.with((Class<T>) ruleTarget.getClass(), ruleTarget);
     }
 
     public static <T> Rule<T> build(T ruleTarget) {
-        return withTarget(ruleTarget).build();
+        return with(ruleTarget).build();
     }
 
     public static <T> ClassBasedRuleBuilder<T> with(Class<T> ruleClass, ObjectFactory objectFactory) {

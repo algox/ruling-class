@@ -58,15 +58,6 @@ public class UrlValidationRule extends BindingValidationRule {
         return validator.isValid(value.toString());
     }
 
-    @Otherwise
-    public void otherwise(RuleContext context, @Match(using = MatchByTypeMatchingStrategy.class) RuleViolations errors) {
-        Object value = getBindingValue(context);
-        RuleViolationBuilder builder = createRuleViolationBuilder()
-                .param("bindingName", getBindingName())
-                .param(getBindingName(), value);
-        errors.add(builder.build(context));
-    }
-
     public String[] getSchemes() {
         return schemes;
     }

@@ -108,43 +108,43 @@ public class AbstractRuleBuilder<T> {
         return this;
     }
 
-    public RuleDefinition getRuleDefinition() {
+    protected RuleDefinition getRuleDefinition() {
         return ruleDefinition;
     }
 
-    public Class<T> getRuleClass() {
+    protected Class<T> getRuleClass() {
         return ruleClass;
     }
 
-    public String getName() {
+    protected String getName() {
         return name;
     }
 
-    public String getDescription() {
+    protected String getDescription() {
         return description;
     }
 
-    public Integer getOrder() {
+    protected Integer getOrder() {
         return order;
     }
 
-    public Condition getPreCondition() {
+    protected Condition getPreCondition() {
         return preCondition;
     }
 
-    public Condition getCondition() {
+    protected Condition getCondition() {
         return condition;
     }
 
-    public List<Action> getThenActions() {
+    protected List<Action> getThenActions() {
         return thenActions;
     }
 
-    public Action getOtherwiseAction() {
+    protected Action getOtherwiseAction() {
         return otherwiseAction;
     }
 
-    public T getTarget() {
+    protected T getTarget() {
         return target;
     }
 

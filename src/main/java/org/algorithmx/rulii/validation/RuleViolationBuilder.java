@@ -1,16 +1,11 @@
 package org.algorithmx.rulii.validation;
 
-import org.algorithmx.rulii.bind.Binding;
-import org.algorithmx.rulii.bind.match.ParameterMatch;
-import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.text.ParameterInfo;
-import org.algorithmx.rulii.validation.RuleViolation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,41 +58,8 @@ public class RuleViolationBuilder {
         return this;
     }
 
-    public RuleViolationBuilder param(Object value) {
-        params.add(new ParameterInfo(params.size(), null, value));
-        return this;
-    }
-
     public RuleViolationBuilder param(String name, Object value) {
         params.add(new ParameterInfo(params.size(), name, value));
-        return this;
-    }
-
-    public RuleViolationBuilder param(Binding binding) {
-        Assert.notNull(binding, "binding cannot be null.");
-        params.add(new ParameterInfo(params.size(), binding.getName(), binding.getValue()));
-        return this;
-    }
-
-    public RuleViolationBuilder param(ParameterInfo parameter) {
-        Assert.notNull(parameter, "parameter cannot be null.");
-        return param(parameter.getName(), parameter.getValue());
-    }
-
-    public RuleViolationBuilder params(ParameterInfo...parameters) {
-        Assert.notNull(parameters, "parameters cannot be null.");
-        Arrays.stream(parameters).forEach(p -> param(p));
-        return this;
-    }
-
-    public RuleViolationBuilder param(ParameterMatch match) {
-        Assert.notNull(match, "match cannot be null.");
-        return param(match.getDefinition().getName(), match.getBinding() != null ? match.getBinding().getValue() : null);
-    }
-
-    public RuleViolationBuilder params(ParameterMatch...matches) {
-        Assert.notNull(matches, "matches cannot be null.");
-        Arrays.stream(matches).forEach(m -> param(m));
         return this;
     }
 
@@ -106,15 +68,12 @@ public class RuleViolationBuilder {
         return this;
     }
 
-    public RuleViolation build(RuleContext context) {
-        return build(context.getMessageResolver(), context.getMessageFormatter(), context.getLocale());
+    public RuleViolation build() {
+        return build(null, null , null);
     }
 
     public RuleViolation build(MessageResolver messageResolver, MessageFormatter messageFormatter, Locale locale) {
-        Assert.notNull(messageResolver, "messageResolver cannot be null.");
-        Assert.notNull(messageFormatter, "messageFormatter cannot be null.");
-
-        String message = resolveErrorMessage(messageResolver, locale);
+        String message = messageResolver != null ? resolveErrorMessage(messageResolver, locale) : null;
         RuleViolation result = new RuleViolation(ruleName, errorCode, severity,
                 message != null
                         ? messageFormatter.format(locale, message, params.toArray(new ParameterInfo[params.size()]))
