@@ -21,6 +21,7 @@ package org.algorithmx.rulii.core.ruleset;
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.action.Action;
 import org.algorithmx.rulii.core.condition.Condition;
+import org.algorithmx.rulii.core.condition.ConditionBuilder;
 import org.algorithmx.rulii.core.model.Definition;
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.lib.spring.util.Assert;
@@ -194,6 +195,36 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder actions(int index, Collection<? extends Action> actions) {
         return addAllInternal(index, actions);
+    }
+
+    public RuleSetBuilder or(Collection<Rule> rules) {
+        Assert.notNull(rules, "rules cannot be null");
+        RuleSet orRules = RuleSetBuilder.with("orRules")
+                .add(rules)
+                .stopCondition(ConditionBuilder.with((RuleSetResult ruleSetResult) -> ruleSetResult.isAnyPass()).build())
+                .build();
+        rules(orRules);
+        return this;
+    }
+
+    public RuleSetBuilder or(Rule...rules) {
+        Assert.notNull(rules, "rules cannot be null");
+        return or(Arrays.asList(rules));
+    }
+
+    public RuleSetBuilder and(Collection<Rule> rules) {
+        Assert.notNull(rules, "rules cannot be null");
+        RuleSet andRules = RuleSetBuilder.with("andRules")
+                .add(rules)
+                .stopCondition(ConditionBuilder.with((RuleSetResult ruleSetResult) -> ruleSetResult.isAnyFail()).build())
+                .build();
+        rules(andRules);
+        return this;
+    }
+
+    public RuleSetBuilder and(Rule...rules) {
+        Assert.notNull(rules, "rules cannot be null");
+        return and(Arrays.asList(rules));
     }
 
     private RuleSetBuilder addAllInternal(Collection<? extends Runnable> runnables) {

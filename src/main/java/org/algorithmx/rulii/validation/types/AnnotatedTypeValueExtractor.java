@@ -154,6 +154,8 @@ public class AnnotatedTypeValueExtractor {
             result = extractorRegistry.find(container.getClass(), index);
         }
 
+        // TODO : Add ability to define @Extract on the class/interface definition
+
         return result;
     }
 
