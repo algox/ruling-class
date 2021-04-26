@@ -18,15 +18,20 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Order;
+import org.algorithmx.rulii.lib.spring.util.Assert;
+
 import java.lang.annotation.Annotation;
 
-public class MarkedAnnotation {
+public class MarkedAnnotation implements Comparable<MarkedAnnotation> {
 
     private final Annotation marker;
     private final Annotation owner;
 
     public MarkedAnnotation(Annotation marker, Annotation owner) {
         super();
+        Assert.notNull(marker, "marker cannot be null.");
+        Assert.notNull(owner, "owner cannot be null.");
         this.marker = marker;
         this.owner = owner;
     }
@@ -37,6 +42,12 @@ public class MarkedAnnotation {
 
     public Annotation getOwner() {
         return owner;
+    }
+
+    @Override
+    public int compareTo(MarkedAnnotation other) {
+        Order order = owner.annotationType().getAnnotation(Order.class);
+        return order != null ? order.value() : 0;
     }
 
     @Override
