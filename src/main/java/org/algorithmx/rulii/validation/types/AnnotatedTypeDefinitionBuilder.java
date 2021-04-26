@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
 import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.lib.spring.core.annotation.MergedAnnotation;
@@ -91,8 +92,10 @@ public class AnnotatedTypeDefinitionBuilder<T> {
             typeArguments.add(traverseInternal(type));
         }
 
-        return new AnnotatedParameterizedTypeDefinition(annotatedType, extractMarkedAnnotations(annotatedType),
+        return new AnnotatedParameterizedTypeDefinition(annotatedType,
+                extractExtractAnnotation(annotatedType),
                 extractIntrospectionAnnotation(annotatedType),
+                extractMarkedAnnotations(annotatedType),
                 typeArguments.toArray(new AnnotatedTypeDefinition[typeArguments.size()]));
     }
 
@@ -109,8 +112,9 @@ public class AnnotatedTypeDefinitionBuilder<T> {
         }
 
         return new AnnotatedWildcardTypeDefinition(annotatedWildcardType,
-                extractMarkedAnnotations(annotatedWildcardType),
+                extractExtractAnnotation(annotatedWildcardType),
                 extractIntrospectionAnnotation(annotatedWildcardType),
+                extractMarkedAnnotations(annotatedWildcardType),
                 lowerbounds.toArray(new AnnotatedTypeDefinition[lowerbounds.size()]),
                 upperbounds.toArray(new AnnotatedTypeDefinition[lowerbounds.size()]));
     }
@@ -123,8 +127,9 @@ public class AnnotatedTypeDefinitionBuilder<T> {
         }
 
         return new AnnotatedTypeVariableDefinition(annotatedTypeVariable,
-                extractMarkedAnnotations(annotatedTypeVariable),
+                extractExtractAnnotation(annotatedTypeVariable),
                 extractIntrospectionAnnotation(annotatedTypeVariable),
+                extractMarkedAnnotations(annotatedTypeVariable),
                 bounds.toArray(new AnnotatedTypeDefinition[bounds.size()]));
     }
 
@@ -134,7 +139,9 @@ public class AnnotatedTypeDefinitionBuilder<T> {
     }
 
     protected SimpleAnnotatedTypeDefinition visit(AnnotatedType annotatedType) {
-        return new SimpleAnnotatedTypeDefinition(annotatedType, extractIntrospectionAnnotation(annotatedType),
+        return new SimpleAnnotatedTypeDefinition(annotatedType,
+                extractExtractAnnotation(annotatedType),
+                extractIntrospectionAnnotation(annotatedType),
                 extractMarkedAnnotations(annotatedType));
     }
 
@@ -143,6 +150,12 @@ public class AnnotatedTypeDefinitionBuilder<T> {
         MergedAnnotation<?> mergedAnnotation = MergedAnnotations.from(annotatedType).get(introspectionAnnotationType);
         return mergedAnnotation != null && mergedAnnotation.isPresent() ? (T) mergedAnnotation.synthesize() : null;
     }
+
+    protected Extract extractExtractAnnotation(AnnotatedType annotatedType) {
+        MergedAnnotation<?> mergedAnnotation = MergedAnnotations.from(annotatedType).get(Extract.class);
+        return mergedAnnotation != null && mergedAnnotation.isPresent() ? (Extract) mergedAnnotation.synthesize() : null;
+    }
+
 
     protected MarkedAnnotation[] extractMarkedAnnotations(AnnotatedType annotatedType) {
         List<MarkedAnnotation> result = new ArrayList<>();

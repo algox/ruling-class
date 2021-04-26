@@ -21,7 +21,7 @@ package org.algorithmx.rulii.validation.types;
 import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.validation.extract.DefaultExtractorRegistry;
+import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 import org.algorithmx.rulii.validation.extract.TypedValueExtractor;
 import org.algorithmx.rulii.validation.extract.TypedValueProcessor;
@@ -41,13 +41,15 @@ public class AnnotatedTypeValueExtractor {
         super();
     }
 
-    public List<ExtractedTypeValue> extract(AnnotatedTypeDefinition definition, Object object, ExtractorRegistry extractorRegistry) {
+    public List<ExtractedTypeValue> extract(AnnotatedTypeDefinition definition, Object object,
+                                            ExtractorRegistry extractorRegistry, ObjectFactory objectFactory) {
         List<ExtractedTypeValue> extractedValues = new ArrayList<>();
-        extractInternal(definition, object, extractorRegistry, extractedValues);
+        extractInternal(definition, object, extractorRegistry, objectFactory, extractedValues);
         return extractedValues;
     }
 
-    public void extractInternal(AnnotatedTypeDefinition definition, Object object, ExtractorRegistry extractorRegistry,
+    public void extractInternal(AnnotatedTypeDefinition definition, Object object,
+                                ExtractorRegistry extractorRegistry, ObjectFactory objectFactory,
                          List<ExtractedTypeValue> extractedValues) {
         Assert.notNull(definition, "definition cannot be null.");
         Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
@@ -58,44 +60,48 @@ public class AnnotatedTypeValueExtractor {
         if (object == null || (!definition.childrenRequireIntrospection() && !definition.childrenHaveRules())) return;
 
         if (definition.getKind() == AnnotatedTypeKind.PARAMETERIZED_TYPE) {
-            visit((AnnotatedParameterizedTypeDefinition) definition, object, extractorRegistry, extractedValues);
+            visit((AnnotatedParameterizedTypeDefinition) definition, object, extractorRegistry, objectFactory, extractedValues);
         } else if (definition.getKind() == AnnotatedTypeKind.WILDCARD_TYPE) {
-            visit((AnnotatedWildcardTypeDefinition) definition, object, extractorRegistry, extractedValues);
+            visit((AnnotatedWildcardTypeDefinition) definition, object, extractorRegistry, objectFactory, extractedValues);
         } else if (definition.getKind() == AnnotatedTypeKind.TYPE_VARIABLE_TYPE) {
-            visit((AnnotatedTypeVariableDefinition) definition, object, extractorRegistry, extractedValues);
+            visit((AnnotatedTypeVariableDefinition) definition, object, extractorRegistry, objectFactory, extractedValues);
         } else if (definition.getKind() == AnnotatedTypeKind.ARRAY_TYPE) {
-            visit((AnnotatedArrayTypeDefinition) definition, object, extractorRegistry, extractedValues);
+            visit((AnnotatedArrayTypeDefinition) definition, object, extractorRegistry, objectFactory, extractedValues);
         }
     }
 
-    public void visit(AnnotatedParameterizedTypeDefinition definition, Object object, ExtractorRegistry extractorRegistry,
+    public void visit(AnnotatedParameterizedTypeDefinition definition, Object object,
+                      ExtractorRegistry extractorRegistry, ObjectFactory objectFactory,
                       List<ExtractedTypeValue> extractedValues) {
         for (int i = 0; i < definition.getTypeArguments().length; i++) {
-            extractAndProcess(object, i, definition.getTypeArguments()[i], extractorRegistry, extractedValues);
+            extractAndProcess(object, i, definition.getTypeArguments()[i], extractorRegistry, objectFactory, extractedValues);
         }
     }
 
-    public void visit(AnnotatedWildcardTypeDefinition definition, Object object, ExtractorRegistry extractorRegistry,
+    public void visit(AnnotatedWildcardTypeDefinition definition, Object object,
+                      ExtractorRegistry extractorRegistry, ObjectFactory objectFactory,
                       List<ExtractedTypeValue> extractedValues) {
         for (int i = 0; i < definition.getLowerBounds().length; i++) {
-            extractAndProcess(object, i, definition.getLowerBounds()[i], extractorRegistry, extractedValues);
+            extractAndProcess(object, i, definition.getLowerBounds()[i], extractorRegistry, objectFactory, extractedValues);
         }
 
         for (int i = 0; i < definition.getUpperBounds().length; i++) {
-            extractAndProcess(object, i, definition.getUpperBounds()[i], extractorRegistry, extractedValues);
+            extractAndProcess(object, i, definition.getUpperBounds()[i], extractorRegistry, objectFactory, extractedValues);
         }
     }
 
-    public void visit(AnnotatedTypeVariableDefinition definition, Object object, ExtractorRegistry extractorRegistry,
+    public void visit(AnnotatedTypeVariableDefinition definition, Object object,
+                      ExtractorRegistry extractorRegistry, ObjectFactory objectFactory,
                       List<ExtractedTypeValue> extractedValues) {
         for (int i = 0; i < definition.getBounds().length; i++) {
-            extractAndProcess(object, i, definition.getBounds()[i], extractorRegistry, extractedValues);
+            extractAndProcess(object, i, definition.getBounds()[i], extractorRegistry, objectFactory, extractedValues);
         }
     }
 
-    public void visit(AnnotatedArrayTypeDefinition definition, Object object, ExtractorRegistry extractorRegistry,
+    public void visit(AnnotatedArrayTypeDefinition definition, Object object,
+                      ExtractorRegistry extractorRegistry, ObjectFactory objectFactory,
                       List<ExtractedTypeValue> extractedValues) {
-        extractAndProcess(object, 0, definition.getComponentType(), extractorRegistry, extractedValues);
+        extractAndProcess(object, 0, definition.getComponentType(), extractorRegistry, objectFactory, extractedValues);
     }
 
     protected void addExtractedValue(AnnotatedTypeDefinition definition, Object value, List<ExtractedTypeValue> extractedValues) {
@@ -106,10 +112,13 @@ public class AnnotatedTypeValueExtractor {
     }
 
     protected void extractAndProcess(Object container, int index, AnnotatedTypeDefinition definition,
-                                     ExtractorRegistry extractorRegistry, List<ExtractedTypeValue> extractedValues) {
+                                     ExtractorRegistry extractorRegistry,
+                                     ObjectFactory objectFactory,
+                                     List<ExtractedTypeValue> extractedValues) {
         if (container == null) return;
 
-        TypedValueExtractor extractor = extractorRegistry.find(container.getClass(), index);
+        TypedValueExtractor extractor = findTypedValueExtractor(container, index, definition,
+                extractorRegistry, objectFactory);
 
         if (extractor == null) {
             // TODO : Log
@@ -121,13 +130,31 @@ public class AnnotatedTypeValueExtractor {
             extractor.extract(container, collector);
 
             for (Object extractedValue : collector.result) {
-                extractInternal(definition, extractedValue, extractorRegistry, extractedValues);
+                extractInternal(definition, extractedValue, extractorRegistry, objectFactory, extractedValues);
             }
 
         } catch (Exception e) {
             // TODO : Unable to extract
             e.printStackTrace();
         }
+    }
+
+    protected TypedValueExtractor findTypedValueExtractor(Object container, int index,
+                                                          AnnotatedTypeDefinition definition,
+                                                          ExtractorRegistry extractorRegistry,
+                                                          ObjectFactory objectFactory) {
+
+        TypedValueExtractor result = null;
+
+        if (definition.getExtractAnnotation() != null) {
+            result = objectFactory.create(definition.getExtractAnnotation().using(), true);
+        }
+
+        if (result == null) {
+            result = extractorRegistry.find(container.getClass(), index);
+        }
+
+        return result;
     }
 
     private static class SimpleTypeValueCollector implements TypedValueProcessor {
@@ -171,7 +198,8 @@ public class AnnotatedTypeValueExtractor {
         valueExtractor.field2.add(Arrays.asList("d"));
         valueExtractor.field2.add(Arrays.asList("e"));
 
-        List<ExtractedTypeValue> extractedValues = valueExtractor.extract(definition, valueExtractor.field1, new DefaultExtractorRegistry());
+        List<ExtractedTypeValue> extractedValues = valueExtractor.extract(definition, valueExtractor.field1,
+                ExtractorRegistry.create(), ObjectFactory.create());
 
         System.err.println("XXX Extracted Values");
         for (ExtractedTypeValue value : extractedValues) {

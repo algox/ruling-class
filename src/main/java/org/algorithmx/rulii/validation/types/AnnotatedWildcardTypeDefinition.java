@@ -18,6 +18,8 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedWildcardType;
 import java.lang.reflect.Type;
@@ -32,13 +34,16 @@ public class AnnotatedWildcardTypeDefinition extends AbstractAnnotatedTypeDefini
     private final AnnotatedTypeDefinition[] upperbounds;
 
     public AnnotatedWildcardTypeDefinition(AnnotatedWildcardType annotatedType,
-                                           MarkedAnnotation[] ruleAnnotations,
+                                           Extract extract,
                                            Annotation traversalAnnotation,
+                                           MarkedAnnotation[] ruleAnnotations,
                                            AnnotatedTypeDefinition[] lowerbounds,
                                            AnnotatedTypeDefinition[] upperbounds) {
-        super(annotatedType, AnnotatedTypeKind.WILDCARD_TYPE, ruleAnnotations,
-                traversalAnnotation, childrenHaveRuleAnnotations(lowerbounds)
-                        || childrenHaveRuleAnnotations(upperbounds),
+        super(annotatedType, AnnotatedTypeKind.WILDCARD_TYPE,
+                extract,
+                traversalAnnotation,
+                ruleAnnotations,
+                childrenHaveRuleAnnotations(lowerbounds) || childrenHaveRuleAnnotations(upperbounds),
                 childrenRequireIntrospection(lowerbounds)
                         || childrenRequireIntrospection(upperbounds));
         this.lowerbounds = lowerbounds != null ? lowerbounds : new AnnotatedTypeDefinition[0];

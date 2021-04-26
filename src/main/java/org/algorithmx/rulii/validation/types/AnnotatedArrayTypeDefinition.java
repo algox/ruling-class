@@ -31,8 +31,11 @@ public class AnnotatedArrayTypeDefinition extends AbstractAnnotatedTypeDefinitio
 
     public AnnotatedArrayTypeDefinition(AnnotatedArrayType annotatedType,
                                         AnnotatedTypeDefinition componentType) {
-        super(annotatedType, AnnotatedTypeKind.ARRAY_TYPE, componentType.getDeclaredRuleAnnotations(),
-                componentType.getIntrospectionAnnotation(), childrenHaveRuleAnnotations(componentType),
+        super(annotatedType, AnnotatedTypeKind.ARRAY_TYPE,
+                componentType.getExtractAnnotation(),
+                componentType.getIntrospectionAnnotation(),
+                componentType.getDeclaredRuleAnnotations(),
+                childrenHaveRuleAnnotations(componentType),
                 childrenRequireIntrospection(componentType));
         Assert.notNull(componentType, "componentType cannot be null.");
         this.componentType = componentType;

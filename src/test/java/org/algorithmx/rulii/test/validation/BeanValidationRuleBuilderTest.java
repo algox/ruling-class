@@ -32,7 +32,7 @@ public class BeanValidationRuleBuilderTest {
 
         BeanValidator validator = new BeanValidator();
         RuleViolations violations = validator.validate(context, person, new BeanHolder(person, null));
-        //System.err.println(violations);
+        System.err.println(violations);
         Assert.assertTrue(violations.size() == 10);
     }
 

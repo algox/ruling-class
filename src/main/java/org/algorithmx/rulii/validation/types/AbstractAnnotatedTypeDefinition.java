@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
@@ -30,15 +31,17 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
 
     private final T annotatedType;
     private final AnnotatedTypeKind kind;
-    private final MarkedAnnotation[] ruleAnnotations;
+    private final Extract extractAnnotation;
     private final Annotation introspectionAnnotation;
+    private final MarkedAnnotation[] ruleAnnotations;
     private final boolean childrenHaveRules;
     private final boolean childrenRequireIntrospection;
     private AnnotatedTypeDefinition parent;
 
     protected AbstractAnnotatedTypeDefinition(T annotatedType, AnnotatedTypeKind kind,
-                                              MarkedAnnotation[] ruleAnnotations,
+                                              Extract extractAnnotation,
                                               Annotation introspectionAnnotation,
+                                              MarkedAnnotation[] ruleAnnotations,
                                               boolean childrenHaveRules,
                                               boolean childrenRequireIntrospection) {
         super();
@@ -46,11 +49,12 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         Assert.notNull(kind, "kind cannot be null.");
         this.annotatedType = annotatedType;
         this.kind = kind;
-        this.ruleAnnotations = ruleAnnotations;
+        this.extractAnnotation = extractAnnotation;
         this.introspectionAnnotation = introspectionAnnotation;
+        this.ruleAnnotations = ruleAnnotations;
         this.childrenHaveRules = childrenHaveRules;
         this.childrenRequireIntrospection = childrenRequireIntrospection;
-        if (ruleAnnotations != null) Arrays.sort(this.ruleAnnotations);
+        //if (ruleAnnotations != null) Arrays.sort(this.ruleAnnotations);
     }
 
     @Override
@@ -64,13 +68,18 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
     }
 
     @Override
-    public MarkedAnnotation[] getDeclaredRuleAnnotations() {
-        return ruleAnnotations;
+    public Annotation getIntrospectionAnnotation() {
+        return introspectionAnnotation;
     }
 
     @Override
-    public Annotation getIntrospectionAnnotation() {
-        return introspectionAnnotation;
+    public Extract getExtractAnnotation() {
+        return extractAnnotation;
+    }
+
+    @Override
+    public MarkedAnnotation[] getDeclaredRuleAnnotations() {
+        return ruleAnnotations;
     }
 
     @Override
@@ -165,6 +174,7 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         return "{" +
                 "kind=" + kind +
                 ", ruleAnnotations=" + Arrays.toString(ruleAnnotations) +
+                ", extractAnnotation=" + extractAnnotation +
                 ", introspectionAnnotation=" + introspectionAnnotation +
                 ", childrenHaveRules=" + childrenHaveRules +
                 ", childrenRequireIntrospection=" + childrenRequireIntrospection +

@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.graph;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.lib.spring.util.ConcurrentReferenceHashMap;
+import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.beans.AnnotatedBeanTypeDefinition;
 import org.algorithmx.rulii.validation.beans.AnnotatedBeanTypeDefinitionBuilder;
 import org.algorithmx.rulii.validation.beans.SourceHolder;
@@ -29,7 +30,7 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
         super();
     }
 
-    protected List<GraphNode> introspectCandidate(GraphNode candidate, ExtractorRegistry extractorRegistry) {
+    protected List<GraphNode> introspectCandidate(GraphNode candidate, ExtractorRegistry extractorRegistry, ObjectFactory objectFactory) {
 
         if (candidate.isNull()) return Collections.emptyList();
         if (candidate.getTypeDefinition() != null
@@ -43,22 +44,22 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
         AnnotatedBeanTypeDefinition typeDefinition = getAnnotatedBeanTypeDefinition(candidate.getTarget().getClass());
         List<GraphNode> result = new ArrayList<>();
 
-        result.addAll(findCandidates(typeDefinition.getFields(), candidate, extractorRegistry));
-        result.addAll(findCandidates(typeDefinition.getProperties(), candidate, extractorRegistry));
+        result.addAll(findCandidates(typeDefinition.getFields(), candidate, extractorRegistry, objectFactory));
+        result.addAll(findCandidates(typeDefinition.getProperties(), candidate, extractorRegistry, objectFactory));
 
         return result;
     }
 
 
     protected List<GraphNode> findCandidates(SourceHolder[] fields, GraphNode candidate,
-                                             ExtractorRegistry extractorRegistry) {
+                                             ExtractorRegistry extractorRegistry, ObjectFactory objectFactory) {
         List<GraphNode> result = new ArrayList<>();
 
         for (SourceHolder holder : fields) {
             List<GraphNode> candidates = extractCandidates(holder,
                     holder.getValue(candidate.getTarget()),
                     holder.getDefinition(),
-                    extractorRegistry);
+                    extractorRegistry, objectFactory);
 
             candidates.stream()
                     .filter(c -> c != null)
@@ -73,9 +74,10 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
 
     protected List<GraphNode> extractCandidates(SourceHolder sourceHolder, Object target,
                                                 AnnotatedTypeDefinition typeDefinition,
-                                                ExtractorRegistry extractorRegistry) {
+                                                ExtractorRegistry extractorRegistry,
+                                                ObjectFactory objectFactory) {
         AnnotatedTypeValueExtractor valueExtractor = new AnnotatedTypeValueExtractor();
-        List<ExtractedTypeValue> extractedValues = valueExtractor.extract(typeDefinition, target, extractorRegistry);
+        List<ExtractedTypeValue> extractedValues = valueExtractor.extract(typeDefinition, target, extractorRegistry, objectFactory);
         List<GraphNode> result = new ArrayList<>();
 
         for (ExtractedTypeValue extractedValue : extractedValues) {

@@ -116,7 +116,7 @@ public class BeanValidator extends AbstractObjectVisitor {
             decorateAndTransferViolations(violations, this.violations, node);
 
             if (isIntrospectionRequired(node)) {
-                result = introspectCandidate(node, context.getExtractorRegistry());
+                result = introspectCandidate(node, context.getExtractorRegistry(), context.getObjectFactory());
             }
 
         } catch (Exception e) {

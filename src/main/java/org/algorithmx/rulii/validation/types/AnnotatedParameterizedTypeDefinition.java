@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
@@ -35,11 +36,15 @@ public class AnnotatedParameterizedTypeDefinition extends AbstractAnnotatedTypeD
     private final AnnotatedTypeDefinition[] typeArguments;
 
     public AnnotatedParameterizedTypeDefinition(AnnotatedParameterizedType annotatedType,
-                                                MarkedAnnotation[] ruleAnnotations,
+                                                Extract extract,
                                                 Annotation traversalAnnotation,
+                                                MarkedAnnotation[] ruleAnnotations,
                                                 AnnotatedTypeDefinition...typeArguments) {
-        super(annotatedType, AnnotatedTypeKind.PARAMETERIZED_TYPE, ruleAnnotations,
-                traversalAnnotation, childrenHaveRuleAnnotations(typeArguments),
+        super(annotatedType, AnnotatedTypeKind.PARAMETERIZED_TYPE,
+                extract,
+                traversalAnnotation,
+                ruleAnnotations,
+                childrenHaveRuleAnnotations(typeArguments),
                 childrenRequireIntrospection(typeArguments));
         Assert.notNull(typeArguments, "typeArguments cannot be null.");
         this.typeArguments = typeArguments;

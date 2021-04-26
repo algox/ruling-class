@@ -18,6 +18,8 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 
@@ -26,9 +28,10 @@ public class SimpleAnnotatedTypeDefinition extends AbstractAnnotatedTypeDefiniti
     private final Class<?> type;
 
     public SimpleAnnotatedTypeDefinition(AnnotatedType annotatedType,
+                                         Extract extract,
                                          Annotation traversalAnnotation,
                                          MarkedAnnotation[] ruleAnnotations) {
-        super(annotatedType, AnnotatedTypeKind.SIMPLE_TYPE, ruleAnnotations, traversalAnnotation,
+        super(annotatedType, AnnotatedTypeKind.SIMPLE_TYPE, extract, traversalAnnotation, ruleAnnotations,
                 false, false);
         this.type = deriveType(annotatedType);
     }

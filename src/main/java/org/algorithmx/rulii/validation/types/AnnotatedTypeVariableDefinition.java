@@ -18,6 +18,7 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.lang.annotation.Annotation;
@@ -31,11 +32,15 @@ public class AnnotatedTypeVariableDefinition extends AbstractAnnotatedTypeDefini
     private final AnnotatedTypeDefinition[] bounds;
 
     public AnnotatedTypeVariableDefinition(AnnotatedTypeVariable annotatedType,
-                                           MarkedAnnotation[] ruleAnnotations,
+                                           Extract extract,
                                            Annotation traversalAnnotation,
+                                           MarkedAnnotation[] ruleAnnotations,
                                            AnnotatedTypeDefinition...bounds) {
-        super(annotatedType, AnnotatedTypeKind.TYPE_VARIABLE_TYPE, ruleAnnotations,
-                traversalAnnotation, childrenHaveRuleAnnotations(bounds),
+        super(annotatedType, AnnotatedTypeKind.TYPE_VARIABLE_TYPE,
+                extract,
+                traversalAnnotation,
+                ruleAnnotations,
+                childrenHaveRuleAnnotations(bounds),
                 childrenRequireIntrospection(bounds));
         Assert.notNull(bounds, "bounds cannot be null.");
         this.bounds = bounds;

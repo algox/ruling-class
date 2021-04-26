@@ -18,6 +18,8 @@
 
 package org.algorithmx.rulii.validation.types;
 
+import org.algorithmx.rulii.annotation.Extract;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 
@@ -32,6 +34,8 @@ public interface AnnotatedTypeDefinition<T extends AnnotatedType> {
     default boolean childrenRequireIntrospection() {
         return false;
     }
+
+    Extract getExtractAnnotation();
 
     Annotation getIntrospectionAnnotation();
 
