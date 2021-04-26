@@ -20,6 +20,7 @@ package org.algorithmx.rulii.validation;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +47,11 @@ public class RuleViolations implements Iterable<RuleViolation> {
     public void add(RuleViolation error) {
         Assert.notNull(error, "error cannot be null.");
         errors.add(error);
+    }
+
+    public void add(RuleViolation...errors) {
+        Assert.notNull(errors, "error cannot be null.");
+        this.errors.addAll(Arrays.asList(errors));
     }
 
     /**
@@ -135,7 +141,7 @@ public class RuleViolations implements Iterable<RuleViolation> {
      * @return Rule Violations.
      */
     public RuleViolation[] getViolations() {
-        if (errors.isEmpty()) return null;
+        if (errors.isEmpty()) return new RuleViolation[0];
         return errors.toArray(new RuleViolation[errors.size()]);
     }
 

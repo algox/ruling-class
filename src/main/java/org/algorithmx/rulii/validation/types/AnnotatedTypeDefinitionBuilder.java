@@ -38,15 +38,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AnnotatedTypeDefinitionBuilder<T extends List, Set> {
+public class AnnotatedTypeDefinitionBuilder<T> {
 
-    private AnnotatedType annotatedType;
-    private Class<? extends Annotation> introspectionAnnotationType;
-    private Class<? extends Annotation> markerAnnotationType;
+    private final AnnotatedType annotatedType;
+    private final Class<? extends Annotation> introspectionAnnotationType;
+    private final Class<? extends Annotation> markerAnnotationType;
 
     private AnnotatedTypeDefinitionBuilder(AnnotatedType annotatedType,
-                                           Class<? extends Annotation> markerAnnotationType,
-                                           Class<? extends Annotation> introspectionAnnotationType) {
+                                           Class<? extends Annotation> introspectionAnnotationType,
+                                           Class<? extends Annotation> markerAnnotationType) {
         super();
         Assert.notNull(annotatedType, "annotatedType cannot be null.");
         Assert.notNull(markerAnnotationType, "markerAnnotationType cannot be null.");

@@ -21,17 +21,21 @@ package org.algorithmx.rulii.core.model;
 import org.algorithmx.rulii.annotation.Default;
 import org.algorithmx.rulii.annotation.Description;
 import org.algorithmx.rulii.annotation.Match;
-import org.algorithmx.rulii.convert.Converter;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
+import org.algorithmx.rulii.convert.Converter;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.RuleUtils;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 /**
  * Defines a parameter within a method that is to be isPass dynamically (such as "when" and "then")
@@ -46,10 +50,13 @@ import java.util.Arrays;
  */
 public final class ParameterDefinition implements Definition {
 
+    private static final Map<Method, ParameterDefinition[]> CACHE = Collections.synchronizedMap(new IdentityHashMap<>());
+
     private int index;
     private String name;
     private String description;
     private Type type;
+    private AnnotatedType annotatedType;
     private String defaultValueText;
     private Class<? extends BindingMatchingStrategy> matchUsing;
     private final Annotation[] annotations;
@@ -58,7 +65,7 @@ public final class ParameterDefinition implements Definition {
 
     private Object defaultValue = null;
 
-    private ParameterDefinition(int index, String name, Type type, String description,
+    private ParameterDefinition(int index, String name, Type type, AnnotatedType annotatedType, String description,
                                 String defaultValueText, Class<? extends BindingMatchingStrategy> matchUsing,
                                 Annotation...annotations) {
         super();
@@ -66,6 +73,7 @@ public final class ParameterDefinition implements Definition {
         setName(name);
         setType(type);
         setDescription(description);
+        this.annotatedType = annotatedType;
         this.index = index;
         this.annotations = annotations;
         this.defaultValueText = defaultValueText;
@@ -81,13 +89,18 @@ public final class ParameterDefinition implements Definition {
         }
     }
 
+    public static ParameterDefinition[] load(Method method) {
+        Assert.notNull(method, "method cannot be null.");
+        return CACHE.computeIfAbsent(method, m -> loadInternal(m));
+    }
+
     /**
      * Loads the parameter definitions for the given method.
      *
      * @param method desired method
      * @return all the parameter definitions for the given method.
      */
-    public static ParameterDefinition[] load(Method method) {
+    public static ParameterDefinition[] loadInternal(Method method) {
         String[] parameterNames = ReflectionUtils.getParameterNames(method);
         Assert.isTrue(parameterNames.length == method.getParameterTypes().length,
                 "parameterNames length does not match parameter types length");
@@ -97,6 +110,7 @@ public final class ParameterDefinition implements Definition {
             String defaultValueText = getDefaultValueText(method, i);
             Description descriptionAnnotation = method.getParameters()[i].getAnnotation(Description.class);
             result[i] = new ParameterDefinition(i, parameterNames[i], method.getGenericParameterTypes()[i],
+                    method.getAnnotatedParameterTypes()[i],
                     descriptionAnnotation != null ? descriptionAnnotation.value() : null, defaultValueText,
                     getMatchUsing(method, i), method.getParameterAnnotations()[i]);
         }
@@ -201,6 +215,10 @@ public final class ParameterDefinition implements Definition {
      */
     public String getTypeAndName() {
         return getTypeName() + " " + getName();
+    }
+
+    public AnnotatedType getAnnotatedType() {
+        return annotatedType;
     }
 
     /**

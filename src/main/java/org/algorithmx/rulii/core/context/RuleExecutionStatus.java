@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.core.model;
+package org.algorithmx.rulii.core.context;
 
 public enum RuleExecutionStatus {
 

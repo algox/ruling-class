@@ -24,7 +24,6 @@ import org.algorithmx.rulii.bind.match.ParameterMatch;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.core.model.MethodDefinition;
-import org.algorithmx.rulii.core.model.RuleExecutionStatus;
 import org.algorithmx.rulii.event.EventProcessor;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.ScriptProcessor;

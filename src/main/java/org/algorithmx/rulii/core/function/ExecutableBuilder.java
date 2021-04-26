@@ -94,7 +94,9 @@ public abstract class ExecutableBuilder {
             }
 
             methodDefinition = new MethodDefinition(functionMethod, implementationMethodDefinition.getOrder(),
-                    implementationMethodDefinition.getDescription(), parameterDefinitions);
+                    implementationMethodDefinition.getDescription(),
+                    implementationMethodDefinition.getReturnTypeDefinition(),
+                    parameterDefinitions);
             methodDefinition.setReturnType(implementationMethod.getGenericReturnType());
 
         } catch (Exception e) {

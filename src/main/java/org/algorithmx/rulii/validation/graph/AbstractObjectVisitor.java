@@ -101,7 +101,7 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
 
     protected AnnotatedBeanTypeDefinition buildBeanDefinition(Class<?> type) {
         AnnotatedBeanTypeDefinitionBuilder result = AnnotatedBeanTypeDefinitionBuilder
-                .with(type, getMarkerAnnotation(), getIntrospectionAnnotation());
+                .with(type, getIntrospectionAnnotation(), getMarkerAnnotation());
 
         result.loadFields(getFieldFilter(), getFieldComparator());
         result.loadProperties(getPropertyFilter(), getPropertyComparator());

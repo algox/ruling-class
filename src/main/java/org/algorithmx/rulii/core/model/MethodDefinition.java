@@ -30,8 +30,10 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,8 +51,11 @@ import java.util.stream.IntStream;
  */
 public final class MethodDefinition implements Definition, Comparable<MethodDefinition> {
 
+    private static final Map<Method, MethodDefinition> CACHE = Collections.synchronizedMap(new IdentityHashMap<>());
+
     private final Method method;
     private final ParameterDefinition[] parameterDefinitions;
+    private final ReturnTypeDefinition returnTypeDefinition;
     private final Map<String, ParameterDefinition> paramNameMap = new HashMap<>();
 
     // Name of the action
@@ -62,7 +67,9 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
     // Return type of the method
     private Type returnType;
 
-    public MethodDefinition(Method method, int order, String description, ParameterDefinition...parameterDefinitions) {
+    public MethodDefinition(Method method, int order, String description,
+                            ReturnTypeDefinition returnTypeDefinition,
+                            ParameterDefinition...parameterDefinitions) {
         super();
         Assert.notNull(method, "method cannot be null");
         this.method = method;
@@ -70,6 +77,7 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
         this.order = order;
         this.description = description;
         this.returnType = method.getGenericReturnType();
+        this.returnTypeDefinition = returnTypeDefinition;
         this.parameterDefinitions = parameterDefinitions != null ? parameterDefinitions : new ParameterDefinition[0];
         createParameterNameIndex();
         validate();
@@ -106,11 +114,18 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
     }
 
     public static MethodDefinition load(Method method) {
+        Assert.notNull(method, "method cannot be null.");
+        return CACHE.computeIfAbsent(method, m -> loadInternal(m));
+    }
+
+    private static MethodDefinition loadInternal(Method method) {
         Assert.notNull(method, "method cannot be null");
         Description descriptionAnnotation = method.getAnnotation(Description.class);
         Order orderAnnotation = method.getAnnotation(Order.class);
         MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : Order.LOWEST_PRECEDENCE,
-                descriptionAnnotation != null ? descriptionAnnotation.value() : null, ParameterDefinition.load(method));
+                descriptionAnnotation != null ? descriptionAnnotation.value() : null,
+                ReturnTypeDefinition.load(method),
+                ParameterDefinition.load(method));
         return result;
     }
 
@@ -123,6 +138,10 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
         return method;
     }
 
+    public ReturnTypeDefinition getReturnTypeDefinition() {
+        return returnTypeDefinition;
+    }
+
     /**
      * All the parameter definitions for this method definition.
      *
@@ -130,6 +149,10 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
      */
     public ParameterDefinition[] getParameterDefinitions() {
         return parameterDefinitions;
+    }
+
+    public int getParameterCount() {
+        return parameterDefinitions.length;
     }
 
     /**

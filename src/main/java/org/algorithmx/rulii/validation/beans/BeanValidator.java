@@ -66,7 +66,7 @@ public class BeanValidator extends AbstractObjectVisitor {
         super();
     }
 
-    public RuleViolations validateBean(RuleContext context, Object bean, SourceHolder source) throws BeanValidationException {
+    public RuleViolations validate(RuleContext context, Object bean, SourceHolder source) throws BeanValidationException {
         Assert.notNull(context, "context cannot be null.");
         Assert.notNull(source, "source cannot be null.");
 
@@ -88,8 +88,6 @@ public class BeanValidator extends AbstractObjectVisitor {
             context.getBindings().removeScope(rootBeanScope);
         }
 
-        System.err.println();
-        System.err.println("XXX Violations [" + violations + "]");
         return violations;
     }
 

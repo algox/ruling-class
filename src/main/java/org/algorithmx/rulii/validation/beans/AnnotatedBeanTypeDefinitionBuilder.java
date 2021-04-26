@@ -114,8 +114,8 @@ public class AnnotatedBeanTypeDefinitionBuilder {
         fields.stream().forEach(
                 field -> {
                     //System.err.println("XXX Field [" + field.getName() + "]");
-                    AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder.with(field.getAnnotatedType(),
-                    introspectionAnnotationType, markerAnnotationType);
+                    AnnotatedTypeDefinitionBuilder builder = AnnotatedTypeDefinitionBuilder
+                            .with(field.getAnnotatedType(), introspectionAnnotationType, markerAnnotationType);
                     field(field, builder.build());
                 });
 
