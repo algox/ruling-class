@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.exists;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface Exists {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class AssertTrueValidationRuleBuilder implements AnnotatedRunnableBuilder<Exists> {
@@ -44,7 +47,7 @@ public @interface Exists {
         public Rule build(Exists exists, String bindingName) {
             ExistsValidationRule rule = new ExistsValidationRule(bindingName, exists.errorCode(),
                     exists.severity(), !NOT_APPLICABLE.equals(exists.message()) ? exists.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null);
+            return buildRule(rule, exists.order(), !NOT_APPLICABLE.equals(exists.when()) ? exists.when() : null);
         }
     }
 }

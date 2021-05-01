@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.min;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
@@ -38,6 +39,8 @@ public @interface DecimalMin {
 
     boolean inclusive() default true;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class DecimalMinValidationRuleBuilder implements AnnotatedRunnableBuilder<DecimalMin> {
@@ -51,7 +54,7 @@ public @interface DecimalMin {
             DecimalMinValidationRule rule = new DecimalMinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null,
                     BigDecimal.valueOf(min.value()), min.inclusive());
-            return buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null);
+            return buildRule(rule, min.order(), !NOT_APPLICABLE.equals(min.when()) ? min.when() : null);
         }
     }
 }

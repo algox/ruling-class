@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.max;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
@@ -38,6 +39,8 @@ public @interface DecimalMax {
 
     boolean inclusive() default true;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class DecimalMaxValidationRuleBuilder implements AnnotatedRunnableBuilder<DecimalMax> {
@@ -51,7 +54,7 @@ public @interface DecimalMax {
             DecimalMaxValidationRule rule = new DecimalMaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null,
                     BigDecimal.valueOf(max.value()), max.inclusive());
-            return buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null);
+            return buildRule(rule, max.order(), !NOT_APPLICABLE.equals(max.when()) ? max.when() : null);
         }
     }
 }

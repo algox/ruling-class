@@ -8,8 +8,8 @@ import org.algorithmx.rulii.validation.beans.AnnotatedBeanTypeDefinitionBuilder;
 import org.algorithmx.rulii.validation.beans.SourceHolder;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
 import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
-import org.algorithmx.rulii.validation.types.AnnotatedTypeValueExtractor;
-import org.algorithmx.rulii.validation.types.ExtractedTypeValue;
+import org.algorithmx.rulii.validation.extract.AnnotatedTypeValueExtractor;
+import org.algorithmx.rulii.validation.extract.ExtractedTypeValue;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;

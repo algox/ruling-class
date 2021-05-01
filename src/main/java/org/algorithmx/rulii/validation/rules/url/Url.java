@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation.rules.url;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -40,6 +41,8 @@ public @interface Url {
 
     String[] hostPatterns() default {};
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class UrlValidationRuleBuilder implements AnnotatedRunnableBuilder<Url> {
@@ -52,7 +55,7 @@ public @interface Url {
         public Rule build(Url url, String bindingName) {
             UrlValidationRule rule = new UrlValidationRule(bindingName, url.errorCode(), url.severity(),
                     !NOT_APPLICABLE.equals(url.message()) ? url.message() : null, url.schemes(), url.hostPatterns());
-            return buildRule(rule, !NOT_APPLICABLE.equals(url.when()) ? url.when() : null);
+            return buildRule(rule, url.order(), !NOT_APPLICABLE.equals(url.when()) ? url.when() : null);
         }
     }
 

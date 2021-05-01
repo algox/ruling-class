@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.startswith;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
@@ -36,6 +37,8 @@ public @interface StartsWith {
 
     String[] prefixes();
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class StartsWithValidationRuleBuilder implements AnnotatedRunnableBuilder<StartsWith> {
@@ -49,7 +52,7 @@ public @interface StartsWith {
             StartsWithValidationRule rule = new StartsWithValidationRule(bindingName, startsWith.errorCode(),
                     startsWith.severity(), !NOT_APPLICABLE.equals(startsWith.message()) ? startsWith.message() : null,
                     startsWith.prefixes());
-            return buildRule(rule, !NOT_APPLICABLE.equals(startsWith.when()) ? startsWith.when() : null);
+            return buildRule(rule, startsWith.order(), !NOT_APPLICABLE.equals(startsWith.when()) ? startsWith.when() : null);
         }
     }
 }

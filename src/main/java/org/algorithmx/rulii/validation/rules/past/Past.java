@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.past;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface Past {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class PastValidationRuleBuilder implements AnnotatedRunnableBuilder<Past> {
@@ -44,7 +47,7 @@ public @interface Past {
         public Rule build(Past past, String bindingName) {
             PastValidationRule rule = new PastValidationRule(bindingName, past.errorCode(), past.severity(),
                     !NOT_APPLICABLE.equals(past.message()) ? past.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(past.when()) ? past.when() : null);
+            return buildRule(rule, past.order(), !NOT_APPLICABLE.equals(past.when()) ? past.when() : null);
         }
     }
 }

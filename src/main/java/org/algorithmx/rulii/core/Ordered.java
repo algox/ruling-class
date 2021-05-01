@@ -15,27 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rulii.annotation;
 
-import org.algorithmx.rulii.core.Ordered;
+package org.algorithmx.rulii.core;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface Ordered {
 
-/**
- * Defines the sort order for an annotated component.
- *
- * @author Max Arulananthan
- * @since 1.0
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-@Documented
-public @interface Order {
+	/**
+	 * Highest precedence.
+	 */
+	int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
 
-	int value() default Ordered.LOWEST_PRECEDENCE;
+	/**
+	 * Lowest precedence.
+	 */
+	int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
+
+
+	/**
+	 * Get the order value of this object.
+	 *
+	 * @return the order value
+	 */
+	int getOrder();
 
 }

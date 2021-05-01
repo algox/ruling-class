@@ -24,6 +24,7 @@ import org.algorithmx.rulii.annotation.Order;
 import org.algorithmx.rulii.annotation.Otherwise;
 import org.algorithmx.rulii.annotation.PreCondition;
 import org.algorithmx.rulii.annotation.Then;
+import org.algorithmx.rulii.core.Ordered;
 import org.algorithmx.rulii.core.action.Action;
 import org.algorithmx.rulii.core.action.ActionBuilder;
 import org.algorithmx.rulii.core.condition.Condition;
@@ -66,7 +67,7 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
 
     public static <T> Integer getRuleOrder(Class<T> ruleClass) {
         Order orderAnnotation = ruleClass.getAnnotation(Order.class);
-        return orderAnnotation != null ? orderAnnotation.value() : Order.LOWEST_PRECEDENCE;
+        return orderAnnotation != null ? orderAnnotation.value() : Ordered.LOWEST_PRECEDENCE;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation.rules.script;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.rules.size.SizeValidationRule;
@@ -25,9 +26,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Documented
-@Repeatable(ScriptRule.ScriptRuleList.class)
-@ValidationMarker(ScriptRule.ScriptRuleRuleBuilder.class)
-public @interface ScriptRule {
+@Repeatable(ScriptAssert.ScriptRuleList.class)
+@ValidationMarker(ScriptAssert.ScriptRuleRuleBuilder.class)
+public @interface ScriptAssert {
 
     String NOT_APPLICABLE = "N/A";
 
@@ -39,28 +40,30 @@ public @interface ScriptRule {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
-    class ScriptRuleRuleBuilder implements AnnotatedRunnableBuilder<ScriptRule> {
+    class ScriptRuleRuleBuilder implements AnnotatedRunnableBuilder<ScriptAssert> {
 
         public ScriptRuleRuleBuilder() {
             super();
         }
 
         @Override
-        public Rule build(ScriptRule scriptRule, String bindingName) {
-            ScriptConditionRule rule = new ScriptConditionRule(bindingName, scriptRule.value(),
+        public Rule build(ScriptAssert scriptRule, String bindingName) {
+            ScriptAssertRule rule = new ScriptAssertRule(bindingName, scriptRule.value(),
                     scriptRule.errorCode(), scriptRule.severity(),
                     !NOT_APPLICABLE.equals(scriptRule.message()) ? scriptRule.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(scriptRule.when()) ? scriptRule.when() : null);
+            return buildRule(rule, scriptRule.order(), !NOT_APPLICABLE.equals(scriptRule.when()) ? scriptRule.when() : null);
         }
     }
 
     @Target({FIELD, METHOD, CONSTRUCTOR, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
     @Retention(RUNTIME)
     @Inherited @Documented
-    @ValidationMarkerContainer(ScriptRule.class)
+    @ValidationMarkerContainer(ScriptAssert.class)
     @interface ScriptRuleList {
-        ScriptRule[] value();
+        ScriptAssert[] value();
     }
 }

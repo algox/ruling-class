@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation.rules.in;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -40,6 +41,8 @@ public @interface InEnum {
 
     Class<? extends Enum> value();
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class InEnumValidationRuleBuilder implements AnnotatedRunnableBuilder<InEnum> {
@@ -58,7 +61,7 @@ public @interface InEnum {
 
             InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
-            return buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null);
+            return buildRule(rule, in.order(), !NOT_APPLICABLE.equals(in.when()) ? in.when() : null);
         }
     }
 

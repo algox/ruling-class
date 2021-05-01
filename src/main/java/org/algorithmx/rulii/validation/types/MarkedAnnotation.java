@@ -18,12 +18,11 @@
 
 package org.algorithmx.rulii.validation.types;
 
-import org.algorithmx.rulii.annotation.Order;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
 import java.lang.annotation.Annotation;
 
-public class MarkedAnnotation implements Comparable<MarkedAnnotation> {
+public class MarkedAnnotation {
 
     private final Annotation marker;
     private final Annotation owner;
@@ -42,12 +41,6 @@ public class MarkedAnnotation implements Comparable<MarkedAnnotation> {
 
     public Annotation getOwner() {
         return owner;
-    }
-
-    @Override
-    public int compareTo(MarkedAnnotation other) {
-        Order order = owner.annotationType().getAnnotation(Order.class);
-        return order != null ? order.value() : 0;
     }
 
     @Override

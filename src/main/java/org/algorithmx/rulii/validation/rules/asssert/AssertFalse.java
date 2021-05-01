@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.asssert;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface AssertFalse {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class AssertFalseValidationRuleBuilder implements AnnotatedRunnableBuilder<AssertFalse> {
@@ -44,7 +47,7 @@ public @interface AssertFalse {
         public Rule build(AssertFalse assertFalse, String bindingName) {
             AssertFalseValidationRule rule = new AssertFalseValidationRule(bindingName, assertFalse.errorCode(),
                     assertFalse.severity(), !NOT_APPLICABLE.equals(assertFalse.message()) ? assertFalse.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(assertFalse.when()) ? assertFalse.when() : null);
+            return buildRule(rule, assertFalse.order(), !NOT_APPLICABLE.equals(assertFalse.when()) ? assertFalse.when() : null);
         }
     }
 }

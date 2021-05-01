@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.past;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface PastOrPresent {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class PastOrPresentValidationRuleBuilder implements AnnotatedRunnableBuilder<PastOrPresent> {
@@ -44,7 +47,7 @@ public @interface PastOrPresent {
         public Rule build(PastOrPresent pastOrPresent, String bindingName) {
             PastOrPresentValidationRule rule = new PastOrPresentValidationRule(bindingName, pastOrPresent.errorCode(),
                     pastOrPresent.severity(), !NOT_APPLICABLE.equals(pastOrPresent.message()) ? pastOrPresent.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(pastOrPresent.when()) ? pastOrPresent.when() : null);
+            return buildRule(rule, pastOrPresent.order(), !NOT_APPLICABLE.equals(pastOrPresent.when()) ? pastOrPresent.when() : null);
         }
     }
 }

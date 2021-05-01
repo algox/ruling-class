@@ -16,16 +16,21 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.types;
+package org.algorithmx.rulii.validation.extract;
 
+import org.algorithmx.rulii.annotation.Extract;
 import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
-import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
-import org.algorithmx.rulii.validation.extract.TypedValueExtractor;
-import org.algorithmx.rulii.validation.extract.TypedValueProcessor;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
+import org.algorithmx.rulii.validation.types.AnnotatedArrayTypeDefinition;
+import org.algorithmx.rulii.validation.types.AnnotatedParameterizedTypeDefinition;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinitionBuilder;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeKind;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeVariableDefinition;
+import org.algorithmx.rulii.validation.types.AnnotatedWildcardTypeDefinition;
 
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
@@ -117,7 +122,7 @@ public class AnnotatedTypeValueExtractor {
                                      List<ExtractedTypeValue> extractedValues) {
         if (container == null) return;
 
-        TypedValueExtractor extractor = findTypedValueExtractor(container, index, definition,
+        TypedValueExtractor extractor = findTypedValueExtractor(container.getClass(), index, definition,
                 extractorRegistry, objectFactory);
 
         if (extractor == null) {
@@ -139,24 +144,39 @@ public class AnnotatedTypeValueExtractor {
         }
     }
 
-    protected TypedValueExtractor findTypedValueExtractor(Object container, int index,
+    protected TypedValueExtractor findTypedValueExtractor(Class<?> containerType, int index,
                                                           AnnotatedTypeDefinition definition,
                                                           ExtractorRegistry extractorRegistry,
                                                           ObjectFactory objectFactory) {
 
         TypedValueExtractor result = null;
 
-        if (definition.getExtractAnnotation() != null) {
-            result = objectFactory.create(definition.getExtractAnnotation().using(), true);
+        // Check use
+        Extract extract = definition.getExtractAnnotation();
+
+        // Check declaration
+        if (extract == null) extract = findExtractOnTypeDeclaration(containerType, index);
+
+        try {
+            if (extract != null) {
+                result = objectFactory.create(definition.getExtractAnnotation().using(), true);
+            }
+        } catch (Exception e) {
+            // log it
         }
 
         if (result == null) {
-            result = extractorRegistry.find(container.getClass(), index);
+            result = extractorRegistry.find(containerType, index);
         }
 
-        // TODO : Add ability to define @Extract on the class/interface definition
-
         return result;
+    }
+
+    protected Extract findExtractOnTypeDeclaration(Class<?> containerType, int index) {
+        Assert.isTrue(index >= 0, "index must be >= 0");
+        return index < containerType.getAnnotatedInterfaces().length
+                ? containerType.getAnnotatedInterfaces()[index].getAnnotation(Extract.class)
+                : null;
     }
 
     private static class SimpleTypeValueCollector implements TypedValueProcessor {

@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.min;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
@@ -36,6 +37,8 @@ public @interface Min {
 
     long value();
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class MinValidationRuleBuilder implements AnnotatedRunnableBuilder<Min> {
@@ -48,7 +51,7 @@ public @interface Min {
         public Rule build(Min min, String bindingName) {
             MinValidationRule rule = new MinValidationRule(bindingName, min.errorCode(), min.severity(),
                     !NOT_APPLICABLE.equals(min.message()) ? min.message() : null, min.value());
-            return buildRule(rule, !NOT_APPLICABLE.equals(min.when()) ? min.when() : null);
+            return buildRule(rule, min.order(), !NOT_APPLICABLE.equals(min.when()) ? min.when() : null);
         }
     }
 }

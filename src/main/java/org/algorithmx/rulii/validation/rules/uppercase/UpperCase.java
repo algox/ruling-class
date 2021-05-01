@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.uppercase;
 
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.annotation.ValidationMarker;
@@ -35,6 +36,8 @@ public @interface UpperCase {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class UpperCaseValidationRuleBuilder implements AnnotatedRunnableBuilder<UpperCase> {
@@ -47,7 +50,7 @@ public @interface UpperCase {
         public Rule build(UpperCase upperCase, String bindingName) {
             UpperCaseValidationRule rule = new UpperCaseValidationRule(bindingName, upperCase.errorCode(),
                     upperCase.severity(), !NOT_APPLICABLE.equals(upperCase.message()) ? upperCase.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(upperCase.when()) ? upperCase.when() : null);
+            return buildRule(rule, upperCase.order(), !NOT_APPLICABLE.equals(upperCase.when()) ? upperCase.when() : null);
         }
     }
 }

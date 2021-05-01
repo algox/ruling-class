@@ -21,6 +21,7 @@ package org.algorithmx.rulii.core.action;
 import org.algorithmx.rulii.bind.BindingDeclaration;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.core.Ordered;
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.context.RuleContext;
@@ -33,7 +34,7 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Action extends Runnable<Void>, Identifiable, Comparable<Action> {
+public interface Action extends Runnable<Void>, Identifiable, Ordered {
 
     /**
      * Derives all the arguments and executes this Action.
@@ -89,7 +90,7 @@ public interface Action extends Runnable<Void>, Identifiable, Comparable<Action>
     }
 
     @Override
-    default int compareTo(Action other) {
-        return getMethodDefinition().compareTo(other.getMethodDefinition());
+    default int getOrder() {
+        return getMethodDefinition().getOrder();
     }
 }

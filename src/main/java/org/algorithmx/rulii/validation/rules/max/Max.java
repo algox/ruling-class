@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.max;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -34,6 +35,8 @@ public @interface Max {
 
     long value();
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class MaxValidationRuleBuilder implements AnnotatedRunnableBuilder<Max> {
@@ -46,7 +49,7 @@ public @interface Max {
         public Rule build(Max max, String bindingName) {
             MaxValidationRule rule = new MaxValidationRule(bindingName, max.errorCode(), max.severity(),
                     !NOT_APPLICABLE.equals(max.message()) ? max.message() : null, max.value());
-            return buildRule(rule, !NOT_APPLICABLE.equals(max.when()) ? max.when() : null);
+            return buildRule(rule, max.order(), !NOT_APPLICABLE.equals(max.when()) ? max.when() : null);
         }
     }
 }

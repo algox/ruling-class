@@ -21,6 +21,7 @@ package org.algorithmx.rulii.core.rule;
 import org.algorithmx.rulii.bind.BindingDeclaration;
 import org.algorithmx.rulii.bind.Bindings;
 import org.algorithmx.rulii.core.Identifiable;
+import org.algorithmx.rulii.core.Ordered;
 import org.algorithmx.rulii.core.Runnable;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.core.action.Action;
@@ -43,7 +44,7 @@ import org.algorithmx.rulii.core.context.RuleContextBuilder;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Rule<T> extends Runnable<RuleResult>, Identifiable, Comparable<Rule> {
+public interface Rule<T> extends Runnable<RuleResult>, Identifiable, Ordered {
 
     /**
      * Executes the Rule Condition based on the RuleContext. If the result is true then any associated Actions are executed;
@@ -110,7 +111,7 @@ public interface Rule<T> extends Runnable<RuleResult>, Identifiable, Comparable<
     Action getOtherwiseAction();
 
     @Override
-    default int compareTo(Rule other) {
-        return getRuleDefinition().compareTo(other.getRuleDefinition());
+    default int getOrder() {
+        return getRuleDefinition().getOrder();
     }
 }

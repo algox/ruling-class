@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.decimal;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -35,6 +36,8 @@ public @interface Decimal {
 
     boolean allowSpace() default true;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class DecimalValidationRuleBuilder implements AnnotatedRunnableBuilder<Decimal> {
@@ -48,7 +51,7 @@ public @interface Decimal {
             DecimalValidationRule rule = new DecimalValidationRule(bindingName, decimal.errorCode(),
                     decimal.severity(), !NOT_APPLICABLE.equals(decimal.message()) ? decimal.message() : null,
                     decimal.allowSpace());
-            return buildRule(rule, !NOT_APPLICABLE.equals(decimal.when()) ? decimal.when() : null);
+            return buildRule(rule, decimal.order(), !NOT_APPLICABLE.equals(decimal.when()) ? decimal.when() : null);
         }
     }
 }

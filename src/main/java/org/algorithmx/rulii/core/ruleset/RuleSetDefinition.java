@@ -25,20 +25,20 @@ import org.algorithmx.rulii.util.RuleUtils;
 
 import java.util.Arrays;
 
-public final class RuleSetDefinition implements Definition, Comparable<RuleSetDefinition> {
+public final class RuleSetDefinition implements Definition {
 
     // Name of the RuleSet
     private String name;
     // Description of the RuleSet
     private final String description;
-
     // PreCondition method details
     private final MethodDefinition preConditionDefinition;
     // StopAction method details
     private final MethodDefinition stopActionDefinition;
     private final Definition[] definitions;
 
-    public RuleSetDefinition(String name, String description, MethodDefinition preConditionDefinition,
+    public RuleSetDefinition(String name, String description,
+                             MethodDefinition preConditionDefinition,
                              MethodDefinition stopActionDefinition,
                              Definition...definitions) {
         super();
@@ -75,11 +75,6 @@ public final class RuleSetDefinition implements Definition, Comparable<RuleSetDe
         Assert.isTrue(RuleUtils.isValidName(name), "RuleSet name must match ["
                 + RuleUtils.NAME_REGEX + "] Given [" + name + "]");
         this.name = name;
-    }
-
-    @Override
-    public int compareTo(RuleSetDefinition other) {
-        return getName().compareTo(other.getName());
     }
 
     @Override

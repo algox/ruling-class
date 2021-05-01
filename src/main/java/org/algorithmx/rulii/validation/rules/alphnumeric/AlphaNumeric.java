@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation.rules.alphnumeric;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -38,6 +39,8 @@ public @interface AlphaNumeric {
 
     boolean allowSpace() default true;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class AlphaNumericValidationRuleBuilder implements AnnotatedRunnableBuilder<AlphaNumeric> {
@@ -51,7 +54,7 @@ public @interface AlphaNumeric {
             AlphaNumericValidationRule rule = new AlphaNumericValidationRule(bindingName, alpha.errorCode(),
                     alpha.severity(), !NOT_APPLICABLE.equals(alpha.message()) ? alpha.message() : null,
                     alpha.allowSpace());
-            return buildRule(rule, !NOT_APPLICABLE.equals(alpha.when()) ? alpha.when() : null);
+            return buildRule(rule, alpha.order(), !NOT_APPLICABLE.equals(alpha.when()) ? alpha.when() : null);
         }
     }
 

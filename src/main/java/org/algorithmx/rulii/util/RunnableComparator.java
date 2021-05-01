@@ -15,27 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.algorithmx.rulii.annotation;
+
+package org.algorithmx.rulii.util;
 
 import org.algorithmx.rulii.core.Ordered;
+import org.algorithmx.rulii.core.Runnable;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Comparator;
 
-/**
- * Defines the sort order for an annotated component.
- *
- * @author Max Arulananthan
- * @since 1.0
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-@Documented
-public @interface Order {
+public class RunnableComparator implements Comparator<Runnable> {
 
-	int value() default Ordered.LOWEST_PRECEDENCE;
+    public RunnableComparator() {
+        super();
+    }
 
+    @Override
+    public int compare(Runnable r1, Runnable r2) {
+        if (r1 == r2) return 0;
+        if (r1 == null) return 1;
+        if (r2 == null) return 1;
+
+        if (r1 instanceof Ordered && r2 instanceof Ordered) {
+            ((Integer) ((Ordered) r1).getOrder()).compareTo(((Ordered) r2).getOrder());
+        }
+
+        return 0;
+    }
 }

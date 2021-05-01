@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation.rules.ascii;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -36,6 +37,8 @@ public @interface Ascii {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class AsciiValidationRuleBuilder implements AnnotatedRunnableBuilder<Ascii> {
@@ -48,7 +51,7 @@ public @interface Ascii {
         public Rule build(Ascii ascii, String bindingName) {
             AsciiValidationRule rule = new AsciiValidationRule(bindingName, ascii.errorCode(), ascii.severity(),
                     !NOT_APPLICABLE.equals(ascii.message()) ? ascii.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(ascii.when()) ? ascii.when() : null);
+            return buildRule(rule, ascii.order(), !NOT_APPLICABLE.equals(ascii.when()) ? ascii.when() : null);
         }
     }
 

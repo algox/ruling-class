@@ -29,6 +29,7 @@ import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.lib.spring.util.StringUtils;
+import org.algorithmx.rulii.util.RunnableComparator;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
@@ -45,6 +46,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -177,6 +179,7 @@ public class BeanValidator extends AbstractObjectVisitor {
         if (definition == null || !definition.hasDeclaredRules()) return null;
 
         RuleSetBuilder result = RuleSetBuilder.with(bindingName + "ValidationRules");
+        List<Runnable> runnables = new ArrayList<>();
 
         for (MarkedAnnotation marker : definition.getDeclaredRuleAnnotations()) {
             ValidationMarker validationRule = (ValidationMarker) marker.getMarker();
@@ -190,10 +193,14 @@ public class BeanValidator extends AbstractObjectVisitor {
             Runnable runnable = builder.build(marker.getOwner(), bindingName);
 
             if (runnable != null) {
-                result.add(runnable);
+                runnables.add(runnable);
+                //result.add(runnable);
             }
         }
 
+        // Sort them in case order was specified
+        Collections.sort(runnables, new RunnableComparator());
+        result.addAll(runnables);
         return result.size() > 0 ? result.build() : null;
     }
 

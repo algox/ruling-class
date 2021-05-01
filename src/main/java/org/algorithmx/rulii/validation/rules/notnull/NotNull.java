@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.notnull;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -33,6 +34,8 @@ public @interface NotNull {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class NotNullValidationRuleBuilder implements AnnotatedRunnableBuilder<NotNull> {
@@ -45,7 +48,7 @@ public @interface NotNull {
         public Rule build(NotNull notNull, String bindingName) {
             NotNullValidationRule rule = new NotNullValidationRule(bindingName, notNull.errorCode(),
                     notNull.severity(), !NOT_APPLICABLE.equals(notNull.message()) ? notNull.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(notNull.when()) ? notNull.when() : null);
+            return buildRule(rule, notNull.order(), !NOT_APPLICABLE.equals(notNull.when()) ? notNull.when() : null);
         }
     }
 }

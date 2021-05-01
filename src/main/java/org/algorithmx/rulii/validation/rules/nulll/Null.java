@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.nulll;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface Null {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class NullValidationRuleBuilder implements AnnotatedRunnableBuilder<Null> {
@@ -45,7 +48,7 @@ public @interface Null {
             NullValidationRule rule = new NullValidationRule(bindingName, nullAnnotation.errorCode(),
                     nullAnnotation.severity(),
                     !NOT_APPLICABLE.equals(nullAnnotation.message()) ? nullAnnotation.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null);
+            return buildRule(rule, nullAnnotation.order(), !NOT_APPLICABLE.equals(nullAnnotation.when()) ? nullAnnotation.when() : null);
         }
     }
 }

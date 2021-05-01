@@ -33,7 +33,7 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
  * @author Max Arulananthan
  * @since 1.0
  */
-public interface Function<T> extends Runnable<T>, Identifiable, Comparable<Function> {
+public interface Function<T> extends Runnable<T>, Identifiable {
 
     @Override
     default T run(RuleContext context) throws FunctionExecutionException {
@@ -105,10 +105,5 @@ public interface Function<T> extends Runnable<T>, Identifiable, Comparable<Funct
     default String getDescription() {
         MethodDefinition methodDefinition = getMethodDefinition();
         return methodDefinition != null ? methodDefinition.getDescription() : null;
-    }
-
-    @Override
-    default int compareTo(Function other) {
-        return getMethodDefinition().compareTo(other.getMethodDefinition());
     }
 }

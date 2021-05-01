@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@Target(value={ElementType.TYPE_USE})
+@Target(value={ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @Retention(RUNTIME)
 public @interface Extract {
 

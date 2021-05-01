@@ -92,7 +92,7 @@ public class RuleSetBuilder {
         // Not possible to have a cyclical dependency as we are yet to create this ruleset
         preCondition(parent.getPreCondition());
         stopCondition(parent.getStopCondition());
-        add(parent.getRuleSetItems());
+        addAll(parent.getRuleSetItems());
     }
 
     protected LinkedList<Runnable> getRuleSetItems() {
@@ -167,13 +167,13 @@ public class RuleSetBuilder {
         return this;
     }
 
-    public RuleSetBuilder add(Runnable...runnables) {
+    public RuleSetBuilder addAll(Runnable...runnables) {
         Assert.notNull(runnables, "runnables cannot be null");
         addAllInternal(Arrays.asList(runnables));
         return this;
     }
 
-    public RuleSetBuilder add(Collection<? extends Runnable> runnables) {
+    public RuleSetBuilder addAll(Collection<? extends Runnable> runnables) {
         return addAllInternal(runnables);
     }
 
@@ -197,34 +197,34 @@ public class RuleSetBuilder {
         return addAllInternal(index, actions);
     }
 
-    public RuleSetBuilder or(Collection<Rule> rules) {
+    public RuleSetBuilder any(Collection<Rule> rules) {
         Assert.notNull(rules, "rules cannot be null");
         RuleSet orRules = RuleSetBuilder.with("orRules")
-                .add(rules)
+                .addAll(rules)
                 .stopCondition(ConditionBuilder.with((RuleSetResult ruleSetResult) -> ruleSetResult.isAnyPass()).build())
                 .build();
         rules(orRules);
         return this;
     }
 
-    public RuleSetBuilder or(Rule...rules) {
+    public RuleSetBuilder any(Rule...rules) {
         Assert.notNull(rules, "rules cannot be null");
-        return or(Arrays.asList(rules));
+        return any(Arrays.asList(rules));
     }
 
-    public RuleSetBuilder and(Collection<Rule> rules) {
+    public RuleSetBuilder all(Collection<Rule> rules) {
         Assert.notNull(rules, "rules cannot be null");
         RuleSet andRules = RuleSetBuilder.with("andRules")
-                .add(rules)
+                .addAll(rules)
                 .stopCondition(ConditionBuilder.with((RuleSetResult ruleSetResult) -> ruleSetResult.isAnyFail()).build())
                 .build();
         rules(andRules);
         return this;
     }
 
-    public RuleSetBuilder and(Rule...rules) {
+    public RuleSetBuilder all(Rule...rules) {
         Assert.notNull(rules, "rules cannot be null");
-        return and(Arrays.asList(rules));
+        return all(Arrays.asList(rules));
     }
 
     private RuleSetBuilder addAllInternal(Collection<? extends Runnable> runnables) {

@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-package org.algorithmx.rulii.validation.types;
+package org.algorithmx.rulii.validation.extract;
 
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.validation.types.AnnotatedTypeDefinition;
 
 public class ExtractedTypeValue {
 

@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.positive;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface Positive {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class PositiveValidationRuleBuilder implements AnnotatedRunnableBuilder<Positive> {
@@ -44,7 +47,7 @@ public @interface Positive {
         public Rule build(Positive positive, String bindingName) {
             PositiveValidationRule rule = new PositiveValidationRule(bindingName, positive.errorCode(),
                     positive.severity(), !NOT_APPLICABLE.equals(positive.message()) ? positive.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(positive.when()) ? positive.when() : null);
+            return buildRule(rule, positive.order(), !NOT_APPLICABLE.equals(positive.when()) ? positive.when() : null);
         }
     }
 }

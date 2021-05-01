@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.lowercase;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -33,6 +34,8 @@ public @interface LowerCase {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class LowerCaseValidationRuleBuilder implements AnnotatedRunnableBuilder<LowerCase> {
@@ -45,7 +48,7 @@ public @interface LowerCase {
         public Rule build(LowerCase lowerCase, String bindingName) {
             LowerCaseValidationRule rule = new LowerCaseValidationRule(bindingName, lowerCase.errorCode(),
                     lowerCase.severity(), !NOT_APPLICABLE.equals(lowerCase.message()) ? lowerCase.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(lowerCase.when()) ? lowerCase.when() : null);
+            return buildRule(rule, lowerCase.order(), !NOT_APPLICABLE.equals(lowerCase.when()) ? lowerCase.when() : null);
         }
     }
 }

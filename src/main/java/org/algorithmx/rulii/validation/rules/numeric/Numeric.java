@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.numeric;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -35,6 +36,8 @@ public @interface Numeric {
 
     boolean allowSpace() default false;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class NumericValidationRuleBuilder implements AnnotatedRunnableBuilder<Numeric> {
@@ -48,7 +51,7 @@ public @interface Numeric {
             NumericValidationRule rule = new NumericValidationRule(bindingName, numeric.errorCode(),
                     numeric.severity(), !NOT_APPLICABLE.equals(numeric.message()) ? numeric.message() : null,
                     numeric.allowSpace());
-            return buildRule(rule, !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null);
+            return buildRule(rule, numeric.order(), !NOT_APPLICABLE.equals(numeric.when()) ? numeric.when() : null);
         }
     }
 }

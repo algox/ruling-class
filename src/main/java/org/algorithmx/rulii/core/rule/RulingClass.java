@@ -55,7 +55,7 @@ public class RulingClass<T> implements Rule<T> {
      * @param thenActions all the Then actions.
      * @param otherwiseAction the Otherwise action (optional);
      */
-    public RulingClass(RuleDefinition ruleDefinition, T target, Condition preCondition, Condition condition,
+    RulingClass(RuleDefinition ruleDefinition, T target, Condition preCondition, Condition condition,
                        List<Action> thenActions, Action otherwiseAction) {
         super();
         Assert.notNull(ruleDefinition, "ruleDefinition cannot be null");
@@ -63,15 +63,8 @@ public class RulingClass<T> implements Rule<T> {
         this.target = target;
         this.preCondition = preCondition;
         this.condition = condition;
-
         // Then actions (optional)
-        if (thenActions != null) {
-            Collections.sort(thenActions);
-            this.actions = Collections.unmodifiableList(thenActions);
-        } else {
-            this.actions = Collections.emptyList();
-        }
-
+        this.actions = thenActions != null ? Collections.unmodifiableList(thenActions) : Collections.emptyList();
         // Otherwise action (Optional)
         this.otherwiseAction = otherwiseAction;
     }

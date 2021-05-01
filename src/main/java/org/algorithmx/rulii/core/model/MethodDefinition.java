@@ -20,6 +20,7 @@ package org.algorithmx.rulii.core.model;
 
 import org.algorithmx.rulii.annotation.Description;
 import org.algorithmx.rulii.annotation.Order;
+import org.algorithmx.rulii.core.Ordered;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.RuleUtils;
@@ -122,7 +123,7 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
         Assert.notNull(method, "method cannot be null");
         Description descriptionAnnotation = method.getAnnotation(Description.class);
         Order orderAnnotation = method.getAnnotation(Order.class);
-        MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : Order.LOWEST_PRECEDENCE,
+        MethodDefinition result = new MethodDefinition(method, orderAnnotation != null ? orderAnnotation.value() : Ordered.LOWEST_PRECEDENCE,
                 descriptionAnnotation != null ? descriptionAnnotation.value() : null,
                 ReturnTypeDefinition.load(method),
                 ParameterDefinition.load(method));

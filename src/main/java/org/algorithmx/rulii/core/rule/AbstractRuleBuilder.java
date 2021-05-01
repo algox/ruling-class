@@ -18,12 +18,13 @@
 
 package org.algorithmx.rulii.core.rule;
 
-import org.algorithmx.rulii.annotation.Order;
 import org.algorithmx.rulii.core.action.Action;
 import org.algorithmx.rulii.core.condition.Condition;
 import org.algorithmx.rulii.core.model.MethodDefinition;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.util.RuleUtils;
+import org.algorithmx.rulii.util.RunnableComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class AbstractRuleBuilder<T> {
     private Class<T> ruleClass;
     private String name;
     private String description;
-    private Integer order = Order.LOWEST_PRECEDENCE;
+    private int order = Ordered.LOWEST_PRECEDENCE;
     private Condition preCondition = null;
     private Condition condition;
     private Action otherwiseAction;
@@ -152,7 +153,7 @@ public class AbstractRuleBuilder<T> {
         Assert.notNull(getName(), "Rule Name cannot be null");
 
         // Sort Then Action per Order
-        Collections.sort(thenActions);
+        Collections.sort(thenActions, new RunnableComparator());
 
         List<MethodDefinition> thenActionDefinitions = new ArrayList(thenActions.size());
 

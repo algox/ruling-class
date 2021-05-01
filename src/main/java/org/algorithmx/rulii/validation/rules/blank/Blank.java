@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.blank;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface Blank {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class BlankValidationRuleBuilder implements AnnotatedRunnableBuilder<Blank> {
@@ -44,7 +47,7 @@ public @interface Blank {
         public Rule build(Blank blank, String bindingName) {
             BlankValidationRule rule = new BlankValidationRule(bindingName, blank.errorCode(),
                     blank.severity(), !NOT_APPLICABLE.equals(blank.message()) ? blank.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(blank.when()) ? blank.when() : null);
+            return buildRule(rule, blank.order(), !NOT_APPLICABLE.equals(blank.when()) ? blank.when() : null);
         }
     }
 }

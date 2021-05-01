@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.email;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -36,6 +37,8 @@ public @interface Email {
 
     boolean allowTopLevelDomain() default true;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class EmailValidationRuleBuilder implements AnnotatedRunnableBuilder<Email> {
@@ -49,7 +52,7 @@ public @interface Email {
             EmailValidationRule rule = new EmailValidationRule(bindingName, email.errorCode(),
                     email.severity(), !NOT_APPLICABLE.equals(email.message()) ? email.message() : null,
                     email.allowLocal(), email.allowTopLevelDomain());
-            return buildRule(rule, !NOT_APPLICABLE.equals(email.when()) ? email.when() : null);
+            return buildRule(rule, email.order(), !NOT_APPLICABLE.equals(email.when()) ? email.when() : null);
         }
     }
 }

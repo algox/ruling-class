@@ -6,6 +6,7 @@ import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.convert.Converter;
 import org.algorithmx.rulii.convert.ConverterRegistry;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 import org.algorithmx.rulii.validation.ValidationRuleException;
@@ -47,6 +48,8 @@ public @interface In {
 
     Class<?> type() default void.class;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class InValidationRuleBuilder implements AnnotatedRunnableBuilder<In> {
@@ -62,7 +65,7 @@ public @interface In {
                     : convertValues(in.values(), in.type(), RuliiSystem.getInstance().getConverterRegistry());
             InValidationRule rule = new InValidationRule(bindingName, in.errorCode(),
                     in.severity(), !NOT_APPLICABLE.equals(in.message()) ? in.message() : null, values);
-            return buildRule(rule, !NOT_APPLICABLE.equals(in.when()) ? in.when() : null);
+            return buildRule(rule, in.order(), !NOT_APPLICABLE.equals(in.when()) ? in.when() : null);
         }
 
         protected Set<Object> convertValues(String[] values, Class<?> type, ConverterRegistry registry) {

@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.notempty;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface NotEmpty {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class NotEmptyValidationRuleBuilder implements AnnotatedRunnableBuilder<NotEmpty> {
@@ -44,7 +47,7 @@ public @interface NotEmpty {
         public Rule build(NotEmpty notEmpty, String bindingName) {
             NotEmptyValidationRule rule = new NotEmptyValidationRule(bindingName, notEmpty.errorCode(),
                     notEmpty.severity(), !NOT_APPLICABLE.equals(notEmpty.message()) ? notEmpty.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(notEmpty.when()) ? notEmpty.when() : null);
+            return buildRule(rule, notEmpty.order(), !NOT_APPLICABLE.equals(notEmpty.when()) ? notEmpty.when() : null);
         }
     }
 }

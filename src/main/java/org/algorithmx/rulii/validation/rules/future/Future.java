@@ -2,6 +2,7 @@ package org.algorithmx.rulii.validation.rules.future;
 
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -32,6 +33,8 @@ public @interface Future {
 
     Severity severity() default Severity.ERROR;
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class FutureValidationRuleBuilder implements AnnotatedRunnableBuilder<Future> {
@@ -45,7 +48,7 @@ public @interface Future {
             FutureValidationRule rule = new FutureValidationRule(bindingName,
                     future.errorCode(), future.severity(),
                     !NOT_APPLICABLE.equals(future.message()) ? future.message() : null);
-            return buildRule(rule, !NOT_APPLICABLE.equals(future.when()) ? future.when() : null);
+            return buildRule(rule, future.order(), !NOT_APPLICABLE.equals(future.when()) ? future.when() : null);
         }
     }
 }

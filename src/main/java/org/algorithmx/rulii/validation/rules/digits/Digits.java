@@ -3,6 +3,7 @@ package org.algorithmx.rulii.validation.rules.digits;
 import org.algorithmx.rulii.annotation.ValidationMarker;
 import org.algorithmx.rulii.annotation.ValidationMarkerContainer;
 import org.algorithmx.rulii.core.rule.Rule;
+import org.algorithmx.rulii.lib.spring.core.Ordered;
 import org.algorithmx.rulii.validation.AnnotatedRunnableBuilder;
 import org.algorithmx.rulii.validation.Severity;
 
@@ -46,6 +47,8 @@ public @interface Digits {
      */
     int fraction();
 
+    int order() default Ordered.LOWEST_PRECEDENCE;
+
     String when() default NOT_APPLICABLE;
 
     class DigitsValidationRuleBuilder implements AnnotatedRunnableBuilder<Digits> {
@@ -59,7 +62,7 @@ public @interface Digits {
             DigitsValidationRule rule = new DigitsValidationRule(bindingName, digits.errorCode(),
                     digits.severity(), !NOT_APPLICABLE.equals(digits.message()) ? digits.message() : null,
                     digits.integer(), digits.fraction());
-            return buildRule(rule, !NOT_APPLICABLE.equals(digits.when()) ? digits.when() : null);
+            return buildRule(rule, digits.order(), !NOT_APPLICABLE.equals(digits.when()) ? digits.when() : null);
         }
     }
 

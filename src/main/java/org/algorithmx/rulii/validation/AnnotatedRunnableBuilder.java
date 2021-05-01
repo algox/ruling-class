@@ -29,11 +29,12 @@ public interface AnnotatedRunnableBuilder<T extends Annotation> {
 
     Runnable build(T type, String bindingName);
 
-    default Rule buildRule(BindingValidationRule target, String when) {
+    default Rule buildRule(BindingValidationRule target, int order, String when) {
 
         if (when != null) {
             return RuleBuilder
                     .with(target)
+                    .order(order)
                     .preCondition(ConditionBuilder.build(when))
                     .build();
         }
