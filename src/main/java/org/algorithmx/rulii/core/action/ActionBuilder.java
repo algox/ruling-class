@@ -157,7 +157,7 @@ public final class ActionBuilder extends ExecutableBuilder {
         return result;
     }
 
-    private static ActionBuilder withAction(Object target) {
+    public static ActionBuilder withAction(Object target) {
         Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
 
         if (candidates == null || candidates.length == 0) {

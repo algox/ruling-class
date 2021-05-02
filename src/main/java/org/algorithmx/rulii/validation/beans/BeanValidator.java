@@ -194,7 +194,6 @@ public class BeanValidator extends AbstractObjectVisitor {
 
             if (runnable != null) {
                 runnables.add(runnable);
-                //result.add(runnable);
             }
         }
 

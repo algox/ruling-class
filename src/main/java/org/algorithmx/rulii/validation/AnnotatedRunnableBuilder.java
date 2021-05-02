@@ -19,6 +19,8 @@
 package org.algorithmx.rulii.validation;
 
 import org.algorithmx.rulii.core.Runnable;
+import org.algorithmx.rulii.core.action.Action;
+import org.algorithmx.rulii.core.action.ActionBuilder;
 import org.algorithmx.rulii.core.condition.ConditionBuilder;
 import org.algorithmx.rulii.core.rule.Rule;
 import org.algorithmx.rulii.core.rule.RuleBuilder;
@@ -39,6 +41,12 @@ public interface AnnotatedRunnableBuilder<T extends Annotation> {
                     .build();
         }
 
-        return RuleBuilder.build(target);
+        return RuleBuilder.with(target).order(order).build();
+    }
+
+    default Action buildAction(Object action, int order) {
+        ActionBuilder builder = ActionBuilder.withAction(action);
+        builder.getDefinition().setOrder(order);
+        return builder.build();
     }
 }

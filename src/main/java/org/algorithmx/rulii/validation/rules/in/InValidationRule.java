@@ -27,7 +27,7 @@ public class InValidationRule extends BindingValidationRule {
 
     private final Set<?> values;
 
-    public InValidationRule(String bindingName, String path, Set<?> values) {
+    public InValidationRule(String bindingName, Set<?> values) {
         this(bindingName, ERROR_CODE, Severity.ERROR, null, values);
     }
 
