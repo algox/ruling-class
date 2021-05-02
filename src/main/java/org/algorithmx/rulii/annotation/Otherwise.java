@@ -34,5 +34,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Action
 public @interface Otherwise {
+
+    @AliasFor(annotation = Action.class, attribute = "name")
+    String name() default "";
 }

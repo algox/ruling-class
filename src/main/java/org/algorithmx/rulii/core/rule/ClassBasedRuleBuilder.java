@@ -94,7 +94,7 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
     }
 
     protected void loadPreCondition(Class<T> ruleClass, Object target) {
-        Condition[] preConditions = ConditionBuilder.build(target, PreCondition.class, 1);
+        Condition[] preConditions = ConditionBuilder.build(target, PreCondition.class, null,1);
         // Load Pre-Condition
         if (preConditions.length == 1) {
             preCondition(preConditions[0]);
@@ -102,7 +102,7 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
     }
 
     protected void loadCondition(Class<T> ruleClass, Object target) {
-        Condition[] givenConditions = ConditionBuilder.build(target, Given.class, 1);
+        Condition[] givenConditions = ConditionBuilder.build(target, Given.class, null, 1);
         // Load Given-Condition
         if (givenConditions.length == 1) {
             given(givenConditions[0]);
@@ -118,7 +118,7 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
      * @param target rule target.
      */
     protected void loadThenActions(Object target) {
-        Action[] thenActions = ActionBuilder.build(target, Then.class, null);
+        Action[] thenActions = ActionBuilder.build(target, Then.class, null, null);
         // Load Then-Actions
         for (Action thenAction : thenActions) {
             then(thenAction);
@@ -132,7 +132,7 @@ public class ClassBasedRuleBuilder<T> extends AbstractRuleBuilder<T> {
      * @param target rule target.
      */
     protected void loadOtherwiseAction(Object target) {
-        Action[] otherwiseActions = ActionBuilder.build(target, Otherwise.class, 1);
+        Action[] otherwiseActions = ActionBuilder.build(target, Otherwise.class, null, 1);
         // Load Otherwise-Action
         if (otherwiseActions.length == 1) {
             otherwise(otherwiseActions[0]);

@@ -36,4 +36,6 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface Function {
+
+    String name() default "";
 }

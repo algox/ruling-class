@@ -36,4 +36,7 @@ import java.lang.annotation.Target;
 @Documented
 @Condition
 public @interface Given {
+
+    @AliasFor(annotation = Condition.class, attribute = "name")
+    String name() default "";
 }

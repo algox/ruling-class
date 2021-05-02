@@ -29,7 +29,9 @@ import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.core.BridgeMethodResolver;
+import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
@@ -107,15 +109,22 @@ public final class ActionBuilder extends ExecutableBuilder {
     }
 
     public static Action[] build(Object target) {
-        return build(target, org.algorithmx.rulii.annotation.Action.class, null);
+        return build(target, org.algorithmx.rulii.annotation.Action.class, null, null);
     }
 
-    public static Action[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
+    public static Action[] build(Object target, Class<? extends Annotation> annotationClass, Integer min, Integer max) {
         Assert.notNull(target, "target cannot be null.");
         Assert.notNull(annotationClass, "annotationClass cannot be null.");
 
         Class<?> clazz = target.getClass();
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
+
+        if (min != null && candidates.length < min) {
+            throw new UnrulyException("Not enough Action method(s) on class [" + target.getClass()
+                    + "]. There must be at least " + min + " methods (Annotated with @" + annotationClass.getSimpleName()
+                    + "). Currently there are [" + candidates.length
+                    + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
 
         if (max != null && candidates.length > max) {
             // Too many matches
@@ -138,7 +147,11 @@ public final class ActionBuilder extends ExecutableBuilder {
         Action[] result = new Action[candidates.length];
 
         for (int i = 0; i < candidates.length; i++) {
-            result[i] = with(target, MethodDefinition.load(candidates[i])).build();
+            String name = extractName(candidates[0]);
+            Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
+            ActionBuilder builder = with(target, MethodDefinition.load(candidate));
+            if (name != null) builder.name(name);
+            result[i] = builder.build();
         }
 
         return result;
@@ -157,6 +170,7 @@ public final class ActionBuilder extends ExecutableBuilder {
                     + Arrays.toString(candidates) + "]");
         }
 
+        String name = extractName(candidates[0]);
         Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
         MethodInfo methodInfo = load(target, candidate);
 
@@ -164,7 +178,11 @@ public final class ActionBuilder extends ExecutableBuilder {
             throw new UnrulyException("Actions must return a void [" + methodInfo.getDefinition().getMethod() + "]");
         }
 
-        return new ActionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
+        ActionBuilder result = new ActionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
+
+        if (name != null) result.name(name);
+
+        return result;
     }
 
     /**
@@ -513,6 +531,7 @@ public final class ActionBuilder extends ExecutableBuilder {
      * @return ActionBuilder for fluency.
      */
     public ActionBuilder name(String name) {
+        Assert.notNull(name, "name cannot be null.");
         getDefinition().setName(name);
         return this;
     }
@@ -542,4 +561,11 @@ public final class ActionBuilder extends ExecutableBuilder {
         return new ParameterDefinitionEditor(definition, this);
     }
 
+    private static String extractName(Method method) {
+        org.algorithmx.rulii.annotation.Action action = AnnotationUtils.getAnnotation(method, org.algorithmx.rulii.annotation.Action.class);
+
+        if (action == null) return null;
+
+        return StringUtils.hasText(action.name()) ? action.name() : null;
+    }
 }

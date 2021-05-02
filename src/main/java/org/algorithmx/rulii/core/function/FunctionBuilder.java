@@ -27,7 +27,10 @@ import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rulii.lib.spring.core.BridgeMethodResolver;
+import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
@@ -56,24 +59,6 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         super(function, definition);
     }
 
-    private static <T> FunctionBuilder<T> withFunction(Object target) {
-        Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
-
-        if (candidates == null || candidates.length == 0) {
-            throw new UnrulyException("Function method not found on class [" + target.getClass() + "]");
-        }
-
-        // Too many Actions declared
-        if (candidates.length > 1) {
-            throw new UnrulyException("Too many function methods found on class [" + target.getClass() + "]. Candidates ["
-                    + Arrays.toString(candidates) + "]");
-        }
-
-        MethodInfo methodInfo = load(target, candidates[0]);
-
-        return (FunctionBuilder<T>) new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
-    }
-
     public static Function[] build(Class<?> clazz) {
         Assert.notNull(clazz, "clazz cannot be null.");
         ObjectFactory objectFactory = RuliiSystem.getInstance().getObjectFactory();
@@ -85,17 +70,24 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
     }
 
     public static Function[] build(Object target) {
-        return build(target, org.algorithmx.rulii.annotation.Function.class, null);
+        return build(target, org.algorithmx.rulii.annotation.Function.class, null, null);
     }
 
     private static <T> FunctionBuilder<T> with(Object target, MethodDefinition definition) {
         return new FunctionBuilder(target, definition);
     }
 
-    public static Function[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
+    public static Function[] build(Object target, Class<? extends Annotation> annotationClass, Integer min, Integer max) {
         Assert.notNull(annotationClass, "annotationClass cannot be null.");
         Class<?> clazz = target.getClass();
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
+
+        if (min != null && candidates.length < min) {
+            throw new UnrulyException("Not enough Function method(s) on class [" + target.getClass()
+                    + "]. There must be at least " + min + " methods (Annotated with @" + annotationClass.getSimpleName()
+                    + "). Currently there are [" + candidates.length
+                    + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
 
         if (max != null && candidates.length > max) {
             // Too many matches
@@ -109,8 +101,36 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         Function[] result = new Function[candidates.length];
 
         for (int i = 0; i < candidates.length; i++) {
-            result[i] = with(target, MethodDefinition.load(candidates[i])).build();
+            String name = extractName(candidates[0]);
+            Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
+            FunctionBuilder builder = with(target, MethodDefinition.load(candidate));
+            if (name != null) builder.name(name);
+            result[i] = builder.build();
         }
+
+        return result;
+    }
+
+    private static <T> FunctionBuilder<T> withFunction(Object target) {
+        Method[] candidates = ReflectionUtils.getMethods(target.getClass(), FILTER);
+
+        if (candidates == null || candidates.length == 0) {
+            throw new UnrulyException("Function method not found on class [" + target.getClass() + "]");
+        }
+
+        // Too many Actions declared
+        if (candidates.length > 1) {
+            throw new UnrulyException("Too many function methods found on class [" + target.getClass() + "]. Candidates ["
+                    + Arrays.toString(candidates) + "]");
+        }
+
+        String name = extractName(candidates[0]);
+        Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
+        MethodInfo methodInfo = load(target, candidate);
+
+        FunctionBuilder result = (FunctionBuilder<T>) new FunctionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
+
+        if (name != null) result.name(name);
 
         return result;
     }
@@ -559,4 +579,11 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
         return new ParameterDefinitionEditor(definition, this);
     }
 
+    private static String extractName(Method method) {
+        org.algorithmx.rulii.annotation.Function function = AnnotationUtils.getAnnotation(method, org.algorithmx.rulii.annotation.Function.class);
+
+        if (function == null) return null;
+
+        return StringUtils.hasText(function.name()) ? function.name() : null;
+    }
 }

@@ -23,7 +23,6 @@ import org.algorithmx.rulii.annotation.Order;
 import org.algorithmx.rulii.core.Ordered;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.util.RuleUtils;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -212,7 +211,6 @@ public final class MethodDefinition implements Definition, Comparable<MethodDefi
      * @param name new value/
      */
     public void setName(String name) {
-        Assert.isTrue(RuleUtils.isValidName(name), "Invalid method name [" + name + "] regex [" + RuleUtils.NAME_REGEX + "]");
         this.name = name;
     }
 

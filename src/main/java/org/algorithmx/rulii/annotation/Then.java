@@ -36,4 +36,7 @@ import java.lang.annotation.Target;
 @Documented
 @Action
 public @interface Then {
+
+    @AliasFor(annotation = Action.class, attribute = "name")
+    String name() default "";
 }

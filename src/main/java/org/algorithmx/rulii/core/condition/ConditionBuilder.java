@@ -39,7 +39,10 @@ import org.algorithmx.rulii.core.function.UnaryFunction;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rulii.lib.spring.core.BridgeMethodResolver;
+import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
@@ -82,13 +85,20 @@ public class ConditionBuilder extends ExecutableBuilder {
     }
 
     public static Condition[] build(Object target) {
-        return build(target, org.algorithmx.rulii.annotation.Condition.class, null);
+        return build(target, org.algorithmx.rulii.annotation.Condition.class, null, null);
     }
 
-    public static Condition[] build(Object target, Class<? extends Annotation> annotationClass, Integer max) {
+    public static Condition[] build(Object target, Class<? extends Annotation> annotationClass, Integer min, Integer max) {
         Assert.notNull(annotationClass, "annotationClass cannot be null.");
         Class<?> clazz = target.getClass();
         Method[] candidates = ReflectionUtils.getMethodsWithAnnotation(clazz, annotationClass);
+
+        if (min != null && candidates.length < min) {
+            throw new UnrulyException("Not enough Condition method(s) on class [" + target.getClass()
+                    + "]. There must be at least " + min + " methods (Annotated with @" + annotationClass.getSimpleName()
+                    + "). Currently there are [" + candidates.length
+                    + "] candidates [" + Arrays.toString(candidates) + "]");
+        }
 
         if (max != null && candidates.length > max) {
             // Too many matches
@@ -111,7 +121,11 @@ public class ConditionBuilder extends ExecutableBuilder {
         Condition[] result = new Condition[candidates.length];
 
         for (int i = 0; i < candidates.length; i++) {
-            result[i] = with(target, MethodDefinition.load(candidates[i])).build();
+            String name = extractName(candidates[0]);
+            Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
+            ConditionBuilder builder = with(target, MethodDefinition.load(candidate));
+            if (name != null) builder.name(name);
+            result[i] = builder.build();
         }
 
         return result;
@@ -130,14 +144,20 @@ public class ConditionBuilder extends ExecutableBuilder {
                     + Arrays.toString(candidates) + "]");
         }
 
-        MethodInfo methodInfo = load(target, candidates[0]);
+        String name = extractName(candidates[0]);
+        Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
+        MethodInfo methodInfo = load(target, candidate);
 
         if (!boolean.class.equals(methodInfo.getDefinition().getReturnType()) &&
                 !Boolean.class.equals(methodInfo.getDefinition().getReturnType())) {
             throw new UnrulyException("Conditions must return a boolean [" + methodInfo.getDefinition().getMethod() + "]");
         }
 
-        return new ConditionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
+        ConditionBuilder result = new ConditionBuilder(methodInfo.getTarget(), methodInfo.getDefinition());
+
+        if (name != null) result.name(name);
+
+        return result;
     }
 
     /**
@@ -553,6 +573,14 @@ public class ConditionBuilder extends ExecutableBuilder {
         }
 
         return new ParameterDefinitionEditor(definition, this);
+    }
+
+    private static String extractName(Method method) {
+        org.algorithmx.rulii.annotation.Condition condition = AnnotationUtils.getAnnotation(method, org.algorithmx.rulii.annotation.Condition.class);
+
+        if (condition == null) return null;
+
+        return StringUtils.hasText(condition.name()) ? condition.name() : null;
     }
 
 }
