@@ -25,6 +25,6 @@ import org.algorithmx.rulii.validation.rules.notnull.NotNull;
 
 public interface TestService {
     void addCustomer(@NotNull @Min(10) @Param("firstName") String firstName,
-                     @Param("lastName") @Validate(using = "lastNameRules") String lastName,
+                     @Param("lastName") @Validate String lastName,
                      @Min(100) @Param("age") Integer age);
 }

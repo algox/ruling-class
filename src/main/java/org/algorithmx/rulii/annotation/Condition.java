@@ -37,5 +37,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Condition {
 
-    String name() default "";
+    String NOT_APPLICABLE = "N/A";
+
+    String name() default NOT_APPLICABLE;
 }

@@ -63,10 +63,6 @@ public class AnnotatedTypeVariableDefinition extends AbstractAnnotatedTypeDefini
         return result.toArray(new AnnotatedTypeDefinition[result.size()]);
     }
 
-    public String getSignatureX() {
-        return getDeclaredRuleSignature() + " " + getAnnotatedType().getType().getTypeName();
-    }
-
     @Override
     public String toString() {
         return "TypeVariableDefinition{" +

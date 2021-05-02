@@ -28,7 +28,6 @@ import org.algorithmx.rulii.core.context.RuleContext;
 import org.algorithmx.rulii.core.ruleset.RuleSet;
 import org.algorithmx.rulii.core.ruleset.RuleSetBuilder;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.util.RunnableComparator;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.util.reflect.ReflectionUtils;
@@ -133,35 +132,19 @@ public class BeanValidator extends AbstractObjectVisitor {
     protected boolean isIntrospectionRequired(GraphNode candidate) {
         if (candidate.getTypeDefinition() == null) return true;
         Validate validate = (Validate) candidate.getTypeDefinition().getIntrospectionAnnotation();
-        return validate != null && (validate.includeAnnotatedRules() || StringUtils.hasText(validate.using()));
+        //return validate != null && (validate.includeAnnotatedRules() || StringUtils.hasText(validate.using()));
+        return validate != null;
     }
 
     protected void runRules(RuleContext context, AnnotatedTypeDefinition definition, String bindingName) {
         if (definition == null) return;
 
-        Validate validate = (Validate) definition.getIntrospectionAnnotation();
+        RuleSet rules = getAnnotatedRules(context.getObjectFactory(), definition, bindingName);
 
-        if (validate == null || validate.includeAnnotatedRules()) {
-            RuleSet rules = getAnnotatedRules(context.getObjectFactory(), definition, bindingName);
-
-            if (rules == null) {
-                // TODO : Log
-            } else {
-                rules.run(context);
-            }
-        }
-
-        if (validate != null) {
-            if (!Validate.NOT_APPLICABLE.equals(validate.using())) {
-                Runnable rules = context.getRuleRegistry().get(validate.using());
-
-                if (rules == null) {
-                    // TODO : Log
-                    System.err.println("XXX No rules named [" + validate.using() + "] found ! [" + definition + "]");
-                } else {
-                    rules.run(context);
-                }
-            }
+        if (rules == null) {
+            // TODO : Log
+        } else {
+            rules.run(context);
         }
     }
 
@@ -172,7 +155,8 @@ public class BeanValidator extends AbstractObjectVisitor {
                 : null;
     }
 
-    protected RuleSet createAnnotatedRules(ObjectFactory objectFactory, AnnotatedTypeDefinition definition,
+    protected RuleSet createAnnotatedRules(ObjectFactory objectFactory,
+                                           AnnotatedTypeDefinition definition,
                                            String bindingName) {
         Assert.notNull(bindingName, "bindingName cannot be null.");
 

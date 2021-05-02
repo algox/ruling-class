@@ -49,10 +49,6 @@ public class SimpleAnnotatedTypeDefinition extends AbstractAnnotatedTypeDefiniti
         return new AnnotatedTypeDefinition[0];
     }
 
-    public String getSignatureX() {
-        return "<" + getDeclaredRuleSignature() + type.getSimpleName() + ">";
-    }
-
     @Override
     public String toString() {
         return "SimpleTypeDefinition{" +

@@ -20,7 +20,6 @@ package org.algorithmx.rulii.validation.types;
 
 import org.algorithmx.rulii.annotation.Extract;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -29,7 +28,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 public class AnnotatedParameterizedTypeDefinition extends AbstractAnnotatedTypeDefinition<AnnotatedParameterizedType> {
 
@@ -75,41 +73,6 @@ public class AnnotatedParameterizedTypeDefinition extends AbstractAnnotatedTypeD
     private static Type getOwnerType(AnnotatedParameterizedType annotatedType) {
         ParameterizedType parameterizedType = (ParameterizedType) annotatedType.getType();
         return parameterizedType.getOwnerType();
-    }
-
-    public String getSignatureX() {
-        StringBuilder sb = new StringBuilder();
-
-        Type ownerType = getOwnerType(getAnnotatedType());
-        Class<?> rawType = getRawType(getAnnotatedType());
-
-        if (ownerType != null) {
-            sb.append(ownerType.getTypeName());
-
-            sb.append("$");
-
-            if (ownerType instanceof ParameterizedTypeImpl) {
-                // Find simple name of nested type by removing the
-                // shared prefix with owner.
-                sb.append(rawType.getName().replace( ((ParameterizedTypeImpl)ownerType).getRawType().getName() + "$",
-                        ""));
-            } else
-                sb.append(rawType.getSimpleName());
-        } else
-            sb.append(rawType.getName());
-
-        if (typeArguments != null) {
-            StringJoiner sj = new StringJoiner(", ", "<", ">");
-            sj.setEmptyValue("");
-
-            for(AnnotatedTypeDefinition t : typeArguments) {
-                sj.add(t.getSignature());
-            }
-
-            sb.append(sj.toString());
-        }
-
-        return sb.toString();
     }
 
     @Override

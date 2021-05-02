@@ -30,7 +30,6 @@ import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.core.BridgeMethodResolver;
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
@@ -584,6 +583,6 @@ public class FunctionBuilder<T> extends ExecutableBuilder {
 
         if (function == null) return null;
 
-        return StringUtils.hasText(function.name()) ? function.name() : null;
+        return org.algorithmx.rulii.annotation.Function.NOT_APPLICABLE.equals(function.name()) ? null : function.name();
     }
 }

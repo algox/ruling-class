@@ -54,7 +54,6 @@ public abstract class AbstractAnnotatedTypeDefinition<T extends AnnotatedType> i
         this.ruleAnnotations = ruleAnnotations;
         this.childrenHaveRules = childrenHaveRules;
         this.childrenRequireIntrospection = childrenRequireIntrospection;
-        //if (ruleAnnotations != null) Arrays.sort(this.ruleAnnotations);
     }
 
     @Override

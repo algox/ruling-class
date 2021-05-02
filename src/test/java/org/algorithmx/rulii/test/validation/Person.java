@@ -22,6 +22,7 @@ import org.algorithmx.rulii.annotation.Validate;
 import org.algorithmx.rulii.core.Identifiable;
 import org.algorithmx.rulii.test.validation.objectgraph.Expression;
 import org.algorithmx.rulii.test.validation.objectgraph.Or;
+import org.algorithmx.rulii.validation.actions.rules.Rules;
 import org.algorithmx.rulii.validation.rules.min.Min;
 import org.algorithmx.rulii.validation.rules.notempty.NotEmpty;
 import org.algorithmx.rulii.validation.rules.notnull.NotNull;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Rules(ruleSet =  "")
 public class Person implements Identifiable {
 
     @NotNull
@@ -41,11 +43,11 @@ public class Person implements Identifiable {
     private String firstName;
     @Annotation5
     private String lastName;
-    @Expression(or = @Or) @Validate(using = "addressRules")
+    @Expression(or = @Or) @Validate @Rules(ruleSet = "addressRules")
     private Address address;
-    @Annotation3
+    @Annotation3 @Validate
     private List<@NotNull @Validate Car> cars;
-    @Annotation1(integer = 4, fraction = 5) //@Validate(using = "jobRules")
+    @Annotation1(integer = 4, fraction = 5) @Validate @Rules(ruleSet = "jobRules")
     private Employment[] jobs;
     @NotNull
     private Map<@NotNull String, Map<@NotNull String, List<@Min(5) Integer>>> attributes;

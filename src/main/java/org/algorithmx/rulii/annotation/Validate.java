@@ -30,13 +30,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Validate {
 
-    String NOT_APPLICABLE = "N/A";
+    /*String NOT_APPLICABLE = "N/A";
 
     String using() default NOT_APPLICABLE;
 
     String when() default NOT_APPLICABLE;
 
-    boolean includeAnnotatedRules() default true;
+    boolean includeAnnotatedRules() default true;*/
 
     // TODO : add before/after for method calls
 }

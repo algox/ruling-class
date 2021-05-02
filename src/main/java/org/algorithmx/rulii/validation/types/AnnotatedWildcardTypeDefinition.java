@@ -26,7 +26,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 public class AnnotatedWildcardTypeDefinition extends AbstractAnnotatedTypeDefinition<AnnotatedWildcardType> {
 
@@ -78,34 +77,6 @@ public class AnnotatedWildcardTypeDefinition extends AbstractAnnotatedTypeDefini
                 .filter(def -> def != null && def.getAnnotatedType() != null)
                 .map(def -> def.getAnnotatedType().getType())
                 .toArray(Type[]::new);
-    }
-
-    public String getSignatureX() {
-        Type[] lowerBounds = getBounds(getLowerBounds());
-        Type[] bounds = lowerBounds;
-        StringBuilder sb = new StringBuilder();
-
-        if (lowerBounds.length > 0)
-            sb.append("? super ");
-        else {
-            Type[] upperBounds = getBounds(getUpperBounds());
-
-            if (upperBounds.length > 0 && !upperBounds[0].equals(Object.class) ) {
-                bounds = upperBounds;
-                sb.append("? extends ");
-            } else
-                return "?";
-        }
-
-        StringJoiner sj = new StringJoiner(" & ");
-
-        for (Type bound: bounds) {
-            sj.add(bound.getTypeName());
-        }
-
-        sb.append(sj.toString());
-
-        return sb.toString();
     }
 
 }

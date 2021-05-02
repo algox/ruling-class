@@ -54,12 +54,6 @@ public class AnnotatedArrayTypeDefinition extends AbstractAnnotatedTypeDefinitio
         return result.toArray(new AnnotatedTypeDefinition[result.size()]);
     }
 
-    public String getSignatureX() {
-        StringBuilder result = new StringBuilder(componentType.getSignature());
-        result.append("[]");
-        return getDeclaredRuleSignature() + " " + result.toString();
-    }
-
     @Override
     public String toString() {
         return "ArrayTypeDefinition{" +

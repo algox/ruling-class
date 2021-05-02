@@ -30,8 +30,9 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
         super();
     }
 
-    protected List<GraphNode> introspectCandidate(GraphNode candidate, ExtractorRegistry extractorRegistry, ObjectFactory objectFactory) {
-
+    protected List<GraphNode> introspectCandidate(GraphNode candidate,
+                                                  ExtractorRegistry extractorRegistry,
+                                                  ObjectFactory objectFactory) {
         if (candidate.isNull()) return Collections.emptyList();
         if (candidate.getTypeDefinition() != null
                 && !candidate.getTypeDefinition().isIntrospectionRequired()) return Collections.emptyList();
@@ -49,7 +50,6 @@ public abstract class AbstractObjectVisitor implements ObjectVisitor {
 
         return result;
     }
-
 
     protected List<GraphNode> findCandidates(SourceHolder[] fields, GraphNode candidate,
                                              ExtractorRegistry extractorRegistry, ObjectFactory objectFactory) {

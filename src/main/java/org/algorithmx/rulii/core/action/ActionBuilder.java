@@ -31,7 +31,6 @@ import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
 import org.algorithmx.rulii.lib.spring.core.BridgeMethodResolver;
 import org.algorithmx.rulii.lib.spring.core.annotation.AnnotationUtils;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.lib.spring.util.StringUtils;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
@@ -566,6 +565,6 @@ public final class ActionBuilder extends ExecutableBuilder {
 
         if (action == null) return null;
 
-        return StringUtils.hasText(action.name()) ? action.name() : null;
+        return org.algorithmx.rulii.annotation.Action.NOT_APPLICABLE.equals(action.name()) ? null : action.name();
     }
 }
