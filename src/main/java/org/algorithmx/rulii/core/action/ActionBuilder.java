@@ -28,6 +28,7 @@ import org.algorithmx.rulii.core.function.ExecutableBuilder;
 import org.algorithmx.rulii.core.model.MethodDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinition;
 import org.algorithmx.rulii.core.model.ParameterDefinitionEditor;
+import org.algorithmx.rulii.lib.spring.core.BridgeMethodResolver;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
@@ -156,7 +157,8 @@ public final class ActionBuilder extends ExecutableBuilder {
                     + Arrays.toString(candidates) + "]");
         }
 
-        MethodInfo methodInfo = load(target, candidates[0]);
+        Method candidate = BridgeMethodResolver.findBridgedMethod(candidates[0]);
+        MethodInfo methodInfo = load(target, candidate);
 
         if (!void.class.equals(methodInfo.getDefinition().getReturnType())) {
             throw new UnrulyException("Actions must return a void [" + methodInfo.getDefinition().getMethod() + "]");
