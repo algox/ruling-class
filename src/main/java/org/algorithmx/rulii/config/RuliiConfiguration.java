@@ -21,14 +21,13 @@ package org.algorithmx.rulii.config;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.convert.ConverterRegistry;
+import org.algorithmx.rulii.core.registry.RuleRegistry;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
-import org.algorithmx.rulii.core.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -43,7 +42,7 @@ public class RuliiConfiguration {
     private ConverterRegistry converterRegistry;
     private ExtractorRegistry extractorRegistry;
     private RuleRegistry ruleRegistry;
-    private ScriptProcessor scriptProcessor;
+    private String scriptLanguage;
     private ObjectFactory objectFactory;
     private Clock clock;
     private Locale locale;
@@ -52,7 +51,7 @@ public class RuliiConfiguration {
                               MethodResolver methodResolver, MessageResolver messageResolver,
                               MessageFormatter messageFormatter, ConverterRegistry converterRegistry,
                               ExtractorRegistry extractorRegistry, RuleRegistry ruleRegistry,
-                              ObjectFactory objectFactory, ScriptProcessor scriptProcessor,
+                              ObjectFactory objectFactory, String scriptLanguage,
                               Clock clock, Locale locale) {
         super();
         Assert.notNull(matchingStrategy, "matchingStrategy cannot be null.");
@@ -64,7 +63,6 @@ public class RuliiConfiguration {
         Assert.notNull(extractorRegistry, "extractorRegistry cannot be null.");
         Assert.notNull(ruleRegistry, "ruleRegistry cannot be null.");
         Assert.notNull(objectFactory, "objectFactory cannot be null.");
-        Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
         Assert.notNull(clock, "clock cannot be null.");
         Assert.notNull(locale, "locale cannot be null.");
         this.matchingStrategy = matchingStrategy;
@@ -78,7 +76,7 @@ public class RuliiConfiguration {
         this.objectFactory = objectFactory;
         this.clock = clock;
         this.locale = locale;
-        this.scriptProcessor = scriptProcessor;
+        this.scriptLanguage = scriptLanguage;
     }
 
     public BindingMatchingStrategy getMatchingStrategy() {
@@ -125,13 +123,12 @@ public class RuliiConfiguration {
         return messageResolver;
     }
 
-    public ScriptProcessor getScriptProcessor() {
-        return scriptProcessor;
+    public String getScriptLanguage() {
+        return scriptLanguage;
     }
 
-    void setScriptProcessor(ScriptProcessor scriptProcessor) {
-        Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
-        this.scriptProcessor = scriptProcessor;
+    void setScriptLanguage(String scriptLanguage) {
+        this.scriptLanguage = scriptLanguage;
     }
 
     void setMatchingStrategy(BindingMatchingStrategy matchingStrategy) {
@@ -198,7 +195,7 @@ public class RuliiConfiguration {
                 ", messageFormatter=" + messageFormatter +
                 ", converterRegistry=" + converterRegistry +
                 ", extractorRegistry=" + extractorRegistry +
-                ", scriptProcessor=" + scriptProcessor +
+                ", scriptLanguage=" + scriptLanguage +
                 ", objectFactory=" + objectFactory +
                 ", clock=" + clock +
                 ", locale=" + locale +

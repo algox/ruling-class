@@ -21,13 +21,12 @@ package org.algorithmx.rulii.config;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.convert.ConverterRegistry;
-import org.algorithmx.rulii.script.ScriptProcessor;
+import org.algorithmx.rulii.core.registry.RuleRegistry;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
-import org.algorithmx.rulii.core.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -139,12 +138,12 @@ public final class RuliiSystem {
         getConfiguration().setMessageResolver(messageResolver);
     }
 
-    public ScriptProcessor getScriptProcessor() {
-        return getConfiguration().getScriptProcessor();
+    public String getScriptLanguage() {
+        return getConfiguration().getScriptLanguage();
     }
 
-    public void setScriptProcessor(ScriptProcessor scriptProcessor) {
-        getConfiguration().setScriptProcessor(scriptProcessor);
+    public void setScriptProcessor(String scriptLanguage) {
+        getConfiguration().setScriptLanguage(scriptLanguage);
     }
 
     @Override

@@ -21,16 +21,14 @@ package org.algorithmx.rulii.config;
 import org.algorithmx.rulii.bind.match.BindingMatchingStrategy;
 import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.convert.ConverterRegistry;
+import org.algorithmx.rulii.core.registry.RuleRegistry;
 import org.algorithmx.rulii.lib.spring.util.Assert;
-import org.algorithmx.rulii.script.NoOpScriptProcessor;
 import org.algorithmx.rulii.script.ScriptLanguageManager;
-import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.MethodResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
-import org.algorithmx.rulii.core.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.Locale;
@@ -48,7 +46,7 @@ public class RuliiConfigurationBuilder {
     private Clock clock = Clock.systemDefaultZone();
     private Locale locale = Locale.getDefault();
     private MessageResolver messageResolver = MessageResolver.create();
-    private ScriptProcessor scriptProcessor = new NoOpScriptProcessor();
+    private String scriptLanguage = ScriptLanguageManager.JAVASCRIPT;
 
     private RuliiConfigurationBuilder() {
         super();
@@ -56,13 +54,6 @@ public class RuliiConfigurationBuilder {
 
     public static RuliiConfigurationBuilder create() {
         RuliiConfigurationBuilder result = new RuliiConfigurationBuilder();
-        ScriptProcessor jsScriptProcessor = ScriptLanguageManager.getScriptProcessor(ScriptLanguageManager.JAVASCRIPT);
-
-        // Found js language processor
-        if (jsScriptProcessor != null) {
-            result.scriptProcessor(jsScriptProcessor);
-        }
-
         return result;
     }
 
@@ -137,15 +128,15 @@ public class RuliiConfigurationBuilder {
         return this;
     }
 
-    public RuliiConfigurationBuilder scriptProcessor(ScriptProcessor scriptProcessor) {
-        Assert.notNull(scriptProcessor, "scriptProcessor cannot be null.");
-        this.scriptProcessor = scriptProcessor;
+    public RuliiConfigurationBuilder scriptLanguage(String scriptLanguage) {
+        Assert.notNull(scriptLanguage, "scriptLanguage cannot be null.");
+        this.scriptLanguage = scriptLanguage;
         return this;
     }
 
     public RuliiConfiguration build() {
         return new RuliiConfiguration(matchingStrategy, parameterResolver, methodResolver, messageResolver,
                 messageFormatter, converterRegistry, extractorRegistry, ruleRegistry,
-                objectFactory, scriptProcessor, clock, locale);
+                objectFactory, scriptLanguage, clock, locale);
     }
 }

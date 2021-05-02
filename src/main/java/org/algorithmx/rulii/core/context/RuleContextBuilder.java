@@ -30,15 +30,17 @@ import org.algorithmx.rulii.bind.match.ParameterResolver;
 import org.algorithmx.rulii.config.RuliiConfiguration;
 import org.algorithmx.rulii.config.RuliiSystem;
 import org.algorithmx.rulii.convert.ConverterRegistry;
+import org.algorithmx.rulii.core.registry.RuleRegistry;
 import org.algorithmx.rulii.event.EventProcessor;
 import org.algorithmx.rulii.event.ExecutionListener;
 import org.algorithmx.rulii.lib.spring.util.Assert;
+import org.algorithmx.rulii.script.NoOpScriptProcessor;
+import org.algorithmx.rulii.script.ScriptLanguageManager;
 import org.algorithmx.rulii.script.ScriptProcessor;
 import org.algorithmx.rulii.text.MessageFormatter;
 import org.algorithmx.rulii.text.MessageResolver;
 import org.algorithmx.rulii.util.reflect.ObjectFactory;
 import org.algorithmx.rulii.validation.extract.ExtractorRegistry;
-import org.algorithmx.rulii.core.registry.RuleRegistry;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -86,7 +88,11 @@ public class RuleContextBuilder {
         this.ruleRegistry = configuration.getRuleRegistry();
         this.clock = configuration.getClock();
         this.locale = configuration.getLocale();
-        this.scriptProcessor = configuration.getScriptProcessor();
+        this.scriptProcessor = ScriptLanguageManager.getScriptProcessor(configuration.getScriptLanguage());
+
+        if (scriptProcessor == null) {
+            scriptProcessor = new NoOpScriptProcessor();
+        }
     }
 
     /**
