@@ -25,6 +25,10 @@ import javax.script.ScriptEngine;
 
 public interface ScriptProcessor {
 
+    static ScriptProcessor create(ScriptEngine engine) {
+        return new DefaultScriptProcessor(engine);
+    }
+
     ScriptContext createContext(Bindings bindings);
 
     Object evaluate(String script, Bindings bindings) throws EvaluationException;

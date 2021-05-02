@@ -21,9 +21,9 @@ package org.algorithmx.rulii.script;
 import org.algorithmx.rulii.core.UnrulyException;
 import org.algorithmx.rulii.lib.spring.util.Assert;
 
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -31,14 +31,14 @@ public final class ScriptLanguageManager {
 
     public static final String JAVASCRIPT = "ECMAScript";
 
-    private static final Map<String, ScriptProcessor> registeredScriptProcessors = new TreeMap<>();
+    private static final Map<String, ScriptEngineFactory> registeredScriptFactories = new TreeMap<>();
 
     static {
         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
         if (scriptEngineManager.getEngineFactories() != null) {
             for (ScriptEngineFactory factory : scriptEngineManager.getEngineFactories()) {
-                register(factory.getScriptEngine(), factory.getLanguageName());
+                register(factory);
             }
         }
     }
@@ -47,26 +47,18 @@ public final class ScriptLanguageManager {
         super();
     }
 
-    public static void register(ScriptEngine engine, String languageName) {
-        register(new DefaultScriptProcessor(engine), languageName);
-    }
-
-    public static void register(ScriptProcessor processor, String languageName) {
-        Assert.notNull(languageName, "languageName cannot be null.");
-        Assert.notNull(processor, "processor cannot be null.");
-        registeredScriptProcessors.put(languageName, processor);
+    public static void register(ScriptEngineFactory factory) {
+        Assert.notNull(factory, "processor cannot be null.");
+        registeredScriptFactories.put(factory.getLanguageName(), factory);
     }
 
     public static ScriptProcessor getScriptProcessor(String language) throws UnrulyException {
-        return registeredScriptProcessors.get(language);
+        ScriptEngineFactory factory = registeredScriptFactories.get(language);
+        return factory != null ? ScriptProcessor.create(factory.getScriptEngine()) : null;
     }
 
-    public static ScriptProcessor[] getAvailableScriptProcessors() {
-        return registeredScriptProcessors.values().stream().toArray(size -> new ScriptProcessor[size]);
-    }
-
-    public static String[] getAvailableScriptingLanguages() {
-        return registeredScriptProcessors.keySet().stream().toArray(size -> new String[size]);
+    public static Collection<String> getAvailableScriptingLanguages() {
+        return registeredScriptFactories.keySet();
     }
 }
 
